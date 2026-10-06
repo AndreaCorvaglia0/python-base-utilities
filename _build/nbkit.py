@@ -47,19 +47,21 @@ NOMI_AULA = {"base": "Aula Base", "avanzata": "Aula Avanzata"}
 # Programma: numero -> (file, titolo). Serve per i link "prossimo notebook".
 # ---------------------------------------------------------------------------
 PROGRAMMA = [
-    ("00", "00_Si_parte", "Si parte: VS Code, notebook e primo codice"),
-    ("01", "01_Librerie_e_ambiente", "Librerie e ambiente"),
-    ("02", "02_Sintassi_di_base", "Sintassi di base: variabili, numeri e stringhe"),
-    ("03", "03_Strutture_dati", "Strutture dati: liste, tuple, dizionari e set"),
-    ("04", "04_Codice_leggibile", "Codice leggibile"),
-    ("05", "05_Condizioni_cicli_funzioni", "Condizioni, cicli e funzioni"),
-    ("06", "06_Oggetti_ed_errori", "Oggetti ed errori"),
-    ("07", "07_Pandas_import_dati", "pandas: DataFrame e import dei dati"),
-    ("08", "08_Pandas_operazioni", "pandas: operazioni sui DataFrame"),
-    ("09", "09_Pandas_date", "pandas: le date"),
-    ("10", "10_Plotly", "Grafici con Plotly"),
-    ("11", "11_Agenti_per_il_coding", "Agenti per il coding"),
-    ("12", "12_Capstone", "Capstone: il carico del Nord e la temperatura"),
+    ("00", "00_Notebook", "Jupyter e i notebook"),
+    ("01", "01_Python_e_sintassi_base", "Introduzione a Python e sintassi base"),
+    ("02", "02_Tipi_di_dato", "Tipi di dato e manipolazione"),
+    ("03", "03_Codice_leggibile", "Codice leggibile"),
+    ("E1", "Esercitazione_1", "Esercitazione 1"),
+    ("04", "04_Funzioni_e_controllo", "Funzioni e controllo del flusso"),
+    ("05", "05_Oggetti_ed_errori", "Oggetti ed errori"),
+    ("06", "06_Pandas_e_import_dati", "Pandas: Series, DataFrame e import dei dati"),
+    ("E2", "Esercitazione_2", "Esercitazione 2"),
+    ("07", "07_Pandas_operazioni", "Pandas: operazioni sui DataFrame"),
+    ("08", "08_Pandas_date", "Pandas: le date"),
+    ("09", "09_Plotly", "Plotly per serie storiche"),
+    ("E3", "Esercitazione_3", "Esercitazione 3"),
+    ("10", "10_Agenti_per_il_coding", "Agenti per il coding"),
+    ("11", "11_Capstone", "Capstone: il carico del Nord e la temperatura"),
 ]
 COMPITO = ("C", "Homework", "Homework")
 
@@ -152,6 +154,7 @@ class Notebook:
     etichetta_esercizio: str = "Esercizio"
     prefisso_esercizi: str | None = None     # default: num
     prossimo: str | None = None              # testo markdown della chiusura, se diverso dal programma
+    extra: bool = False                      # notebook della cartella Extra: versione unica, senza aula
     celle: list[Cella] = field(default_factory=list)
     _aula_corrente: str | None = None
 
@@ -201,7 +204,7 @@ class Notebook:
     def esercizio(self, titolo: str, scenario: str, richiesta: str, starter: str, soluzione: str,
                   verifica: str | None = None, suggerimento: str | None = None, perche: str | None = None,
                   bis: bool = False, passo_in_piu: dict | None = None, aula: str | None = None,
-                  rete: bool = False) -> None:
+                  rete: bool = False, facoltativo: bool = False) -> None:
         """Esercizio di fine notebook: box verde, starter, verifica (+ soluzione nelle Soluzioni).
 
         passo_in_piu: dict(testo=..., starter=..., soluzione=..., verifica=...) facoltativo.
@@ -209,7 +212,7 @@ class Notebook:
         """
         a = self._aula(aula)
         self.celle.append(Cella("esercizio", "", aula=a, extra={
-            "titolo": titolo, "scenario": _d(scenario), "richiesta": _d(richiesta),
+            "titolo": titolo + (" (facoltativo)" if facoltativo else ""), "scenario": _d(scenario), "richiesta": _d(richiesta),
             "suggerimento": _d(suggerimento) if suggerimento else None, "bis": bis,
             "passo": _d(passo_in_piu["testo"]) if passo_in_piu else None, "perche": _d(perche) if perche else None,
         }))
@@ -240,7 +243,7 @@ class Notebook:
             return None
         n, f, t = PROGRAMMA[i + 1]
         testo = f"Prossimo: [{n} · {t}]({f}.ipynb)"
-        if self.num == "07":
+        if self.num == "E2":
             testo += f" · e, prima della seconda giornata, l'[{COMPITO[2]}]({COMPITO[1]}.ipynb)"
         return testo
 
@@ -248,18 +251,20 @@ class Notebook:
         obiettivi = self._per_aula(self.obiettivi, aula)
         dati = self._per_aula(self.dati, aula)
         tempo = self._per_aula(self.tempo, aula)
-        titolo = f"{self.num} · {self.titolo}" if self.num != COMPITO[0] else self.titolo
-        if soluzioni:
+        titolo = f"{self.num} · {self.titolo}" if self.num[0].isdigit() else self.titolo
+        if soluzioni and not self.extra:
             titolo += " · Soluzioni"
-        kicker = NOMI_BLOCCO[self.blocco]
-        if self.giornata:
+        kicker = "Extra · materiale per il docente" if self.extra else NOMI_BLOCCO[self.blocco]
+        if self.giornata and not self.extra:
             kicker += f" · Giornata {self.giornata}"
-        kicker += f" · {NOMI_AULA[aula]} &nbsp;·&nbsp; ⏱ ~{tempo} min"
+        if not self.extra:
+            kicker += f" · {NOMI_AULA[aula]}"
+        kicker += f" &nbsp;·&nbsp; ⏱ ~{tempo} min"
         righe = [f"**{kicker}**", "", self.intento, "", "**In questo notebook impariamo a**", ""]
         righe += [f"- {o}" for o in obiettivi]
         pre = []
         nums = [p[0] for p in PROGRAMMA]
-        if self.num in nums and nums.index(self.num) > 0:
+        if not self.extra and self.num in nums and nums.index(self.num) > 0:
             n, f, t = PROGRAMMA[nums.index(self.num) - 1]
             pre.append(f"Prima di questo: [{n} · {t}]({f}.ipynb)")
         pre.append("Dati: " + (", ".join(f"`../Dati/{d}`" for d in dati) if dati else "nessuno"))
@@ -369,8 +374,15 @@ class Notebook:
                 cells.append(new_markdown_cell(src, metadata=meta))
             else:
                 cells.append(new_code_cell(src, metadata=meta))
-        chiusura = f"---\n\n**Fine del notebook {self.num}.**" if self.num != COMPITO[0] else "---\n\n**Fine dell'homework.**"
-        link = self._link_prossimo()
+        if self.extra:
+            chiusura = "---\n\n**Fine.**"
+        elif self.num == COMPITO[0]:
+            chiusura = "---\n\n**Fine dell'homework.**"
+        elif self.num.startswith("E"):
+            chiusura = f"---\n\n**Fine dell'{self.titolo.lower()}.**"
+        else:
+            chiusura = f"---\n\n**Fine del notebook {self.num}.**"
+        link = None if self.extra else self._link_prossimo()
         if link:
             chiusura += " " + link
         cells.append(new_markdown_cell(chiusura, metadata={"tags": ["chiusura"]}))
@@ -410,6 +422,7 @@ FRASI_VIETATE = [
     "questa sezione è pensata", "questo notebook è pensato", "versione del corso", "istruzioni del corso",
     "compito a casa", "compiti a casa",
 ]
+TITOLI_SOSPETTI = ["davvero", "che serv", "che cont", "sul serio", "uno alla volta", "in cinque", "in sei", "senza paura", "che fanno la differenza"]
 PAROLE_SOSPETTE = [
     "esploreremo", "fondamentale", "cruciale", "potente", "robusto", "sfruttare", "in sintesi",
     "ricapitolando", "vale la pena", "buon lavoro", "ottimo lavoro", "perfetto!", "immagina", "best practice",
@@ -464,7 +477,14 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
             avvisi.append(f"punto esclamativo nel testo: {c['source'][:50]!r}")
     # la sezione Esercizi deve essere l'ultima
     sezioni = [c["source"].splitlines()[1] for c in md if "sezione" in c.get("metadata", {}).get("tags", [])]
+    for s in sezioni:
+        for w in TITOLI_SOSPETTI:
+            if w in s.lower():
+                avvisi.append(f"titolo a effetto: {s!r}")
+    for c in md:
+        if "📌" in c["source"]:
+            avvisi.append("box Ricorda: non si usa più")
     # il capstone ha gli Step dentro ogni sezione, per scelta didattica
-    if sezioni and not sezioni[-1].endswith("Esercizi") and nb.num != COMPITO[0] and nb.etichetta_esercizio == "Esercizio":
+    if sezioni and not sezioni[-1].endswith("Esercizi") and nb.num != COMPITO[0] and not nb.num.startswith("E") and not nb.extra and nb.etichetta_esercizio == "Esercizio":
         avvisi.append(f"l'ultima sezione non è 'Esercizi' ma {sezioni[-1]!r}")
     return errori, avvisi

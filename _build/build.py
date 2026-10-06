@@ -2,7 +2,7 @@
 Costruisce i notebook del corso a partire dagli script in `_build/src/`.
 
     uv run python _build/build.py            # tutti
-    uv run python _build/build.py 05 07      # solo quei numeri (C = homework)
+    uv run python _build/build.py 05 07      # solo quei numeri (C = homework, E1..E3 = esercitazioni, EXTRA = cartella Extra)
 
 Output: Aula_Base/, Aula_Avanzata/ (versione studente) e Soluzioni_Base/, Soluzioni_Avanzata/.
 """
@@ -37,9 +37,26 @@ def carica(filtro: list[str]):
         yield script.stem, mod.costruisci()
 
 
+def carica_extra(filtro: list[str]):
+    for script in sorted((SRC / "extra").glob("*.py")):
+        if filtro and "EXTRA" not in filtro and script.stem.upper() not in filtro:
+            continue
+        spec = importlib.util.spec_from_file_location("extra_" + script.stem, script)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        yield script.stem, mod.costruisci()
+
+
 def main(argv: list[str]) -> int:
     filtro = [a.upper() for a in argv if not a.startswith("-")]
     rc = 0
+    for stem, nb in carica_extra(filtro):
+        try:
+            out = nb.build(ROOT / "Extra", aula="avanzata", soluzioni=True)
+            print(f"{stem:32s} -> {out.relative_to(ROOT)}")
+        except ValueError as e:
+            print(f"[ERRORE] {e}")
+            rc = 1
     for stem, nb in carica(filtro):
         for aula in nb.aule:
             for soluzioni in (False, True):
