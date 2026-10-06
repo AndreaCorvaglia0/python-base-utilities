@@ -187,7 +187,7 @@ def costruisci() -> Notebook:
         carico.isna().sum()
     """
     verifica_2 = """
-        assert len(duplicati) == 8, "❌ duplicati: 8 righe, cioè 4 timestamp doppi per anno (keep=False tiene tutte le copie)"
+        assert len(duplicati) == 16, "❌ duplicati: 16 righe, cioè 4 timestamp doppi per anno in 2 copie (keep=False le tiene tutte)"
         assert set(pd.to_datetime(list(giorni_strani.index)).strftime("%Y-%m-%d")) == {"2024-03-31", "2024-10-27", "2025-03-30", "2025-10-26"}, "❌ giorni_strani: le ultime domeniche di marzo e di ottobre dei due anni"
         assert len(carico) == 70168, "❌ carico: 70176 righe meno gli 8 duplicati"
         assert carico["data"].duplicated().sum() == 0, "❌ Ci sono ancora timestamp ripetuti"
@@ -480,17 +480,17 @@ def costruisci() -> Notebook:
         nb.md("""
             La funzione qui sotto è già scritta: leggila prima di usarla. Dentro c'è la chiamata all'API con
             `requests` e un `try/except`, quello che abbiamo imparato a leggere nel notebook sugli errori:
-            se la rete non risponde, la funzione legge la copia salvata in `../Dati/fallback/` e il resto del
-            notebook non se ne accorge.
+            se la rete non risponde, legge la copia salvata in `../Dati/fallback/`. Restituisce la parte
+            `hourly` della risposta: un dizionario con due liste, pronto per `pd.DataFrame`.
         """)
         nb.code("""
             import json
 
             import requests
-
-
+        """)
+        nb.code("""
             def scarica_temperatura(start, end):
-                \"\"\"Temperatura oraria a Milano tra due date (Open-Meteo), con la copia locale di riserva.\"\"\"
+                \"\"\"Temperatura oraria a Milano tra due date (Open-Meteo): dizionario con le liste time e temperature_2m.\"\"\"
                 url = "https://archive-api.open-meteo.com/v1/archive"
                 params = {"latitude": 45.4642, "longitude": 9.19, "start_date": start, "end_date": end,
                           "hourly": "temperature_2m", "timezone": "Europe/Rome"}
@@ -502,14 +502,16 @@ def costruisci() -> Notebook:
                     print("API non raggiungibile: uso la copia in ../Dati/fallback/")
                     with open("../Dati/fallback/meteo_milano_2024_2025.json", encoding="utf-8") as f:
                         risposta = json.load(f)
-                meteo = pd.DataFrame(risposta["hourly"])
-                meteo["time"] = pd.to_datetime(meteo["time"])
-                return meteo.rename(columns={"time": "data", "temperature_2m": "temperatura"})
+                return risposta["hourly"]
         """)
     soluzione_5_base = """
         inizio = carico["data"].min().strftime("%Y-%m-%d")
         fine = carico["data"].max().strftime("%Y-%m-%d")
-        meteo = scarica_temperatura(inizio, fine)
+        orario = scarica_temperatura(inizio, fine)
+
+        meteo = pd.DataFrame(orario)
+        meteo["time"] = pd.to_datetime(meteo["time"])
+        meteo = meteo.rename(columns={"time": "data", "temperature_2m": "temperatura"})
         display(meteo.head())
 
         fig = px.line(meteo, x="data", y="temperatura", title="Temperatura oraria a Milano", labels={"temperatura": "°C", "data": ""})
@@ -548,9 +550,11 @@ def costruisci() -> Notebook:
         richiesta="""
             1. Ricava `inizio` e `fine` dal carico: primo e ultimo giorno, come testo `AAAA-MM-GG`
                (`.min()`, `.max()` e `.strftime("%Y-%m-%d")`).
-            2. Chiama `scarica_temperatura(inizio, fine)` e salva il risultato in `meteo`. Guarda le prime
+            2. Chiama `scarica_temperatura(inizio, fine)`: restituisce un dizionario con due liste, `time` e
+               `temperature_2m`. Trasformalo in `meteo` con `pd.DataFrame`.
+            3. Converti `time` in datetime e rinomina le colonne in `data` e `temperatura`. Guarda le prime
                righe.
-            3. Disegna la temperatura nel tempo con `px.line` e chiudi con `meteo.describe()`: il massimo e
+            4. Disegna la temperatura nel tempo con `px.line` e chiudi con `meteo.describe()`: il massimo e
                il minimo sono plausibili per Milano?
         """,
         suggerimento="`strftime` trasforma una data in testo nel formato che vuoi; l'API vuole `2024-01-01`.",
@@ -558,11 +562,16 @@ def costruisci() -> Notebook:
             # 1. l'intervallo da chiedere: dal primo all'ultimo giorno del carico, come testo
             inizio = carico["data"].min().strftime("%Y-%m-%d")
             fine = ...
-            # 2. la temperatura oraria
-            meteo = scarica_temperatura(...)
+            # 2. la risposta dell'API: un dizionario con due liste, time e temperature_2m
+            orario = scarica_temperatura(inizio, fine)
+            meteo = pd.DataFrame(...)
+
+            # 3. date vere e nomi corti
+            meteo["time"] = pd.to_datetime(meteo["time"])
+            meteo = meteo.rename(columns={...})
             display(meteo.head())
 
-            # 3. un grafico per vedere se è plausibile, e i numeri
+            # 4. un grafico per vedere se è plausibile, e i numeri
             fig = px.line(meteo, x=..., y=..., title="Temperatura oraria a Milano")
             fig.show()
             meteo.describe()
@@ -893,8 +902,8 @@ def costruisci() -> Notebook:
     nb.md("""
         **Cosa abbiamo scoperto sul carico del Nord, 2024-2025**
 
-        1. I dati di Terna sono ... (non orari): ... righe pulite, dopo aver tolto ... doppioni dell'ora
-           legale di ottobre; le ... ore mancanti di marzo restano un buco.
+        1. I dati di Terna sono ... (non orari): ... righe pulite, tolti ... doppioni dell'ora legale di
+           ottobre; le ... ore mancanti di marzo restano un buco.
         2. Il giorno più pesante è stato il ... con ... MWh; il più leggero il ... con ... MWh.
         3. La giornata media ha ... picchi, alle ... e alle ...; il minimo è alle ...
         4. Nel weekend il carico medio cala del ...% rispetto ai giorni feriali.

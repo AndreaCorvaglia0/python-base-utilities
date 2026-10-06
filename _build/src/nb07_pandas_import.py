@@ -776,7 +776,7 @@ def costruisci() -> Notebook:
         """)
 
         nb.sezione("Il wrapper", intro="""
-            Abbiamo scritto tre volte le stesse tre righe: `requests.get`, `raise_for_status()`, `.json()`.
+            Abbiamo scritto quattro volte le stesse tre righe: `requests.get`, `raise_for_status()`, `.json()`.
             Quando un pezzo di codice si ripete uguale lo chiudiamo in una funzione: si riusa con una riga
             e, se c'è da correggere qualcosa (il timeout, una chiave di accesso), si corregge in un posto
             solo.
@@ -804,12 +804,8 @@ def costruisci() -> Notebook:
             def misure_sensore(idsensore: str, inizio: str, fine: str) -> pd.DataFrame:
                 """Misure ARPA di un sensore tra due date (aaaa-mm-gg), numeriche e senza i -9999."""
                 url = "https://www.dati.lombardia.it/resource/647i-nhxk.json"
-                params = {
-                    "idsensore": idsensore,
-                    "$where": f"data between '{inizio}T00:00:00' and '{fine}T23:59:59'",
-                    "$order": "data",
-                    "$limit": 50000,
-                }
+                periodo = f"data between '{inizio}T00:00:00' and '{fine}T23:59:59'"
+                params = {"idsensore": idsensore, "$where": periodo, "$order": "data", "$limit": 50000}
                 misure = pd.DataFrame(get_json(url, params))
                 misure["valore"] = pd.to_numeric(misure["valore"])
                 mask = misure["valore"] != -9999
@@ -830,7 +826,7 @@ def costruisci() -> Notebook:
                 giugno["valore"] = pd.to_numeric(giugno["valore"])
                 mask = giugno["valore"] != -9999
                 giugno = giugno[mask]
-                print(giugno["valore"].describe())
+                display(giugno["valore"].describe())
             else:
                 print(f"File di riserva non trovato: {file_misure}")
         """)

@@ -10,7 +10,7 @@ _ZONE = ['"NORD"', '"CNOR"', '"CSUD"', '"SUD"', '"SICI"', '"SARD"']
 
 
 def _riga(etichetta: str, celle: list[str]) -> str:
-    return f"{etichetta:<{_LARGHEZZA_ETICHETTA}}" + "".join(f"{c:^{_LARGHEZZA_CELLA}}" for c in celle)
+    return (f"{etichetta:<{_LARGHEZZA_ETICHETTA}}" + "".join(f"{c:^{_LARGHEZZA_CELLA}}" for c in celle)).rstrip()
 
 
 def _fetta(etichetta: str, a: int, b: int, testo: str) -> str:
@@ -161,9 +161,8 @@ def costruisci() -> Notebook:
     """)
     nb.box("attenzione", """
         `letture_kwh = letture_kwh.append(13.2)` è il modo più rapido per perdere una lista:
-        `append` la modifica sul posto e restituisce `None`, che finisce in `letture_kwh`. I metodi
-        delle liste si chiamano e basta, senza `=`. Con pandas sarà il contrario: lì i metodi
-        restituiscono una copia e si riassegna sempre.
+        `append` modifica sul posto e restituisce `None`, che finisce in `letture_kwh`. I metodi
+        delle liste si chiamano senza `=`; con pandas sarà il contrario, lì si riassegna sempre.
     """)
     nb.box("nota", """
         Eseguire due volte una cella con `append` aggiunge due volte. Quando una cella modifica una
@@ -426,7 +425,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         `in` risponde se un valore c'è, e sui set è immediato anche con milioni di elementi. Funziona
-        anche su liste, tuple e stringhe: `"NORD" in zone`, `"E" in pod`. Tra due set si fanno le
+        anche su liste, tuple e stringhe: `"NORD" in zone`, `"IT" in "IT001E12345678"`. Tra due set si fanno le
         operazioni degli insiemi: `|` unisce, `&` tiene quello che hanno in comune, `-` toglie.
     """)
     nb.code("""
@@ -474,9 +473,9 @@ def costruisci() -> Notebook:
     nb.md("""
         | Struttura | Quando | Dove la incontreremo |
         |---|---|---|
-        | Lista `[12.4, 15.1]` | valori in ordine, anche ripetuti, che possono cambiare | le letture di un giorno, i file di una cartella, una colonna |
-        | Tupla `(45.46, 9.19)` | pochi valori che vanno insieme e non devono cambiare | `df.shape`, le coordinate, le funzioni che restituiscono una coppia |
-        | Dizionario `{"F1": 0.21}` | cercare per nome, non per posizione | anagrafiche, listini, i parametri di un'API e la sua risposta |
+        | Lista `[12.4, 15.1]` | valori in ordine, anche ripetuti, che possono cambiare | le letture di un giorno, i file di una cartella |
+        | Tupla `(45.46, 9.19)` | pochi valori che vanno insieme e non cambiano | `df.shape`, le coordinate |
+        | Dizionario `{"F1": 0.21}` | cercare per nome, non per posizione | anagrafiche, listini, i parametri di un'API |
         | Set `{"NORD", "SUD"}` | valori unici: c'è o non c'è, quanti distinti | togliere i doppioni, confrontare due elenchi |
     """)
     nb.md("""
@@ -496,11 +495,10 @@ def costruisci() -> Notebook:
         titolo="Le 24 letture della cabina",
         scenario="""
             In sala controllo arrivano ogni mattina le 24 letture orarie, in kWh, della cabina del
-            polo logistico di Lodi: una lista con la lettura delle 0 in posizione 0 e quella delle 23
-            in posizione 23. Il collega di turno vuole il consumo in fascia F1 con totale, media e
-            picco. Le fasce orarie dividono la settimana in tre prezzi: F1 lunedì-venerdì dalle 8
-            alle 19, F2 lunedì-venerdì 7-8 e 19-23 più il sabato 7-23, F3 notte, domenica e festivi.
-            Oggi il collega conta le celle in Excel con il dito.
+            polo logistico di Lodi: la lettura delle 0 in posizione 0, quella delle 23 in posizione 23.
+            Il collega di turno vuole totale, media e picco della fascia F1, e oggi conta le celle in
+            Excel con il dito. Le fasce orarie sono i tre prezzi della settimana: F1 lunedì-venerdì
+            8-19, F2 lunedì-venerdì 7-8 e 19-23 più il sabato 7-23, F3 notte, domenica e festivi.
         """,
         richiesta="""
             È un giorno feriale.
@@ -555,7 +553,7 @@ def costruisci() -> Notebook:
             solo: la coda va aggiornata prima di dividerla.
         """,
         richiesta="""
-            Tre passi.
+            Prima si aggiorna la coda, poi si divide.
 
             1. Aggiungi in coda a `coda_pod` il POD `"IT001E99887766"` e togli `"IT001E23456789"`.
             2. Metti in `turno_mattina` i primi quattro POD della coda aggiornata e in
@@ -606,7 +604,7 @@ def costruisci() -> Notebook:
             conto senza riscrivere tutto.
         """,
         richiesta="""
-            Quattro passi.
+            Tutto parte dal dizionario `listino`.
 
             1. Costruisci il dizionario `listino`: fascia come chiave, prezzo come valore.
             2. Calcola `costo` della bolletta: per ogni fascia il consumo per il prezzo, sommati.
@@ -685,7 +683,7 @@ def costruisci() -> Notebook:
             senza che la cella esploda se non c'è.
         """,
         richiesta="""
-            Quattro passi.
+            Tutto sul dizionario `impianto`, già creato nella cella.
 
             1. Porta `kwp` a 9.0 e aggiungi la chiave `collaudo` con il valore `"2025-09-15"`.
             2. Togli la chiave `note`.

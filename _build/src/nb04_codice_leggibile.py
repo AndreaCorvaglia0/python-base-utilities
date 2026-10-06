@@ -93,7 +93,7 @@ def costruisci() -> Notebook:
     """)
     nb.box("nota", """
         Sintassi che basta: `# Titolo` e `## Sezione`, `**grassetto**`, `- elenco`, codice tra
-        backtick. Una cella selezionata diventa Markdown con **M** e torna codice con **Y**.
+        backtick. Il resto si cerca quando serve, ed è raro che serva.
     """)
 
     # ------------------------------------------------------------------ 3
@@ -249,14 +249,14 @@ def costruisci() -> Notebook:
             ```
         """)
         nb.md("""
-            I tre avvisi che vedremo più spesso. Ogni avviso ha un codice: la lettera dice la famiglia
-            (`F` per gli errori veri, `E` per lo stile) e il numero la regola.
+            I tre avvisi che vedremo più spesso. La lettera del codice è la famiglia (`F` errori veri,
+            `E` stile), il numero la regola.
 
             | Codice | Avviso | Cosa vuol dire |
             |---|---|---|
-            | `F401` | `` `math` imported but unused `` | abbiamo importato una libreria che non usiamo: via la riga |
-            | `F841` | `Local variable `totale` is assigned to but never used` | una variabile calcolata e mai letta: un avanzo, o un errore di battitura |
-            | `E501` | `Line too long (129 > 100)` | la riga supera il limite di `pyproject.toml`: si spezza |
+            | `F401` | `` `math` imported but unused `` | una libreria importata e mai usata: via la riga |
+            | `F841` | `` Local variable `totale` is assigned to but never used `` | una variabile calcolata e mai letta: un avanzo o un refuso |
+            | `E501` | `Line too long (129 > 100)` | la riga supera il limite scritto in `pyproject.toml`: si spezza |
         """)
         nb.md("""
             Dal terminale, nella cartella del progetto, su un file `.py`:
@@ -465,7 +465,7 @@ def costruisci() -> Notebook:
                 print(riepilogo(pod_anomali, soglia_kwh))
             """,
             soluzione="""
-                avvisi = ["F401", "F841", "E501"]   # import mai usato, variabile mai usata, riga da 129 caratteri
+                avvisi = ["F401", "F841", "E501"]  # import mai usato, variabile mai usata, riga da 129 caratteri
 
                 soglia_kwh = 1000
                 pod_anomali = ["IT001E45678901"]
