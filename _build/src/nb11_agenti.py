@@ -70,6 +70,7 @@ def costruisci() -> Notebook:
         verifica="""
             assert mw_a_mwh([100, 100, 100, 100]) == 100, "❌ Quattro quartorari a 100 MW sono 100 MWh"
             assert mw_a_mwh([12.4, 12.9, 13.1, 12.6]) == 12.75, "❌ Somma delle potenze diviso 4, senza arrotondare"
+            assert mw_a_mwh([100] * 8) == 200, "❌ Otto quartorari a 100 MW sono due ore: 200 MWh, non la media"
         """,
     )
     nb.md("""
