@@ -278,7 +278,7 @@ def costruisci() -> Notebook:
             fig_carico.show()
         """,
         verifica="""
-            assert len(fig_carico.data) == 1 and fig_carico.data[0].type == "scatter", "❌ Serve una linea sola: px.line con y='Total Load [MW]'"
+            assert len(fig_carico.data) == 1 and fig_carico.data[0].mode == "lines", "❌ Serve una linea sola: px.line con y='Total Load [MW]'"
             assert fig_carico.layout.title.text == "Carico Nord, gennaio 2024", "❌ Il titolo deve essere 'Carico Nord, gennaio 2024'"
             assert fig_carico.layout.xaxis.rangeslider.visible, "❌ Manca il range slider: update_xaxes(rangeslider_visible=True)"
         """,

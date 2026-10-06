@@ -160,7 +160,7 @@ def costruisci() -> Notebook:
         valori non mancanti ha ogni colonna.
     """)
     nb.code("""
-        df_nan["A"].dtype  # Output: dtype('float64')
+        df_nan["A"].dtype
     """)
     nb.code("""
         df_nan.info()
@@ -380,8 +380,8 @@ def costruisci() -> Notebook:
         df_outer
     """)
     nb.md("""
-        Il left join è il più usato per aggiungere informazioni a una tabella senza perdere righe:
-        dove manca la corrispondenza resta `NaN`.
+        Con il left join teniamo tutte le righe del DataFrame di sinistra: dove manca la corrispondenza
+        resta `NaN`.
     """)
     nb.code("""
         # left join
@@ -540,7 +540,7 @@ def costruisci() -> Notebook:
             prezzi_stati
         """,
         verifica="""
-            assert len(prezzi_stati) == 4, "❌ Con l'inner join restano i quattro stati di stati"
+            assert len(prezzi_stati) == 4, "❌ Con l'inner join restano le quattro righe di stati"
             assert {"sigla", "price"} <= set(prezzi_stati.columns), "❌ Servono le colonne sigla e price"
             prezzo_tx = prezzi_stati.loc[prezzi_stati["sigla"] == "TX", "price"].iloc[0]
             assert round(prezzo_tx, 2) == 8.86, "❌ Filtra su all sectors prima della media"

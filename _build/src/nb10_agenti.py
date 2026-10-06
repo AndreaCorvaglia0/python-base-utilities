@@ -73,9 +73,9 @@ def costruisci() -> Notebook:
     nb.md("""
         | Parola | Cos'è | Perché conta |
         |---|---|---|
-        | modelli | il completamento usa un modello piccolo e veloce; nella chat si sceglie dal menu in basso | scrive il seguito più probabile, senza verificare che sia vero; per un traceback strano si prova un modello più grande |
+        | modelli | il completamento usa un modello piccolo e veloce; nella chat si sceglie dal menu in basso | scrive il seguito più probabile senza verificarlo; per un traceback strano si prova un modello più grande |
         | Plan e Agent | prima il piano dei passi, poi le modifiche ai file | il piano si legge e si corregge prima di lasciar fare |
-        | prompt e contesto | il prompt è la domanda; il contesto è quello che il modello vede: file aperti, celle selezionate, testo incollato | la risposta dipende più dal contesto che dalla domanda |
+        | prompt e contesto | il prompt è la domanda; il contesto è quello che il modello vede: file aperti, celle selezionate, testo incollato | conta più della domanda |
     """)
     nb.md("""
         Le istruzioni che valgono sempre si scrivono una volta in un file del progetto, che l'agente legge a
@@ -326,7 +326,7 @@ def costruisci() -> Notebook:
             prezzo_medio({"pane": 2, "latte": 1})
         """)
 
-        nb.sottosezione("@dataclass", intro="""
+        nb.sottosezione("`@dataclass`", intro="""
             `@dataclass` sopra una classe la trasforma in un contenitore di campi, ognuno con tipo e, se c'è,
             default. Il costruttore, la stampa e il confronto con `==` li scrive da solo.
         """)
@@ -375,7 +375,7 @@ def costruisci() -> Notebook:
             list(a_blocchi(spesa, 2))
         """)
 
-        nb.sottosezione("**kwargs", intro="""
+        nb.sottosezione("`**kwargs`", intro="""
             `**kwargs` (il nome può cambiare, contano i due asterischi) raccoglie in un dizionario i parametri
             passati per nome che la funzione non elenca. `*args` fa lo stesso con quelli passati per posizione.
         """)

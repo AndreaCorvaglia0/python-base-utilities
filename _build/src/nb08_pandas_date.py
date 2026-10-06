@@ -42,7 +42,8 @@ def costruisci() -> Notebook:
 
         pd.set_option("display.max_rows", 10)
         pd.set_option("display.max_columns", 20)
-
+    """)
+    nb.code("""
         rng = pd.date_range("2025-03-01 00:00", periods=3 * 24 * 4, freq="15min")
 
         # pattern giornaliero semplice + rumore: giusto per avere una serie "viva"
@@ -267,10 +268,7 @@ def costruisci() -> Notebook:
 
         t0 = missing_timestamps[0]
         # finestra: da t0-45min a t0+45min
-        idx = slice(
-            t0 - pd.Timedelta(minutes=45),
-            t0 + pd.Timedelta(minutes=45),
-        )
+        idx = slice(t0 - pd.Timedelta(minutes=45), t0 + pd.Timedelta(minutes=45))
 
         # imputazioni (una colonna ciascuna)
         out = pd.DataFrame({
