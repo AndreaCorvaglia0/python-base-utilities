@@ -55,6 +55,19 @@ torna. Le soluzioni di tutto stanno in `Soluzioni_Base/` e `Soluzioni_Avanzata/`
 Prima del corso, con la rete disponibile, `uv run python _build/scarica_fallback.py` salva in `Dati/fallback/`
 le risposte delle API usate nei notebook: se in aula la rete non collabora, i notebook leggono quelle.
 
+## Per chi tiene il corso
+
+- Prima del corso, con la rete disponibile: `uv run python _build/scarica_fallback.py` (salva le risposte delle API in
+  `Dati/fallback/`; senza questi file le celle di fallback del notebook 07 e del capstone restano vuote).
+- Estensioni di VS Code sui PC dell'aula: Python, Jupyter, Data Wrangler, GitHub Copilot (e Ruff per l'aula Avanzata).
+- Ogni notebook ha nel banner il tempo previsto; se si è in ritardo si taglia a fine sezione, mai a metà. I punti
+  dove tagliare senza perdere il filo: nel 06 gli esercizi "bis"; nel 07 Base la sezione di ripasso; nel 08 il
+  tour di Data Wrangler (si può fare solo come dimostrazione); nel 09 i fusi orari.
+- I notebook sono generati dagli script in `_build/src/`: per cambiare un testo o un esercizio in tutte e quattro
+  le versioni, si modifica lo script e si lancia `uv run python _build/build.py NN`. Le Soluzioni si eseguono da
+  capo a fondo con `uv run python _build/validate.py Soluzioni_Base/NN_*.ipynb` (serve la rete per le celle delle API).
+  Modificare direttamente un `.ipynb` funziona, ma la modifica resta in quella sola versione.
+
 ## I riquadri nei notebook
 
 Nei notebook incontrerai riquadri colorati: 💡 **Nota** (una precisazione utile adesso), ⚠️ **Attenzione**
