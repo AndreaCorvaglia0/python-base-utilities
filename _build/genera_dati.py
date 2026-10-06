@@ -152,6 +152,55 @@ def prezzi_zonali() -> None:
     df.to_csv(DATI / "prezzi_zonali_2025_settimana.csv", index=False)
 
 
+POD_COMPITO = [
+    ("IT001E31045201", "Panificio Rè", "Cantù", 15.0),
+    ("IT001E31045877", "Lavanderia Più", "Lodi", 10.0),
+    ("IT001E31046310", "Bar Centrale", "Monza", 6.0),
+    ("IT001E31047092", "Officina Meccanica Fumagalli", "Lecco", 30.0),
+    ("IT001E31047555", "Studio Dentistico Colombo", "Varese", 6.0),
+    ("IT001E31048128", "Supermercato Il Mercato", "Crema", 50.0),
+    ("IT001E31048743", "Palestra Energy", "Rho", 15.0),
+    ("IT001E31049306", "Serra Fiorita", "Mantova", 30.0),
+]
+POD_ANOMALO, GIORNO_ANOMALO = "IT001E31047092", "12/03/2025"
+
+
+def compito() -> None:
+    """Cartella Dati/compito/: letture giornaliere di marzo (e aprile) di 8 POD, un Excel a due fogli, un SQLite."""
+    cartella = DATI / "compito"
+    cartella.mkdir(exist_ok=True)
+    media = {pod: potenza * rng.uniform(2.5, 5.0) for pod, _, _, potenza in POD_COMPITO}  # kWh al giorno
+
+    def letture(inizio: str, fine: str) -> pd.DataFrame:
+        righe = []
+        for pod, _, _, _ in POD_COMPITO:
+            for g in pd.date_range(inizio, fine, freq="D"):
+                fattore = 0.6 if g.dayofweek >= 5 else 1.0
+                kwh = media[pod] * fattore * rng.uniform(0.85, 1.15)
+                data = g.strftime("%d/%m/%Y")
+                if pod == POD_ANOMALO and data == GIORNO_ANOMALO:
+                    kwh *= 10  # uno zero di troppo: la lettura da trovare
+                righe.append({"pod": pod, "data": data, "kwh": round(kwh, 1)})
+        return pd.DataFrame(righe)
+
+    letture("2025-03-01", "2025-03-31").to_csv(cartella / "letture_marzo.csv", sep=";", decimal=",", index=False)
+    letture("2025-04-01", "2025-04-30").to_csv(cartella / "letture_aprile.csv", sep=";", decimal=",", index=False)
+
+    anagrafica = pd.DataFrame([{"pod": p, "cliente": c, "comune": m} for p, c, m, _ in POD_COMPITO])
+    listino = pd.DataFrame({"fascia": FASCE, "eur_kwh": [0.21, 0.19, 0.17]})
+    with pd.ExcelWriter(cartella / "clienti.xlsx") as w:
+        anagrafica.to_excel(w, sheet_name="Anagrafica", index=False)
+        listino.to_excel(w, sheet_name="Listino", index=False)
+
+    path = cartella / "anagrafica.db"
+    if path.exists():
+        path.unlink()
+    pods = pd.DataFrame([{"pod": p, "cliente": c, "potenza_kw": k} for p, c, _, k in POD_COMPITO])
+    con = sqlite3.connect(path)
+    pods.to_sql("pod", con, index=False)
+    con.close()
+
+
 if __name__ == "__main__":
     DATI.mkdir(exist_ok=True)
     letture_pod()
@@ -159,4 +208,5 @@ if __name__ == "__main__":
     bolletta_excel()
     database()
     prezzi_zonali()
+    compito()
     print("Dati di esempio generati in", DATI)
