@@ -968,7 +968,9 @@ def costruisci() -> Notebook:
         4. Nel weekend il carico medio cala del ...% rispetto al feriale.
         5. Il carico è minimo tra ... e ... °C e sale con il freddo e con il caldo; al Nord pesa di più ...
 
-        Fonte della temperatura: Open-Meteo / dati di esempio (lascia quella vera).
+    """)
+    nb.md("""
+        Sotto le frasi, una riga sulla fonte: temperatura da Open-Meteo oppure dati di esempio, se è scattato il file di riserva.
     """)
     with nb.solo("avanzata"):
         nb.box("nota", """
