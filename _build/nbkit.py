@@ -327,7 +327,8 @@ class Notebook:
                 c.extra["_numero"] = numero
             elif c.ruolo == "box-soluzione":
                 perche = c.extra.get("perche")
-                corpo = f"**{BOX['soluzione'][0]} Soluzione {corrente}**"
+                etichetta = "" if self.etichetta_esercizio == "Esercizio" else f"{self.etichetta_esercizio} "
+                corpo = f"**{BOX['soluzione'][0]} Soluzione {etichetta}{corrente}**"
                 if perche:
                     corpo += "\n\n" + perche
                 out.append(("md", _div(BOX["soluzione"][3], BOX["soluzione"][2], corpo), {"tags": ["soluzione"]}))

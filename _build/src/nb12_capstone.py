@@ -906,9 +906,8 @@ def costruisci() -> Notebook:
            ottobre; le ... ore mancanti di marzo restano un buco.
         2. Il giorno più pesante è stato il ... con ... MWh; il più leggero il ... con ... MWh.
         3. La giornata media ha ... picchi, alle ... e alle ...; il minimo è alle ...
-        4. Nel weekend il carico medio cala del ...% rispetto ai giorni feriali.
-        5. Il carico è minimo tra ... e ... °C e cresce sia con il freddo sia con il caldo; al Nord pesa di
-           più ...
+        4. Nel weekend il carico medio cala del ...% rispetto al feriale.
+        5. Il carico è minimo tra ... e ... °C e sale con il freddo e con il caldo; al Nord pesa di più ...
     """)
     with nb.solo("avanzata"):
         nb.box("nota", """
