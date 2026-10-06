@@ -14,7 +14,7 @@ def costruisci() -> Notebook:
         obiettivi=[
             "usare Copilot in VS Code per completare, chiedere e far spiegare",
             "sapere cosa sono token, finestra di contesto e modelli quanto basta per non fidarsi alla cieca",
-            "leggere uno script scritto da un agente, passarlo a Ruff e applicare tre regole prima di accettarlo",
+            "leggere uno script scritto da un agente, passarlo a Ruff e farsi le quattro domande prima di accettarlo",
         ],
         tempo={"base": 70, "avanzata": 70},
         dati=["impianti_fv.csv", "letture_pod_2025.csv"],
@@ -40,7 +40,7 @@ def costruisci() -> Notebook:
     nb.md("""
         Claude Code e Codex fanno la stessa cosa con un vestito diverso: tutti e due girano nel terminale
         o come estensione di VS Code, e Codex anche dentro ChatGPT. Cambia il modello sotto e qualche
-        comando. Le regole che vediamo alla fine valgono per tutti e tre.
+        comando. Le tre regole che vediamo più avanti valgono per tutti e tre.
     """)
     nb.md("""
         Partiamo dal completamento. Il modo più affidabile di ottenerlo è scrivere la firma di una funzione
@@ -81,19 +81,19 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Le parole che servono", intro="""
-        Sei parole bastano per capire perché Copilot a volte è brillante e a volte inventa. Stanno nelle
-        tabelle qui sotto, da rileggere quando una risposta non torna.
+        Sei parole spiegano perché Copilot a volte ha ragione e a volte inventa. Stanno nelle tabelle
+        qui sotto, da rileggere quando una risposta non torna.
     """)
     nb.md("""
         | Parola | Cos'è | Perché conta |
         |---|---|---|
-        | token | il pezzo di testo che il modello legge e scrive: circa tre quarti di parola in inglese, un po' meno in italiano | si paga e si conta in token; un traceback intero costa poco, un errore non capito di più |
+        | token | il pezzo di testo che il modello legge e scrive: circa tre quarti di parola in inglese, un po' meno in italiano | si paga e si conta in token: incollare un traceback intero costa poco |
         | finestra di contesto | quanti token il modello tiene in mente in una conversazione | se la chat "dimentica" la colonna di cui parlavamo dieci messaggi fa, la finestra è piena: chat nuova |
     """)
     nb.md("""
         | Parola | Cos'è | Perché conta |
         |---|---|---|
-        | allucinazione | il modello scrive il seguito più probabile e non verifica che sia vero | un parametro dal nome sensato può non esistere: in Ask il codice non gira, lo scopriamo solo eseguendolo |
+        | allucinazione | il modello scrive il seguito più probabile e non verifica che sia vero | un parametro dal nome sensato può non esistere; in Ask nessuno esegue il codice: lo scopriamo solo eseguendolo noi |
         | modello piccolo o grande | il completamento usa un modello piccolo e veloce; nella chat il modello lo scegli tu dal menu in basso, accanto alla modalità | per un `groupby` basta il piccolo; se la risposta su un traceback strano non convince, si prova un modello più grande dal menu |
     """)
     nb.md("""
@@ -128,7 +128,8 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Incollare va bene per una domanda sola. Per un file intero basta scriverne il nome nel prompt con
-        `#file:` (per esempio `#file:Dati/README.md`), e Copilot lo legge da sé.
+        `#file:` (per esempio `#file:Dati/README.md`), e Copilot lo legge da sé. Selezionare righe o una
+        cella prima di aprire la chat le mette nel contesto.
     """)
     nb.md("""
         Le regole che valgono sempre si scrivono una volta sola, in un file di istruzioni del progetto:
@@ -144,13 +145,13 @@ def costruisci() -> Notebook:
         Se l'agente propone `pip install` o un percorso inventato, di solito questo file manca.
     """)
     nb.box("ricorda", """
-        Il prompt dice cosa vogliamo; il contesto dice su cosa. Senza `df.info()` e i nomi delle colonne,
-        il modello inventa quelli che gli sembrano plausibili.
+        Incolla `df.info()` e i nomi esatti delle colonne: senza, il modello inventa quelli che gli
+        sembrano plausibili.
     """)
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Prova guidata", intro="""
-        Quattro prompt, in ordine. Per ognuno: copia il testo nella chat in modalità Ask, leggi la
+        Tre prompt, in ordine. Per ognuno: copia il testo nella chat in modalità Ask, leggi la
         risposta, incolla il codice nella cella sotto, esegui, controlla. La verifica guarda il risultato
         finale, non da dove viene.
     """)
@@ -233,8 +234,8 @@ def costruisci() -> Notebook:
     )
 
     nb.sottosezione("Un errore che non fa rumore", intro="""
-        Il terzo prompt è innocuo: nessun parametro strano, nessuna trappola nel testo. Il codice gira,
-        non dà errori, e il risultato è sbagliato.
+        Il terzo prompt è innocuo: nessun parametro strano, nessuna trappola nel testo. Il codice gira e
+        non dà errori; se è sbagliato, nessuno ce lo dice.
     """)
     nb.md("""
         ```text
@@ -243,7 +244,7 @@ def costruisci() -> Notebook:
         ```
 
         Cosa controllare: un numero che conosci. Le letture coprono un anno, quindi i mesi devono essere
-        dodici e la somma 134507.7. Se `per_mese` ha una riga sola, `pd.to_datetime` ha letto 01/03/2025
+        dodici e la somma 134507,7. Se `per_mese` ha una riga sola, `pd.to_datetime` ha letto 01/03/2025
         all'americana (3 gennaio): servono `format="%d/%m/%Y"` o `dayfirst=True`.
     """)
     nb.prova_tu(
@@ -312,7 +313,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 4
     nb.sezione("Le tre regole", intro="""
         Tre regole prima di accettare codice generato, da chiunque arrivi. Sono le stesse che useremo nel
-        capstone, dove Copilot avrà il permesso di aiutare sui dettagli e non sulla logica.
+        capstone.
     """)
     nb.md("""
         **Verifica.** Esegui subito, guarda l'output, confrontalo con un numero che conosci già: la somma
@@ -321,8 +322,8 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         **Chiedi spiegazioni.** "Spiegami" prima di "correggi", e sempre con il traceback intero. Se la
-        spiegazione non la capisci, il codice corretto non lo accetti: domani lo stesso errore tornerà e tu
-        sarai senza chat.
+        spiegazione non la capisci, il codice corretto non lo accetti: la prossima volta lo stesso errore
+        lo dovrai riconoscere da solo.
     """)
     nb.md("""
         **Piccoli passi.** Un prompt, una cella, un controllo. "Fai tutta l'analisi" produce un notebook
@@ -363,8 +364,8 @@ def costruisci() -> Notebook:
         ```
     """)
     nb.md("""
-        I tre avvisi che vedremo più spesso. La lettera del codice è la famiglia (`F` errori veri,
-        `E` stile), il numero la regola.
+        I tre avvisi che vedremo più spesso. La lettera del codice è la famiglia (`F` codice inutile
+        o sospetto, `E` stile, PEP 8), il numero la regola.
 
         | Codice | Avviso | Cosa vuol dire |
         |---|---|---|
@@ -389,14 +390,14 @@ def costruisci() -> Notebook:
         report_pod.py:9:5: F841 Local variable `totale` is assigned to but never used
         report_pod.py:10:101: E501 Line too long (129 > 100)
         Found 3 errors.
-        [*] 1 fixable with the `--fix` option.
+        [*] 1 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).
         ```
     """)
     nb.md("""
         Ogni riga dice file, riga, colonna, codice e messaggio. `format` tocca solo la forma e
         non cambia mai cosa fa il codice; `check --fix` toglie gli import inutilizzati e poco
-        altro. Righe lunghe e variabili inutili restano a noi: decidere cosa farne è un giudizio,
-        non una regola. Per una stringa lunga, la ricetta è questa.
+        altro. `format` spezza le righe lunghe di codice ma non una stringa: quella, come le
+        variabili inutili, resta a noi. Per una stringa lunga, la ricetta è questa.
     """)
     nb.code("""
         soglia_kwh = 1000
@@ -443,7 +444,7 @@ def costruisci() -> Notebook:
         |---|---|---|---|
         | `"""Totale..."""` | prima riga, tra tre virgolette | docstring di modulo: dice cosa fa lo script | no |
         | `import`, `from ... import` | in testa | caricano le librerie: `logging`, `dataclasses`, `pathlib` sono standard, pandas è installata | no |
-        | `logger = logging.getLogger(...)` | dopo gli import | prepara il log: `logger.info(...)` è un `print` con il livello davanti | no |
+        | `logger = logging.getLogger(...)` | dopo gli import | prepara il log: `logger.info(...)` è un `print` con il livello davanti (`INFO:__main__:...`), nel terminale | no |
         | `DATA_DIR = Path("Dati")` | nome tutto maiuscolo | costante: dove sono i dati, dalla cartella da cui si lancia lo script | se i dati stanno altrove |
     ''')
     nb.md('''
@@ -461,7 +462,7 @@ def costruisci() -> Notebook:
     nb.md('''
         | Riga | Come si riconosce | Cosa fa | Va toccata? |
         |---|---|---|---|
-        | `@dataclass` | riga che inizia con `@`, sopra un `class` o un `def` | decoratore: cambia come si comporta quello che sta sotto; qui fa di `Config` un semplice contenitore di campi, ognuno con il suo default | no |
+        | `@dataclass` | riga che inizia con `@`, sopra un `class` o un `def` | decoratore: cambia come si comporta quello che sta sotto; qui trasforma `Config` in un contenitore di campi, ognuno con tipo e, se c'è, default; scrive da solo il costruttore (`Config(path=...)`) e la stampa | no |
         | `sep: str = ";"` | nome, due punti, tipo, uguale | campo con type hint e default | no |
     ''')
     nb.md("Poi le funzioni che fanno il lavoro:")
@@ -506,7 +507,7 @@ def costruisci() -> Notebook:
         | Riga | Come si riconosce | Cosa fa | Va toccata? |
         |---|---|---|---|
         | `-> pd.DataFrame` | dopo la parentesi del `def` | type hint di ritorno: dice cosa restituisce la funzione | no |
-        | `fasce: list[str] \\| None = None` | parametro con default `None` | facoltativo: se non lo passiamo, la funzione tiene tutte le fasce | no |
+        | `fasce: list[str] \\| None = None` | parametro con default `None` | lista di stringhe oppure `None` (`\\|` si legge «oppure»); facoltativo: se non lo passiamo, la funzione tiene tutte le fasce | no |
         | `raise FileNotFoundError(...)` | dentro un `if` | crea un errore apposta, con un messaggio chiaro: il contrario di `except` | no |
 
         Quello che tocchiamo noi sono le due o tre righe di pandas: `read_csv` e il `groupby`.
@@ -554,12 +555,13 @@ def costruisci() -> Notebook:
         | Riga | Come si riconosce | Cosa fa | Va toccata? |
         |---|---|---|---|
         | `-> None` | dopo la parentesi del `def` | la funzione non restituisce niente: `main` esegue i passi e basta | no |
+        | `logging.basicConfig(level=logging.INFO)` | prima riga di `main` | accende il log: senza, `logger.info` non stampa | no |
         | `if __name__ == "__main__":` (blocco main) | in fondo al file | parte solo se il file è il programma lanciato, con `uv run` o in una cella; non se viene importato | no |
         | `main()` | l'ultima riga | chiama la funzione che mette in fila i passi | no |
     ''')
     nb.md("""
-        Portiamo lo script nel notebook. Stesso codice; cambia solo `DATA_DIR`, perché il notebook gira
-        nella sua cartella e i dati stanno un livello sopra, in `../Dati`.
+        Portiamo nel notebook la configurazione e le due funzioni; cambia solo `DATA_DIR`, perché il
+        notebook gira nella sua cartella e i dati stanno un livello sopra, in `../Dati`.
     """)
     nb.code("""
         from dataclasses import dataclass
@@ -624,7 +626,9 @@ def costruisci() -> Notebook:
         totali
     """, aula="base")
     nb.code("""
-        letture = leggi_letture(config.path, sep=config.sep, decimal=config.decimal, encoding=config.encoding)
+        letture = leggi_letture(
+            config.path, sep=config.sep, decimal=config.decimal, encoding=config.encoding
+        )
         totali = totale_per_pod(letture)
         totali
     """, aula="avanzata")
@@ -656,9 +660,6 @@ def costruisci() -> Notebook:
         2. Quali righe fanno il lavoro e quali sono la cornice? Qui il lavoro è `read_csv` più il `groupby`.
         3. Il percorso dei dati esiste, dalla cartella da cui lo lanciamo?
         4. Il numero torna? Qui 134507,7 kWh in tutto, su sei POD.
-
-        Tutte le forme che si incontrano, una per riga, stanno nella
-        [scheda per leggere il codice](../Schede/Scheda_leggere_codice.md).
     """)
     nb.prova_tu(
         richiesta="""
@@ -864,8 +865,8 @@ def costruisci() -> Notebook:
                riga, scegliendo tra `"decoratore"`, `"commento"` e `"type hint"`; in
                `"lanciato in una cella"` cosa succede incollando tutto lo script in una cella del notebook,
                scegliendo tra `"FileNotFoundError"`, `"NameError"` e `"non parte niente"`.
-            2. Nella cella c'è già la parte dello script che serve, con il percorso del notebook. Trova il
-               dettaglio sbagliato in `leggi_letture`, riscrivi la funzione e lascia il report in `totale`.
+            2. Trova il dettaglio sbagliato nella `leggi_letture` dello script e scrivi nella cella la
+               versione giusta, che qui riceve direttamente il percorso.
         """,
         suggerimento="Guarda `totale.dtypes`: se `kwh` non è un numero, il problema è in quello che `read_csv` riceve.",
         starter="""
@@ -914,7 +915,7 @@ def costruisci() -> Notebook:
         """,
         verifica="""
             assert str(risposte["file letto"]).endswith("letture_pod_2025.csv"), "❌ file letto: il nome del file sta nel default di path, dentro Config"
-            assert risposte["lavoro vero"] == "report_kwh", "❌ lavoro vero: il nome della funzione con il groupby, come stringa"
+            assert str(risposte["lavoro vero"]).strip().rstrip("()") == "report_kwh", "❌ lavoro vero: il nome della funzione con il groupby, come stringa; solo il nome, senza parentesi"
             assert risposte["riga con @"] == "decoratore", "❌ riga con @: una riga che inizia con @ sopra una class è un decoratore"
             assert risposte["lanciato in una cella"] == "FileNotFoundError", "❌ lanciato in una cella: il blocco main parte anche nel notebook, e da qui il percorso Dati non esiste"
             assert str(totale["kwh"].dtype) == "float64", "❌ kwh è ancora testo: controlla totale.dtypes e i parametri di read_csv"
@@ -926,7 +927,7 @@ def costruisci() -> Notebook:
         titolo="Pulizia con Ruff",
         scenario="""
             Un collega ha lasciato lo script `report_pod.py` qui sotto e vuole metterlo nel
-            repository del team, dove Ruff gira a ogni salvataggio e non lascia passare niente.
+            repository del team, dove ogni file deve passare `uv run ruff check` senza avvisi.
             Prima di lanciarlo facciamo noi il lavoro di Ruff: leggiamo il file e scriviamo quali
             avvisi darebbe.
 

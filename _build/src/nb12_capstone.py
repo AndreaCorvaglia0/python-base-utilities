@@ -410,7 +410,7 @@ def costruisci() -> Notebook:
                 5. Calcola `calo_weekend`: di quanto il carico medio del weekend sta sotto quello feriale,
                    in percentuale con un decimale.
             """,
-            suggerimento="`groupby` con due chiavi vuole una lista; `color=\"weekend\"` separa le linee.",
+            suggerimento="`groupby` con due chiavi vuole una lista; `color=\"weekend\"` separa le linee. `medie.loc[True]` è il weekend, `medie.loc[False]` il feriale.",
             starter="""
                 # 1. ora del giorno e weekend (sabato = 5, domenica = 6)
                 carico["ora"] = carico["data"].dt.hour
@@ -490,17 +490,19 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 5
     nb.sezione("La temperatura di Milano", intro=f"""
-        {DETTAGLIO}
+        {DETTAGLIO_BREVE}
 
         La temperatura arriva dall'archivio storico di Open-Meteo: oraria, per un punto. Prendiamo Milano
         come rappresentante del Nord: non lo è del tutto, ma per capire la forma della relazione basta.
     """)
     with nb.solo("base"):
         nb.md("""
-            La funzione qui sotto è già scritta: leggiamola prima di usarla. Dentro c'è la chiamata all'API
-            con `requests` e un `try/except` come quello del notebook sugli errori: se la rete non risponde,
-            legge il file di riserva in `../Dati/fallback/`, con dati di esempio. Restituisce la parte
-            `hourly` della risposta: un dizionario con due liste, pronto per `pd.DataFrame`.
+            La funzione qui sotto è già scritta: leggiamola prima di usarla. `requests.get` chiede i dati
+            all'API con i `params` del dizionario, `raise_for_status()` si ferma se il server risponde con
+            un errore, `.json()` trasforma la risposta in dizionari e liste. Se la rete non risponde
+            (`requests.RequestException`), il `try/except` del notebook sugli errori legge
+            `../Dati/fallback/meteo_milano_2024_2025.json`: temperature di esempio, non misurate.
+            `uv run python _build/scarica_fallback.py` le sostituisce con quelle vere.
         """)
         nb.code("""
             import json
