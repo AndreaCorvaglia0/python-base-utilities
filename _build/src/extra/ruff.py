@@ -22,7 +22,7 @@ def costruisci() -> Notebook:
     )
 
     nb.sezione("Ruff: linter e formatter", intro="""
-        Il primo controllo su codice che non abbiamo scritto noi lo fa una macchina. Ruff è linter e
+        Ruff controlla il codice prima che lo leggiamo noi. Ruff è linter e
         formatter in uno: segnala quello che non va (`check`) e rimette in forma il codice da solo
         (`format`), con le regole di PEP 8 viste nel notebook sul codice leggibile. È già tra le
         dipendenze di sviluppo del progetto e si lancia dal terminale con `uv run ruff`.

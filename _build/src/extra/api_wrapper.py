@@ -127,7 +127,7 @@ def costruisci() -> Notebook:
     nb.md("""
         Il secondo passo è una funzione di dominio: dato un sensore e due date, restituisce le misure
         pulite, numeriche e senza `-9999`, il modo del portale di dire "misura mancante". Dentro c'è
-        tutto il lavoro; fuori resta una chiamata che si legge come una frase.
+        tutto il lavoro; fuori resta una sola chiamata.
     """)
     nb.code('''
         def misure_sensore(idsensore: str, inizio: str, fine: str) -> pd.DataFrame:
@@ -161,7 +161,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Il type hint `-> pd.DataFrame` e la docstring dicono a chi legge (e a Copilot) cosa aspettarsi.
-        Quando una fonte dati va letta più di una volta, la strada è questa: una funzione piccola, con
+        Quando una fonte dati va letta più volte, conviene una funzione piccola, con
         un nome che dice cosa restituisce.
     """)
 

@@ -43,9 +43,8 @@ def costruisci() -> Notebook:
         | Agent | legge i file, li modifica mostrando le differenze, lancia comandi chiedendo conferma | compiti che sappiamo controllare pezzo per pezzo |
     """)
     nb.md("""
-        Claude Code e Codex funzionano allo stesso modo: girano nel terminale o come estensione di VS Code,
-        e Codex anche dentro ChatGPT. Cambiano il modello e qualche comando; le regole che vediamo più
-        avanti valgono per tutti.
+        Claude Code e Codex girano nel terminale o come estensione di VS Code, Codex anche dentro ChatGPT.
+        Cambiano il modello e alcuni comandi.
     """)
     nb.md('''
         Per il completamento basta scrivere la firma di una funzione e una docstring che dice cosa deve fare:
@@ -60,22 +59,21 @@ def costruisci() -> Notebook:
     ''')
 
     # ------------------------------------------------------------------ 2
-    nb.sezione("Le parole", intro="""
-        Sei parole che tornano ogni volta che si lavora con un agente.
+    nb.sezione("Glossario", intro="""
+        Cinque termini che si incontrano lavorando con un agente.
     """)
     nb.md("""
-        | Parola | Cos'è | Perché conta |
+        | Parola | Cos'è | A cosa serve |
         |---|---|---|
         | token | il pezzo di testo che il modello legge e scrive, circa tre quarti di parola | l'uso si misura in token: un traceback costa poco, un file enorme molto |
         | finestra di contesto | quanti token il modello tiene presenti in una conversazione | se la chat dimentica una colonna nominata dieci messaggi prima, la finestra è piena: si apre una chat nuova |
         | cache | la parte iniziale della conversazione (istruzioni, file già letti) che il servizio tiene da parte per qualche minuto | rileggerla costa meno e la risposta arriva prima |
     """)
     nb.md("""
-        | Parola | Cos'è | Perché conta |
+        | Parola | Cos'è | A cosa serve |
         |---|---|---|
         | modelli | il completamento usa un modello piccolo e veloce; nella chat si sceglie dal menu in basso | scrive il seguito più probabile senza verificarlo; per un traceback strano si prova un modello più grande |
-        | Plan e Agent | prima il piano dei passi, poi le modifiche ai file | il piano si legge e si corregge prima di lasciar fare |
-        | prompt e contesto | il prompt è la domanda; il contesto è quello che il modello vede: file aperti, celle selezionate, testo incollato | conta più della domanda |
+        | prompt e contesto | il prompt è la domanda; il contesto è quello che il modello vede: file aperti, celle selezionate, testo incollato | il modello risponde in base a quello che vede, oltre che alla domanda |
     """)
     nb.md("""
         Le istruzioni che valgono sempre si scrivono una volta in un file del progetto, che l'agente legge a
@@ -113,7 +111,7 @@ def costruisci() -> Notebook:
     nb.prova_tu(
         richiesta="""
             Incolla la funzione proposta da Copilot al posto dei puntini ed esegui la cella. Output atteso: due
-            colonne, `MI` in testa con 323.5 kWp, e la somma della colonna kwp uguale a 737, come in `df`.
+            colonne, `MI` in testa con 323,5 kWp, e la somma della colonna kwp uguale a 737, come in `df`.
         """,
         starter="""
             ...
@@ -151,7 +149,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Le tre regole", intro="""
-        Tre regole prima di accettare codice generato, da chiunque arrivi.
+        Tre regole da applicare al codice generato.
     """)
     nb.md("""
         **Verifica.** Esegui subito e confronta l'output con un numero che conosci già: la somma dei kwp, il
@@ -170,7 +168,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 5
     nb.sezione("Leggere il codice scritto da un agente", intro="""
         In modalità Agent chiediamo: "Scrivi uno script che legge le letture, somma i kWh per POD e salva un
-        CSV". Torna un file di una trentina di righe. Prima di lanciarlo lo leggiamo dall'alto, un blocco
+        CSV". Torna un file di una quarantina di righe. Prima di lanciarlo lo leggiamo dall'alto, un blocco
         alla volta.
     """)
     nb.sottosezione("Lo script", aula="avanzata")
@@ -346,7 +344,7 @@ def costruisci() -> Notebook:
 
         nb.sottosezione("Decoratori", intro="""
             Una riga `@nome` sopra un `def` avvolge la funzione in un'altra che ne cambia il comportamento.
-            Qui `@cache` ricorda i risultati già calcolati: senza, `fibonacci(80)` non finirebbe più.
+            Qui `@cache` ricorda i risultati già calcolati: senza, `fibonacci(80)` richiederebbe miliardi di chiamate.
         """)
         nb.code("""
             from functools import cache
@@ -358,13 +356,13 @@ def costruisci() -> Notebook:
             fibonacci(80)
         """)
         nb.md("""
-            Altri decoratori frequenti negli script degli agenti: `@property` e `@staticmethod` nelle classi,
+            Altri decoratori che si incontrano: `@property` e `@staticmethod` nelle classi,
             `@pytest.fixture` nei test.
         """)
 
         nb.sottosezione("Generatori", intro="""
             Una funzione con `yield` al posto di `return` è un generatore: consegna un valore alla volta, quando
-            un `for` o `list()` lo chiede. Gli agenti lo usano per lavorare su dati lunghi a pezzi.
+            un `for` o `list()` lo chiede. Si incontra in script che leggono dati lunghi a pezzi.
         """)
         nb.code("""
             def a_blocchi(elementi: list, n: int):
@@ -377,7 +375,7 @@ def costruisci() -> Notebook:
 
         nb.sottosezione("`**kwargs`", intro="""
             `**kwargs` (il nome può cambiare, contano i due asterischi) raccoglie in un dizionario i parametri
-            passati per nome che la funzione non elenca. `*args` fa lo stesso con quelli passati per posizione.
+            passati per nome che la funzione non elenca. `*args` raccoglie in una tupla quelli passati per posizione.
         """)
         nb.code("""
             def ordine(piatto: str, **opzioni) -> str:
@@ -393,7 +391,7 @@ def costruisci() -> Notebook:
             def leggi_csv(path: str, **opzioni) -> pd.DataFrame:
                 return pd.read_csv(path, **opzioni)
 
-            leggi_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1").shape
+            leggi_csv("../Dati/impianti_fv.csv", usecols=["comune", "kwp"], nrows=3).shape
         """)
 
     # ------------------------------------------------------------------ Esercizi
@@ -486,7 +484,7 @@ def costruisci() -> Notebook:
             2. Trova il dettaglio che manca nella lettura del file e completa `leggi_letture`, che qui riceve
                direttamente il percorso. Output atteso: sei POD, 134507,7 kWh in tutto.
         """,
-        suggerimento="Guarda `totale.dtypes`: se `kwh` non è un numero, il problema è in quello che `read_csv` riceve.",
+        suggerimento="guarda `totale.dtypes`: se `kwh` non è un numero, il problema è in quello che `read_csv` riceve.",
         starter="""
             risposte = {
                 "lavoro vero": ...,

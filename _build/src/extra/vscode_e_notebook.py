@@ -57,9 +57,8 @@ def costruisci() -> Notebook:
         ogni volta che qualcosa sembra sparito.
     """)
     nb.box("attenzione", """
-        `ModuleNotFoundError: No module named 'pandas'` alla prima cella del giorno quasi mai vuol dire
-        che pandas manca: vuol dire che il kernel selezionato è un altro Python. Prima **Select Kernel**,
-        poi tutto il resto.
+        `ModuleNotFoundError` alla prima cella del giorno di solito indica un kernel sbagliato, non una
+        libreria mancante. Prima **Select Kernel**, poi tutto il resto.
     """)
 
     nb.sezione("Run All e Restart", intro="""
@@ -85,8 +84,8 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Su Mac, **Cmd** al posto di **Ctrl**. Tutto il resto si trova nei menu e nei pulsanti che
-        compaiono passando il mouse sopra una cella: le scorciatoie servono a non staccare le mani dalla
-        tastiera, niente di più.
+        compaiono passando il mouse sopra una cella: le scorciatoie evitano di staccare le mani dalla
+        tastiera.
     """)
 
     return nb

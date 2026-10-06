@@ -100,8 +100,8 @@ def costruisci() -> Notebook:
     nb.sezione("Un ambiente per progetto", intro="""
         Il notebook funziona sul nostro PC, lo mandiamo al collega e da lui non parte: ha una
         versione di pandas di tre anni fa, installata per un altro progetto, e il nostro codice gli
-        dà errori che da noi non esistono. Due progetti, un solo Python condiviso: prima o poi uno
-        dei due si rompe. La soluzione è un ambiente per progetto.
+        dà errori che da noi non esistono. Con un solo Python condiviso tra due progetti, una versione di
+        pandas può andare bene per uno e non per l'altro. Per questo si usa un ambiente per progetto.
     """)
     nb.md("""
         `.venv` è una cartella: un Python e le sue librerie, dedicati a questo progetto. Lo crea
@@ -139,7 +139,7 @@ def costruisci() -> Notebook:
         chi scrive il codice ma non al programma, come Ruff, il linter che useremo più avanti.
     """)
     nb.md("""
-        `uv.lock` è l'altra metà: la fotografia esatta di cosa è stato installato, versione per
+        `uv.lock` è l'altra metà: l'elenco esatto di cosa è stato installato, versione per
         versione, dipendenze delle dipendenze comprese (un estratto):
 
         ```toml
@@ -180,8 +180,8 @@ def costruisci() -> Notebook:
         uv non è l'unico modo. `pip` con `venv` è lo strumento di base di Python: stessa idea, più
         passaggi a mano, niente `uv.lock`. conda è diffuso in ambito scientifico, Poetry fa un lavoro
         simile a uv. In un progetto che li usa, `environment.yml` (conda) o `poetry.lock` (Poetry) fanno
-        la parte di `pyproject.toml` e `uv.lock`: chi lo eredita usa quello che trova; chi ne apre uno
-        nuovo, oggi, usa uv.
+        la parte di `pyproject.toml` e `uv.lock`: chi lo eredita usa quello che trova; per un progetto
+        nuovo qui si usa uv.
     """)
     nb.prova_tu(
         richiesta="""
@@ -210,7 +210,7 @@ def costruisci() -> Notebook:
         Il notebook è il posto per esplorare: si prova una cella, si guarda il risultato, si cambia
         idea. Uno script è un file `.py` che fa sempre la stessa cosa, dall'inizio alla fine, senza
         nessuno davanti: il report che parte alle sei di mattina, il controllo che lanciamo uguale
-        ogni lunedì. Regola pratica: quando il notebook ha smesso di cambiare, diventa uno script.
+        ogni lunedì. Quando il notebook è stabile, si può trasformare in script.
     """)
     nb.md("""
         Si crea in VS Code con **File → New File**, nome `profilo_carico.py`, salvato nella cartella

@@ -25,7 +25,7 @@ def costruisci() -> Notebook:
     nb.md("""
         1. Su un DataFrame con indice `0, 1, 2, 3, ...`, quante righe restituiscono `df.loc[0:2]` e `df.iloc[0:2]`? Perché?
         2. Cosa restituisce `df.groupby("Categoria")["Vendite"].sum()`? E `df.groupby("Categoria")` da solo?
-        3. Cosa fa `serie.resample("D").mean()` su una serie con un valore ogni 15 minuti? Cosa serve perché funzioni?
+        3. Cosa fa `serie.resample("D").mean()` su una serie con un valore ogni 15 minuti? Che cosa serve perché funzioni?
         4. A cosa serve `dayfirst=True` in `pd.to_datetime`? Fai l'esempio di `"01/02/2025"`.
         5. Quando serve `how="left"` in `pd.merge`, invece del valore predefinito?
     """)
@@ -40,7 +40,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ esercizi
     nb.sezione("Esercizi", intro="""
-        Leggiamo i prezzi mensili dell'elettricità negli Stati Uniti, che servono al primo e all'ultimo esercizio.
+        Leggiamo i prezzi mensili dell'elettricità negli Stati Uniti, che serve al primo esercizio.
         Il prezzo `price` è in centesimi di dollaro per kWh; la colonna `stateDescription` contiene anche
         regioni e il totale nazionale (`U.S. Total`).
     """)
@@ -60,7 +60,7 @@ def costruisci() -> Notebook:
             1. Metti in `residenziale_2023` le righe di `prezzi` con `sectorName` uguale a `"residential"` e anno 2023.
             2. Calcola `prezzo_medio`: il prezzo medio per `stateDescription`, ordinato dal più alto al più basso.
         """,
-        suggerimento="Due condizioni tra parentesi unite con `&`; l'anno si legge con `.dt.year`.",
+        suggerimento="due condizioni tra parentesi unite con `&`; l'anno si legge con `.dt.year`.",
         starter="""
             residenziale_2023 = ...
             prezzo_medio = ...
@@ -123,7 +123,7 @@ def costruisci() -> Notebook:
             1. Disegna in `fig` l'istogramma della colonna `System power generated | (kW)` con `px.histogram`.
             2. Metti in `ore_ferme` il numero di ore in cui la potenza è 0.
         """,
-        suggerimento="Una maschera booleana con `== 0` e `.sum()` conta i `True`.",
+        suggerimento="una maschera booleana con `== 0` e `.sum()` conta i `True`.",
         starter="""
             turbina = pd.read_csv("../Dati/TexasTurbine.csv")
 
@@ -146,50 +146,6 @@ def costruisci() -> Notebook:
         verifica="""
             assert fig.data[0].type == "histogram", "❌ fig: usa px.histogram"
             assert ore_ferme == 822, "❌ ore_ferme: conta le righe con potenza uguale a 0"
-        """,
-    )
-
-    nb.esercizio(
-        titolo="Il prezzo residenziale nel 2013 e nel 2023",
-        facoltativo=True,
-        scenario="Confrontiamo per ogni stato il prezzo residenziale medio del 2013 con quello del 2023.",
-        richiesta="""
-            1. Costruisci `prezzi_2023` come `prezzi_2013` (già scritto nello starter), con la colonna `prezzo_2023`.
-            2. Unisci i due DataFrame su `stateDescription` in `confronto` e aggiungi la colonna `aumento` (2023 meno 2013).
-        """,
-        starter="""
-            residenziale = prezzi[prezzi["sectorName"] == "residential"]
-
-            anno_2013 = residenziale[residenziale["date"].dt.year == 2013]
-            prezzi_2013 = anno_2013.groupby("stateDescription")["price"].mean().reset_index()
-            prezzi_2013 = prezzi_2013.rename(columns={"price": "prezzo_2013"})
-
-            prezzi_2023 = ...
-
-            confronto = ...
-            confronto["aumento"] = ...
-            confronto.sort_values("aumento", ascending=False).head()
-        """,
-        soluzione="""
-            residenziale = prezzi[prezzi["sectorName"] == "residential"]
-
-            anno_2013 = residenziale[residenziale["date"].dt.year == 2013]
-            prezzi_2013 = anno_2013.groupby("stateDescription")["price"].mean().reset_index()
-            prezzi_2013 = prezzi_2013.rename(columns={"price": "prezzo_2013"})
-
-            anno_2023 = residenziale[residenziale["date"].dt.year == 2023]
-            prezzi_2023 = anno_2023.groupby("stateDescription")["price"].mean().reset_index()
-            prezzi_2023 = prezzi_2023.rename(columns={"price": "prezzo_2023"})
-
-            confronto = pd.merge(prezzi_2013, prezzi_2023, on="stateDescription", how="inner")
-            confronto["aumento"] = confronto["prezzo_2023"] - confronto["prezzo_2013"]
-            confronto.sort_values("aumento", ascending=False).head()
-        """,
-        verifica="""
-            assert len(confronto) == 62, "❌ confronto: una riga per ciascuna delle 62 voci di stateDescription"
-            piu_aumentato = confronto.loc[confronto["aumento"].idxmax(), "stateDescription"]
-            assert piu_aumentato == "Massachusetts", "❌ aumento: prezzo_2023 meno prezzo_2013"
-            assert round(confronto["aumento"].max(), 2) == 13.61, "❌ aumento: medie annue del settore residential"
         """,
     )
 

@@ -56,7 +56,7 @@ def costruisci() -> Notebook:
         del giorno, dal giorno della settimana e dalla temperatura.
     """)
     nb.md("""
-        *Copilot è ammesso per i titoli e le etichette dei grafici; il codice degli step lo scriviamo noi.*
+        Per i titoli e le etichette dei grafici si può usare Copilot; il codice degli step lo scriviamo noi.
     """)
 
     # ------------------------------------------------------------------ 1
@@ -140,8 +140,8 @@ def costruisci() -> Notebook:
         nb, titolo="Preparazione della colonna temporale e prima visualizzazione",
         scenario="In questo step rendiamo la colonna data utilizzabile come variabile temporale e facciamo una prima ispezione visiva della serie.",
         richiesta="""
-            1. Identifica la colonna che contiene la data/ora e assicurati che sia in formato `datetime`: se la
-               data è letta come stringa, la convertiamo con `pd.to_datetime(...)`.
+            1. Controlla con `df.dtypes` che `Date` sia già `datetime`; se fosse testo, `pd.to_datetime` la
+               converte.
             2. Ordina il dataset per data (i file partono dall'ultimo quarto d'ora dell'anno) e reimposta
                l'indice per avere un ordinamento pulito.
             3. Importa Plotly e visualizza **entrambe** le serie nel tempo: `Total Load [MW]` e
@@ -152,7 +152,7 @@ def costruisci() -> Notebook:
             Al termine di questo step deve rimanere una serie storica con una colonna temporale in formato
             `datetime` e una sola colonna di valori, `Total Load [MW]`.
         """,
-        suggerimento="`reset_index(drop=True)` rifà l'indice da 0 senza tenere il vecchio come colonna.",
+        suggerimento="`reset_index(drop=True)` rifà l'indice da 0 senza tenere il vecchio come colonna. `df.drop(columns=[...])` toglie le colonne indicate.",
         starter_base="""
             import plotly.express as px
 
@@ -211,8 +211,8 @@ def costruisci() -> Notebook:
     """)
     with nb.solo("avanzata"):
         nb.md("""
-            La strada più diretta sarebbe dare alle date il fuso orario italiano e lasciare a pandas il compito
-            di riconoscere l'ora ripetuta. La cella dà errore apposta: leggiamo l'ultima riga.
+            Proviamo prima a dare alle date il fuso orario italiano e a lasciare a pandas il riconoscimento
+            dell'ora ripetuta. La cella dà errore apposta: leggiamo l'ultima riga.
         """)
         nb.code('df["Date"].dt.tz_localize("Europe/Rome", ambiguous="infer")', errore=True)
         nb.md("""
@@ -231,15 +231,15 @@ def costruisci() -> Notebook:
             3. Ordina per `Date`, togli i duplicati con `drop_duplicates(subset="Date")` e reimposta l'indice.
             4. In `buchi` metti le righe che arrivano dopo un salto più lungo di 15 minuti. Che giorni sono?
         """,
-        suggerimento="L'ultima domenica di ottobre le 2:00-2:45 esistono due volte; l'ultima domenica di marzo non esistono.",
+        suggerimento="l'ultima domenica di ottobre le 2:00-2:45 esistono due volte; l'ultima domenica di marzo non esistono.",
         starter_base="""
             # 1. il passo tra un timestamp e il precedente, e quante volte compare ogni valore
             passi = df["Date"].diff()
-            display(passi.value_counts())
+            print(passi.value_counts())
 
             # 2. le righe con un timestamp ripetuto, tutte le copie
             duplicati = df[df["Date"].duplicated(keep=...)]
-            display(duplicati)
+            print(duplicati)
 
             # 3. una riga per timestamp, indice da 0
             df = df.sort_values("Date").drop_duplicates(subset=...).reset_index(drop=True)
@@ -260,10 +260,10 @@ def costruisci() -> Notebook:
         """,
         soluzione="""
             passi = df["Date"].diff()
-            display(passi.value_counts())
+            print(passi.value_counts())
 
             duplicati = df[df["Date"].duplicated(keep=False)]
-            display(duplicati)
+            print(duplicati)
 
             df = df.sort_values("Date").drop_duplicates(subset="Date").reset_index(drop=True)
 
@@ -417,10 +417,13 @@ def costruisci() -> Notebook:
                     with open(file_meteo, encoding="utf-8") as f:
                         return json.load(f)["hourly"]
         """)
+        nb.md("""
+            Se la rete non risponde, la funzione usa dati di esempio (non misurati) da `../Dati/fallback/meteo_milano_2024_2025.json`.
+        """)
 
     scenario_5 = """
         Ora dobbiamo integrare il dato di temperatura con il dato di carico. Per prima cosa va risolta la
-        differente granularità: la temperatura è oraria, il carico quartorario (upsampling da 1 ora a 15 minuti).
+        differente granularità: la temperatura è oraria, il carico quartorario (da 1 ora a 15 minuti).
     """
     passi_comuni = """
         3. Converti `time` in datetime, rinomina le colonne in `Date` e `Temperature_C`, imposta `Date` come
@@ -464,7 +467,7 @@ def costruisci() -> Notebook:
             2. Chiama `scarica_temperatura(start_date, end_date)` e trasforma il risultato in `meteo` con
                `pd.DataFrame`.
         """, passi_comuni),
-        suggerimento="`how=\"left\"` tiene tutte le righe del DataFrame di sinistra, la temperatura dove c'è.",
+        suggerimento="`how=\"left\"` tiene tutte le righe del DataFrame di sinistra, la temperatura dove c'è. `resample(\"15min\")` crea una riga ogni quarto d'ora e `interpolate(method=\"linear\")` riempie quelle nuove.",
         starter="""
             # 1. l'intervallo da chiedere, come testo AAAA-MM-GG
             start_date = df["Date"].min().strftime("%Y-%m-%d")
@@ -543,8 +546,8 @@ def costruisci() -> Notebook:
     )
     with nb.solo("avanzata"):
         nb.md("""
-            Se l'API non risponde, esegui la cella qui sotto: legge da `../Dati/fallback/` una risposta con la
-            stessa forma, con temperature di esempio (non misurate). Se l'API ha risposto, saltala.
+            Se la rete non risponde, la cella qui sotto carica da `../Dati/fallback/` temperature di esempio
+            (non misurate); se l'API ha risposto, saltala.
         """)
         nb.code("""
             import json
@@ -568,7 +571,7 @@ def costruisci() -> Notebook:
     nb.sezione("Carico e temperatura")
     step(
         nb, titolo="Carico e temperatura",
-        scenario="Un punto per giorno: temperatura media sulle x, carico medio sulle y, un colore per mese. La forma che esce dice come il carico dipende dalla temperatura.",
+        scenario="Un punto per giorno: temperatura media sulle x, carico medio sulle y, un colore per mese. Dalla forma della nuvola di punti si legge come il carico dipende dalla temperatura.",
         richiesta="""
             1. Porta `df_full` a medie giornaliere in `giornaliero`: `Date` come indice, le colonne
                `Total Load [MW]` e `Temperature_C`, `resample("D").mean()`, poi `reset_index()`.
@@ -578,7 +581,7 @@ def costruisci() -> Notebook:
                forma ha? A che temperatura il carico è più basso?
             4. Completa le cinque frasi della cella dopo la verifica, con i numeri e i grafici degli step.
         """,
-        suggerimento="Con `dt.month`, che è un numero, Plotly colora con una scala continua; `dt.month_name()` dà un colore per mese.",
+        suggerimento="con `dt.month`, che è un numero, Plotly colora con una scala continua; `dt.month_name()` dà un colore per mese.",
         starter_base="""
             # 1. medie giornaliere di carico e temperatura
             df_temp = df_full.set_index("Date")
