@@ -73,32 +73,32 @@ def costruisci() -> Notebook:
         """,
     )
     nb.md("""
-        Se il corpo proposto era diverso (un ciclo, una media, `* 0.25`), può essere giusto lo stesso: la
-        verifica decide, non l'aspetto del codice. È il primo controllo che faremo sempre.
+        Se il corpo proposto era diverso (un ciclo, `* 0.25`), può essere giusto lo stesso: la verifica
+        decide, non l'aspetto del codice. È il primo controllo che faremo sempre.
     """)
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Le parole che servono", intro="""
-        Sei parole bastano per capire perché Copilot a volte è brillante e a volte inventa. Le slide le
-        raccontano; qui restano scritte per quando serviranno.
+        Sei parole bastano per capire perché Copilot a volte è brillante e a volte inventa. Due tabelle,
+        da rileggere quando una risposta non torna.
     """)
     nb.md("""
-        | Parola | Cos'è | Perché ti riguarda |
+        | Parola | Cos'è | Perché conta |
         |---|---|---|
         | token | il pezzo di testo che il modello legge e scrive: circa tre quarti di parola | si paga e si conta in token; un traceback intero costa poco, un errore non capito di più |
-        | finestra di contesto | quanti token il modello tiene in mente in una conversazione | se la chat "dimentica" la colonna di cui parlavi dieci messaggi fa, la finestra è piena: chat nuova |
+        | finestra di contesto | quanti token il modello tiene in mente in una conversazione | se la chat "dimentica" la colonna di cui parlavamo dieci messaggi fa, la finestra è piena: chat nuova |
         | cache | le parti di contesto già lette, riusate senza rileggerle | ripetere un prompt lungo costa poco; cambiarne l'inizio fa ripartire da zero |
     """)
     nb.md("""
-        | Parola | Cos'è | Perché ti riguarda |
+        | Parola | Cos'è | Perché conta |
         |---|---|---|
         | modello piccolo o grande | il completamento usa un modello piccolo e veloce, la chat uno grande e lento | per un `groupby` basta il piccolo; per un traceback strano serve il grande |
-        | plan e agent | prima il piano dei passi, poi le modifiche | fai scrivere il piano, leggilo, e solo dopo lascialo eseguire |
+        | plan e agent | prima il piano dei passi, poi le modifiche | il piano si legge; solo dopo si lascia eseguire |
         | prompt e contesto | il prompt è la domanda; il contesto è tutto il resto che il modello vede: file aperti, celle, quello che incolli | la qualità della risposta dipende più dal contesto che dalla domanda |
     """)
     nb.md("""
-        Il contesto è la parte che decidi tu. Tre cose cambiano tutto: `df.info()` incollato nella chat
-        (nomi, tipi e righe), i nomi esatti delle colonne, il traceback intero dalla prima riga all'ultima.
+        Il contesto è la parte che decidiamo noi. Tre cose fanno la differenza: `df.info()` incollato nella
+        chat (nomi, tipi e righe), i nomi esatti delle colonne, il traceback intero dalla prima riga all'ultima.
         Carichiamo il DataFrame su cui lavoreremo e guardiamo cosa gli daremo da leggere.
     """)
     nb.code("""
@@ -121,8 +121,8 @@ def costruisci() -> Notebook:
         ```
     """)
     nb.box("ricorda", """
-        Il prompt dice cosa vuoi; il contesto dice su cosa. Senza `df.info()` e i nomi delle colonne, il
-        modello inventa quelli che gli sembrano plausibili.
+        Il prompt dice cosa vogliamo; il contesto dice su cosa. Senza `df.info()` e i nomi delle colonne,
+        il modello inventa quelli che gli sembrano plausibili.
     """)
 
     # ------------------------------------------------------------------ 3
@@ -173,7 +173,7 @@ def costruisci() -> Notebook:
             assert set(per_provincia.columns) == {"provincia", "kwp"}, "❌ Due colonne: provincia e kwp (serve un reset_index dopo il groupby)"
             assert round(per_provincia["kwp"].sum(), 1) == 737.0, "❌ La somma dei kwp deve restare 737: controlla che sommi e non faccia la media"
             assert per_provincia["kwp"].is_monotonic_decreasing, "❌ Ordina dal più alto al più basso: ascending=False"
-            assert per_provincia.iloc[0]["provincia"] == "MI", "❌ La prima riga dovrebbe essere Milano"
+            assert per_provincia.iloc[0]["provincia"] == "MI", "❌ In testa deve esserci MI, la provincia con più kWp: controlla l'ordinamento"
         """,
     )
 
@@ -210,8 +210,8 @@ def costruisci() -> Notebook:
     )
 
     nb.sottosezione("Un grafico", intro="""
-        Il terzo prompt chiede un grafico. Qui Copilot rende di più: conosce Plotly meglio di chiunque
-        ricordi a memoria i nomi dei parametri.
+        Il terzo prompt chiede un grafico. Qui Copilot rende di più: i nomi dei parametri di Plotly li
+        ricorda meglio di noi.
     """)
     nb.md("""
         ```text
@@ -256,9 +256,9 @@ def costruisci() -> Notebook:
         Usa il parametro years=True di pd.to_datetime sulla colonna anno_allaccio.
         ```
 
-        Cosa controllare: `pd.to_datetime` non ha nessun parametro `years`. Verificalo tu con
+        Cosa controllare: `pd.to_datetime` non ha nessun parametro `years`. Controllalo con
         `help(pd.to_datetime)`. Se Copilot l'ha usato lo stesso, hai appena visto un'invenzione: la cella
-        darebbe `TypeError`. Se ti ha detto che non esiste e ha proposto una sottrazione, bene: la strada
+        darebbe `TypeError`. Se ha risposto che non esiste e ha proposto una sottrazione, bene: la strada
         giusta è `2026 - df["anno_allaccio"]`.
     """)
     nb.prova_tu(
@@ -279,7 +279,7 @@ def costruisci() -> Notebook:
     )
     nb.md("""
         Il quarto prompt è il più istruttivo: Copilot non sa cosa non sa. Se il prompt suggerisce un
-        parametro, spesso lo usa; se il parametro non esiste, l'errore arriva a te, non a lui.
+        parametro, spesso lo usa; se il parametro non esiste, l'errore arriva a noi, non a lui.
     """)
 
     # ------------------------------------------------------------------ 4
@@ -356,7 +356,7 @@ def costruisci() -> Notebook:
         perche="I nomi dei parametri non si indovinano: `sep` e `decimal` stanno nella firma di `read_csv`. Copilot li conosce benissimo, finché il prompt non gliene suggerisce altri.",
         passo_in_piu=dict(
             testo="""
-                Chiedi a Copilot, in modalità Ask, di incapsulare la lettura giusta in una funzione
+                Chiedi a Copilot, in modalità Ask, di chiudere la lettura giusta in una funzione
                 `leggi_letture(path)` con docstring di una riga e type hint. Incollala, poi controlla con
                 `help(leggi_letture)` che la docstring ci sia e che il risultato sia lo stesso di prima.
             """,
