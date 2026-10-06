@@ -309,7 +309,7 @@ def costruisci() -> Notebook:
         titolo="Il grafico del carico in HTML",
         facoltativo=True,
         scenario="""
-            Il grafico del carico di gennaio va mandato a un collega che non ha Python.
+            Il grafico del carico di gennaio dell'Esercizio 9.1 va mandato a un collega che non ha Python.
         """,
         richiesta="""
             Salva `fig_carico` in `carico_gennaio.html` con `include_plotlyjs="cdn"`, poi aprilo con un
