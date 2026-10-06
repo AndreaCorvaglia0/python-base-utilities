@@ -149,7 +149,7 @@ def costruisci() -> Notebook:
     nb.box("ricorda", """
         - **Shift+Invio** esegue la cella; l'ultima espressione è l'output.
         - Il kernel ricorda solo quello che ha eseguito, nell'ordine in cui lo ha eseguito.
-        - Se non torna niente: **Restart**, poi Run All.
+        - Se non torna niente: **Restart**, poi **Run All**.
     """)
 
     # ------------------------------------------------------------------ 4
@@ -183,10 +183,10 @@ def costruisci() -> Notebook:
         Fai doppio clic su questa cella: compare il Markdown che la genera. Poi **Shift+Invio** per
         tornare al testo formattato. Qui dentro ci sono un **grassetto**, del `codice` e un elenco:
 
-        - un titolo si fa con `#`, `##` o `###` a inizio riga: meno cancelletti, titolo più grande
-        - il grassetto con due asterischi prima e due dopo, `**così**`
-        - un elenco con un trattino e uno spazio a inizio riga
-        - il codice dentro al testo tra due apici inversi, `` `così` ``
+        - un titolo: `#`, `##` o `###` a inizio riga (meno cancelletti, titolo più grande)
+        - il grassetto: due asterischi prima e due dopo, `**così**`
+        - un elenco: un trattino e uno spazio a inizio riga
+        - il codice dentro al testo: tra due apici inversi, `` `così` ``
         - una riga vuota separa i paragrafi
     """)
     nb.md("""
@@ -211,9 +211,8 @@ def costruisci() -> Notebook:
         Quando esegui una cella, VS Code manda il testo al kernel, un processo Python che gira in
         sottofondo. Il kernel esegue, tiene in memoria le variabili e rimanda l'output, che VS Code
         mostra sotto la cella e salva nel file `.ipynb` insieme al codice. Per questo un notebook
-        riaperto il giorno dopo mostra ancora i vecchi output, ma le variabili non ci sono più: il
-        processo è morto con la chiusura. Restart kernel fa la stessa cosa a comando: chiude quel
-        processo e ne apre uno nuovo, vuoto.
+        riaperto il giorno dopo mostra ancora i vecchi output ma non ha più le variabili: il processo
+        è finito con la chiusura. Restart fa la stessa cosa a comando.
     """, titolo="Cosa succede quando premi Shift+Invio")
     nb.md("""
         Il verde è l'esercizio: un Prova tu in mezzo a una sezione, da due o tre minuti, o un Esercizio
@@ -223,10 +222,10 @@ def costruisci() -> Notebook:
     nb.prova_tu(
         richiesta="""
             Clicca nella cella di codice qui sotto, premi **Esc**, poi **A** e **M**: hai una cella
-            Markdown nuova sopra. Entra con Invio, scrivi un titolo di terzo livello e un elenco di due
-            voci, poi Shift+Invio. Infine completa la cella di codice: in `titolo` il Markdown che
-            produce un titolo di secondo livello con il testo `Report consumi`, in `grassetto` quello
-            che produce la parola `urgente` in grassetto.
+            Markdown nuova sopra. Entra con **Invio**, scrivi un titolo di terzo livello e un elenco di
+            due voci, poi **Shift+Invio**. Infine completa la cella di codice: in `titolo` il Markdown
+            che produce un titolo di secondo livello con il testo `Report consumi`, in `grassetto`
+            quello che produce la parola `urgente` in grassetto.
         """,
         starter="""
             titolo = "..."
