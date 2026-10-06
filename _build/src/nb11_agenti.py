@@ -271,43 +271,9 @@ def costruisci() -> Notebook:
         """,
     )
     nb.md("""
-        Nessun traceback, nessun avviso: se ne accorge solo chi sa che i mesi sono dodici.
-    """)
-
-    nb.sottosezione("Un parametro inventato apposta", intro="""
-        Il quarto prompt contiene una trappola: un parametro che non esiste. Vediamo se Copilot se ne
-        accorge o ci segue.
-    """)
-    nb.md("""
-        ```text
-        Aggiungi al DataFrame `df` una colonna eta_anni con gli anni passati dall'allaccio a oggi (siamo nel 2026).
-        Usa il parametro years=True di pd.to_datetime sulla colonna anno_allaccio.
-        ```
-
-        Cosa controllare: `pd.to_datetime` non ha nessun parametro `years`. Controllalo con
-        `help(pd.to_datetime)`. Se Copilot l'ha usato lo stesso, hai appena visto un'invenzione: la cella
-        darebbe `TypeError`. Se ha risposto che non esiste e ha proposto una sottrazione, bene: la strada
-        giusta è `2026 - df["anno_allaccio"]`.
-    """)
-    nb.prova_tu(
-        richiesta="""
-            Scrivi la riga giusta: la colonna `eta_anni` come differenza tra 2026 e l'anno di allaccio.
-        """,
-        starter="""
-            df["eta_anni"] = ...
-            df[["id_impianto", "anno_allaccio", "eta_anni"]].head()
-        """,
-        soluzione="""
-            df["eta_anni"] = 2026 - df["anno_allaccio"]
-            df[["id_impianto", "anno_allaccio", "eta_anni"]].head()
-        """,
-        verifica="""
-            assert df["eta_anni"].max() == 15 and df["eta_anni"].min() == 1, "❌ eta_anni: 2026 meno anno_allaccio, da 1 a 15"
-        """,
-    )
-    nb.md("""
-        Il terzo e il quarto prompt sono i più istruttivi: uno sbaglia in silenzio, l'altro segue un
-        parametro inventato. In tutti e due i casi l'errore arriva a noi, non a lui.
+        Nessun traceback, nessun avviso: il codice sbagliato gira come quello giusto. Nell'esercizio sul
+        parametro inventato, alla fine, Copilot segue invece un nome che non esiste. In tutti e due i casi
+        se ne accorge solo chi controlla il risultato.
     """)
 
     # ------------------------------------------------------------------ 4
@@ -382,7 +348,8 @@ def costruisci() -> Notebook:
         uv run ruff format report_pod.py                           # riscrive il file nella forma giusta
         uv run ruff check --fix report_pod.py                      # corregge quello che sa correggere
         ```
-
+    """)
+    nb.md("""
         Il secondo comando, su un file con i tre problemi della tabella:
 
         ```text
@@ -442,10 +409,10 @@ def costruisci() -> Notebook:
     nb.md('''
         | Riga | Come si riconosce | Cosa fa | Va toccata? |
         |---|---|---|---|
-        | `"""Totale..."""` | prima riga, tra tre virgolette | docstring di modulo: dice cosa fa lo script | no |
+        | `"""Totale..."""` | prima riga, tra tre virgolette | docstring di modulo: cosa fa lo script | no |
         | `import`, `from ... import` | in testa | caricano le librerie: `logging`, `dataclasses`, `pathlib` sono standard, pandas è installata | no |
         | `logger = logging.getLogger(...)` | dopo gli import | prepara il log: `logger.info(...)` è un `print` con il livello davanti (`INFO:__main__:...`), nel terminale | no |
-        | `DATA_DIR = Path("Dati")` | nome tutto maiuscolo | costante: dove sono i dati, dalla cartella da cui si lancia lo script | se i dati stanno altrove |
+        | `DATA_DIR = Path("Dati")` | tutto maiuscolo | costante: dove sono i dati, dalla cartella da cui si lancia lo script | se i dati stanno altrove |
     ''')
     nb.md('''
         Poi la configurazione:
@@ -506,7 +473,7 @@ def costruisci() -> Notebook:
     nb.md('''
         | Riga | Come si riconosce | Cosa fa | Va toccata? |
         |---|---|---|---|
-        | `-> pd.DataFrame` | dopo la parentesi del `def` | type hint di ritorno: dice cosa restituisce la funzione | no |
+        | `-> pd.DataFrame` | dopo la parentesi del `def` | type hint di ritorno: cosa restituisce la funzione | no |
         | `fasce: list[str] \\| None = None` | parametro con default `None` | lista di stringhe oppure `None` (`\\|` si legge «oppure»); facoltativo: se non lo passiamo, la funzione tiene tutte le fasce | no |
         | `raise FileNotFoundError(...)` | dentro un `if` | crea un errore apposta, con un messaggio chiaro: il contrario di `except` | no |
 
@@ -554,7 +521,7 @@ def costruisci() -> Notebook:
     nb.md('''
         | Riga | Come si riconosce | Cosa fa | Va toccata? |
         |---|---|---|---|
-        | `-> None` | dopo la parentesi del `def` | la funzione non restituisce niente: `main` esegue i passi e basta | no |
+        | `-> None` | dopo la parentesi del `def` | la funzione non restituisce niente: `main` esegue i passi | no |
         | `logging.basicConfig(level=logging.INFO)` | prima riga di `main` | accende il log: senza, `logger.info` non stampa | no |
         | `if __name__ == "__main__":` (blocco main) | in fondo al file | parte solo se il file è il programma lanciato, con `uv run` o in una cella; non se viene importato | no |
         | `main()` | l'ultima riga | chiama la funzione che mette in fila i passi | no |
@@ -687,13 +654,17 @@ def costruisci() -> Notebook:
             cosa_e
         """,
         verifica="""
-            assert cosa_e["@dataclass"] == "decoratore", "❌ @dataclass: una riga con @ sopra una class è un decoratore"
-            assert cosa_e["-> pd.DataFrame"] == "type hint", "❌ -> pd.DataFrame: dice cosa restituisce la funzione, è un type hint"
-            assert cosa_e['if __name__ == "__main__":'] == "blocco main", "❌ if __name__ == \\"__main__\\": è il blocco main, in fondo al file"
-            assert cosa_e["logger.info(...)"] == "log", "❌ logger.info(...): un print con il livello davanti, cioè il log"
-            assert cosa_e["DATA_DIR"] == "costante", "❌ DATA_DIR: tutto maiuscolo, è una costante"
+            assert str(cosa_e["@dataclass"]).strip().lower() == "decoratore", "❌ @dataclass: una riga con @ sopra una class è un decoratore"
+            assert str(cosa_e["-> pd.DataFrame"]).strip().lower() == "type hint", "❌ -> pd.DataFrame: dice cosa restituisce la funzione, è un type hint"
+            assert str(cosa_e['if __name__ == "__main__":']).strip().lower() == "blocco main", "❌ if __name__ == \\"__main__\\": è il blocco main, in fondo al file"
+            assert str(cosa_e["logger.info(...)"]).strip().lower() == "log", "❌ logger.info(...): un print con il livello davanti, cioè il log"
+            assert str(cosa_e["DATA_DIR"]).strip().lower() == "costante", "❌ DATA_DIR: tutto maiuscolo, è una costante"
         """,
     )
+    nb.md("""
+        Tutte le forme che si incontrano, una per riga, stanno nella
+        [scheda per leggere il codice](../Schede/Scheda_leggere_codice.md).
+    """)
     nb.box("ricorda", """
         - Leggi dall'alto: import, costanti, `def`; in fondo, chi li usa.
         - Una riga che non capisci: "spiegami questa riga", poi verifica eseguendo.
@@ -749,28 +720,28 @@ def costruisci() -> Notebook:
         passo_in_piu=dict(
             testo="""
                 Chiedi a Copilot, in modalità Ask, di chiudere la lettura giusta in una funzione
-                `leggi_letture(path)` con docstring di una riga e type hint. Incollala, poi controlla con
-                `help(leggi_letture)` che la docstring ci sia e che il risultato sia lo stesso di prima.
+                `leggi_csv_letture(path)` con docstring di una riga e type hint. Incollala, poi controlla con
+                `help(leggi_csv_letture)` che la docstring ci sia e che il risultato sia lo stesso di prima.
             """,
             starter="""
                 ...
 
 
-                help(leggi_letture)
-                letture_bis = leggi_letture("../Dati/letture_pod_2025.csv")
+                help(leggi_csv_letture)
+                letture_bis = leggi_csv_letture("../Dati/letture_pod_2025.csv")
             """,
             soluzione="""
-                def leggi_letture(path: str) -> pd.DataFrame:
+                def leggi_csv_letture(path: str) -> pd.DataFrame:
                     \"\"\"Legge un CSV di letture all'italiana: punto e virgola, virgola decimale, latin-1.\"\"\"
                     return pd.read_csv(path, sep=";", decimal=",", encoding="latin-1")
 
 
-                help(leggi_letture)
-                letture_bis = leggi_letture("../Dati/letture_pod_2025.csv")
+                help(leggi_csv_letture)
+                letture_bis = leggi_csv_letture("../Dati/letture_pod_2025.csv")
             """,
             verifica="""
-                assert leggi_letture.__doc__, "❌ La funzione deve avere una docstring"
-                assert letture_bis.shape == (216, 5), "❌ leggi_letture deve restituire le stesse 216 righe e 5 colonne"
+                assert leggi_csv_letture.__doc__, "❌ La funzione deve avere una docstring"
+                assert letture_bis.shape == (216, 5), "❌ leggi_csv_letture deve restituire le stesse 216 righe e 5 colonne"
             """,
         ),
     )

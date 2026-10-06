@@ -568,7 +568,7 @@ def costruisci() -> Notebook:
     """
     nb.esercizio(
         titolo="Scaricare la temperatura", aula="base",
-        scenario="Due anni di temperatura oraria: 17.544 valori. Prima di unirli al carico, guardiamoli.",
+        scenario="Per la domanda del capo non serve il meteo a pagamento dell'ufficio previsioni: basta l'archivio gratuito di Open-Meteo, 17.544 valori orari. Prima di unirli al carico, guardiamoli.",
         richiesta="""
             1. Ricava `inizio` e `fine` dal carico: primo e ultimo giorno, come testo `AAAA-MM-GG`
                (`.min()`, `.max()` e `.strftime("%Y-%m-%d")`).
@@ -600,6 +600,7 @@ def costruisci() -> Notebook:
         """,
         soluzione=soluzione_5_base,
         verifica=verifica_5,
+        perche="La funzione restituisce già il dizionario `hourly`: `pd.DataFrame` lo legge così com'è.",
     )
     nb.esercizio(
         titolo="Scaricare la temperatura", aula="avanzata", rete=True,
@@ -630,8 +631,10 @@ def costruisci() -> Notebook:
             `pd.DataFrame(...)` lo trasforma in tabella, poi `to_datetime` su `time` e `rename`.
         """, titolo="Se sei bloccato")
         nb.md("""
-            Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: produce lo stesso
-            `meteo` dal file di riserva, che contiene dati di esempio. Poi rilancia la verifica.
+            Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: costruisce `meteo`
+            con la stessa forma da `../Dati/fallback/`, con temperature di esempio
+            (`uv run python _build/scarica_fallback.py` le sostituisce con quelle vere). Poi rilancia la
+            verifica.
         """)
         nb.code("""
             import json
@@ -651,7 +654,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 6
     nb.sezione("Due tabelle, una sola", intro=f"""
-        {DETTAGLIO}
+        {DETTAGLIO_BREVE}
 
         La temperatura è oraria, il carico quartorario: prima di unirli, portiamo il carico all'ora.
         Per questo passaggio basta il carico; la temperatura entra subito dopo.
@@ -667,6 +670,14 @@ def costruisci() -> Notebook:
         print(len(carico_orario), "ore")
         carico_orario[carico_orario["mw"].isna()]
     """
+    soluzione_6a_base = """
+        indice_tempo = carico.set_index("data")
+        carico_orario = indice_tempo["mw"].resample("h").mean()
+        carico_orario = carico_orario.reset_index()
+
+        print(len(carico_orario), "ore")
+        carico_orario[carico_orario["mw"].isna()]
+    """
     nb.prova_tu(
         aula="base",
         richiesta="""
@@ -675,12 +686,13 @@ def costruisci() -> Notebook:
         """,
         starter="""
             indice_tempo = carico.set_index("data")
-            carico_orario = indice_tempo["mw"].resample(...).mean().reset_index()
+            carico_orario = indice_tempo["mw"].resample(...).mean()
+            carico_orario = carico_orario.reset_index()
 
             print(len(carico_orario), "ore")
             carico_orario[carico_orario["mw"].isna()]
         """,
-        soluzione=soluzione_6a,
+        soluzione=soluzione_6a_base,
         verifica=verifica_6a,
     )
     nb.prova_tu(
@@ -765,7 +777,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 7
     nb.sezione("La relazione", intro=f"""
-        {DETTAGLIO}
+        {DETTAGLIO_BREVE}
 
         Ora la domanda del capo. Un punto per giorno: temperatura media sulle x, carico medio sulle y, un
         colore per mese. La forma che esce è la risposta.
@@ -773,6 +785,22 @@ def costruisci() -> Notebook:
     soluzione_7 = """
         indice_tempo = unione.set_index("data")
         giornaliero_tc = indice_tempo.resample("D").mean().reset_index()
+        giornaliero_tc["mese"] = giornaliero_tc["data"].dt.month_name()
+
+        fig = px.scatter(giornaliero_tc, x="temperatura", y="mw", color="mese", hover_data=["data"],
+                         title="Carico medio giornaliero e temperatura media, zona Nord 2024-2025",
+                         labels={"temperatura": "temperatura media (°C)", "mw": "carico medio (MW)"})
+        fig.show()
+
+        giornaliero_tc["fascia_t"] = (giornaliero_tc["temperatura"] // 3) * 3
+        per_fascia = giornaliero_tc.groupby("fascia_t")["mw"].mean()
+        temperatura_minimo = per_fascia.idxmin()
+        print(f"Carico minimo nella fascia {temperatura_minimo:.0f}-{temperatura_minimo + 3:.0f} °C")
+    """
+    soluzione_7_base = """
+        indice_tempo = unione.set_index("data")
+        giornaliero_tc = indice_tempo.resample("D").mean()
+        giornaliero_tc = giornaliero_tc.reset_index()
         giornaliero_tc["mese"] = giornaliero_tc["data"].dt.month_name()
 
         fig = px.scatter(giornaliero_tc, x="temperatura", y="mw", color="mese", hover_data=["data"],
@@ -793,7 +821,7 @@ def costruisci() -> Notebook:
     step(
         nb, titolo="Carico e temperatura",
         scenario="Il capo si aspetta una retta. Vediamo cosa dicono 731 giorni.",
-        soluzione=soluzione_7, verifica=verifica_7,
+        soluzione={"base": soluzione_7_base, "avanzata": soluzione_7}, verifica=verifica_7,
         perche="Le medie giornaliere tolgono il ciclo orario, che qui è rumore: la relazione con la temperatura si vede giorno per giorno, non ora per ora.",
         base=dict(
             richiesta="""
@@ -811,7 +839,8 @@ def costruisci() -> Notebook:
             starter="""
                 # 1. medie giornaliere di carico e temperatura
                 indice_tempo = unione.set_index("data")
-                giornaliero_tc = indice_tempo.resample("D").mean().reset_index()
+                giornaliero_tc = indice_tempo.resample("D").mean()
+                giornaliero_tc = giornaliero_tc.reset_index()
                 # 2. il mese, per colorare i punti
                 giornaliero_tc["mese"] = ...
 
@@ -938,6 +967,8 @@ def costruisci() -> Notebook:
         3. La giornata media ha ... picchi, alle ... e alle ...; il minimo è alle ...
         4. Nel weekend il carico medio cala del ...% rispetto al feriale.
         5. Il carico è minimo tra ... e ... °C e sale con il freddo e con il caldo; al Nord pesa di più ...
+
+        Fonte della temperatura: Open-Meteo / dati di esempio (lascia quella vera).
     """)
     with nb.solo("avanzata"):
         nb.box("nota", """
