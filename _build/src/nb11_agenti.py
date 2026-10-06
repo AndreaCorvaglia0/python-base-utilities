@@ -263,7 +263,7 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            Scrivi la versione giusta: la colonna `eta_anni` come differenza tra 2026 e l'anno di allaccio.
+            Scrivi la riga giusta: la colonna `eta_anni` come differenza tra 2026 e l'anno di allaccio.
         """,
         starter="""
             df["eta_anni"] = ...

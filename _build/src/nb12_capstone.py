@@ -2,9 +2,9 @@
 
 from nbkit import Notebook
 
-DA_SOLI = "*Copilot: da soli.*"
-DETTAGLIO = "*Copilot: per il dettaglio (titoli, etichette, colori), non per la logica.*"
-CHAT = "*Copilot: chat per capire. Se un errore non si capisce, \"spiegami\", mai \"risolvilo\".*"
+DA_SOLI = "*Senza Copilot: qui conta capire il meccanismo.*"
+DETTAGLIO = "*Copilot solo per il dettaglio, titoli, etichette e colori: la logica la scriviamo noi.*"
+CHAT = "*Copilot in chat, per capire: davanti a un errore \"spiegami\", mai \"risolvilo\".*"
 
 
 def step(nb: Notebook, titolo: str, scenario: str, soluzione: str, verifica: str,
@@ -48,15 +48,14 @@ def costruisci() -> Notebook:
         anni di carico della zona Nord e un'API meteo. Niente previsioni: prima bisogna capire i dati.
     """)
     nb.md("""
-        Otto step, uno per sezione. Ogni step inizia con un'indicazione su Copilot: *da soli* dove conta
-        capire il meccanismo, *per il dettaglio* dove può sistemare titoli ed etichette, *chat per capire*
-        quando qualcosa non torna. Le verifiche controllano forma e intervalli: il resto lo controlli tu,
-        guardando l'output.
+        Otto step, uno per sezione. Ogni sezione si apre con una riga su Copilot: senza, dove conta capire
+        il meccanismo; per il dettaglio, dove può sistemare titoli ed etichette; in chat, quando qualcosa
+        non torna. Le verifiche controllano forma e intervalli: il resto lo controlli tu, guardando l'output.
     """)
     nb.md("""
-        Cose da scoprire lungo la strada, non da leggere qui: la frequenza vera dei dati, quanti picchi ha
-        una giornata, di quanto cala il weekend, se al Nord pesa più il caldo o il freddo, che forma ha la
-        relazione tra carico e temperatura, e cosa combina l'ora legale due volte l'anno.
+        Lungo la strada scopriremo la frequenza vera dei dati, quanti picchi ha una giornata, di quanto
+        cala il weekend, se al Nord pesa più il caldo o il freddo, che forma ha la relazione tra carico e
+        temperatura e cosa combina l'ora legale due volte l'anno.
     """)
 
     # ------------------------------------------------------------------ 1
@@ -232,8 +231,9 @@ def costruisci() -> Notebook:
                 Trova i timestamp ripetuti in `duplicati` (tutte le copie) e, in `giorni_strani`, i giorni
                 che non hanno 96 quartorari (`quartorari_giorno` è il conteggio per giorno). Poi lascia in
                 `carico` una riga per timestamp, indice da 0, e conta i valori mancanti.
-                Risultato atteso: 8 righe doppie, 4 giorni strani, 70168 righe pulite, zero NaN.
-                Domanda: perché quei quattro giorni, e perché il buco di marzo non va riempito?
+                Risultato atteso: 16 righe in `duplicati` (8 timestamp, due copie ciascuno), 4 giorni
+                strani, 70168 righe pulite, zero valori mancanti.
+                Domanda: perché proprio quei quattro giorni, e perché il buco di marzo non va riempito?
             """,
             starter="""
                 duplicati = ...
@@ -256,9 +256,9 @@ def costruisci() -> Notebook:
         """)
         nb.code('carico["data"].dt.tz_localize("Europe/Rome", ambiguous="infer")', errore=True)
         nb.md("""
-            `AmbiguousTimeError`: le 2:00 dell'ultima domenica di ottobre esistono due volte nel fuso
-            orario italiano, e con una copia sola rimasta pandas non sa più quale delle due sia. Per questa
-            analisi l'ora locale senza fuso basta: il rimedio è stato togliere i doppioni.
+            `AmbiguousTimeError`: nel fuso italiano le 2:00 dell'ultima domenica di ottobre esistono due
+            volte, e dalla copia rimasta pandas non capisce quale delle due sia. Per questa analisi basta
+            l'ora locale, senza fuso: i doppioni li abbiamo già tolti e il resto lo lasciamo stare.
         """)
 
     # ------------------------------------------------------------------ 3
@@ -294,7 +294,7 @@ def costruisci() -> Notebook:
         nb, titolo="La serie giornaliera",
         scenario="Il capo vuole \"vedere i due anni\". Un grafico con lo slider sotto, e due numeri: il giorno più leggero e quello più pesante.",
         soluzione=soluzione_3, verifica=verifica_3,
-        perche="Somma dei quartorari e poi diviso 4: un quarto d'ora a P MW vale P/4 MWh. La media per 24 darebbe quasi lo stesso, ma nei due giorni con il buco di marzo mentirebbe un po'.",
+        perche="Somma dei quartorari e poi diviso 4: un quarto d'ora a P MW vale P/4 MWh. La media moltiplicata per 24 darebbe quasi lo stesso, ma nel giorno del buco di marzo conterebbe un'ora che non c'è stata.",
         base=dict(
             richiesta="""
                 1. Metti `data` come indice in `indice_tempo`.
@@ -445,7 +445,8 @@ def costruisci() -> Notebook:
             richiesta="""
                 Le due linee dicono poco sul sabato rispetto alla domenica. Costruisci `mappa`: una griglia
                 con i giorni della settimana sulle righe (0 = lunedì) e le ore sulle colonne, carico medio
-                dentro; poi colorala con `px.imshow(mappa, aspect="auto")`. Dove sta la cella più chiara?
+                dentro; poi colorala con `px.imshow(mappa, aspect="auto")`. Dove sta il carico più alto?
+                E il sabato somiglia più al venerdì o alla domenica?
             """,
             starter="""
                 carico["giorno_settimana"] = carico["data"].dt.dayofweek
@@ -478,10 +479,10 @@ def costruisci() -> Notebook:
     """)
     with nb.solo("base"):
         nb.md("""
-            La funzione qui sotto è già scritta: leggila prima di usarla. Dentro c'è la chiamata all'API con
-            `requests` e un `try/except`, quello che abbiamo imparato a leggere nel notebook sugli errori:
-            se la rete non risponde, legge la copia salvata in `../Dati/fallback/`. Restituisce la parte
-            `hourly` della risposta: un dizionario con due liste, pronto per `pd.DataFrame`.
+            La funzione qui sotto è già scritta: leggiamola prima di usarla. Dentro c'è la chiamata all'API
+            con `requests` e un `try/except` come quello del notebook sugli errori: se la rete non risponde,
+            legge la copia salvata in `../Dati/fallback/`. Restituisce la parte `hourly` della risposta: un
+            dizionario con due liste, pronto per `pd.DataFrame`.
         """)
         nb.code("""
             import json
@@ -581,7 +582,7 @@ def costruisci() -> Notebook:
     )
     nb.esercizio(
         titolo="Scaricare la temperatura", aula="avanzata", rete=True,
-        scenario="Due anni di temperatura oraria, dall'archivio storico di Open-Meteo. La chiamata la scriviamo noi, sullo schema della previsione.",
+        scenario="Due anni di temperatura oraria, dall'archivio storico di Open-Meteo. La chiamata la scriviamo noi, con lo schema già usato per la previsione.",
         richiesta="""
             Chiedi all'archivio storico di Open-Meteo la temperatura oraria di Milano (latitudine
             45.4642, longitudine 9.19) dal primo all'ultimo giorno del carico. URL
@@ -628,7 +629,7 @@ def costruisci() -> Notebook:
         {DETTAGLIO}
 
         La temperatura è oraria, il carico quartorario: prima di unirli, portiamo il carico all'ora.
-        Questa parte usa solo il carico, quindi funziona anche senza rete.
+        Per questo passaggio basta il carico; la temperatura entra subito dopo.
     """)
     verifica_6a = """
         assert set(carico_orario.columns) == {"data", "mw"}, "❌ carico_orario: due colonne, data e mw"
@@ -645,7 +646,7 @@ def costruisci() -> Notebook:
         aula="base",
         richiesta="""
             Costruisci `carico_orario`: media dei quattro quartorari di ogni ora, con `data` e `mw` come
-            colonne. Quante righe sono? Ci sono valori mancanti? Da dove vengono?
+            colonne. Quante righe sono, e da dove vengono i valori mancanti?
         """,
         starter="""
             indice_tempo = carico.set_index("data")
@@ -662,7 +663,7 @@ def costruisci() -> Notebook:
         richiesta="""
             Costruisci `carico_orario`: media dei quattro quartorari di ogni ora, con `data` e `mw` come
             colonne, e mostra le righe con valori mancanti. Risultato atteso: 17544 righe. Domanda: da dove
-            vengono i NaN?
+            vengono i valori mancanti?
         """,
         starter="""
             carico_orario = ...
@@ -724,7 +725,7 @@ def costruisci() -> Notebook:
                 Unisci `carico_orario` e `meteo` in `unione` (colonne `data`, `mw`, `temperatura`) tenendo
                 tutte le ore del carico. Stampa le righe prima e dopo, conta i valori mancanti per colonna,
                 poi togli le righe incomplete.
-                Risultato atteso: circa 17540 righe, zero NaN. Domanda: da dove venivano i NaN?
+                Risultato atteso: circa 17540 righe, zero valori mancanti. Domanda: da dove venivano?
             """,
             starter="""
                 unione = ...
@@ -762,7 +763,7 @@ def costruisci() -> Notebook:
     verifica_7 = """
         assert len(giornaliero_tc) == 731, "❌ giornaliero_tc: una riga per giorno, 731"
         assert giornaliero_tc["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.month"
-        assert 10 <= temperatura_minimo <= 21, "❌ temperatura_minimo: il fondo della U sta tra 10 e 21 °C"
+        assert 10 <= temperatura_minimo <= 21, "❌ temperatura_minimo: la fascia con il carico più basso sta tra 10 e 21 °C; serve il bordo inferiore della fascia, da idxmin"
     """
     step(
         nb, titolo="Carico e temperatura", rete=True,
@@ -857,7 +858,7 @@ def costruisci() -> Notebook:
                 1. Costruisci di nuovo lo scatter in `fig`, con un titolo che dica dove sta il minimo.
                 2. Esportalo con `fig.write_html("carico_nord_temperatura.html")`, nella cartella del notebook.
                 3. Esegui le `print` già scritte: sono i numeri per le cinque frasi della cella Markdown
-                   qui sotto. Completala al posto dei puntini.
+                   dopo la verifica. Completala al posto dei puntini.
             """,
             suggerimento="Il titolo è una f-string: dentro le graffe ci sta `temperatura_minimo`.",
             starter="""
@@ -883,7 +884,7 @@ def costruisci() -> Notebook:
             richiesta="""
                 Ricostruisci lo scatter in `fig` con un titolo che dica dove sta il minimo ed esportalo in
                 `carico_nord_temperatura.html`, nella cartella del notebook. Poi stampa i numeri che
-                servono alle cinque frasi della cella Markdown qui sotto e completala.
+                servono alle cinque frasi della cella Markdown dopo la verifica, e completala.
                 Risultato atteso: un file HTML che si apre nel browser, cinque frasi con i numeri.
             """,
             starter="""
@@ -895,7 +896,8 @@ def costruisci() -> Notebook:
             """,
             bloccato="""
                 I numeri stanno già nelle variabili: `estremi`, `profilo`, `calo_weekend`,
-                `temperatura_minimo`. Una `print` con f-string per ciascuna, e la cella Markdown si compila da sola.
+                `temperatura_minimo`. Una `print` con f-string per ciascuna, poi i numeri si copiano
+                nella cella Markdown.
             """,
         ),
     )
