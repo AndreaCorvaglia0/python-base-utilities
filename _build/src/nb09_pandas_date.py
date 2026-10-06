@@ -483,7 +483,8 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 7
     nb.sezione("Cambiare passo: resample", intro="""
         `resample` cambia il passo di una serie: da quarti d'ora a ore, a giorni, a settimane. È un
-        `groupby` sul tempo, e vuole il tempo nell'indice. Dopo il `resample` si dice cosa fare dei
+        `groupby` sul tempo, e vuole il tempo nell'indice. `carico` ce l'ha già: l'abbiamo messo con
+        `set_index("Date")` per guardare la notte del 31 marzo. Dopo il `resample` si dice cosa fare dei
         valori raggruppati: `mean()`, `sum()`, `max()`.
     """)
     nb.code("""
@@ -499,6 +500,35 @@ def costruisci() -> Notebook:
         energia_giorno = mw.resample("D").sum() / 4
         energia_giorno.head()
     """)
+
+    with nb.solo("base"):
+        nb.md("""
+            Come dopo un `groupby`, la data è finita nell'indice: `reset_index()` la riporta colonna,
+            pronta per un grafico o un `merge`.
+        """)
+        nb.code("""
+            giornaliero = energia_giorno.reset_index()
+            giornaliero.head(3)
+        """)
+        nb.prova_tu(
+            richiesta="""
+                Il picco di ogni giorno: metti in `picco_giorno` il massimo giornaliero di `mw` con
+                `resample`.
+            """,
+            starter="""
+                picco_giorno = ...
+                picco_giorno.head()
+            """,
+            soluzione="""
+                picco_giorno = mw.resample("D").max()
+                picco_giorno.head()
+            """,
+            verifica="""
+                assert len(picco_giorno) == 366, "❌ picco_giorno: un valore per giorno, 366 nel 2024; il passo è \\"D\\""
+                assert round(picco_giorno.max()) == 32424, "❌ picco_giorno: dopo resample serve max(), non mean() o sum()"
+                assert str(picco_giorno.idxmax())[:10] == "2024-07-17", "❌ picco_giorno: il picco dell'anno cade il 17 luglio; controlla di aver usato mw"
+            """,
+        )
 
     with nb.solo("avanzata"):
         nb.md("""

@@ -109,13 +109,14 @@ def costruisci() -> Notebook:
         conserva, `help()` la mostra e VS Code la fa comparire quando passiamo il mouse sul nome
         della funzione.
     """)
-    nb.code("help(energia_mwh)")
+    nb.code("help(energia_intervallo_mwh)")
     nb.md("""
         `help` stampa la firma, con i nomi dei parametri, e sotto la docstring. Funziona su
-        qualunque funzione, nostra o di una libreria: `help(round)`, `help(pd.read_csv)`. La
-        docstring vive nell'attributo `__doc__` della funzione, ed è lì che `help` va a leggerla.
+        qualunque funzione, nostra o di una libreria: `help(round)`, `help(sum)` e, dopo
+        `import pandas as pd`, anche `help(pd.read_csv)`. La docstring vive nell'attributo
+        `__doc__` della funzione, ed è lì che `help` va a leggerla.
     """)
-    nb.code("energia_mwh.__doc__   # Output: 'Energia in MWh di un intervallo a potenza costante.'")
+    nb.code("energia_intervallo_mwh.__doc__   # Output: 'Energia in MWh di un intervallo a potenza costante.'")
     nb.prova_tu(
         richiesta="""
             La funzione `quarti_in_ore` funziona ma non ha docstring. Sostituisci i `...` con una
@@ -146,8 +147,8 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 4
     nb.sezione("PEP 8 in cinque regole", intro="""
         PEP 8 è la guida di stile ufficiale di Python: come spaziare, come chiamare le cose, dove
-        andare a capo. Sono decine di pagine e ne contano cinque. Prima com'è scritto troppo
-        spesso.
+        andare a capo. Le regole sono molte; quelle che si incontrano ogni giorno sono cinque.
+        Partiamo da una cella scritta come capita spesso di trovarla.
     """)
     nb.code("""
         PrezzoKwh=0.21
@@ -188,8 +189,8 @@ def costruisci() -> Notebook:
     """)
     nb.box("nota", """
         Il limite di 100 caratteri non è sacro: PEP 8 dice 79, molti team scelgono 88 o 100. Conta
-        che il team ne scelga uno e lo scriva in `pyproject.toml`; nel progetto del corso c'è
-        `line-length = 100`.
+        che il team ne scelga uno e lo scriva in `pyproject.toml`, dove lo legge Ruff: nel nostro
+        c'è `line-length = 100`.
     """)
     nb.prova_tu(
         richiesta="""
@@ -211,8 +212,9 @@ def costruisci() -> Notebook:
         """,
     )
     nb.md("""
-        Queste regole non si applicano a mano, a meno di volerci passare le serate: le controlla
-        uno strumento, Ruff, che vedremo quando leggeremo il codice scritto da un agente.
+        A mano si fa per imparare a vederle. Spazi, rientri e righe lunghe, nel lavoro di tutti i
+        giorni, li sistema uno strumento, Ruff, che vedremo quando leggeremo il codice scritto da
+        un agente; i nomi che dicono cosa contengono restano compito nostro.
     """)
 
     # ------------------------------------------------------------------ Esercizi
@@ -229,10 +231,10 @@ def costruisci() -> Notebook:
             Lascia `f` dov'è: serve al confronto. Sotto, riscrivila come `costo_bolletta` con due
             parametri che dicono cosa sono, `consumo_kwh` e `prezzo_kwh`, e una docstring di una
             riga che spieghi anche il fattore `1.1`: è l'IVA al 10%. Dentro la funzione, prima del
-            `return`, metti il `1.1` in una variabile `iva` e usala nel conto: il risultato deve
-            restare lo stesso.
+            `return`, metti il `1.1` in una variabile `fattore_iva` e usala nel conto: il risultato
+            deve restare lo stesso.
         """,
-        suggerimento="La docstring è la prima riga sotto il `def`, tra tre virgolette.",
+        suggerimento="la docstring è la prima riga sotto il `def`, tra tre virgolette.",
         starter="""
             def f(a, b):
                 return a * b * 1.1
@@ -251,8 +253,8 @@ def costruisci() -> Notebook:
 
             def costo_bolletta(consumo_kwh, prezzo_kwh):
                 \"\"\"Costo in euro di una bolletta: consumo per prezzo, più IVA al 10%.\"\"\"
-                iva = 1.1
-                return consumo_kwh * prezzo_kwh * iva
+                fattore_iva = 1.1
+                return consumo_kwh * prezzo_kwh * fattore_iva
 
 
             print(f(1250, 0.21), costo_bolletta(1250, 0.21))
@@ -267,9 +269,10 @@ def costruisci() -> Notebook:
         passo_in_piu=dict(
             testo="""
                 Nel notebook del collega c'era anche questa riga:
-                `s = f(1250, 0.21) + f(830, 0.19) + f(1040, 0.17)`. Riscrivila con `costo_bolletta`,
-                un nome che dica cosa contiene (`totale_bolletta`) e un commento di una riga che
-                spieghi perché tre chiamate.
+                `s = f(1250, 0.21) + f(830, 0.19) + f(1040, 0.17)` (i tre consumi sono le fasce F1,
+                F2 e F3 dello stesso cliente, ognuna con il suo prezzo). Riscrivila con
+                `costo_bolletta`, un nome che dica cosa contiene (`totale_bolletta`) e un commento di
+                una riga che spieghi perché tre chiamate.
             """,
             starter="""
                 # ...
@@ -285,7 +288,7 @@ def costruisci() -> Notebook:
                 totale_bolletta
             """,
             verifica="""
-                assert round(totale_bolletta, 2) == 656.7, "❌ totale_bolletta: la somma delle tre bollette per fascia"
+                assert round(totale_bolletta, 2) == 656.7, "❌ totale_bolletta: la somma dei costi delle tre fasce"
             """,
         ),
     )
@@ -303,7 +306,7 @@ def costruisci() -> Notebook:
             parametri che dicono cosa sono (`potenze_mw` e `prezzo_mwh`), una docstring di una riga
             che spieghi anche il `/ 4`, e lo stesso risultato.
         """,
-        suggerimento="Dare un nome al passaggio intermedio (`energia_mwh`) rende inutile il commento.",
+        suggerimento="un passaggio intermedio con un nome, `energia_mwh = sum(potenze_mw) / 4`, si legge meglio di un conto tutto nel `return`.",
         starter="""
             def g(l, p):
                 return sum(l) / 4 * p
@@ -343,12 +346,12 @@ def costruisci() -> Notebook:
             Chi la apre a gennaio deve trovarlo al primo colpo.
         """,
         richiesta="""
-            Lascia la cella originale dov'è: serve al confronto. Sotto, riscrivila seguendo le
-            cinque regole: la lista si chiama `consumi_kwh`, il prezzo va in una variabile sua,
+            Lascia le prime due righe come sono: servono al confronto. Sotto, riscrivile seguendo
+            le cinque regole: la lista si chiama `consumi_kwh`, il prezzo va in una variabile sua,
             `prezzo_f3`, e il risultato in `costo_notte`. Al posto del commento che ripete il
             codice scrivine uno che dica da dove viene lo `0.17`.
         """,
-        suggerimento="Il commento va sulla riga sopra `prezzo_f3` e dice quello che dal codice non si vede.",
+        suggerimento="il commento va sulla riga sopra `prezzo_f3` e dice quello che dal codice non si vede.",
         starter="""
             L=[310,295 ,288,402,276]
             c=sum( L )*0.17 # moltiplico la somma per 0.17
@@ -388,12 +391,12 @@ def costruisci() -> Notebook:
             senza ripescare la mail di due anni fa.
         """,
         richiesta="""
-            Lascia la cella originale dov'è: serve al confronto. Sotto, riscrivila seguendo le
-            cinque regole: la lista si chiama `immessa_mwh`, il fattore va in una variabile sua,
+            Lascia le prime due righe come sono: servono al confronto. Sotto, riscrivile seguendo
+            le cinque regole: la lista si chiama `immessa_mwh`, il fattore va in una variabile sua,
             `quota_perdite`, e il risultato in `perdite_mwh`. Al posto del commento che ripete il
             codice scrivine uno che dica da dove viene lo `0.062`.
         """,
-        suggerimento="Il commento va sulla riga sopra `quota_perdite` e dice quello che dal codice non si vede.",
+        suggerimento="il commento va sulla riga sopra `quota_perdite` e dice quello che dal codice non si vede.",
         starter="""
             E=[1820,1765 ,1910]
             p=sum( E )*0.062  # moltiplico per 0.062

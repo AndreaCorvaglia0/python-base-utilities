@@ -106,8 +106,8 @@ def costruisci() -> Notebook:
     nb.md("""
         `ModuleNotFoundError: No module named 'grafici_bollette'`. Lo stesso messaggio compare in due
         casi diversi: la libreria non è installata nel progetto, oppure il kernel non usa il Python di
-        `.venv` e sta guardando nel posto sbagliato. Prima si controlla il kernel, poi si aggiunge la libreria: come,
-        lo vediamo nella prossima sezione.
+        `.venv` e sta guardando nel posto sbagliato. Prima si controlla il kernel, poi si aggiunge la
+        libreria: come, lo vediamo nella prossima sezione.
     """)
     nb.md("""
         Per sapere cosa fa una funzione senza uscire dal notebook c'è `help(nome)`: stampa la
@@ -260,9 +260,9 @@ def costruisci() -> Notebook:
         dei due si rompe. La soluzione è un ambiente per progetto.
     """)
     nb.md("""
-        `.venv` è una cartella: un Python e le sue librerie, dedicati a questo progetto. Lo crea `uv sync`, lo usa il kernel che abbiamo scelto, e
-        si può cancellare e ricreare in un minuto. È il motivo per cui `sys.executable` doveva
-        contenere `.venv`. Dove vive pandas, per dire:
+        `.venv` è una cartella: un Python e le sue librerie, dedicati a questo progetto. Lo crea
+        `uv sync`, lo usa il kernel che abbiamo scelto, e si può cancellare e ricreare in un minuto.
+        È il motivo per cui `sys.executable` doveva contenere `.venv`. Dove vive pandas, per dire:
     """)
     nb.code("""
         import pandas as pd

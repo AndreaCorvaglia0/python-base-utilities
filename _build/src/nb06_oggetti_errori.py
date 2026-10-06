@@ -184,8 +184,8 @@ def costruisci() -> Notebook:
         type(oggi), oggi.year
     """)
     nb.md("""
-        Lo stesso per il sottomodulo di Plotly che useremo per i grafici: `express` sta dentro la
-        cartella della libreria `plotly`, e `px` è il suo alias.
+        Un import si legge allo stesso modo. `import plotly.express as px` scende nel sottomodulo
+        `express`, dentro la cartella della libreria `plotly`, e lo chiama `px`.
     """)
     nb.code("""
         import plotly.express as px
@@ -203,6 +203,12 @@ def costruisci() -> Notebook:
         | `libreria.nome(...)`, nome minuscolo | funzione di libreria | `pd.read_csv(...)` |
         | `oggetto.nome(...)` | metodo, un'azione dell'oggetto | `letture.head()` |
         | `oggetto.nome` senza parentesi | attributo, un dato dell'oggetto (se l'output dice `bound method` era un metodo senza parentesi) | `letture.shape` |
+    """)
+    nb.md("""
+        Poi la maiuscola, le parentesi da sole, le quadre e la chiocciola:
+
+        | Forma | Cos'è | Esempio |
+        |---|---|---|
         | `Nome(...)` o `libreria.Nome(...)`, con la maiuscola | classe chiamata: costruisce un oggetto | `pd.DataFrame({...})` |
         | `nome(...)` da sola | funzione di Python (`len`, `print`), sempre disponibile; se il nome viene da un `from … import`, è della libreria indicata in testa | `len(letture)` |
         | `nome[...]` | selezione con le quadre: posizione, chiave o colonna | `letture["kwh"]` |
