@@ -8,7 +8,7 @@ uv è il package manager del corso: crea l'ambiente virtuale `.venv`, installa l
 2. Scarica il repository: `git clone https://github.com/AndreaCorvaglia0/python-base-utilities` oppure, da GitHub, **Code → Download ZIP** e scompatta la cartella.
 3. Entra nella cartella (`cd python-base-utilities`) e lancia `uv sync`: crea `.venv` con la versione giusta di Python e tutte le librerie. La prima volta ci vuole un minuto.
 4. Apri la cartella in VS Code: **File → Open Folder**. Servono le estensioni Python e Jupyter.
-5. Apri un notebook e scegli il kernel: in alto a destra **Select Kernel → Python Environments → .venv**.
+5. Apri un notebook e scegli il kernel: in alto a destra **Select Kernel**. Se nel menu c'è già una voce con `.venv` nel nome, scegli quella; altrimenti **Select Another Kernel... → Python Environments...** e scegli la `.venv`.
 6. Verifica in una cella: `import sys` e poi `sys.executable`. Il percorso deve contenere `.venv`; se no, il kernel è sbagliato.
 
 Una libreria in più: nel terminale `uv add nome`, poi **Restart** del kernel, poi `import nome`. Mai `!pip install` dentro il notebook: la libreria non finisce in `pyproject.toml` e al prossimo `uv sync` sparisce.
@@ -57,9 +57,9 @@ Dal terminale, nella cartella del progetto:
 
 | Comando | Cosa fa |
 |---|---|
-| `uvx ruff check script.py` | elenca gli avvisi: file, riga, colonna, codice, messaggio |
-| `uvx ruff format script.py` | riscrive il file nella forma giusta |
-| `uvx ruff check --fix script.py` | corregge quello che sa correggere (gli import inutilizzati, per esempio) |
+| `uv run ruff check script.py` | elenca gli avvisi: file, riga, colonna, codice, messaggio |
+| `uv run ruff format script.py` | riscrive il file nella forma giusta |
+| `uv run ruff check --fix script.py` | corregge quello che sa correggere (gli import inutilizzati, per esempio) |
 
 I tre codici che si vedono più spesso: `F401` import mai usato, `F841` variabile assegnata e mai letta, `E501` riga oltre il limite scritto in `pyproject.toml` (`line-length = 100`). I codici `F` segnalano problemi veri, il codice potrebbe non funzionare; i codici `E` riguardano lo stile.
 
@@ -73,4 +73,5 @@ I tre codici che si vedono più spesso: `F401` import mai usato, `F841` variabil
 | `uv sync` | ricrea `.venv` esattamente come dice `uv.lock` | subito dopo il clone, o se l'ambiente si rompe |
 | `uv run script.py` | esegue uno script dentro `.venv` | lanciare uno script dal terminale |
 | `uv python install 3.13` | scarica una versione di Python | se `uv sync` dice che manca |
-| `uvx ruff check .` | controlla il codice con Ruff senza installarlo nel progetto | prima di passare lo script a un collega |
+| `uv run ruff check .` | controlla il codice con Ruff, che nel progetto del corso è già installato | prima di passare lo script a un collega |
+| `uvx ruff check .` | lancia Ruff al volo, senza aggiungerlo al progetto | su una cartella che non è un progetto uv |

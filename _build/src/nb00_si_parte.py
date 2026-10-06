@@ -14,13 +14,35 @@ def costruisci() -> Notebook:
         obiettivi=[
             "aprire un notebook in VS Code e scegliere il kernel giusto",
             "eseguire celle di codice e celle Markdown, e leggere quello che restituiscono",
-            "dire in due frasi cosa sono Python e le librerie",
+            "dire in due frasi cosa sono Python e le librerie, e perché impararli quando il codice lo scrive un agente",
         ],
         tempo={"base": 40, "avanzata": 30},
         dati=[],
     )
 
     # ------------------------------------------------------------------ 1
+    nb.sezione("Perché Python, se il codice lo scrive un agente", intro="""
+        Oggi il codice lo scrive spesso un agente: Copilot in VS Code, Claude Code, Codex. Scrive in
+        fretta e sbaglia con grande sicurezza. Il lavoro che resta a noi è un altro: dire cosa vogliamo,
+        leggere quello che torna, capire se è giusto, correggere la rotta.
+    """)
+    nb.md("""
+        Per farlo serve sapere come è fatto Python: cosa sono una libreria e un metodo, cosa dice un
+        errore, dove vive il codice e come si lancia. In due giorni scriveremo molto codice a mano: è il
+        modo più rapido per imparare a leggerlo.
+    """)
+    nb.md("""
+        Una riga vera, di quelle che si incontrano ogni giorno:
+
+        ```python
+        letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
+        ```
+
+        Chi è `pd`, cosa fa `read_csv`, cosa sono le cose tra parentesi: oggi stesso, nel notebook sugli
+        oggetti, la leggeremo pezzo per pezzo. Partiamo da dove si scrive.
+    """)
+
+    # ------------------------------------------------------------------ 2
     nb.sezione("Python e le librerie", intro="""
         Python è un linguaggio di programmazione: un modo di scrivere istruzioni che il computer esegue
         una riga dopo l'altra. Per noi vuol dire tre cose: legge i file Excel e i CSV senza aprirli,
@@ -38,7 +60,7 @@ def costruisci() -> Notebook:
         programma che lo apre: VS Code.
     """)
 
-    # ------------------------------------------------------------------ 2
+    # ------------------------------------------------------------------ 3
     nb.sezione("VS Code e il kernel", intro="""
         VS Code è l'editor: il programma in cui si aprono i file, si scrive il codice e si eseguono i
         notebook. Il corso è una cartella: in VS Code si apre con **File → Open Folder**, e da quel
@@ -50,10 +72,11 @@ def costruisci() -> Notebook:
         si vede con il codice colorato e i pulsanti sopra le celle, ci sono già.
     """)
     nb.md("""
-        Il kernel è il Python che esegue le celle. In alto a destra c'è **Select Kernel**: scegli
-        **Python Environments** e poi la voce con `.venv` nel nome. Quello è l'ambiente del corso, con
-        dentro Python e tutte le librerie che servono. Controlliamo subito di aver preso quello giusto:
-        un clic nella cella qui sotto e **Shift+Invio**.
+        Il kernel è il Python che esegue le celle. In alto a destra c'è **Select Kernel**. Se nel menu
+        compare già una voce con `.venv` nel nome, è quella. Se no, **Select Another Kernel... → Python
+        Environments...** e lì trovi la `.venv`. Quello è l'ambiente del corso, con dentro Python e
+        tutte le librerie che servono. Controlliamo subito di aver preso quello giusto: un clic nella
+        cella qui sotto e **Shift+Invio**.
     """)
     nb.code("""
         import sys
@@ -79,7 +102,7 @@ def costruisci() -> Notebook:
         poi tutto il resto.
     """)
 
-    # ------------------------------------------------------------------ 3
+    # ------------------------------------------------------------------ 4
     nb.sezione("Le celle", intro="""
         Un notebook è una sequenza di celle, di due tipi: le celle di codice, che il kernel esegue, e le
         celle Markdown, che contengono testo formattato come questo. Si eseguono una alla volta,
@@ -91,8 +114,8 @@ def costruisci() -> Notebook:
     """)
     nb.code("3 + 4")
     nb.md("""
-        L'ultima riga di una cella, se è un'espressione, viene mostrata sotto: è l'output, e non serve
-        chiedere niente. Diamo un nome al risultato, così possiamo riusarlo.
+        L'ultima riga di una cella, se è un'espressione (un conto o un nome che ha un valore), viene
+        mostrata sotto: è l'output, e non serve chiedere niente. Diamo un nome al risultato, così possiamo riusarlo.
     """)
     nb.code("consumo_kwh = 1480")
     nb.md("""
@@ -102,7 +125,8 @@ def costruisci() -> Notebook:
     nb.code("consumo_kwh")
     nb.md("""
         Un testo si scrive tra virgolette. Per mostrare più cose insieme, o una frase intera, c'è
-        `print`: accetta più valori separati da virgola e li stampa con uno spazio in mezzo.
+        `print`, la prima funzione che incontriamo: un nome e, tra parentesi, i valori da mostrare
+        separati da virgola. Li stampa con uno spazio in mezzo.
     """)
     nb.code("""
         cliente = "Panificio Bianchi"
@@ -129,9 +153,10 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            Un contatore registra una lettura ogni quarto d'ora. Nella cella qui sotto calcola quante
-            letture fa in un giorno (24 ore, 4 letture l'ora), salvale in `letture_giorno` e mostrale
-            come ultima riga. Poi esegui la verifica.
+            Un contatore registra una lettura ogni quarto d'ora. Nella cella qui sotto, al posto dei tre
+            puntini `...`, scrivi il conto delle letture in un giorno (24 ore, 4 letture l'ora): il
+            risultato va in `letture_giorno` e resta come ultima riga. Poi esegui la cella di verifica
+            senza modificarla.
         """,
         starter="""
             letture_giorno = ...
@@ -142,7 +167,7 @@ def costruisci() -> Notebook:
             letture_giorno
         """,
         verifica="""
-            assert letture_giorno == 96, "❌ letture_giorno: le ore di un giorno per le letture in un'ora"
+            assert letture_giorno == 96, "❌ letture_giorno: moltiplica le ore di un giorno per le letture di un'ora"
         """,
     )
     nb.box("ricorda", """
@@ -151,7 +176,7 @@ def costruisci() -> Notebook:
         - Se non torna niente: **Restart**, poi **Run All**.
     """)
 
-    # ------------------------------------------------------------------ 4
+    # ------------------------------------------------------------------ 5
     nb.sezione("Le scorciatoie che servono davvero", intro="""
         Una cella ha due stati: in modifica, quando il cursore è dentro e scriviamo, e selezionata,
         quando è evidenziata e i tasti diventano comandi. **Esc** passa da modifica a selezionata,
@@ -172,7 +197,7 @@ def costruisci() -> Notebook:
         tastiera, niente di più.
     """)
 
-    # ------------------------------------------------------------------ 5
+    # ------------------------------------------------------------------ 6
     nb.sezione("Markdown e i riquadri", intro="""
         Le celle di testo si scrivono in Markdown: testo semplice con qualche segno per la
         formattazione. Le regole che servono stanno in cinque righe, e il modo migliore per vederle è
@@ -185,7 +210,7 @@ def costruisci() -> Notebook:
         - un titolo: `#`, `##` o `###` a inizio riga (meno cancelletti, titolo più grande)
         - il grassetto: due asterischi prima e due dopo, `**così**`
         - un elenco: un trattino e uno spazio a inizio riga
-        - il codice dentro al testo: tra due apici inversi, `` `così` ``
+        - il codice dentro al testo: tra due backtick, `` `così` ``
         - una riga vuota separa i paragrafi
     """)
     nb.md("""
@@ -208,7 +233,7 @@ def costruisci() -> Notebook:
         Un pezzo in più per chi vuole il perché: per gli esercizi non serve.
 
         Quando esegui una cella, VS Code manda il testo al kernel, un processo Python che gira in
-        sottofondo. Il kernel esegue, tiene in memoria le variabili e rimanda l'output, che VS Code
+        background. Il kernel esegue, tiene in memoria le variabili e rimanda l'output, che VS Code
         mostra sotto la cella e salva nel file `.ipynb` insieme al codice. Per questo un notebook
         riaperto il giorno dopo mostra ancora i vecchi output ma non ha più le variabili: il processo
         è finito con la chiusura. Restart fa la stessa cosa a comando.
@@ -217,6 +242,11 @@ def costruisci() -> Notebook:
         Il verde è l'esercizio: un Prova tu in mezzo a una sezione, da due o tre minuti, o un Esercizio
         alla fine del notebook. Sotto al riquadro c'è una cella da completare al posto dei `...` e una
         cella di verifica, da eseguire senza modificare: ✅ se va bene, ❌ e cosa controllare se no.
+    """)
+    nb.md("""
+        Dentro la cella di verifica ci sono righe `assert condizione, "❌ messaggio"`: se la condizione
+        è vera Python passa alla riga dopo, se è falsa si ferma con un `AssertionError` e mostra il
+        messaggio. È lo stesso modo in cui si scrivono i test, anche quelli che genera un agente.
     """)
     nb.prova_tu(
         richiesta="""

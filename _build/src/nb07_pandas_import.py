@@ -32,7 +32,14 @@ def costruisci() -> Notebook:
             ],
         },
         tempo={"base": 80, "avanzata": 120},
-        dati={"base": DATI_COMUNI, "avanzata": DATI_COMUNI + ["fallback/"]},
+        dati={
+            "base": DATI_COMUNI,
+            "avanzata": DATI_COMUNI + [
+                "fallback/meteo_milano_previsione.json",
+                "fallback/lombardia_sensori.json",
+                "fallback/lombardia_misure_2001.json",
+            ],
+        },
     )
 
     # ------------------------------------------------------------------ 1
@@ -91,12 +98,25 @@ def costruisci() -> Notebook:
     """)
     nb.code("consumi.head(3)")
     nb.md("""
+        Una cella mostra da sola solo il valore dell'ultima espressione. Per vedere due tabelle nella stessa
+        cella si usa `display(tabella)`: è come `print`, ma la tabella resta formattata.
+    """)
+    nb.code("""
+        display(consumi.head(2))
+        consumi.tail(2)
+    """)
+    nb.md("""
         `info()` mette insieme tutto: righe, colonne, tipi e quanti valori non mancano. `describe()` fa le
         statistiche di base delle colonne numeriche. Sono le prime due cose da chiamare su un file appena
         aperto.
     """)
     nb.code("consumi.info()")
     nb.code("consumi.describe()")
+    nb.md("""
+        Le righe da guardare sono `count` (quanti valori), `mean` (la media), `50%` (la mediana: metà dei
+        valori sta sotto, metà sopra), `min` e `max`. Se la media e la mediana sono molto lontane, di
+        solito c'è qualche valore anomalo.
+    """)
     nb.md("""
         Su una Series si calcolano direttamente somma, media, massimo: tutta la colonna in un colpo,
         senza ciclo.
@@ -203,9 +223,9 @@ def costruisci() -> Notebook:
     """)
     nb.code('pd.read_csv("../Dati/impianti.csv")', errore=True)
     nb.md("""
-        `FileNotFoundError`: il percorso non porta a nessun file. Nove volte su dieci è un nome scritto
-        male o una cartella di lavoro diversa da quella che pensavamo. `Path.cwd()` e `.exists()` sono i
-        due controlli da fare prima di cercare altrove.
+        `FileNotFoundError`, già incontrato nel notebook sugli errori: il percorso non porta a nessun
+        file. Prima di cercare altrove facciamo due controlli: `Path.cwd()` dice da quale cartella stiamo
+        lavorando, `.exists()` dice se il file c'è.
     """)
     nb.box("nota", """
         Nel resto del corso i percorsi sono stringhe come `"../Dati/impianti_fv.csv"`. `pathlib` serve
@@ -218,6 +238,17 @@ def costruisci() -> Notebook:
         Il CSV è il formato di scambio più comune: testo, una riga per record, un separatore tra i campi.
         `pd.read_csv` lo legge in un DataFrame. Quando il file è pulito basta il nome; quando viene da un
         gestionale italiano, no.
+    """)
+    nb.code("""
+        with open("../Dati/impianti_fv.csv", encoding="utf-8") as f:
+            print(f.readline().strip())
+            print(f.readline().strip())
+    """)
+    nb.md("""
+        Ecco il CSV com'è davvero: righe di testo. La prima contiene i nomi delle colonne, le altre i
+        valori, separati dalla virgola. `open` apre il file e `with ... as f` lo richiude da solo alla fine
+        del blocco: è una forma che troviamo spesso nel codice scritto da un agente. `pd.read_csv` fa
+        questo per tutte le righe e ne fa una tabella.
     """)
     nb.code("""
         impianti = pd.read_csv("../Dati/impianti_fv.csv")
@@ -233,6 +264,27 @@ def costruisci() -> Notebook:
         Potenze da 3 a 200 kWp, anni dal 2011 al 2025. Le colonne di testo non compaiono: `describe()`
         fa statistiche sui numeri.
     """)
+    nb.md("""
+        Capita spesso: chiediamo all'agente una tabella da incollare in chat, e lui scrive
+        `.to_markdown()`. Questa cella dà errore apposta: leggiamo l'ultima riga.
+    """)
+    nb.code("impianti.head().to_markdown()", errore=True)
+    nb.md("""
+        L'errore dice il nome della libreria che manca: `tabulate`. Il consiglio su pip non vale per noi:
+        le librerie le gestisce uv. Nel terminale, nella cartella del corso, scriviamo `uv add tabulate`,
+        poi Restart kernel e infine la cella qui sotto. Il Restart svuota la memoria: per questo la cella
+        reimporta pandas e `Path` e rilegge il file.
+    """)
+    nb.code("""
+        import pandas as pd
+        from pathlib import Path
+
+        impianti = pd.read_csv("../Dati/impianti_fv.csv")
+        print(impianti.head().to_markdown())
+    """, rete=True)
+    nb.md("""
+        Apri `pyproject.toml`: tra le `dependencies` adesso c'è anche `tabulate`.
+    """)
 
     nb.sottosezione("Il CSV del fornitore", intro="""
         Il fornitore ci manda i consumi mensili per fascia (F1, F2, F3) di sei POD. Il file è un'esportazione
@@ -241,7 +293,7 @@ def costruisci() -> Notebook:
     nb.code('pd.read_csv("../Dati/letture_pod_2025.csv")', errore=True)
     nb.md("""
         `UnicodeDecodeError`: pandas prova a leggere il file come UTF-8 e inciampa su un byte che non lo è
-        (la `è` di "Caffè"). I file salvati da Excel su Windows usano un'altra codifica, `latin-1`:
+        (la `è` di "Caffè"). I file salvati da Excel su Windows usano un altro encoding, `latin-1`:
         glielo diciamo con `encoding`.
     """)
     nb.code("""
@@ -372,7 +424,8 @@ def costruisci() -> Notebook:
     nb.box("ricorda", """
         - CSV italiano: `sep=";"`, `decimal=","`, e `encoding="latin-1"` solo dopo l'errore.
         - Appena letto: `dtypes`. Un numero letto come `str` non si somma.
-        - Si salva con `to_csv("nome.csv", index=False)`.
+        - Un file si guarda come testo con `with open(p, encoding="utf-8") as f:` e `f.readline()`; si
+          salva con `to_csv("nome.csv", index=False)`.
     """)
 
     # ------------------------------------------------------------------ 4
@@ -465,9 +518,10 @@ def costruisci() -> Notebook:
     """)
     nb.code("carico.tail(3)")
     nb.md("""
-        Due cose che ci serviranno più avanti: il file è in ordine inverso (parte dal 31 dicembre e finisce
-        il 1° gennaio) e i valori sono in MW, cioè la potenza media del quarto d'ora. Per l'energia in MWh
-        si divide per 4: un quarto d'ora a 100 MW sono 25 MWh.
+        Tre cose che ci serviranno più avanti: il passo è di un quarto d'ora anche se il nome del file dice
+        `hourly` (vale quello che vediamo nei dati, non il nome); il file è in ordine inverso (parte dal 31
+        dicembre e finisce il 1° gennaio); i valori sono in MW, cioè la potenza media del quarto d'ora. Per
+        l'energia in MWh si divide per 4: un quarto d'ora a 100 MW sono 25 MWh.
     """)
     nb.box("nota", """
         Per leggere e scrivere `.xlsx` pandas si appoggia alla libreria `openpyxl`, già nel progetto. Se in
@@ -492,9 +546,10 @@ def costruisci() -> Notebook:
         pd.read_sql("SELECT name FROM sqlite_master WHERE type = 'table'", con)
     """)
     nb.md("""
-        Tre tabelle: `clienti`, `pod` e `letture`. `pd.read_sql` prende una query e la connessione, e
-        restituisce un DataFrame. `SELECT * FROM letture` vuol dire: tutte le colonne, tutte le righe
-        della tabella.
+        `sqlite_master` è la tabella in cui SQLite tiene l'elenco di quello che contiene: con questa query
+        scopriamo le tabelle di un database che non conosciamo. Sono tre: `clienti`, `pod` e `letture`.
+        `pd.read_sql` prende una query e la connessione, e restituisce un DataFrame. `SELECT * FROM
+        letture` vuol dire: tutte le colonne, tutte le righe della tabella.
     """)
     nb.code("""
         letture_db = pd.read_sql("SELECT * FROM letture", con)
@@ -509,7 +564,9 @@ def costruisci() -> Notebook:
     nb.code('pd.read_sql("SELECT * FROM pod WHERE potenza_kw >= 30", con)')
     nb.md("""
         Il database sa anche unire le tabelle: `JOIN` affianca a ogni POD il suo cliente, usando la
-        colonna che hanno in comune, `id_cliente`. Gli alias `p` e `c` servono solo a scrivere meno.
+        colonna che hanno in comune, `id_cliente`. Gli alias `p` e `c` servono solo a scrivere meno. La
+        query è una stringa normale tra tre virgolette, come la docstring: così può andare su più righe e
+        si legge meglio.
     """)
     nb.code('''
         query = """
@@ -578,7 +635,7 @@ def costruisci() -> Notebook:
             200 vuol dire che è andata. I codici che iniziano per 4 sono errori nostri (parametro
             sbagliato, 404 indirizzo inesistente), quelli per 5 sono problemi del server. `timeout=30`
             evita che la cella resti appesa per sempre se il server non risponde. L'URL completo, con i
-            parametri codificati, è in `response.url`.
+            parametri messi dopo il `?`, è in `response.url`.
         """)
         nb.code("response.url", rete=True)
         nb.md("""
@@ -601,9 +658,9 @@ def costruisci() -> Notebook:
             dati.keys()
         """, rete=True)
         nb.md("""
-            Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: legge la stessa
-            risposta, salvata in un file. `with open(...) as f` apre il file e lo chiude alla fine del
-            blocco; `json.load` lo trasforma come farebbe `.json()`.
+            Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: legge una risposta
+            di esempio, salvata in un file di riserva. `with open(...) as f` apre il file e lo chiude alla
+            fine del blocco; `json.load` lo trasforma come farebbe `.json()`.
         """)
         nb.code("""
             import json
@@ -695,7 +752,8 @@ def costruisci() -> Notebook:
             sensori.head()
         """, rete=True)
         nb.md("""
-            Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra.
+            Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: il file di riserva
+            contiene dati di esempio.
         """)
         nb.code("""
             file_sensori = Path("../Dati/fallback/lombardia_sensori.json")
@@ -741,8 +799,8 @@ def costruisci() -> Notebook:
             misure.head()
         """, rete=True)
         nb.md("""
-            Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: contiene tutto lo
-            storico salvato del sensore, settimana compresa.
+            Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: il file di riserva
+            contiene dati di esempio, con tutto lo storico del sensore, settimana compresa.
         """)
         nb.code("""
             file_misure = Path("../Dati/fallback/lombardia_misure_2001.json")
@@ -817,7 +875,7 @@ def costruisci() -> Notebook:
         """, rete=True)
         nb.md("""
             Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: fa gli stessi passi
-            della funzione sullo storico salvato del sensore.
+            della funzione sui dati di esempio del file di riserva.
         """)
         nb.code("""
             if file_misure.exists():
@@ -1075,8 +1133,9 @@ def costruisci() -> Notebook:
         richiesta="""
             1. Apri la connessione a `../Dati/utility.db` in `con`.
             2. Con `pd.read_sql` e `WHERE`, prendi la riga di quel POD dalla tabella `pod` in `scheda_pod` e
-               leggi il suo `id_cliente`.
-            3. Con un'altra query prendi il cliente dalla tabella `clienti` in `scheda_cliente`.
+               guarda nella tabella stampata il suo `id_cliente`.
+            3. Con un'altra query prendi il cliente dalla tabella `clienti` in `scheda_cliente`, scrivendo
+               nel `WHERE` il numero che hai letto (è un numero: senza apici).
             4. Prendi tutte le letture di quel POD in `letture_pod`, poi metti in `n_letture` quante sono e
                in `kwh_marzo` la somma dei kWh, arrotondata a un decimale.
             5. Chiudi la connessione.
@@ -1118,7 +1177,7 @@ def costruisci() -> Notebook:
         """,
         verifica="""
             assert list(scheda_pod["id_cliente"]) == [9], "❌ scheda_pod: una sola riga, quella del POD cercato, con id_cliente 9"
-            assert set(scheda_cliente["ragione_sociale"]) == {"Farmacia San Marco"}, "❌ scheda_cliente: il WHERE va sull'id_cliente letto in scheda_pod"
+            assert set(scheda_cliente["ragione_sociale"]) == {"Farmacia San Marco"}, "❌ scheda_cliente: nel WHERE scrivi l'id_cliente che vedi in scheda_pod, senza apici"
             assert n_letture == 31, "❌ n_letture: marzo ha 31 giorni, una lettura al giorno"
             assert kwh_marzo == 3094.4, "❌ kwh_marzo: somma della colonna kwh di letture_pod, a un decimale"
         """,

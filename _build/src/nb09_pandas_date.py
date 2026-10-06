@@ -14,7 +14,7 @@ def costruisci() -> Notebook:
         obiettivi={
             "base": [
                 "trasformare testo in date e interrogarle con `.dt`",
-                "usare il tempo come indice per selezionare periodi",
+                "usare il tempo come indice per selezionare periodi e cambiare passo con `resample`",
                 "riconoscere buchi, duplicati e ora legale in una serie temporale",
             ],
             "avanzata": [
@@ -23,7 +23,7 @@ def costruisci() -> Notebook:
                 "cambiare granularità con `resample` e costruire lag e medie mobili con `shift` e `rolling`",
             ],
         },
-        tempo={"base": 70, "avanzata": 90},
+        tempo={"base": 80, "avanzata": 90},
         dati=["prezzi_zonali_2025_settimana.csv", "load_total_north_hourly_2024.xlsx",
               "load_total_north_hourly_2025.xlsx", "TexasTurbine.csv"],
     )
@@ -402,7 +402,8 @@ def costruisci() -> Notebook:
         nb.md("""
             `There are 4 dst switches when there should only be 1`: pandas vede quattro passaggi
             dall'ora legale alla solare dove ne aspetta uno. Sull'indice pulito l'ambiguità resta, ma la
-            decidiamo noi: `ambiguous="NaT"` marca come mancanti le quattro ore incerte.
+            decidiamo noi: `ambiguous="NaT"` marca come mancanti i quattro quartorari incerti, cioè
+            l'ora che a ottobre esiste due volte.
         """)
         nb.code("""
             indice_locale = carico.index.tz_localize("Europe/Rome", ambiguous="NaT")
@@ -443,6 +444,15 @@ def costruisci() -> Notebook:
         print(durata / pd.Timedelta("1h"))
     """)
     nb.md("""
+        Il verso opposto di `to_datetime` è `strftime`: da data a testo, con gli stessi codici. Serve per i
+        nomi dei file e per le API, che vogliono `2024-01-01`. Dentro un'f-string si scrive dopo i due punti.
+    """)
+    nb.code("""
+        primo = carico.index.min()
+        print(primo.strftime("%Y-%m-%d"))
+        print(f"Dal {primo:%d/%m/%Y}")
+    """)
+    nb.md("""
         Una durata si somma a una data. Comodo per "una settimana dopo", e istruttivo sulla notte del
         31 marzo: pandas non sa che quelle 2:00 non sono mai esistite, per lui è un orologio e basta.
     """)
@@ -470,20 +480,29 @@ def costruisci() -> Notebook:
         """,
     )
 
-    # ------------------------------------------------------------------ 7 (A)
+    # ------------------------------------------------------------------ 7
+    nb.sezione("Cambiare passo: resample", intro="""
+        `resample` cambia il passo di una serie: da quarti d'ora a ore, a giorni, a settimane. È un
+        `groupby` sul tempo, e vuole il tempo nell'indice. Dopo il `resample` si dice cosa fare dei
+        valori raggruppati: `mean()`, `sum()`, `max()`.
+    """)
+    nb.code("""
+        mw = carico["Total Load [MW]"]
+        orario = mw.resample("h").mean()
+        orario.head()
+    """)
+    nb.md("""
+        Da MW a MWh. Ogni riga è una potenza media su un quarto d'ora, quindi vale un quarto di MWh
+        per MW: l'energia di un giorno è la somma dei 96 valori divisa per 4.
+    """)
+    nb.code("""
+        energia_giorno = mw.resample("D").sum() / 4
+        energia_giorno.head()
+    """)
+
     with nb.solo("avanzata"):
-        nb.sezione("Cambiare passo: resample", intro="""
-            `resample` cambia il passo di una serie: da quarti d'ora a ore, a giorni, a settimane. È un
-            `groupby` sul tempo, e vuole il tempo nell'indice. Dopo il `resample` si dice cosa fare dei
-            valori raggruppati: `mean()`, `sum()`, `max()`.
-        """)
-        nb.code("""
-            mw = carico["Total Load [MW]"]
-            orario = mw.resample("h").mean()
-            orario.head()
-        """)
         nb.md("""
-            Attenzione a non confonderlo con il profilo orario. `resample("h")` risponde a "quanto valeva
+            Attenzione a non confondere `resample` con il profilo orario. `resample("h")` risponde a "quanto valeva
             il carico in ogni singola ora dell'anno" (8784 valori); `groupby` sull'ora risponde a "quanto
             vale in media alle 8, alle 9, alle 10" (24 valori). Sull'indice l'ora si legge con `.hour`,
             senza `.dt`, che è per le colonne.
@@ -491,14 +510,6 @@ def costruisci() -> Notebook:
         nb.code("""
             profilo_carico = carico.groupby(carico.index.hour)["Total Load [MW]"].mean()
             profilo_carico.round(0)
-        """)
-        nb.md("""
-            Da MW a MWh. Ogni riga è una potenza media su un quarto d'ora, quindi vale un quarto di MWh
-            per MW: l'energia di un giorno è la somma dei 96 valori divisa per 4.
-        """)
-        nb.code("""
-            energia_giorno = mw.resample("D").sum() / 4
-            energia_giorno.head()
         """)
         nb.code("""
             print(f"Giorno di massimo consumo: {energia_giorno.idxmax():%d/%m/%Y}, {energia_giorno.max():,.0f} MWh")
@@ -509,11 +520,12 @@ def costruisci() -> Notebook:
             dorme. Il 31 marzo ha 92 quarti d'ora e il 27 ottobre ne avrebbe 100: la somma di quei due
             giorni è sbagliata di un'ora. Su un report annuale è rumore, su un bilancio orario no.
         """)
-        nb.box("nota", """
-            I passi si scrivono con sigle: `"15min"`, `"h"`, `"D"`, `"W"` (settimane che chiudono la
-            domenica), `"ME"` (fine mese), `"YE"` (fine anno). Minuscole e maiuscole contano.
-        """)
+    nb.box("nota", """
+        I passi si scrivono con sigle: `"15min"`, `"h"`, `"D"`, `"W"` (settimane che chiudono la
+        domenica), `"ME"` (fine mese), `"YE"` (fine anno). Minuscole e maiuscole contano.
+    """)
 
+    with nb.solo("avanzata"):
         # -------------------------------------------------------------- 8 (A)
         nb.sezione("Spostare e lisciare: shift e rolling", intro="""
             `shift(n)` sposta la serie di `n` righe, non di `n` ore: con il quartorario un'ora sono 4
@@ -562,7 +574,7 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="La settimana dei prezzi",
         scenario="""
-            Il collega del trading ha ricevuto i prezzi zonali della settimana e vuole due cose: a che
+            Sara, del trading, ha ricevuto i prezzi zonali della settimana e vuole due cose: a che
             ora del giorno l'energia costa di più, in media, e perché "nel NORD mancano due righe". Finora
             apriva il CSV in Excel e contava a mano.
         """,
@@ -611,7 +623,7 @@ def costruisci() -> Notebook:
         titolo="Il mese della turbina",
         bis=True,
         scenario="""
-            La collega che segue l'eolico vuole la produzione mensile della turbina texana per la
+            Elena, che segue l'eolico, vuole la produzione mensile della turbina texana per la
             relazione annuale. Il file ha il timestamp senza anno e la potenza oraria in kW: su un passo
             orario, un kW medio per un'ora è un kWh.
         """,
@@ -695,6 +707,30 @@ def costruisci() -> Notebook:
             assert n_righe_pulite == 35132, "❌ n_righe_pulite: dopo drop_duplicates(subset='Date') restano 35136 - 4 righe"
         """,
         perche="Il conteggio per giorno va fatto prima di `drop_duplicates`, altrimenti il 27 ottobre torna a 96 e il problema sparisce dalla vista. Pulire e verificare sono due passi, in quest'ordine: verifica, poi pulisci.",
+        passo_in_piu=dict(
+            testo="""
+                Ora che il file è pulito si può aggregare. Metti in `mw` la colonna `Total Load [MW]` con
+                la data nell'indice. In `giornaliero` calcola il carico medio di ogni giorno con `resample`,
+                e in `giorno_top` metti il giorno con la media più alta.
+            """,
+            starter="""
+                mw = ...
+                giornaliero = ...
+                giorno_top = ...
+                print(len(giornaliero), giorno_top, round(giornaliero.max()))
+            """,
+            soluzione="""
+                mw = carico.set_index("Date")["Total Load [MW]"]
+                giornaliero = mw.resample("D").mean()
+                giorno_top = giornaliero.idxmax()
+                print(len(giornaliero), giorno_top, round(giornaliero.max()))
+            """,
+            verifica="""
+                assert len(giornaliero) == 366, "❌ giornaliero: resample('D') su un anno bisestile dà 366 valori"
+                assert round(giornaliero.max()) == 26869, "❌ giornaliero: media (non somma) per giorno, in MW"
+                assert str(giorno_top)[:10] == "2024-07-17", "❌ giorno_top: il 17 luglio; usa idxmax() sulla media giornaliera"
+            """,
+        ),
     )
     nb.esercizio(
         titolo="Il 2025, stessa storia",

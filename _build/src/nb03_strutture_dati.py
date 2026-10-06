@@ -77,10 +77,10 @@ def costruisci() -> Notebook:
     """)
 
     nb.sottosezione("Indici e slicing", intro="""
-        Per prendere un elemento si scrive la sua posizione tra quadre. Python conta da zero: il
-        primo elemento è in posizione 0, l'ultimo in posizione `len - 1`. I numeri negativi contano
-        da destra, e `-1` è sempre l'ultimo. Questo schema vale per tutto il corso, dalle liste alle
-        righe di una tabella.
+        Per prendere un elemento si scrive la sua posizione tra quadre. Quel numero si chiama
+        indice. Python conta da zero: il primo elemento ha indice 0, l'ultimo `len - 1`. I numeri
+        negativi contano da destra, e `-1` è sempre l'ultimo. Questo schema vale per tutto il corso,
+        dalle liste alle righe di una tabella.
     """)
     nb.md("```text\n" + SCHEMA_INDICI + "\n```")
     nb.code("""
@@ -162,7 +162,8 @@ def costruisci() -> Notebook:
     """)
     nb.box("attenzione", """
         `letture_kwh = letture_kwh.append(13.2)` è il modo più rapido per perdere una lista:
-        `append` modifica sul posto e restituisce `None`, che finisce in `letture_kwh`. I metodi
+        `append` modifica sul posto e restituisce `None` (il "niente" di Python), che finisce in
+        `letture_kwh`. I metodi
         delle liste si chiamano senza `=`; con pandas sarà il contrario, lì si riassegna sempre.
     """)
     nb.box("nota", """
@@ -171,29 +172,30 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            In `letture_kwh` manca l'ultima lettura della giornata, 13.2. Aggiungila in coda, poi
-            calcola `media` (arrotondata a due decimali) e `massimo`.
+            In `letture_kwh` manca l'ultima lettura della giornata, 13.2. Aggiungila in coda con
+            `append`, poi metti in `n_letture` quante letture ci sono adesso e in `ultima` l'ultima
+            lettura della lista.
         """,
         starter="""
             letture_kwh = [12.4, 15.1, 14.9, 13.0, 11.7, 12.9]
 
             ...
-            media = ...
-            massimo = ...
-            print(media, massimo)
+            n_letture = ...
+            ultima = ...
+            print(n_letture, ultima)
         """,
         soluzione="""
             letture_kwh = [12.4, 15.1, 14.9, 13.0, 11.7, 12.9]
 
             letture_kwh.append(13.2)
-            media = round(sum(letture_kwh) / len(letture_kwh), 2)
-            massimo = max(letture_kwh)
-            print(media, massimo)
+            n_letture = len(letture_kwh)
+            ultima = letture_kwh[-1]
+            print(n_letture, ultima)
         """,
         verifica="""
-            assert len(letture_kwh) == 7 and letture_kwh[-1] == 13.2, "❌ letture_kwh: aggiungi 13.2 in coda con append"
-            assert media == 13.31, "❌ media: somma diviso numero di letture, due decimali"
-            assert massimo == 15.1, "❌ massimo: la lettura più alta"
+            assert letture_kwh == [12.4, 15.1, 14.9, 13.0, 11.7, 12.9, 13.2], "❌ letture_kwh: aggiungi 13.2 in coda con append, una volta sola"
+            assert n_letture == 7, "❌ n_letture: len della lista dopo l'aggiunta"
+            assert ultima == 13.2, "❌ ultima: l'ultimo elemento si prende con l'indice -1"
         """,
     )
 
@@ -226,6 +228,30 @@ def costruisci() -> Notebook:
         Funziona, ma `[1][2]` non dice niente a chi legge. Per le tabelle useremo i DataFrame di
         pandas, dove le colonne hanno un nome: ci arriviamo nel notebook sui DataFrame.
     """)
+    nb.prova_tu(
+        richiesta="""
+            In `letture_kwh` ci sono le sette letture della giornata. Calcola `media` (arrotondata
+            a due decimali) e `massimo`.
+        """,
+        starter="""
+            letture_kwh = [12.4, 15.1, 14.9, 13.0, 11.7, 12.9, 13.2]
+
+            media = ...
+            massimo = ...
+            print(media, massimo)
+        """,
+        soluzione="""
+            letture_kwh = [12.4, 15.1, 14.9, 13.0, 11.7, 12.9, 13.2]
+
+            media = round(sum(letture_kwh) / len(letture_kwh), 2)
+            massimo = max(letture_kwh)
+            print(media, massimo)
+        """,
+        verifica="""
+            assert media == 13.31, "❌ media: somma diviso numero di letture, due decimali"
+            assert massimo == 15.1, "❌ massimo: la lettura più alta"
+        """,
+    )
     nb.box("ricorda", """
         - Si conta da 0: il primo elemento è `[0]`, l'ultimo è `[-1]`.
         - In `[a:b]` l'inizio è compreso e la fine esclusa: `b - a` elementi.
@@ -252,8 +278,8 @@ def costruisci() -> Notebook:
     nb.code("coordinate[0] = 46.0", errore=True)
     nb.md("""
         `TypeError: 'tuple' object does not support item assignment`: la tupla non accetta
-        assegnazioni. È una garanzia, non un limite: nessuno sposta Milano per sbaglio a metà di
-        un'analisi. Quando un valore deve poter cambiare, si usa una lista.
+        assegnazioni. È voluto: così nessuno sposta Milano per sbaglio a metà di un'analisi.
+        Quando un valore deve poter cambiare, si usa una lista.
     """)
     nb.md("""
         Una tupla si spacchetta: a sinistra dell'uguale tanti nomi quanti sono gli elementi, e ognuno
@@ -319,7 +345,7 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         print(cliente.get("comune"))           # Output: Monza
-        print(cliente.get("tensione"))         # Output: None   (la chiave non c'è: nessun errore)
+        print(cliente.get("tensione"))         # Output: None   (il "niente" di Python: la chiave non c'è, e nessun errore)
         print(cliente.get("tensione", "BT"))   # Output: BT     (il valore di riserva)
     """)
     nb.md("""
@@ -497,10 +523,8 @@ def costruisci() -> Notebook:
         scenario="""
             Siamo nell'ufficio misure. Ogni mattina arrivano le 24 letture orarie, in kWh, della
             cabina del polo logistico di Lodi: la lettura delle 0 in posizione 0, quella delle 23 in
-            posizione 23. Il collega vuole totale, media e picco della fascia F1, e oggi conta le
-            celle in Excel con il dito. Le fasce orarie sono i tre prezzi della bolletta secondo
-            l'ora: F1 lunedì-venerdì 8-19, F2 lunedì-venerdì 7-8 e 19-23 più il sabato 7-23, F3
-            notte, domenica e festivi.
+            posizione 23. Il collega vuole totale, media e picco della fascia F1, quella di punta in
+            bolletta: nei giorni feriali va dalle 8 alle 19.
         """,
         richiesta="""
             È un giorno feriale.

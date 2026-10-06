@@ -49,6 +49,8 @@ letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",")
 | `yield` | generatore | una funzione che restituisce un elemento alla volta invece di una lista intera | |
 | `async def` / `await` | codice asincrono | si legge come una funzione normale con una parola in più; nelle analisi dati è raro | |
 | `None` | il valore "niente" | default dei parametri facoltativi; quel che restituisce una funzione senza `return` | `if fasce is not None:` |
+| `x is None`, `x is not None` | controllo del niente | per `None` si usa `is`, non `==`; nel codice degli agenti è il modo di dire "se il parametro è stato passato" | `if fasce is not None:` |
+| `assert condizione, "❌ messaggio"` | verifica | se la condizione è falsa si ferma con `AssertionError` e mostra il messaggio; è così che sono scritti i test, anche quelli generati da un agente | le celle di verifica del corso |
 | `__file__`, `__name__`, `__version__` | nomi speciali | li mette Python; `__file__` esiste solo negli script, in una cella dà `NameError` | |
 
 ## Come si legge uno script

@@ -11,7 +11,6 @@
 | `utility.db` | Database SQLite con le tabelle `clienti`, `pod`, `letture` | dati di esempio, inventati |
 | `prezzi_zonali_2025_settimana.csv` | Prezzi orari per zona di mercato, una settimana | dati di esempio, inventati |
 | `homework/letture_marzo.csv` | Letture giornaliere di marzo 2025 di otto POD, formato "italiano" (`;` e virgola decimale), con una lettura ×10 il 12 marzo per il POD IT001E31047092 | dati di esempio, inventati (homework) |
-| `homework/letture_aprile.csv` | Stesse colonne, aprile 2025, senza anomalie: serve per unire più file | dati di esempio, inventati (homework) |
 | `homework/clienti.xlsx` | Due fogli: `Anagrafica` (pod, cliente, comune) e `Listino` (fascia, eur_kwh) | dati di esempio, inventati (homework) |
 | `homework/anagrafica.db` | Database SQLite con la tabella `pod` (pod, cliente, potenza_kw) | dati di esempio, inventati (homework) |
 | `fallback/meteo_milano_2024_2025.json` | Risposta di Open-Meteo (archivio): temperatura oraria a Milano, 2024-2025, 17544 ore | dati di esempio, generati da `_build/genera_dati.py` con lo stesso schema dell'API; `uv run python _build/scarica_fallback.py` li sostituisce con i dati veri |

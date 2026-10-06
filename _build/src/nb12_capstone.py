@@ -52,11 +52,6 @@ def costruisci() -> Notebook:
         il meccanismo; per il dettaglio, dove può sistemare titoli ed etichette; in chat, quando qualcosa
         non torna. Le verifiche controllano forma e intervalli: il resto lo controlli tu, guardando l'output.
     """)
-    nb.md("""
-        Lungo la strada scopriremo la frequenza vera dei dati, quanti picchi ha una giornata, di quanto
-        cala il weekend, se al Nord pesa più il caldo o il freddo, che forma ha la relazione tra carico e
-        temperatura e cosa combina l'ora legale due volte l'anno.
-    """)
 
     # ------------------------------------------------------------------ 1
     nb.sezione("I dati di Terna", intro=f"""
@@ -81,8 +76,8 @@ def costruisci() -> Notebook:
         carico.info()
     """
     verifica_1 = """
-        assert set(carico.columns) == {"data", "mw"}, "❌ carico: due colonne sole, data e mw"
-        assert len(carico) == 70176, "❌ carico: 70176 righe, i due anni uno sotto l'altro senza togliere nulla per ora"
+        assert set(carico.columns) == {"data", "mw"}, "❌ carico: due colonne sole, data e mw. Se vedi anche index, a reset_index manca drop=True"
+        assert len(carico) == 70176, "❌ carico: 70.176 righe, i due anni uno sotto l'altro senza togliere nulla per ora"
         assert str(carico["data"].dtype).startswith("datetime64"), "❌ La colonna data deve essere datetime"
         assert carico["data"].is_monotonic_increasing, "❌ Ordina per data: i file arrivano al contrario"
     """
@@ -96,8 +91,8 @@ def costruisci() -> Notebook:
                 2. Mettili uno sotto l'altro in `carico` con `pd.concat`, indice rifatto da 0.
                 3. Togli le colonne `Forecast Total Load [MW]` e `Bidding Zone`; rinomina `Date` in `data` e
                    `Total Load [MW]` in `mw`.
-                4. Assicurati che `data` sia datetime, ordina per `data` e rifai l'indice. Chiudi con
-                   `carico.info()`.
+                4. Assicurati che `data` sia datetime, ordina per `data` e rifai l'indice da 0 con
+                   `reset_index(drop=True)`, come nel notebook sulle operazioni. Chiudi con `carico.info()`.
             """,
             suggerimento="`read_excel` legge le date già come datetime; `to_datetime` qui è una cintura di sicurezza.",
             starter="""
@@ -113,7 +108,7 @@ def costruisci() -> Notebook:
                 # 3. solo data e carico, con nomi corti
                 carico = carico.drop(columns=[...])
                 carico = carico.rename(columns={...})
-                # 4. date vere, ordine cronologico, indice da 0
+                # 4. date vere, ordine cronologico, indice da 0 (reset_index con drop=True)
                 carico["data"] = pd.to_datetime(carico["data"])
                 carico = ...
                 carico.info()
@@ -123,7 +118,7 @@ def costruisci() -> Notebook:
             richiesta="""
                 Costruisci `carico`: i due anni in una tabella sola, due colonne `data` (datetime) e `mw`,
                 righe in ordine cronologico con indice da 0, senza il forecast e la zona.
-                Risultato atteso: `carico.info()` con 70176 righe e due colonne.
+                Risultato atteso: `carico.info()` con 70.176 righe e due colonne.
             """,
             starter="""
                 import pandas as pd
@@ -177,7 +172,7 @@ def costruisci() -> Notebook:
         duplicati = carico[mask_doppi]
         display(duplicati)
 
-        quartorari_giorno = carico.groupby(carico["data"].dt.date).size()
+        quartorari_giorno = carico["data"].dt.date.value_counts().sort_index()
         giorni_strani = quartorari_giorno[quartorari_giorno != 96]
         display(giorni_strani)
 
@@ -187,8 +182,8 @@ def costruisci() -> Notebook:
     """
     verifica_2 = """
         assert len(duplicati) == 16, "❌ duplicati: 16 righe, cioè 4 timestamp doppi per anno in 2 copie (keep=False le tiene tutte)"
-        assert set(pd.to_datetime(list(giorni_strani.index)).strftime("%Y-%m-%d")) == {"2024-03-31", "2024-10-27", "2025-03-30", "2025-10-26"}, "❌ giorni_strani: le ultime domeniche di marzo e di ottobre dei due anni"
-        assert len(carico) == 70168, "❌ carico: 70176 righe meno gli 8 duplicati"
+        assert set(pd.to_datetime(list(giorni_strani.index)).strftime("%Y-%m-%d")) == {"2024-03-31", "2024-10-27", "2025-03-30", "2025-10-26"}, "❌ giorni_strani: filtra la Series quartorari_giorno (niente lista); attese le ultime domeniche di marzo e di ottobre dei due anni"
+        assert len(carico) == 70168, "❌ carico: 70.176 righe meno gli 8 duplicati"
         assert carico["data"].duplicated().sum() == 0, "❌ Ci sono ancora timestamp ripetuti"
         assert carico["mw"].isna().sum() == 0, "❌ Non dovrebbero esserci valori mancanti"
     """
@@ -215,7 +210,7 @@ def costruisci() -> Notebook:
                 display(duplicati)
 
                 # 2. quanti quartorari ha ogni giorno? uno normale ne ha 96
-                quartorari_giorno = carico.groupby(carico["data"].dt.date).size()
+                quartorari_giorno = carico["data"].dt.date.value_counts().sort_index()
                 giorni_strani = quartorari_giorno[...]
                 display(giorni_strani)
 
@@ -228,11 +223,12 @@ def costruisci() -> Notebook:
         ),
         avanzata=dict(
             richiesta="""
-                Trova i timestamp ripetuti in `duplicati` (tutte le copie) e, in `giorni_strani`, i giorni
-                che non hanno 96 quartorari (`quartorari_giorno` è il conteggio per giorno). Poi lascia in
-                `carico` una riga per timestamp, indice da 0, e conta i valori mancanti.
+                Trova i timestamp ripetuti in `duplicati` (tutte le copie) e in `giorni_strani` tieni solo
+                la parte di `quartorari_giorno` (il conteggio per giorno) diversa da 96: una Series, con i
+                giorni nell'indice. Poi lascia in `carico` una riga per timestamp, indice da 0, e conta i
+                valori mancanti.
                 Risultato atteso: 16 righe in `duplicati` (8 timestamp, due copie ciascuno), 4 giorni
-                strani, 70168 righe pulite, zero valori mancanti.
+                strani, 70.168 righe pulite, zero valori mancanti.
                 Domanda: perché proprio quei quattro giorni, e perché il buco di marzo non va riempito?
             """,
             starter="""
@@ -245,7 +241,8 @@ def costruisci() -> Notebook:
             """,
             bloccato="""
                 `duplicated(keep=False)` segna tutte le copie, `drop_duplicates(subset="data")` tiene la
-                prima. Per contare per giorno: `groupby(carico["data"].dt.date).size()`.
+                prima. Per contare per giorno: `carico["data"].dt.date.value_counts()`, come nell'esercizio
+                "Terna, ma pulita" del notebook sulle date.
             """,
         ),
     )
@@ -256,18 +253,19 @@ def costruisci() -> Notebook:
         """)
         nb.code('carico["data"].dt.tz_localize("Europe/Rome", ambiguous="infer")', errore=True)
         nb.md("""
-            `AmbiguousTimeError`: nel fuso italiano le 2:00 dell'ultima domenica di ottobre esistono due
-            volte, e dalla copia rimasta pandas non capisce quale delle due sia. Per questa analisi basta
-            l'ora locale, senza fuso: i doppioni li abbiamo già tolti e il resto lo lasciamo stare.
+            L'ultima riga dice `ValueError` e cita le 2:00 del 27 ottobre 2024: nel fuso italiano le 2:00
+            dell'ultima domenica di ottobre esistono due volte, e dalla copia rimasta pandas non capisce
+            quale delle due sia. Per questa analisi basta l'ora locale, senza fuso: i doppioni li abbiamo
+            già tolti e il resto lo lasciamo stare.
         """)
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Un anno in un grafico", intro=f"""
         {DA_SOLI}
 
-        Settantamila punti non si guardano: li raggruppiamo per giorno. `resample("D")` lavora su un
-        indice temporale e raggruppa per giorno di calendario, come un `groupby` che sa che i giorni sono
-        consecutivi; il risultato ha la data come indice e `reset_index()` la riporta colonna.
+        Settantamila punti non si guardano: li raggruppiamo per giorno. `resample("D")` lo abbiamo già
+        usato sul 2024: vuole il tempo nell'indice e raggruppa per giorno di calendario; il risultato ha
+        la data come indice e `reset_index()` la riporta colonna.
     """)
     soluzione_3 = """
         indice_tempo = carico.set_index("data")
@@ -481,11 +479,12 @@ def costruisci() -> Notebook:
         nb.md("""
             La funzione qui sotto è già scritta: leggiamola prima di usarla. Dentro c'è la chiamata all'API
             con `requests` e un `try/except` come quello del notebook sugli errori: se la rete non risponde,
-            legge la copia salvata in `../Dati/fallback/`. Restituisce la parte `hourly` della risposta: un
-            dizionario con due liste, pronto per `pd.DataFrame`.
+            legge il file di riserva in `../Dati/fallback/`, con dati di esempio. Restituisce la parte
+            `hourly` della risposta: un dizionario con due liste, pronto per `pd.DataFrame`.
         """)
         nb.code("""
             import json
+            from pathlib import Path
 
             import requests
         """)
@@ -498,12 +497,12 @@ def costruisci() -> Notebook:
                 try:
                     response = requests.get(url, params=params, timeout=30)
                     response.raise_for_status()
-                    risposta = response.json()
+                    return response.json()["hourly"]
                 except requests.RequestException:
-                    print("API non raggiungibile: uso la copia in ../Dati/fallback/")
-                    with open("../Dati/fallback/meteo_milano_2024_2025.json", encoding="utf-8") as f:
-                        risposta = json.load(f)
-                return risposta["hourly"]
+                    file_meteo = Path("../Dati/fallback/meteo_milano_2024_2025.json")
+                    print(f"API non raggiungibile: uso i dati di esempio di {file_meteo}")
+                    with open(file_meteo, encoding="utf-8") as f:
+                        return json.load(f)["hourly"]
         """)
     soluzione_5_base = """
         inizio = carico["data"].min().strftime("%Y-%m-%d")
@@ -542,12 +541,12 @@ def costruisci() -> Notebook:
     verifica_5 = """
         assert set(meteo.columns) == {"data", "temperatura"}, "❌ meteo: due colonne, data e temperatura"
         assert str(meteo["data"].dtype).startswith("datetime64"), "❌ meteo: la colonna data deve essere datetime"
-        assert len(meteo) == 17544, "❌ meteo: un valore per ogni ora dei due anni, 17544"
+        assert len(meteo) == 17544, "❌ meteo: un valore per ogni ora dei due anni, 17.544"
         assert meteo["temperatura"].between(-15, 45).all(), "❌ meteo: temperature fuori da ogni plausibilità per Milano"
     """
     nb.esercizio(
-        titolo="Scaricare la temperatura", aula="base", rete=True,
-        scenario="Due anni di temperatura oraria: 17544 valori. Prima di unirli al carico, guardiamoli.",
+        titolo="Scaricare la temperatura", aula="base",
+        scenario="Due anni di temperatura oraria: 17.544 valori. Prima di unirli al carico, guardiamoli.",
         richiesta="""
             1. Ricava `inizio` e `fine` dal carico: primo e ultimo giorno, come testo `AAAA-MM-GG`
                (`.min()`, `.max()` e `.strftime("%Y-%m-%d")`).
@@ -590,7 +589,7 @@ def costruisci() -> Notebook:
             `start_date` ed `end_date` come testo `AAAA-MM-GG`, `hourly="temperature_2m"`,
             `timezone="Europe/Rome"`. Trasforma la risposta in `meteo` con due colonne: `data` (datetime)
             e `temperatura`. Disegnala e chiudi con `describe()`.
-            Risultato atteso: 17544 righe, temperature plausibili per Milano.
+            Risultato atteso: 17.544 righe, temperature plausibili per Milano.
         """,
         starter="""
             import requests
@@ -610,19 +609,23 @@ def costruisci() -> Notebook:
         """, titolo="Se sei bloccato")
         nb.md("""
             Se l'API non risponde, esegui la cella qui sotto al posto di quella sopra: produce lo stesso
-            `meteo` dalla copia salvata. Poi rilancia la verifica.
+            `meteo` dal file di riserva, che contiene dati di esempio. Poi rilancia la verifica.
         """)
         nb.code("""
             import json
+            from pathlib import Path
 
-            with open("../Dati/fallback/meteo_milano_2024_2025.json", encoding="utf-8") as f:
-                risposta = json.load(f)
-
-            meteo = pd.DataFrame(risposta["hourly"])
-            meteo["time"] = pd.to_datetime(meteo["time"])
-            meteo = meteo.rename(columns={"time": "data", "temperature_2m": "temperatura"})
-            meteo.describe()
-        """, rete=True)
+            file_meteo = Path("../Dati/fallback/meteo_milano_2024_2025.json")
+            if file_meteo.exists():
+                with open(file_meteo, encoding="utf-8") as f:
+                    risposta = json.load(f)
+                meteo = pd.DataFrame(risposta["hourly"])
+                meteo["time"] = pd.to_datetime(meteo["time"])
+                meteo = meteo.rename(columns={"time": "data", "temperature_2m": "temperatura"})
+                display(meteo.describe())
+            else:
+                print(f"File di riserva non trovato: {file_meteo}. Controlla che la cartella Dati/fallback/ sia completa.")
+        """)
 
     # ------------------------------------------------------------------ 6
     nb.sezione("Due tabelle, una sola", intro=f"""
@@ -633,7 +636,7 @@ def costruisci() -> Notebook:
     """)
     verifica_6a = """
         assert set(carico_orario.columns) == {"data", "mw"}, "❌ carico_orario: due colonne, data e mw"
-        assert len(carico_orario) == 17544, "❌ carico_orario: 17544 ore; con resample compare anche l'ora di marzo che manca, vuota"
+        assert len(carico_orario) == 17544, "❌ carico_orario: 17.544 ore; con resample compare anche l'ora di marzo che manca, vuota"
     """
     soluzione_6a = """
         indice_tempo = carico.set_index("data")
@@ -662,7 +665,7 @@ def costruisci() -> Notebook:
         aula="avanzata",
         richiesta="""
             Costruisci `carico_orario`: media dei quattro quartorari di ogni ora, con `data` e `mw` come
-            colonne, e mostra le righe con valori mancanti. Risultato atteso: 17544 righe. Domanda: da dove
+            colonne, e mostra le righe con valori mancanti. Risultato atteso: 17.544 righe. Domanda: da dove
             vengono i valori mancanti?
         """,
         starter="""
@@ -691,10 +694,10 @@ def costruisci() -> Notebook:
     verifica_6 = """
         assert set(unione.columns) == {"data", "mw", "temperatura"}, "❌ unione: tre colonne, data, mw e temperatura"
         assert unione.isna().sum().sum() == 0, "❌ unione: dopo dropna non devono restare valori mancanti"
-        assert 17000 <= len(unione) <= 17548, "❌ unione: circa 17500 righe, una per ora"
+        assert 17000 <= len(unione) <= 17548, "❌ unione: circa 17.500 righe, una per ora"
     """
     step(
-        nb, titolo="L'unione", rete=True,
+        nb, titolo="L'unione",
         scenario="Due tabelle con la stessa colonna `data`. Prima e dopo il merge contiamo le righe: è il controllo che smaschera una chiave non unica.",
         soluzione=soluzione_6, verifica=verifica_6,
         perche="`how=\"left\"` tiene tutte le ore del carico: se alla temperatura manca un'ora, lo vediamo come NaN invece di perdere la riga in silenzio.",
@@ -725,7 +728,7 @@ def costruisci() -> Notebook:
                 Unisci `carico_orario` e `meteo` in `unione` (colonne `data`, `mw`, `temperatura`) tenendo
                 tutte le ore del carico. Stampa le righe prima e dopo, conta i valori mancanti per colonna,
                 poi togli le righe incomplete.
-                Risultato atteso: circa 17540 righe, zero valori mancanti. Domanda: da dove venivano?
+                Risultato atteso: circa 17.540 righe, zero valori mancanti. Domanda: da dove venivano?
             """,
             starter="""
                 unione = ...
@@ -748,7 +751,7 @@ def costruisci() -> Notebook:
     soluzione_7 = """
         indice_tempo = unione.set_index("data")
         giornaliero_tc = indice_tempo.resample("D").mean().reset_index()
-        giornaliero_tc["mese"] = giornaliero_tc["data"].dt.month
+        giornaliero_tc["mese"] = giornaliero_tc["data"].dt.month_name()
 
         fig = px.scatter(giornaliero_tc, x="temperatura", y="mw", color="mese", hover_data=["data"],
                          title="Carico medio giornaliero e temperatura media, zona Nord 2024-2025",
@@ -762,11 +765,11 @@ def costruisci() -> Notebook:
     """
     verifica_7 = """
         assert len(giornaliero_tc) == 731, "❌ giornaliero_tc: una riga per giorno, 731"
-        assert giornaliero_tc["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.month"
+        assert giornaliero_tc["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.month_name()"
         assert 10 <= temperatura_minimo <= 21, "❌ temperatura_minimo: la fascia con il carico più basso sta tra 10 e 21 °C; serve il bordo inferiore della fascia, da idxmin"
     """
     step(
-        nb, titolo="Carico e temperatura", rete=True,
+        nb, titolo="Carico e temperatura",
         scenario="Il capo si aspetta una retta. Vediamo cosa dicono 731 giorni.",
         soluzione=soluzione_7, verifica=verifica_7,
         perche="Le medie giornaliere tolgono il ciclo orario, che qui è rumore: la relazione con la temperatura si vede giorno per giorno, non ora per ora.",
@@ -774,7 +777,8 @@ def costruisci() -> Notebook:
             richiesta="""
                 1. Porta `unione` a medie giornaliere in `giornaliero_tc` (indice temporale, `resample("D")`,
                    `mean()`, `reset_index()`).
-                2. Aggiungi la colonna `mese` (`dt.month`).
+                2. Aggiungi la colonna `mese` con il nome del mese (`dt.month_name()`, che dà `January`, `February`...): così lo
+                   scatter ha un colore per mese e non una scala.
                 3. Disegna lo scatter: temperatura sulle x, carico sulle y, `color="mese"`,
                    `hover_data=["data"]`. Che forma ha? Dove stanno i punti bassi di ogni colore?
                 4. A che temperatura il carico è minimo? Raggruppa per fasce di 3 °C (la colonna `fascia_t`
@@ -819,6 +823,8 @@ def costruisci() -> Notebook:
             bloccato="""
                 `(temperatura // 3) * 3` arrotonda al multiplo di 3 inferiore: è la fascia.
                 `groupby("fascia_t")["mw"].mean().idxmin()` dice quale fascia ha il carico medio più basso.
+                Per un colore per mese serve il nome del mese (`dt.month_name()`): con `dt.month`, che è un
+                numero, Plotly disegna una scala continua.
             """,
         ),
     )
@@ -850,7 +856,7 @@ def costruisci() -> Notebook:
         assert Path("carico_nord_temperatura.html").exists(), "❌ Il file HTML non c'è: write_html con il nome carico_nord_temperatura.html, nella cartella del notebook"
     """
     step(
-        nb, titolo="La sintesi", rete=True,
+        nb, titolo="La sintesi",
         scenario="Un file HTML e cinque frasi. Il grafico finale è lo scatter, con un titolo che dice la scoperta.",
         soluzione=soluzione_8, verifica=verifica_8,
         base=dict(
@@ -925,7 +931,7 @@ def costruisci() -> Notebook:
         - Ho verificato con: ...
     """)
     nb.box("ricorda", """
-        - Prima la frequenza vera e i duplicati, poi tutto il resto: un `resample` su dati sporchi mente con precisione.
+        - Prima la frequenza vera e i duplicati, poi tutto il resto: su dati sporchi `resample` restituisce numeri precisi ma sbagliati.
         - `len()` prima e dopo ogni `merge`.
         - Il grafico risponde alla domanda solo se il titolo dice la risposta.
     """)

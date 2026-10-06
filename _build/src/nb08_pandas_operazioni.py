@@ -1,4 +1,4 @@
-"""08 · pandas: operazioni sui DataFrame e tra DataFrame."""
+"""08 · pandas: operazioni sui DataFrame."""
 
 from nbkit import Notebook
 
@@ -7,7 +7,7 @@ def costruisci() -> Notebook:
     nb = Notebook(
         num="08",
         file="08_Pandas_operazioni",
-        titolo="pandas: operazioni sui DataFrame e tra DataFrame",
+        titolo="pandas: operazioni sui DataFrame",
         blocco=3,
         giornata=2,
         intento="Il grosso del lavoro di tutti i giorni: prendere le righe giuste, togliere quello che non serve, aggiungere quello che manca, raggruppare e incrociare con un'altra tabella.",
@@ -31,7 +31,7 @@ def costruisci() -> Notebook:
     nb.sezione("Selezionare", intro="""
         Ripartiamo dal file del fornitore del notebook precedente: le letture mensili di sei POD, per
         fascia. Lo leggiamo con i parametri che ci erano costati un errore a testa: separatore `;`,
-        virgola decimale, codifica latin-1.
+        virgola decimale, encoding latin-1.
     """)
     nb.code("""
         letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
@@ -338,8 +338,8 @@ def costruisci() -> Notebook:
         letture.head(3)
     """)
     nb.md("""
-        Per il costo serve il prezzo della fascia. `.map` con un dizionario traduce ogni valore della
-        colonna nel suo corrispondente: fascia → €/kWh. Poi il prodotto, con `round` a due decimali.
+        Per il costo serve il prezzo della fascia. `.map` con un dizionario traduce ogni fascia nel
+        suo prezzo in €/kWh. Poi il prodotto, con `round` a due decimali.
     """)
     nb.code("""
         listino = {"F1": 0.21, "F2": 0.19, "F3": 0.17}
@@ -385,7 +385,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Il file dei prezzi americani ha i nomi delle colonne in inglese e in camelCase. `rename` con
-        un dizionario vecchio → nuovo li sistema; le colonne non nominate restano come sono.
+        un dizionario da nome vecchio a nome nuovo li sistema; le colonne non nominate restano come sono.
     """)
     nb.code("""
         prezzi = prezzi.rename(columns={"stateDescription": "stato", "sectorName": "settore", "price": "prezzo"})
@@ -400,6 +400,12 @@ def costruisci() -> Notebook:
         prezzi["anno"] = prezzi["date"].str[:4].astype(int)
         prezzi[["date", "anno"]].dtypes
     """)
+    with nb.solo("avanzata"):
+        nb.md("""
+            Con `.str` anche la `fascia_num` di prima si fa senza `lambda`:
+            `letture["fascia"].str[1].astype(int)`. Quando nel codice di un agente troviamo
+            `.apply(lambda ...)`, controlliamo se esiste già l'operazione su colonna.
+        """)
     nb.md("""
         `sort_values` ordina per una colonna, `ascending=False` dal più grande. Con una lista di
         colonne ordina per la prima e, a pari merito, per la seconda.
@@ -414,10 +420,19 @@ def costruisci() -> Notebook:
     nb.code("""
         anagrafica_pod.reset_index().head(3)
     """)
+    nb.md("""
+        Dopo un ordinamento l'indice resta in disordine (183, 180, 213...). `reset_index(drop=True)` lo
+        riparte da 0 e scarta il vecchio; senza `drop=True` il vecchio indice diventerebbe una colonna
+        `index`.
+    """)
+    nb.code("""
+        ordinate = letture.sort_values("kwh", ascending=False).reset_index(drop=True)
+        ordinate.head(3)
+    """)
     nb.prova_tu(
         richiesta="""
             Aggiungi ad `anagrafica` la colonna `provincia` con `.map` e il dizionario `sigle`
-            (comune → sigla).
+            (da comune a sigla).
         """,
         starter="""
             sigle = {"Monza": "MB", "Lodi": "LO", "Cremona": "CR", "Cantù": "CO", "Lecco": "LC", "Varese": "VA"}
@@ -439,6 +454,7 @@ def costruisci() -> Notebook:
         - Colonna nuova: `df["nuova"] = espressione sulle colonne`.
         - Dizionario → `.map`; funzione → `.apply`.
         - `rename`, `drop`, `sort_values` restituiscono una tabella nuova: riassegna.
+        - `reset_index(drop=True)` dopo `sort_values`: indice da 0, senza colonna `index`.
     """)
 
     # ------------------------------------------------------------------ 4
@@ -536,23 +552,41 @@ def costruisci() -> Notebook:
         """,
     )
     with nb.solo("avanzata"):
-        nb.box("approfondimento", """
+        nb.md("""
             `groupby(...).transform("median")` calcola la statistica per gruppo ma la restituisce lunga
             quanto la tabella di partenza, un valore per riga: così ogni lettura si confronta con la
             mediana del suo POD, senza merge.
-
-            ```python
+        """)
+        nb.code("""
             mediana_pod = letture.groupby("pod")["kwh"].transform("median")
             letture["rapporto"] = (letture["kwh"] / mediana_pod).round(2)
-            ```
-
-            Una lettura con `rapporto` 6 è da controllare; 1,3 è un inverno normale.
-        """, titolo="Il valore del gruppo accanto a ogni riga")
+            letture.sort_values("rapporto", ascending=False).head(3)
+        """)
+        nb.md("""
+            Il massimo è 2: il Panificio a gennaio in F1, un inverno normale. Prima della correzione di
+            luglio la lettura sballata dava 9,3: un rapporto così alto salta subito all'occhio.
+        """)
+        nb.md("""
+            `.agg` accetta anche la forma con nome: `nome_nuovo=(colonna, funzione)`. È quella che
+            scrive di solito Copilot, e si legge così: il nome della colonna di arrivo, poi la colonna
+            di partenza e la funzione da applicare. Qui una riga per POD con massimo e mediana, già
+            etichettati.
+        """)
+        nb.code("""
+            letture.groupby("pod").agg(massimo=("kwh", "max"), mediana=("kwh", "median"))
+        """)
     nb.box("ricorda", """
         - `groupby(chiave)[colonna].funzione()`, poi `reset_index()`.
         - `idxmax` prima di `reset_index`: vuole l'etichetta.
         - `value_counts` per contare, `pivot_table` per la griglia.
-    """)
+    """, aula="base")
+    with nb.solo("avanzata"):
+        nb.box("ricorda", """
+            - `groupby(chiave)[colonna].funzione()`, poi `reset_index()`.
+            - `idxmax` prima di `reset_index`: vuole l'etichetta.
+            - `value_counts` per contare, `pivot_table` per la griglia.
+            - `transform` restituisce un valore per riga; `.agg(nome=(col, fn))` dà il nome alla colonna.
+        """)
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Unire", intro="""
@@ -668,6 +702,7 @@ def costruisci() -> Notebook:
         - Prima e dopo il merge: `len()`.
         - `how="left"` è il CERCA.VERT; `indicator=True` per vedere chi resta senza corrispondenza.
         - `concat` per impilare, `merge` per incrociare.
+        - Le operazioni di Excel con il loro nome in pandas, in una pagina: [scheda Excel → pandas](../Schede/Scheda_Excel_pandas.md).
     """)
 
     # ------------------------------------------------------------------ 6
@@ -678,13 +713,15 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Si apre da un DataFrame già in memoria. Dopo aver eseguito una cella che lo mostra, sotto
-        l'output compare il pulsante **Open in Data Wrangler**; in alternativa, nel pannello
+        l'output compare il pulsante **Open 'letture' in Data Wrangler** (il nome tra apici è quello
+        della variabile); in alternativa, nel pannello
         **Variables** della barra del notebook, ogni DataFrame ha l'icona di Data Wrangler accanto.
     """)
     nb.md("""
         Dentro: in alto le colonne con un riassunto (distribuzione, mancanti), a destra la lista dei
         passi fatti, in basso il codice che li produce. Le operazioni si scelgono dal pannello
-        **Operations** a sinistra.
+        **Operations** a sinistra, che compare solo in **Editing mode**: all'apertura Data Wrangler è
+        in sola lettura (Viewing mode), si cambia con il pulsante in alto a destra.
     """)
     nb.md("""
         Proviamone due: **Filter** sulla colonna `fascia` uguale a `F1`, poi **Drop columns** su
@@ -723,7 +760,7 @@ def costruisci() -> Notebook:
             quella che, in fascia F1, è fuori scala rispetto alle altre letture dello stesso POD.
         """,
         richiesta="""
-            1. Rileggi `../Dati/letture_pod_2025.csv` in `letture` (separatore, decimale e codifica
+            1. Rileggi `../Dati/letture_pod_2025.csv` in `letture` (separatore, encoding e decimale
                giusti) e tieni in `f1` solo le righe della fascia F1.
             2. Calcola `statistiche`: per ogni POD il massimo e la mediana di `kwh`, con `groupby` e
                `.agg(["max", "median"])`.
@@ -914,7 +951,7 @@ def costruisci() -> Notebook:
         """,
         verifica="""
             assert len(bolletta) == 6, "❌ bolletta: una riga per POD, sei POD"
-            assert round(bolletta["costo"].sum(), 2) == 17874.14, "❌ costo: F1*p_f1 + F2*p_f2 + F3*p_f3, poi somma per POD"
+            assert abs(bolletta["costo"].sum() - 17874.13) < 0.05, "❌ costo: F1*p_f1 + F2*p_f2 + F3*p_f3, totale per POD arrotondato a due decimali"
             assert "cliente" in bolletta.columns, "❌ bolletta: dopo il merge deve avere la colonna cliente dell'anagrafica"
             assert len(pd.read_excel("bolletta_2025.xlsx")) == 6, "❌ Il file bolletta_2025.xlsx deve avere sei righe"
         """,

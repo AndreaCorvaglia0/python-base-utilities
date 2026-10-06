@@ -10,13 +10,13 @@ def costruisci() -> Notebook:
         titolo="Agenti per il coding",
         blocco=4,
         giornata=2,
-        intento="Copilot scrive codice in fretta e sbaglia con grande sicurezza. Impariamo a usarlo come un collega svelto a cui si controlla sempre il lavoro.",
+        intento="Copilot scrive codice in fretta e sbaglia con grande sicurezza. Qui gli chiediamo le cose giuste, poi leggiamo quello che scrive e lo controlliamo con un numero che conosciamo.",
         obiettivi=[
             "usare Copilot in VS Code per completare, chiedere e far spiegare",
             "sapere cosa sono token, finestra di contesto e modelli quanto basta per non fidarsi alla cieca",
-            "applicare tre regole prima di accettare codice generato",
+            "leggere uno script scritto da un agente, passarlo a Ruff e applicare tre regole prima di accettarlo",
         ],
-        tempo={"base": 40, "avanzata": 40},
+        tempo={"base": 70, "avanzata": 70},
         dati=["impianti_fv.csv", "letture_pod_2025.csv"],
     )
 
@@ -25,20 +25,21 @@ def costruisci() -> Notebook:
         GitHub Copilot vive dentro VS Code in due forme. Il completamento propone codice in grigio mentre
         scriviamo: **Tab** lo accetta, **Esc** lo rifiuta. La chat risponde a domande e scrive codice su
         richiesta: si apre con **Ctrl+Alt+I** (su Mac **Ctrl+Cmd+I**), oppure dentro una cella con
-        **Ctrl+I**.
+        **Ctrl+I** (su Mac **Cmd+I**).
     """)
     nb.md("""
-        La chat ha tre modalità, che si scelgono dal menu in basso nel riquadro della chat.
-
+        La chat ha tre modalità (Ask, Plan, Agent), che si scelgono dal menu in basso nel riquadro della chat.
+    """)
+    nb.md("""
         | Modalità | Cosa fa | Quando usarla |
         |---|---|---|
         | Ask | risponde; il codice lo copiamo noi | domande, spiegazioni, una funzione alla volta |
-        | Edit | modifica il file aperto e mostra le differenze, da accettare una per una | rinominare, aggiungere una docstring, sistemare un blocco |
-        | Agent | legge i file, esegue comandi, crea celle, finché non pensa di aver finito | compiti lunghi che sappiamo controllare pezzo per pezzo |
+        | Plan | scrive il piano dei passi senza toccare i file; il piano si legge e si corregge, poi si passa ad Agent | compiti di più passi, prima di lasciar fare |
+        | Agent | legge i file, modifica il codice mostrando le differenze da accettare, lancia comandi nel terminale chiedendo conferma, crea celle, finché non pensa di aver finito | compiti che sappiamo controllare pezzo per pezzo |
     """)
     nb.md("""
-        Claude Code e Codex fanno la stessa cosa con un vestito diverso: Claude Code nel terminale o come
-        estensione di VS Code, Codex nel terminale o dentro ChatGPT. Cambia il modello sotto e qualche
+        Claude Code e Codex fanno la stessa cosa con un vestito diverso: tutti e due girano nel terminale
+        o come estensione di VS Code, e Codex anche dentro ChatGPT. Cambia il modello sotto e qualche
         comando. Le regole che vediamo alla fine valgono per tutti e tre.
     """)
     nb.md("""
@@ -80,21 +81,25 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Le parole che servono", intro="""
-        Sei parole bastano per capire perché Copilot a volte è brillante e a volte inventa. Due tabelle,
-        da rileggere quando una risposta non torna.
+        Sei parole bastano per capire perché Copilot a volte è brillante e a volte inventa. Stanno nelle
+        tabelle qui sotto, da rileggere quando una risposta non torna.
     """)
     nb.md("""
         | Parola | Cos'è | Perché conta |
         |---|---|---|
-        | token | il pezzo di testo che il modello legge e scrive: circa tre quarti di parola | si paga e si conta in token; un traceback intero costa poco, un errore non capito di più |
+        | token | il pezzo di testo che il modello legge e scrive: circa tre quarti di parola in inglese, un po' meno in italiano | si paga e si conta in token; un traceback intero costa poco, un errore non capito di più |
         | finestra di contesto | quanti token il modello tiene in mente in una conversazione | se la chat "dimentica" la colonna di cui parlavamo dieci messaggi fa, la finestra è piena: chat nuova |
-        | cache | le parti di contesto già lette, riusate senza rileggerle | ripetere un prompt lungo costa poco; cambiarne l'inizio fa ripartire da zero |
     """)
     nb.md("""
         | Parola | Cos'è | Perché conta |
         |---|---|---|
-        | modello piccolo o grande | il completamento usa un modello piccolo e veloce, la chat uno grande e lento | per un `groupby` basta il piccolo; per un traceback strano serve il grande |
-        | plan e agent | prima il piano dei passi, poi le modifiche | il piano si legge; solo dopo si lascia eseguire |
+        | allucinazione | il modello scrive il seguito più probabile e non verifica che sia vero | un parametro dal nome sensato può non esistere: in Ask il codice non gira, lo scopriamo solo eseguendolo |
+        | modello piccolo o grande | il completamento usa un modello piccolo e veloce; nella chat il modello lo scegli tu dal menu in basso, accanto alla modalità | per un `groupby` basta il piccolo; se la risposta su un traceback strano non convince, si prova un modello più grande dal menu |
+    """)
+    nb.md("""
+        | Parola | Cos'è | Perché conta |
+        |---|---|---|
+        | Plan e Agent | prima il piano dei passi, poi le modifiche | il piano si legge; solo dopo si lascia eseguire |
         | prompt e contesto | il prompt è la domanda; il contesto è tutto il resto che il modello vede: file aperti, celle, quello che incolli | la qualità della risposta dipende più dal contesto che dalla domanda |
     """)
     nb.md("""
@@ -121,6 +126,23 @@ def costruisci() -> Notebook:
         Niente commenti, docstring di una riga.
         ```
     """)
+    nb.md("""
+        Incollare va bene per una domanda sola. Per un file intero basta scriverne il nome nel prompt con
+        `#file:` (per esempio `#file:Dati/README.md`), e Copilot lo legge da sé.
+    """)
+    nb.md("""
+        Le regole che valgono sempre si scrivono una volta sola, in un file di istruzioni del progetto:
+        `.github/copilot-instructions.md` per Copilot, `CLAUDE.md` per Claude Code, `AGENTS.md` per Codex.
+        L'agente lo legge a ogni richiesta. Per un progetto come il nostro bastano tre righe:
+
+        ```text
+        Le librerie si aggiungono con `uv add`, mai con `pip install`.
+        I dati stanno in `Dati/` (dai notebook, `../Dati/`).
+        pandas 3: riassegna sempre il risultato, niente `inplace=True`.
+        ```
+
+        Se l'agente propone `pip install` o un percorso inventato, di solito questo file manca.
+    """)
     nb.box("ricorda", """
         Il prompt dice cosa vogliamo; il contesto dice su cosa. Senza `df.info()` e i nomi delle colonne,
         il modello inventa quelli che gli sembrano plausibili.
@@ -128,9 +150,9 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Prova guidata", intro="""
-        Quattro prompt, in ordine, sullo stesso `df`. Per ognuno: copia il testo nella chat in modalità Ask,
-        leggi la risposta, incolla il codice nella cella sotto, esegui, controlla. La verifica guarda il
-        risultato finale, non da dove viene.
+        Quattro prompt, in ordine. Per ognuno: copia il testo nella chat in modalità Ask, leggi la
+        risposta, incolla il codice nella cella sotto, esegui, controlla. La verifica guarda il risultato
+        finale, non da dove viene.
     """)
     nb.sottosezione("Una funzione", intro="""
         Il primo prompt è quello della sezione precedente. Copialo com'è.
@@ -210,42 +232,46 @@ def costruisci() -> Notebook:
         """,
     )
 
-    nb.sottosezione("Un grafico", intro="""
-        Il terzo prompt chiede un grafico. Qui Copilot rende di più: i nomi dei parametri di Plotly li
-        ricorda meglio di noi.
+    nb.sottosezione("Un errore che non fa rumore", intro="""
+        Il terzo prompt è innocuo: nessun parametro strano, nessuna trappola nel testo. Il codice gira,
+        non dà errori, e il risultato è sbagliato.
     """)
     nb.md("""
         ```text
-        Con Plotly Express fai un istogramma della colonna kwp del DataFrame pandas `df`:
-        titolo "Potenza degli impianti", etichetta dell'asse x "potenza (kWp)", 20 barre.
-        Salva la figura nella variabile fig e mostrala.
+        Ho un DataFrame pandas `letture` letto da letture_pod_2025.csv, con le colonne pod, cliente, data (testo, es. 01/03/2025), fascia, kwh.
+        Converti la colonna data in datetime e calcola in `per_mese` la somma dei kwh per mese (una Series con il mese come indice).
         ```
 
-        Cosa controllare: `import plotly.express as px`, `px.histogram` con `nbins=20`, il titolo e
-        `labels` per l'etichetta, `fig.show()` alla fine. Se la figura appare ma il titolo manca, non è
-        finita.
+        Cosa controllare: un numero che conosci. Le letture coprono un anno, quindi i mesi devono essere
+        dodici e la somma 134507.7. Se `per_mese` ha una riga sola, `pd.to_datetime` ha letto 01/03/2025
+        all'americana (3 gennaio): servono `format="%d/%m/%Y"` o `dayfirst=True`.
     """)
     nb.prova_tu(
         richiesta="""
-            Incolla il codice proposto e lascia la figura in `fig`.
+            La lettura del file è già pronta. Incolla al posto dei puntini il codice proposto da Copilot e
+            lascia il risultato in `per_mese`.
         """,
         starter="""
-            import plotly.express as px
+            letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
 
-            fig = ...
-            fig.show()
+            ...
+            per_mese
         """,
         soluzione="""
-            import plotly.express as px
+            letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
 
-            fig = px.histogram(df, x="kwp", nbins=20, title="Potenza degli impianti", labels={"kwp": "potenza (kWp)"})
-            fig.show()
+            letture["data"] = pd.to_datetime(letture["data"], format="%d/%m/%Y")
+            per_mese = letture.groupby(letture["data"].dt.month)["kwh"].sum()
+            per_mese
         """,
         verifica="""
-            assert len(fig.data) == 1 and fig.data[0].type == "histogram", "❌ fig deve contenere un solo istogramma (px.histogram)"
-            assert fig.layout.title.text == "Potenza degli impianti", "❌ Il titolo deve essere esattamente 'Potenza degli impianti'"
+            assert len(per_mese) == 12, "❌ I mesi devono essere 12: la data è gg/mm/aaaa, serve format=\\"%d/%m/%Y\\""
+            assert round(per_mese.sum(), 1) == 134507.7, "❌ La somma dei kwh deve restare 134507.7"
         """,
     )
+    nb.md("""
+        Nessun traceback, nessun avviso: se ne accorge solo chi sa che i mesi sono dodici.
+    """)
 
     nb.sottosezione("Un parametro inventato apposta", intro="""
         Il quarto prompt contiene una trappola: un parametro che non esiste. Vediamo se Copilot se ne
@@ -279,8 +305,8 @@ def costruisci() -> Notebook:
         """,
     )
     nb.md("""
-        Il quarto prompt è il più istruttivo: Copilot non sa cosa non sa. Se il prompt suggerisce un
-        parametro, spesso lo usa; se il parametro non esiste, l'errore arriva a noi, non a lui.
+        Il terzo e il quarto prompt sono i più istruttivi: uno sbaglia in silenzio, l'altro segue un
+        parametro inventato. In tutti e due i casi l'errore arriva a noi, non a lui.
     """)
 
     # ------------------------------------------------------------------ 4
@@ -303,10 +329,374 @@ def costruisci() -> Notebook:
         lungo con tre errori nascosti in mezzo; "calcola il profilo medio orario" produce una cella che
         puoi leggere. La modalità Agent va bene solo su cose che sai controllare pezzo per pezzo.
     """)
+    nb.md("""
+        In Agent le modifiche arrivano come differenze: rosso è quello che toglie, verde quello che
+        aggiunge. Leggi prima il rosso, poi tieni o annulla blocco per blocco (**Keep** o **Undo**). Se
+        propone un comando nel terminale, leggilo prima di approvarlo: un `pip install` al posto di
+        `uv add` installa nell'ambiente sbagliato.
+    """)
     nb.box("ricorda", """
         - Verifica con un numero che conosci, non con l'aspetto del codice.
         - "Spiegami l'errore" con il traceback intero, mai solo "risolvilo".
         - Un prompt, una cella, un controllo.
+    """)
+
+    # ------------------------------------------------------------------ 5
+    nb.sezione("Ruff in VS Code", intro="""
+        Il primo controllo su codice che non abbiamo scritto noi lo fa una macchina. Ruff è linter e
+        formatter in uno: segnala quello che non va (`check`) e rimette in forma il codice da solo
+        (`format`), con le regole di PEP 8 viste nel notebook sul codice leggibile. È già tra le
+        dipendenze di sviluppo del progetto e si lancia dal terminale con `uv run ruff`.
+    """)
+    nb.md("""
+        In VS Code si installa l'estensione **Ruff** dal pannello delle estensioni. Poi si attiva
+        la formattazione al salvataggio: ogni **Ctrl+S** su un file `.py` rimette a posto spazi,
+        virgole e righe vuote. In `settings.json` servono queste righe:
+
+        ```json
+        {
+            "[python]": {
+                "editor.defaultFormatter": "charliermarsh.ruff",
+                "editor.formatOnSave": true
+            }
+        }
+        ```
+    """)
+    nb.md("""
+        I tre avvisi che vedremo più spesso. La lettera del codice è la famiglia (`F` errori veri,
+        `E` stile), il numero la regola.
+
+        | Codice | Avviso | Cosa vuol dire |
+        |---|---|---|
+        | `F401` | `` `math` imported but unused `` | una libreria importata e mai usata: via la riga |
+        | `F841` | `` Local variable `totale` is assigned to but never used `` | una variabile calcolata e mai letta: un avanzo o un refuso |
+        | `E501` | `Line too long (129 > 100)` | la riga supera il limite scritto in `pyproject.toml`: si spezza |
+    """)
+    nb.md("""
+        Dal terminale, nella cartella del progetto, su un file `.py`:
+
+        ```bash
+        uv run ruff check report_pod.py                            # elenca gli avvisi
+        uv run ruff check --output-format concise report_pod.py    # una riga per avviso
+        uv run ruff format report_pod.py                           # riscrive il file nella forma giusta
+        uv run ruff check --fix report_pod.py                      # corregge quello che sa correggere
+        ```
+
+        Il secondo comando, su un file con i tre problemi della tabella:
+
+        ```text
+        report_pod.py:1:8: F401 [*] `math` imported but unused
+        report_pod.py:9:5: F841 Local variable `totale` is assigned to but never used
+        report_pod.py:10:101: E501 Line too long (129 > 100)
+        Found 3 errors.
+        [*] 1 fixable with the `--fix` option.
+        ```
+    """)
+    nb.md("""
+        Ogni riga dice file, riga, colonna, codice e messaggio. `format` tocca solo la forma e
+        non cambia mai cosa fa il codice; `check --fix` toglie gli import inutilizzati e poco
+        altro. Righe lunghe e variabili inutili restano a noi: decidere cosa farne è un giudizio,
+        non una regola. Per una stringa lunga, la ricetta è questa.
+    """)
+    nb.code("""
+        soglia_kwh = 1000
+
+        messaggio = (
+            f"Trovati 3 POD sopra la soglia di {soglia_kwh} kWh: "
+            "controllare le letture di luglio prima di fatturare"
+        )
+        messaggio
+    """)
+    nb.md("""
+        Due pezzi tra parentesi, uno per riga, e Python li attacca in una stringa sola. La `f`
+        serve solo sui pezzi che hanno le graffe.
+    """)
+    nb.box("nota", """
+        Ruff legge anche i notebook: `uv run ruff check nome.ipynb` controlla le celle una per una,
+        con la stessa configurazione del progetto.
+    """)
+
+    # ------------------------------------------------------------------ 6
+    nb.sezione("Leggere il codice scritto da un agente", intro="""
+        In modalità Agent chiediamo: "Scrivi uno script che legge le letture, somma i kWh per POD e salva
+        un CSV". In pochi secondi torna un file di una quarantina di righe. Prima di lanciarlo lo leggiamo
+        dall'alto, un pezzo alla volta. In testa ci sono la descrizione, gli import e le costanti:
+    """)
+    nb.md('''
+        ```python
+        """Totale dei consumi per POD dal file delle letture mensili."""
+
+        import logging
+        from dataclasses import dataclass
+        from pathlib import Path
+
+        import pandas as pd
+
+        logger = logging.getLogger(__name__)
+
+        DATA_DIR = Path("Dati")
+        OUTPUT = Path("totale_per_pod.csv")
+        ```
+    ''')
+    nb.md('''
+        | Riga | Come si riconosce | Cosa fa | Va toccata? |
+        |---|---|---|---|
+        | `"""Totale..."""` | prima riga, tra tre virgolette | docstring di modulo: dice cosa fa lo script | no |
+        | `import`, `from ... import` | in testa | caricano le librerie: `logging`, `dataclasses`, `pathlib` sono standard, pandas è installata | no |
+        | `logger = logging.getLogger(...)` | dopo gli import | prepara il log: `logger.info(...)` è un `print` con il livello davanti | no |
+        | `DATA_DIR = Path("Dati")` | nome tutto maiuscolo | costante: dove sono i dati, dalla cartella da cui si lancia lo script | se i dati stanno altrove |
+    ''')
+    nb.md('''
+        Poi la configurazione:
+
+        ```python
+        @dataclass
+        class Config:
+            path: Path
+            sep: str = ";"
+            decimal: str = ","
+            encoding: str = "latin-1"
+        ```
+    ''')
+    nb.md('''
+        | Riga | Come si riconosce | Cosa fa | Va toccata? |
+        |---|---|---|---|
+        | `@dataclass` | riga che inizia con `@`, sopra un `class` o un `def` | decoratore: cambia come si comporta quello che sta sotto; qui fa di `Config` un semplice contenitore di campi, ognuno con il suo default | no |
+        | `sep: str = ";"` | nome, due punti, tipo, uguale | campo con type hint e default | no |
+    ''')
+    nb.md("Poi le funzioni che fanno il lavoro:")
+    nb.md('''
+        ```python
+        def leggi_letture(config: Config) -> pd.DataFrame:
+            """Legge il CSV delle letture con le opzioni della configurazione."""
+            if not config.path.exists():
+                raise FileNotFoundError(f"File non trovato: {config.path}")
+            return pd.read_csv(
+                config.path, sep=config.sep, decimal=config.decimal, encoding=config.encoding
+            )
+
+
+        def totale_per_pod(letture: pd.DataFrame, fasce: list[str] | None = None) -> pd.DataFrame:
+            """Somma dei kWh per POD, eventualmente solo per alcune fasce."""
+            if fasce is not None:
+                letture = letture[letture["fascia"].isin(fasce)]
+            return letture.groupby("pod")["kwh"].sum().reset_index()
+        ```
+    ''', aula="base")
+    nb.md('''
+        ```python
+        def leggi_letture(path: Path, **opzioni) -> pd.DataFrame:
+            """Legge il CSV delle letture; le opzioni vanno dritte a read_csv."""
+            if not path.exists():
+                raise FileNotFoundError(f"File non trovato: {path}")
+            return pd.read_csv(path, **opzioni)
+
+
+        def totale_per_pod(letture: pd.DataFrame, fasce: list[str] | None = None) -> pd.DataFrame:
+            """Somma dei kWh per POD, eventualmente solo per alcune fasce."""
+            mancanti = [col for col in ("pod", "fascia", "kwh") if col not in letture.columns]
+            if mancanti:
+                raise ValueError(f"Colonne mancanti: {mancanti}")
+            if fasce is not None:
+                letture = letture[letture["fascia"].isin(fasce)]
+            return letture.groupby("pod")["kwh"].sum().reset_index()
+        ```
+    ''', aula="avanzata")
+    nb.md('''
+        | Riga | Come si riconosce | Cosa fa | Va toccata? |
+        |---|---|---|---|
+        | `-> pd.DataFrame` | dopo la parentesi del `def` | type hint di ritorno: dice cosa restituisce la funzione | no |
+        | `fasce: list[str] \\| None = None` | parametro con default `None` | facoltativo: se non lo passiamo, la funzione tiene tutte le fasce | no |
+        | `raise FileNotFoundError(...)` | dentro un `if` | crea un errore apposta, con un messaggio chiaro: il contrario di `except` | no |
+
+        Quello che tocchiamo noi sono le due o tre righe di pandas: `read_csv` e il `groupby`.
+    ''')
+    with nb.solo("avanzata"):
+        nb.md("""
+            Nella firma di `leggi_letture` c'è anche `**opzioni`: raccoglie tutti i parametri passati per
+            nome (`sep=`, `decimal=`, `encoding=`) e li passa avanti a `read_csv` così come sono. In
+            `totale_per_pod` c'è una comprehension: `mancanti` è la lista delle colonne richieste che non
+            ci sono, vuota se ci sono tutte.
+        """)
+    nb.md("In fondo, chi le usa:")
+    nb.md('''
+        ```python
+        def main() -> None:
+            logging.basicConfig(level=logging.INFO)
+            config = Config(path=DATA_DIR / "letture_pod_2025.csv")
+            totali = totale_per_pod(leggi_letture(config))
+            totali.to_csv(OUTPUT, index=False)
+            logger.info(f"Salvati {len(totali)} POD in {OUTPUT}")
+
+
+        if __name__ == "__main__":
+            main()
+        ```
+    ''', aula="base")
+    nb.md('''
+        ```python
+        def main() -> None:
+            logging.basicConfig(level=logging.INFO)
+            config = Config(path=DATA_DIR / "letture_pod_2025.csv")
+            letture = leggi_letture(
+                config.path, sep=config.sep, decimal=config.decimal, encoding=config.encoding
+            )
+            totali = totale_per_pod(letture)
+            totali.to_csv(OUTPUT, index=False)
+            logger.info(f"Salvati {len(totali)} POD in {OUTPUT}")
+
+
+        if __name__ == "__main__":
+            main()
+        ```
+    ''', aula="avanzata")
+    nb.md('''
+        | Riga | Come si riconosce | Cosa fa | Va toccata? |
+        |---|---|---|---|
+        | `-> None` | dopo la parentesi del `def` | la funzione non restituisce niente: `main` esegue i passi e basta | no |
+        | `if __name__ == "__main__":` (blocco main) | in fondo al file | parte solo se il file è il programma lanciato, con `uv run` o in una cella; non se viene importato | no |
+        | `main()` | l'ultima riga | chiama la funzione che mette in fila i passi | no |
+    ''')
+    nb.md("""
+        Portiamo lo script nel notebook. Stesso codice; cambia solo `DATA_DIR`, perché il notebook gira
+        nella sua cartella e i dati stanno un livello sopra, in `../Dati`.
+    """)
+    nb.code("""
+        from dataclasses import dataclass
+        from pathlib import Path
+
+        import pandas as pd
+
+        DATA_DIR = Path("../Dati")
+
+
+        @dataclass
+        class Config:
+            path: Path
+            sep: str = ";"
+            decimal: str = ","
+            encoding: str = "latin-1"
+
+
+        config = Config(path=DATA_DIR / "letture_pod_2025.csv")
+        config
+    """)
+    nb.md("""
+        La stampa ordinata di `config` non l'abbiamo scritta noi: l'ha aggiunta `@dataclass`. Poi le due
+        funzioni, identiche.
+    """)
+    nb.code('''
+        def leggi_letture(config: Config) -> pd.DataFrame:
+            """Legge il CSV delle letture con le opzioni della configurazione."""
+            if not config.path.exists():
+                raise FileNotFoundError(f"File non trovato: {config.path}")
+            return pd.read_csv(
+                config.path, sep=config.sep, decimal=config.decimal, encoding=config.encoding
+            )
+
+
+        def totale_per_pod(letture: pd.DataFrame, fasce: list[str] | None = None) -> pd.DataFrame:
+            """Somma dei kWh per POD, eventualmente solo per alcune fasce."""
+            if fasce is not None:
+                letture = letture[letture["fascia"].isin(fasce)]
+            return letture.groupby("pod")["kwh"].sum().reset_index()
+    ''', aula="base")
+    nb.code('''
+        def leggi_letture(path: Path, **opzioni) -> pd.DataFrame:
+            """Legge il CSV delle letture; le opzioni vanno dritte a read_csv."""
+            if not path.exists():
+                raise FileNotFoundError(f"File non trovato: {path}")
+            return pd.read_csv(path, **opzioni)
+    ''', aula="avanzata")
+    nb.code('''
+        def totale_per_pod(letture: pd.DataFrame, fasce: list[str] | None = None) -> pd.DataFrame:
+            """Somma dei kWh per POD, eventualmente solo per alcune fasce."""
+            mancanti = [col for col in ("pod", "fascia", "kwh") if col not in letture.columns]
+            if mancanti:
+                raise ValueError(f"Colonne mancanti: {mancanti}")
+            if fasce is not None:
+                letture = letture[letture["fascia"].isin(fasce)]
+            return letture.groupby("pod")["kwh"].sum().reset_index()
+    ''', aula="avanzata")
+    nb.md("Le chiamiamo come fa `main`, senza salvare il CSV:")
+    nb.code("""
+        totali = totale_per_pod(leggi_letture(config))
+        totali
+    """, aula="base")
+    nb.code("""
+        letture = leggi_letture(config.path, sep=config.sep, decimal=config.decimal, encoding=config.encoding)
+        totali = totale_per_pod(letture)
+        totali
+    """, aula="avanzata")
+    nb.md("""
+        Sei POD, una riga ciascuno. Il numero che conosciamo è la somma di tutte le letture,
+        134507,7 kWh:
+    """)
+    nb.code("""
+        round(totali["kwh"].sum(), 1)
+    """)
+    nb.md("""
+        Con il percorso dello script, `Dati`, la stessa lettura dal notebook non trova il file. Questa
+        cella dà errore apposta: leggiamo l'ultima riga.
+    """)
+    nb.code("""
+        leggi_letture(Config(path=Path("Dati") / "letture_pod_2025.csv"))
+    """, aula="base", errore=True)
+    nb.code("""
+        leggi_letture(Path("Dati") / "letture_pod_2025.csv", sep=";")
+    """, aula="avanzata", errore=True)
+    nb.md("""
+        L'ultima riga è il messaggio del `raise`: lo script si ferma con una frase chiara, prima di arrivare
+        dentro pandas.
+    """)
+    nb.md("""
+        Prima di accettare uno script, quattro domande, nell'ordine:
+
+        1. La struttura è quella solita: import, costanti, `def`, `main` in fondo?
+        2. Quali righe fanno il lavoro e quali sono la cornice? Qui il lavoro è `read_csv` più il `groupby`.
+        3. Il percorso dei dati esiste, dalla cartella da cui lo lanciamo?
+        4. Il numero torna? Qui 134507,7 kWh in tutto, su sei POD.
+
+        Tutte le forme che si incontrano, una per riga, stanno nella
+        [scheda per leggere il codice](../Schede/Scheda_leggere_codice.md).
+    """)
+    nb.prova_tu(
+        richiesta="""
+            Per ogni riga dello script scrivi cos'è, scegliendo tra `"decoratore"`, `"type hint"`,
+            `"blocco main"`, `"log"` e `"costante"`. Le tabelle qui sopra hanno tutte le risposte.
+        """,
+        starter="""
+            cosa_e = {
+                "@dataclass": ...,
+                "-> pd.DataFrame": ...,
+                'if __name__ == "__main__":': ...,
+                "logger.info(...)": ...,
+                "DATA_DIR": ...,
+            }
+            cosa_e
+        """,
+        soluzione="""
+            cosa_e = {
+                "@dataclass": "decoratore",
+                "-> pd.DataFrame": "type hint",
+                'if __name__ == "__main__":': "blocco main",
+                "logger.info(...)": "log",
+                "DATA_DIR": "costante",
+            }
+            cosa_e
+        """,
+        verifica="""
+            assert cosa_e["@dataclass"] == "decoratore", "❌ @dataclass: una riga con @ sopra una class è un decoratore"
+            assert cosa_e["-> pd.DataFrame"] == "type hint", "❌ -> pd.DataFrame: dice cosa restituisce la funzione, è un type hint"
+            assert cosa_e['if __name__ == "__main__":'] == "blocco main", "❌ if __name__ == \\"__main__\\": è il blocco main, in fondo al file"
+            assert cosa_e["logger.info(...)"] == "log", "❌ logger.info(...): un print con il livello davanti, cioè il log"
+            assert cosa_e["DATA_DIR"] == "costante", "❌ DATA_DIR: tutto maiuscolo, è una costante"
+        """,
+    )
+    nb.box("ricorda", """
+        - Leggi dall'alto: import, costanti, `def`; in fondo, chi li usa.
+        - Una riga che non capisci: "spiegami questa riga", poi verifica eseguendo.
+        - Il lavoro vero sono poche righe: controlla quelle, con un numero che conosci.
     """)
 
     # ------------------------------------------------------------------ Esercizi
@@ -315,7 +705,7 @@ def costruisci() -> Notebook:
         titolo="Il parametro inventato",
         scenario="""
             L'ufficio misure ci manda `letture_pod_2025.csv`, il solito CSV all'italiana: punto e virgola,
-            virgola decimale, codifica latin-1. Giulia ha chiesto a Copilot di leggerlo con i nomi dei
+            virgola decimale, encoding latin-1. Giulia ha chiesto a Copilot di leggerlo con i nomi dei
             parametri che ricordava lei, ha incollato quel che le ha dato, e adesso la cella dà `TypeError`.
             Ha un treno tra venti minuti.
         """,
@@ -324,7 +714,7 @@ def costruisci() -> Notebook:
 
                ```text
                Leggi il file ../Dati/letture_pod_2025.csv con pandas: separatore punto e virgola,
-               virgola come decimale, codifica latin-1. Usa i parametri separator, decimal_separator ed encoding.
+               virgola come decimale, encoding latin-1. Usa i parametri separator, decimal_separator ed encoding.
                ```
             2. Eseguila. Se dà `TypeError`, leggi l'ultima riga del traceback: quale parametro non esiste?
             3. Apri la documentazione con `help(pd.read_csv)` e trova i nomi giusti per il separatore dei
@@ -424,5 +814,184 @@ def costruisci() -> Notebook:
             assert (grandi_milano["kwp"] > 10).all(), "❌ Solo gli impianti sopra i 10 kWp"
         """,
         perche="Le parentesi attorno a ogni condizione non sono stile: senza, `10 & impianti[\"provincia\"]` viene calcolato per primo e non ha senso.",
+    )
+    nb.esercizio(
+        titolo="Leggere prima di lanciare",
+        scenario='''
+            Paolo, in fatturazione, ha fatto scrivere all'agente lo script del report settimanale e vuole
+            metterlo nel giro del lunedì mattina. Prima ce lo fa leggere. Dice che gira senza errori, ma il
+            totale gli sembra strano.
+
+            ```python
+            """Report settimanale: kWh totali per POD."""
+
+            from dataclasses import dataclass
+            from pathlib import Path
+
+            import pandas as pd
+
+
+            @dataclass
+            class Config:
+                path: Path = Path("Dati") / "letture_pod_2025.csv"
+                sep: str = ";"
+                encoding: str = "latin-1"
+
+
+            def leggi_letture(config: Config) -> pd.DataFrame:
+                """Legge il CSV delle letture."""
+                return pd.read_csv(config.path, sep=config.sep, encoding=config.encoding)
+
+
+            def report_kwh(letture: pd.DataFrame) -> pd.DataFrame:
+                """kWh totali per POD."""
+                return letture.groupby("pod")["kwh"].sum().reset_index()
+
+
+            def main() -> None:
+                totale = report_kwh(leggi_letture(Config()))
+                totale.to_csv("report_settimanale.csv", index=False)
+                print(f"Report salvato: {len(totale)} POD")
+
+
+            if __name__ == "__main__":
+                main()
+            ```
+        ''',
+        richiesta="""
+            1. Compila `risposte` con quattro voci: in `"file letto"` il nome del file che lo script legge;
+               in `"lavoro vero"` il nome della funzione che fa il calcolo; in `"riga con @"` cos'è quella
+               riga, scegliendo tra `"decoratore"`, `"commento"` e `"type hint"`; in
+               `"lanciato in una cella"` cosa succede incollando tutto lo script in una cella del notebook,
+               scegliendo tra `"FileNotFoundError"`, `"NameError"` e `"non parte niente"`.
+            2. Nella cella c'è già la parte dello script che serve, con il percorso del notebook. Trova il
+               dettaglio sbagliato in `leggi_letture`, riscrivi la funzione e lascia il report in `totale`.
+        """,
+        suggerimento="Guarda `totale.dtypes`: se `kwh` non è un numero, il problema è in quello che `read_csv` riceve.",
+        starter="""
+            risposte = {
+                "file letto": ...,
+                "lavoro vero": ...,
+                "riga con @": ...,
+                "lanciato in una cella": ...,
+            }
+
+
+            def leggi_letture(path: str) -> pd.DataFrame:
+                \"\"\"Legge il CSV delle letture.\"\"\"
+                ...
+
+
+            def report_kwh(letture: pd.DataFrame) -> pd.DataFrame:
+                \"\"\"kWh totali per POD.\"\"\"
+                return letture.groupby("pod")["kwh"].sum().reset_index()
+
+
+            totale = report_kwh(leggi_letture("../Dati/letture_pod_2025.csv"))
+            totale
+        """,
+        soluzione="""
+            risposte = {
+                "file letto": "letture_pod_2025.csv",
+                "lavoro vero": "report_kwh",
+                "riga con @": "decoratore",
+                "lanciato in una cella": "FileNotFoundError",
+            }
+
+
+            def leggi_letture(path: str) -> pd.DataFrame:
+                \"\"\"Legge il CSV delle letture.\"\"\"
+                return pd.read_csv(path, sep=";", decimal=",", encoding="latin-1")
+
+
+            def report_kwh(letture: pd.DataFrame) -> pd.DataFrame:
+                \"\"\"kWh totali per POD.\"\"\"
+                return letture.groupby("pod")["kwh"].sum().reset_index()
+
+
+            totale = report_kwh(leggi_letture("../Dati/letture_pod_2025.csv"))
+            totale
+        """,
+        verifica="""
+            assert str(risposte["file letto"]).endswith("letture_pod_2025.csv"), "❌ file letto: il nome del file sta nel default di path, dentro Config"
+            assert risposte["lavoro vero"] == "report_kwh", "❌ lavoro vero: il nome della funzione con il groupby, come stringa"
+            assert risposte["riga con @"] == "decoratore", "❌ riga con @: una riga che inizia con @ sopra una class è un decoratore"
+            assert risposte["lanciato in una cella"] == "FileNotFoundError", "❌ lanciato in una cella: il blocco main parte anche nel notebook, e da qui il percorso Dati non esiste"
+            assert str(totale["kwh"].dtype) == "float64", "❌ kwh è ancora testo: controlla totale.dtypes e i parametri di read_csv"
+            assert round(totale["kwh"].sum(), 1) == 134507.7, "❌ La somma dei kwh deve essere 134507.7: controlla il tipo di kwh con .dtypes"
+        """,
+        perche="Nessun traceback, solo un numero sbagliato: senza `decimal=\",\"` la colonna `kwh` era rimasta testo e `sum()` ha incollato le stringhe. È il caso in cui l'errore lo trovi solo controllando con un numero che conosci.",
+    )
+    nb.esercizio(
+        titolo="Pulizia con Ruff",
+        scenario="""
+            Un collega ha lasciato lo script `report_pod.py` qui sotto e vuole metterlo nel
+            repository del team, dove Ruff gira a ogni salvataggio e non lascia passare niente.
+            Prima di lanciarlo facciamo noi il lavoro di Ruff: leggiamo il file e scriviamo quali
+            avvisi darebbe.
+
+            ```python
+            import math
+
+            soglia_kwh = 1000
+            pod_anomali = ["IT001E45678901"]
+
+
+            def riepilogo(pod_anomali, soglia_kwh):
+                n = len(pod_anomali)
+                totale = 0
+                return f"Trovati {n} POD sopra la soglia di {soglia_kwh} kWh nel file letture_pod_2025.csv: controllare le letture di luglio"
+
+
+            print(riepilogo(pod_anomali, soglia_kwh))
+            ```
+        """,
+        richiesta="""
+            Tre passi, il terzo facoltativo.
+
+            1. Metti in `avvisi` la lista dei codici Ruff che questo file farebbe scattare, come stringhe, uno per problema.
+            2. Riscrivi il codice corretto nella cella: niente avvisi, stesso testo in uscita, una docstring per `riepilogo`.
+            3. Salva l'originale in un file `report_pod.py` nella cartella principale del progetto, accanto a `pyproject.toml`, e da lì lancia `uv run ruff check report_pod.py` nel terminale per confrontare.
+        """,
+        suggerimento="I codici sono nella tabella della sezione su Ruff; la stringa lunga si spezza tra parentesi.",
+        starter="""
+            avvisi = [...]
+
+            # qui sotto il codice corretto
+            soglia_kwh = 1000
+            pod_anomali = ["IT001E45678901"]
+
+
+            def riepilogo(pod_anomali, soglia_kwh):
+                ...
+
+
+            print(riepilogo(pod_anomali, soglia_kwh))
+        """,
+        soluzione="""
+            # un import mai usato, una variabile mai letta, una riga da 129 caratteri
+            avvisi = ["F401", "F841", "E501"]
+
+            soglia_kwh = 1000
+            pod_anomali = ["IT001E45678901"]
+
+
+            def riepilogo(pod_anomali, soglia_kwh):
+                \"\"\"Una riga di testo con quanti POD superano la soglia.\"\"\"
+                n = len(pod_anomali)
+                return (
+                    f"Trovati {n} POD sopra la soglia di {soglia_kwh} kWh nel file letture_pod_2025.csv: "
+                    "controllare le letture di luglio"
+                )
+
+
+            print(riepilogo(pod_anomali, soglia_kwh))
+        """,
+        verifica="""
+            assert sorted(avvisi) == ["E501", "F401", "F841"], "❌ avvisi: tre codici come stringhe: import inutilizzato, variabile mai usata, riga troppo lunga"
+            assert riepilogo(["IT001E45678901"], 1000) == "Trovati 1 POD sopra la soglia di 1000 kWh nel file letture_pod_2025.csv: controllare le letture di luglio", "❌ riepilogo: il testo in uscita deve restare identico"
+            assert riepilogo.__doc__, "❌ riepilogo: manca la docstring"
+        """,
+        perche="`import math` e `totale` si tolgono e basta. La riga lunga si spezza in due pezzi tra parentesi: il testo in uscita non cambia, e Ruff tace.",
     )
     return nb

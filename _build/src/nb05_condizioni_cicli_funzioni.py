@@ -380,8 +380,9 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Definire una funzione non esegue niente: Python si segna la ricetta. Eseguirla è chiamarla, con un
-        valore tra parentesi. `ora` è il parametro, il nome che quel valore prende dentro la funzione.
-        `return` consegna il risultato a chi ha chiamato e chiude la funzione.
+        valore tra parentesi: quel valore, per esempio il 21, è l'argomento; `ora` è il parametro, il nome
+        che l'argomento prende dentro la funzione. `return` consegna il risultato a chi ha chiamato e
+        chiude la funzione.
     """)
     nb.code("""
         print(fascia_feriale(3), fascia_feriale(7), fascia_feriale(12))
@@ -639,9 +640,9 @@ def costruisci() -> Notebook:
         """)
         nb.md("""
             Lo stesso trucco ordina un dizionario per valore: `sorted(consumi_pod.items(), key=lambda coppia: coppia[1])`.
-            E tornerà con pandas, dove `df["kwh"].apply(lambda x: x / 1000)` applica la funzione a ogni
-            valore di una colonna. Regola pratica: una `lambda` vive dentro un'altra chiamata; se le serve
-            un nome, è un `def`.
+            E tornerà con pandas, dentro `.apply(lambda ...)`, che applica la funzione a ogni valore di
+            una colonna (ma per un conto come `/ 1000` basta `df["kwh"] / 1000`). Regola pratica: una
+            `lambda` vive dentro un'altra chiamata; se le serve un nome, è un `def`.
         """)
 
         nb.sottosezione("map e filter", intro="""
@@ -699,6 +700,20 @@ def costruisci() -> Notebook:
         """)
         nb.code("""
             sum(kwh / 1000 for kwh in consumi_kwh)
+        """)
+        nb.md("""
+            Un generatore si può scrivere anche come funzione: al posto di `return` c'è `yield`, che
+            consegna un valore e aspetta che qualcuno chieda il prossimo. Non lo scriveremo noi, ma nel
+            codice di un agente capita di trovarlo: se compare `yield`, la funzione restituisce un
+            generatore, non una lista.
+        """)
+        nb.code("""
+            def in_mwh(potenze_mw):
+                for p in potenze_mw:
+                    # un quarto d'ora a potenza costante
+                    yield p / 4
+
+            list(in_mwh([100, 80, 120]))
         """)
         nb.box("approfondimento", """
             Un DataFrame si può scorrere riga per riga con `df.iterrows()`, un generatore di righe.
@@ -980,7 +995,7 @@ def costruisci() -> Notebook:
             3. Chiudi il conteggio in `conta_turni(turni, tipo="notte")`, che restituisce il dizionario
                per il tipo di turno indicato.
         """,
-        suggerimento="`notti.get(nome, 0) + 1` aggiorna il conteggio anche se il nome non c'è ancora.",
+        suggerimento="`notti.get(nome, 0) + 1` aggiorna il conteggio anche se il nome non c'è ancora; per il massimo scorri `notti.items()` con `for nome, numero in ...` e, se `numero > massimo`, aggiorna `massimo` e `chi_piu_notti`.",
         starter='''
             turni = [
                 ("Anna", "notte"), ("Luca", "mattina"), ("Anna", "notte"), ("Marco", "notte"),

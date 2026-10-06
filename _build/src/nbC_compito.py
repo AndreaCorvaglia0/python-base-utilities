@@ -20,7 +20,7 @@ def costruisci() -> Notebook:
             "correggersi da soli con le celle di verifica, prima del confronto in aula",
         ],
         tempo={"base": 40, "avanzata": 45},
-        dati=["homework/letture_marzo.csv", "homework/clienti.xlsx", "homework/anagrafica.db", "homework/letture_aprile.csv"],
+        dati=["homework/letture_marzo.csv", "homework/clienti.xlsx", "homework/anagrafica.db"],
         etichetta_esercizio="Passo",
         prefisso_esercizi="",
         prossimo="Le soluzioni le correggiamo insieme all'inizio della seconda giornata.",
@@ -28,12 +28,12 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Prima di cominciare", intro="""
-        Servono la cartella del corso aperta in VS Code con il kernel di `.venv`, come in aula, i quattro
-        file in `../Dati/homework/` e tra i 30 e i 45 minuti di fila. I passi si parlano tra loro: meglio
+        Servono la cartella del corso aperta in VS Code con il kernel di `.venv`, come in aula, i file
+        in `../Dati/homework/` e tra i 30 e i 45 minuti di fila. I passi si parlano tra loro: meglio
         farli in ordine e in una sola seduta.
     """)
     nb.md("""
-        La cella qui sotto elenca i file del compito. Se la lista è vuota, il notebook non sta leggendo
+        La cella qui sotto elenca i file dell'homework. Se la lista è vuota, il notebook non sta leggendo
         dalla cartella giusta: controlla di aver aperto in VS Code la cartella del corso, non il singolo file.
     """)
     nb.code("""
@@ -56,7 +56,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 2
     nb.sezione("La settimana", intro="""
         Ufficio Analisi Consumi di una piccola società di vendita: otto POD di clienti business, un capo
-        che vuole le cose per ieri e un collega in ferie che faceva tutto a mano in Excel. Un POD è il
+        con poca pazienza e un collega in ferie che faceva tutto a mano in Excel. Un POD è il
         codice del punto di prelievo (`IT001E...`): identifica il contatore, non il cliente. Sei passi, uno
         al giorno, sabato compreso.
     """)
@@ -65,9 +65,9 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Lunedì: il messaggio per il capo",
         scenario="""
-            Lunedì, 9:02. Il capo scrive in chat: «Mi mandi una riga con il consumo di febbraio del
+            Lunedì, 9:02. Il capo scrive in chat: "Mi mandi una riga con il consumo di febbraio del
             Panificio Rè e quanto gli costa al prezzo di listino? Poi la stessa riga per tutti gli altri,
-            uguale uguale». La seconda parte è un problema di giovedì; oggi basta la riga.
+            uguale uguale". La seconda parte è un problema di giovedì; oggi basta la riga.
         """,
         richiesta="""
             Calcola `costo` (consumo per prezzo) e costruisci `messaggio` con una f-string, in questo formato
@@ -106,7 +106,7 @@ def costruisci() -> Notebook:
         titolo="Martedì: le 24 letture del panificio",
         scenario="""
             Martedì arrivano dal contatore del Panificio Rè le 24 letture orarie di ieri, in kWh, una per
-            ora da mezzanotte alle 23. Il titolare sostiene che «è tutto il forno»: si accende alle 4 e
+            ora da mezzanotte alle 23. Il titolare sostiene che "è tutto il forno": si accende alle 4 e
             lavora fino alle 8. Il capo vuole sapere se è vero, in percentuale.
         """,
         richiesta="""
@@ -171,6 +171,15 @@ def costruisci() -> Notebook:
         totale_kwh = ...
         print(f"{len(sopra_soglia)} POD sopra i {soglia} kWh, su {totale_kwh:.1f} kWh totali")
     """
+    starter_3_base = starter_3.replace("""
+        sopra_soglia = ...
+        totale_kwh = ...
+        """, """
+        sopra_soglia = []
+        for pod, kwh in ...:
+            ...
+        totale_kwh = ...
+        """)
     verifica_3 = """
         assert sorted(sopra_soglia) == ["IT001E31047092", "IT001E31048128", "IT001E31049306"], "❌ sopra_soglia: i tre POD con più di 2000 kWh, confronta il valore con >"
         assert round(totale_kwh, 1) == 16244.1, "❌ totale_kwh: la somma di tutti i valori del dizionario"
@@ -184,12 +193,12 @@ def costruisci() -> Notebook:
             con i POD che superano `soglia`. Calcola poi `totale_kwh`, la somma di tutti i consumi.
         """,
         suggerimento="Dentro il ciclo: `if kwh > soglia:` e poi `.append(pod)`. Per il totale, `sum()` sui `.values()`.",
-        starter=starter_3,
-        soluzione=starter_3.replace("""
-        sopra_soglia = ...
+        starter=starter_3_base,
+        soluzione=starter_3_base.replace("""
+        for pod, kwh in ...:
+            ...
         totale_kwh = ...
         """, """
-        sopra_soglia = []
         for pod, kwh in consumi_febbraio.items():
             if kwh > soglia:
                 sopra_soglia.append(pod)
@@ -223,8 +232,8 @@ def costruisci() -> Notebook:
     scenario_4 = """
         Giovedì. Il conto di lunedì va rifatto per altri quattro clienti. Il collega in ferie copiava la
         riga e cambiava i numeri a mano, e una volta su tre il prezzo restava quello vecchio. Il collega
-        senior, passando: «Fanne una funzione, e il prezzo mettilo come default: il listino cambia una volta
-        l'anno».
+        senior, passando: "Fanne una funzione, e il prezzo mettilo come default: il listino cambia una volta
+        l'anno".
     """
     suggerimento_4 = "`return` restituisce il valore a chi chiama, `print` lo mostra e basta: la verifica usa il valore."
     verifica_4 = """
@@ -308,12 +317,12 @@ def costruisci() -> Notebook:
         titolo="Venerdì: il file del distributore",
         scenario="""
             Venerdì arriva via mail il CSV del distributore: le letture giornaliere di marzo degli otto POD,
-            separatore `;` e virgola decimale, come sempre. Il capo: «Dagli un'occhiata, l'officina di Lecco
-            dice che la bolletta di marzo è il triplo del solito».
+            separatore `;` e virgola decimale, come sempre. Il capo: "Dagli un'occhiata, l'officina di Lecco
+            dice che la bolletta di marzo è il triplo del solito".
         """,
         richiesta="""
             1. Leggi `../Dati/homework/letture_marzo.csv` in `letture` con i parametri giusti per un CSV italiano, e guarda `info()`, `head()` e `describe()`: la colonna `kwh` deve essere numerica, e il massimo dice già qualcosa.
-            2. Crea `mask`, la condizione «`kwh` sopra 500» su tutta la colonna, e `anomale = letture[mask]`: le righe in cui la condizione è vera.
+            2. Crea `mask`, la condizione `kwh` sopra 500 su tutta la colonna, e `anomale = letture[mask]`: le righe in cui la condizione è vera.
             3. Salva `anomale` nel file `letture_anomale.csv`, nella cartella del notebook, senza l'indice.
         """,
         suggerimento="`sep=\";\"` e `decimal=\",\"`. Se `kwh` esce come testo, è il `decimal` che manca.",
@@ -464,7 +473,7 @@ def costruisci() -> Notebook:
         perche="La funzione tiene insieme apri, leggi e chiudi: la connessione non resta aperta per sbaglio e il nome del file sta in un posto solo. Con un database aziendale cambia solo la riga del `connect`.",
     )
 
-    # Passo 7 · domenica, facoltativo (+ un passo in più: glob e concat)
+    # Passo 7 · domenica, facoltativo (+ un passo in più: lettura di codice)
     nb.esercizio(
         titolo="Facoltativo: la classe di consumo",
         scenario="""
@@ -513,33 +522,57 @@ def costruisci() -> Notebook:
         perche="L'`else` finale non ripete la condizione: se non è sotto 1000 e non è fino a 3000, è sopra. Tre rami, due confronti.",
         passo_in_piu=dict(
             testo="""
-                Nella cartella c'è anche `letture_aprile.csv`, stesso formato. Con
-                `Path("../Dati/homework").glob("letture_*.csv")` prendi tutti i file delle letture, leggili uno
-                per uno in una lista di DataFrame e uniscili in `tutte` con `pd.concat(..., ignore_index=True)`.
-                A fine anno, con dodici file, sarà lo stesso codice.
+                Il collega in ferie ha lasciato questa funzione, scritta da Copilot. Prima di lanciarla,
+                leggila: la trovi anche nella cella sotto, da correggere.
+
+                ```python
+                def totale_pod(path: str, pod: str) -> float:
+                    \"\"\"Totale dei kWh di un POD in un file di letture.\"\"\"
+                    letture = pd.read_csv(path, sep=";")
+                    filtrate = letture[letture["pod"] == pod]
+                    return round(filtrate["kwh"].sum(), 1)
+                ```
+
+                1. Compila `risposte` con due stringhe: il tipo che promette la freccia (come `"float"`) e il
+                nome dell'argomento di `read_csv` che manca, sapendo che il file ha la virgola decimale.
+                2. Correggi la funzione e metti in `totale_officina` il totale di IT001E31047092 su
+                `../Dati/homework/letture_marzo.csv`.
+
+                *Suggerimento:* guarda il CSV nell'anteprima di VS Code: come sono scritti i decimali?
             """,
             starter="""
-                from pathlib import Path
+                risposte = {"restituisce": ..., "manca_a_read_csv": ...}
 
-                tabelle = []
-                for file in sorted(Path("../Dati/homework").glob("letture_*.csv")):
-                    ...
-                tutte = ...
-                print(len(tutte))
-            """,
-            soluzione="""
-                from pathlib import Path
 
-                tabelle = []
-                for file in sorted(Path("../Dati/homework").glob("letture_*.csv")):
-                    tabelle.append(pd.read_csv(file, sep=";", decimal=","))
-                tutte = pd.concat(tabelle, ignore_index=True)
-                print(len(tutte))
+                def totale_pod(path: str, pod: str) -> float:
+                    \"\"\"Totale dei kWh di un POD in un file di letture.\"\"\"
+                    letture = pd.read_csv(path, sep=";")
+                    filtrate = letture[letture["pod"] == pod]
+                    return round(filtrate["kwh"].sum(), 1)
+
+
+                totale_officina = ...
+                totale_officina
             """,
+            soluzione='''
+                risposte = {"restituisce": "float", "manca_a_read_csv": "decimal"}
+
+
+                def totale_pod(path: str, pod: str) -> float:
+                    """Totale dei kWh di un POD in un file di letture."""
+                    # senza decimal la colonna resta testo: la somma concatena le stringhe e round dà errore
+                    letture = pd.read_csv(path, sep=";", decimal=",")
+                    filtrate = letture[letture["pod"] == pod]
+                    return round(filtrate["kwh"].sum(), 1)
+
+
+                totale_officina = totale_pod("../Dati/homework/letture_marzo.csv", "IT001E31047092")
+                totale_officina
+            ''',
             verifica="""
-                assert len(tutte) == 488, "❌ tutte: 248 righe di marzo più 240 di aprile, controlla sep, decimal e che i file letti siano due"
-                assert list(tutte.columns) == ["pod", "data", "kwh"], "❌ tutte: le colonne devono restare pod, data, kwh"
-                assert len(set(tutte["pod"])) == 8, "❌ tutte: devono esserci tutti gli otto POD"
+                assert risposte["restituisce"] in ("float", float), "❌ risposte: la freccia nella firma dice che tipo restituisce la funzione, scrivilo come stringa"
+                assert "decimal" in str(risposte["manca_a_read_csv"]), "❌ risposte: il file ha la virgola decimale, quale argomento di read_csv la dichiara?"
+                assert isinstance(totale_officina, float) and round(totale_officina, 1) == 5106.9, "❌ totale_officina: chiama la funzione corretta sul file di marzo, con il POD dell'officina"
             """,
         ),
     )

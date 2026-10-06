@@ -48,6 +48,10 @@ def costruisci() -> Notebook:
         print(type(attivo))       # Output: <class 'bool'>
     """)
     nb.md("""
+        Nell'output Python scrive `class`: per lui tipo e classe sono la stessa cosa. Cos'è una classe
+        lo vediamo nel notebook sugli oggetti.
+    """)
+    nb.md("""
         Sui nomi, tre regole che bastano: minuscolo con gli underscore (`consumo_kwh`, non `ConsumoKWh`),
         mai un numero come primo carattere, e il nome dice cosa contiene. `x` va bene per cinque secondi,
         `consumo_kwh` per sempre.
@@ -178,7 +182,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 3
     nb.sezione("Stringhe", intro="""
         Un testo in Python è una stringa: una sequenza di caratteri tra virgolette, singole o doppie
-        è uguale. Sono stringhe i nomi, i codici, i messaggi e quasi tutto quello che arriva da un
+        (è lo stesso). Sono stringhe i nomi, i codici, i messaggi e quasi tutto quello che arriva da un
         file prima di essere convertito in numero.
     """)
     nb.code("""
@@ -239,7 +243,8 @@ def costruisci() -> Notebook:
     nb.md("""
         Dentro le graffe possiamo anche dire come formattare il numero: `:.2f` vuol dire due decimali,
         `:.0f` nessuno, `:,` mette il separatore delle migliaia. Si scrive dopo il nome, separato dai
-        due punti.
+        due punti. Python usa la convenzione inglese, virgola per le migliaia e punto per i decimali:
+        `152,000` è centocinquantaduemila.
     """)
     nb.code("""
         prezzo_kwh = 0.215

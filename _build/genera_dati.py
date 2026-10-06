@@ -172,7 +172,7 @@ POD_ANOMALO, GIORNO_ANOMALO = "IT001E31047092", "12/03/2025"
 
 
 def compito() -> None:
-    """Cartella Dati/homework/: letture giornaliere di marzo (e aprile) di 8 POD, un Excel a due fogli, un SQLite."""
+    """Cartella Dati/homework/: letture giornaliere di marzo di 8 POD, un Excel a due fogli, un SQLite."""
     cartella = DATI / "homework"
     cartella.mkdir(exist_ok=True)
     media = {pod: potenza * rng.uniform(2.5, 5.0) for pod, _, _, potenza in POD_COMPITO}  # kWh al giorno
@@ -190,7 +190,6 @@ def compito() -> None:
         return pd.DataFrame(righe)
 
     letture("2025-03-01", "2025-03-31").to_csv(cartella / "letture_marzo.csv", sep=";", decimal=",", index=False)
-    letture("2025-04-01", "2025-04-30").to_csv(cartella / "letture_aprile.csv", sep=";", decimal=",", index=False)
 
     anagrafica = pd.DataFrame([{"pod": p, "cliente": c, "comune": m} for p, c, m, _ in POD_COMPITO])
     listino = pd.DataFrame({"fascia": FASCE, "eur_kwh": [0.21, 0.19, 0.17]})

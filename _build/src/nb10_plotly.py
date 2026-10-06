@@ -167,6 +167,8 @@ def costruisci() -> Notebook:
         verifica="""
             assert fig_vento.data[0].type == "histogram", "❌ Serve px.histogram, non px.line o px.scatter"
             assert len(fig_vento.data) == 1, "❌ Una sola distribuzione: niente color"
+            assert fig_vento.data[0].nbinsx == 40, "❌ Servono 40 barre: nbins=40"
+            assert max(fig_vento.data[0].x) == turbina["vento_ms"].max(), "❌ Sull'asse x va la colonna vento_ms"
         """,
     )
 
@@ -274,7 +276,7 @@ def costruisci() -> Notebook:
     """)
     nb.box("nota", """
         Per un'immagine fissa c'è `fig.write_image("grafico.png")`, che però vuole una libreria in più
-        (`kaleido`, con `uv add`). Per il corso basta l'HTML: nessuno deve installare niente per aprirlo.
+        (`kaleido`, con `uv add`). Qui basta l'HTML: nessuno deve installare niente per aprirlo.
     """)
     nb.box("ricorda", """
         - `px.line`, `px.histogram`, `px.scatter`: stessi argomenti, `(df, x=, y=, color=, labels=, title=)`, e restituiscono `fig`.
@@ -287,7 +289,7 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Il grafico per il capo",
         scenario="""
-            Il capo vuole "per ieri" il grafico del carico del Nord di febbraio 2024, da aprire sul suo
+            Il capo vuole entro stasera il grafico del carico del Nord di febbraio 2024, da aprire sul suo
             portatile in riunione, e sul suo portatile non c'è Python. Vuole una linea sola, poter
             zoomare su un giorno, e un titolo che si capisca.
         """,
@@ -325,7 +327,7 @@ def costruisci() -> Notebook:
         titolo="Zone a confronto",
         bis=True,
         scenario="""
-            Il collega del trading vuole vedere NORD e SICI sullo stesso grafico, e solo quelle due:
+            Sara, del trading, vuole vedere NORD e SICI sullo stesso grafico, e solo quelle due:
             con sei linee non ci capisce niente. Il file HTML lo allega alla mail del lunedì.
         """,
         richiesta="""
@@ -362,7 +364,7 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Vento e potenza",
         scenario="""
-            La collega che segue l'eolico deve presentare la turbina texana al comitato investimenti:
+            Elena, che segue l'eolico, deve presentare la turbina texana al comitato investimenti:
             vuole la curva di potenza (vento contro potenza) e la distribuzione della potenza prodotta,
             per far vedere quante ore la macchina lavora a pieno regime e quante sta ferma.
         """,
@@ -418,5 +420,53 @@ def costruisci() -> Notebook:
                 assert "January" in {traccia.name for traccia in fig_mesi.data}, "❌ fig_mesi: la colonna mese deve contenere il nome del mese (dt.month_name())"
             """,
         ),
+    )
+    nb.esercizio(
+        titolo="Temperatura e potenza",
+        bis=True,
+        scenario="""
+            Chi gestisce la manutenzione sospetta che col caldo la turbina renda meno. Vuole vedere la
+            temperatura dell'aria contro la potenza prodotta, e come sono distribuite le temperature
+            nell'anno, prima di chiedere un controllo al costruttore.
+        """,
+        richiesta="""
+            1. Rinomina in `turbina` la colonna `Air temperature | ('C)` in `temperatura_c`.
+            2. `fig_temp`: scatter con la temperatura sulla x e la potenza sulla y, con `opacity=0.3`
+               e titolo `Temperatura e potenza`.
+            3. `fig_temp_dist`: istogramma della colonna `temperatura_c`, 30 barre, titolo
+               `Distribuzione della temperatura`.
+        """,
+        suggerimento="Il nome della colonna da cambiare si copia dall'intestazione del file: `rename(columns={...})` come con il vento.",
+        starter="""
+            turbina = turbina.rename(columns=...)
+
+            fig_temp = px.scatter(...)
+            fig_temp.show()
+
+            fig_temp_dist = px.histogram(...)
+            fig_temp_dist.show()
+        """,
+        soluzione="""
+            turbina = turbina.rename(columns={"Air temperature | ('C)": "temperatura_c"})
+
+            fig_temp = px.scatter(turbina, x="temperatura_c", y="potenza_kw", opacity=0.3, title="Temperatura e potenza",
+                                  labels={"temperatura_c": "Temperatura [°C]", "potenza_kw": "Potenza [kW]"})
+            fig_temp.show()
+
+            fig_temp_dist = px.histogram(turbina, x="temperatura_c", nbins=30, title="Distribuzione della temperatura",
+                                         labels={"temperatura_c": "Temperatura [°C]"})
+            fig_temp_dist.show()
+        """,
+        verifica="""
+            assert "temperatura_c" in turbina.columns, "❌ La colonna va rinominata in temperatura_c con rename(columns={...})"
+            assert len(fig_temp.data) == 1 and "scatter" in fig_temp.data[0].type, "❌ fig_temp: px.scatter con una sola traccia (niente color)"
+            assert fig_temp.data[0].marker.opacity == 0.3, "❌ fig_temp: passa opacity=0.3 a px.scatter"
+            assert max(fig_temp.data[0].x) == turbina["temperatura_c"].max(), "❌ fig_temp: la temperatura va sull'asse x"
+            assert fig_temp_dist.data[0].type == "histogram", "❌ fig_temp_dist: serve px.histogram"
+            assert fig_temp_dist.data[0].nbinsx == 30, "❌ fig_temp_dist: servono 30 barre, nbins=30"
+            assert max(fig_temp_dist.data[0].x) == turbina["temperatura_c"].max(), "❌ fig_temp_dist: sull'asse x va la colonna temperatura_c"
+            assert fig_temp_dist.layout.title.text == "Distribuzione della temperatura", "❌ fig_temp_dist: controlla il titolo"
+        """,
+        perche="Lo scatter fa vedere subito se due numeri si muovono insieme. Qui la nuvola di punti non ha nessuna forma: la temperatura non spiega la potenza, che segue il vento.",
     )
     return nb

@@ -11,19 +11,12 @@ def costruisci() -> Notebook:
         blocco=1,
         giornata=1,
         intento="Il codice si scrive una volta e si legge venti: dal collega domani, da noi tra tre mesi. Le poche abitudini che fanno la differenza tra un notebook e un rebus.",
-        obiettivi={
-            "base": [
-                "commentare quando serve e scrivere una docstring",
-                "usare le celle Markdown per raccontare un'analisi",
-                "applicare le cinque regole di stile che contano",
-            ],
-            "avanzata": [
-                "commentare quando serve e scrivere una docstring",
-                "usare le celle Markdown per raccontare un'analisi",
-                "applicare le cinque regole di stile che contano e lasciare il resto a Ruff",
-            ],
-        },
-        tempo={"base": 20, "avanzata": 30},
+        obiettivi=[
+            "commentare quando serve e scrivere una docstring",
+            "usare le celle Markdown per raccontare un'analisi",
+            "applicare le cinque regole di stile che contano",
+        ],
+        tempo={"base": 20, "avanzata": 20},
         dati=[],
     )
 
@@ -217,90 +210,10 @@ def costruisci() -> Notebook:
             assert round(energia_mwh, 2) == 12.75, "❌ energia_mwh: la somma delle quattro potenze divisa per 4, con questo nome"
         """,
     )
-    nb.box("nota", """
-        Esistono strumenti che applicano queste regole al posto nostro: si chiamano formattatori, e
-        Ruff è quello che oggi si usa di più. In VS Code è un'estensione che si installa in un
-        minuto, da cercare quando lavoreremo su script veri.
-    """, aula="base")
     nb.md("""
-        Queste regole non si applicano a mano, a meno di volerci passare le serate: le applica Ruff,
-        qui sotto.
-    """, aula="avanzata")
-
-    # ------------------------------------------------------------------ 5 (solo Avanzata)
-    with nb.solo("avanzata"):
-        nb.sezione("Ruff in VS Code", intro="""
-            Ruff è linter e formattatore in uno: segnala quello che non va (`check`) e rimette in
-            forma il codice da solo (`format`). È già tra le dipendenze di sviluppo del progetto e
-            si lancia dal terminale con `uvx ruff`.
-        """)
-        nb.md("""
-            In VS Code si installa l'estensione **Ruff** dal pannello delle estensioni. Poi si attiva
-            la formattazione al salvataggio: ogni **Ctrl+S** su un file `.py` rimette a posto spazi,
-            virgole e righe vuote. In `settings.json` servono queste righe:
-
-            ```json
-            {
-                "[python]": {
-                    "editor.defaultFormatter": "charliermarsh.ruff",
-                    "editor.formatOnSave": true
-                }
-            }
-            ```
-        """)
-        nb.md("""
-            I tre avvisi che vedremo più spesso. La lettera del codice è la famiglia (`F` errori veri,
-            `E` stile), il numero la regola.
-
-            | Codice | Avviso | Cosa vuol dire |
-            |---|---|---|
-            | `F401` | `` `math` imported but unused `` | una libreria importata e mai usata: via la riga |
-            | `F841` | `` Local variable `totale` is assigned to but never used `` | una variabile calcolata e mai letta: un avanzo o un refuso |
-            | `E501` | `Line too long (129 > 100)` | la riga supera il limite scritto in `pyproject.toml`: si spezza |
-        """)
-        nb.md("""
-            Dal terminale, nella cartella del progetto, su un file `.py`:
-
-            ```bash
-            uvx ruff check report_pod.py                            # elenca gli avvisi
-            uvx ruff check --output-format concise report_pod.py    # una riga per avviso
-            uvx ruff format report_pod.py                           # riscrive il file nella forma giusta
-            uvx ruff check --fix report_pod.py                      # corregge quello che sa correggere
-            ```
-
-            Il primo comando, in forma concisa, su un file con i tre problemi della tabella:
-
-            ```text
-            report_pod.py:1:8: F401 [*] `math` imported but unused
-            report_pod.py:9:5: F841 Local variable `totale` is assigned to but never used
-            report_pod.py:10:101: E501 Line too long (129 > 100)
-            Found 3 errors.
-            [*] 1 fixable with the `--fix` option.
-            ```
-        """)
-        nb.md("""
-            Ogni riga dice file, riga, colonna, codice e messaggio. `format` tocca solo la forma e
-            non cambia mai cosa fa il codice; `check --fix` toglie gli import inutilizzati e poco
-            altro. Righe lunghe e variabili inutili restano a noi: decidere cosa farne è un giudizio,
-            non una regola. Per una stringa lunga, la ricetta è questa.
-        """)
-        nb.code("""
-            soglia_kwh = 1000
-
-            messaggio = (
-                f"Trovati 3 POD sopra la soglia di {soglia_kwh} kWh: "
-                "controllare le letture di luglio prima di fatturare"
-            )
-            messaggio
-        """)
-        nb.md("""
-            Due pezzi tra parentesi, uno per riga, e Python li attacca in una stringa sola. La `f`
-            serve solo sui pezzi che hanno le graffe.
-        """)
-        nb.box("nota", """
-            Ruff legge anche i notebook: `uvx ruff check nome.ipynb` controlla le celle una per una,
-            con la stessa configurazione del progetto.
-        """)
+        Queste regole non si applicano a mano, a meno di volerci passare le serate: le controlla
+        uno strumento, Ruff, che vedremo quando leggeremo il codice scritto da un agente.
+    """)
 
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")
@@ -315,8 +228,9 @@ def costruisci() -> Notebook:
         richiesta="""
             Lascia `f` dov'è: serve al confronto. Sotto, riscrivila come `costo_bolletta` con due
             parametri che dicono cosa sono, `consumo_kwh` e `prezzo_kwh`, e una docstring di una
-            riga che spieghi anche il fattore `1.1`: è l'IVA al 10%. Il risultato deve restare lo
-            stesso, e dentro la funzione anche quel numero prende un nome.
+            riga che spieghi anche il fattore `1.1`: è l'IVA al 10%. Dentro la funzione, prima del
+            `return`, metti il `1.1` in una variabile `iva` e usala nel conto: il risultato deve
+            restare lo stesso.
         """,
         suggerimento="La docstring è la prima riga sotto il `def`, tra tre virgolette.",
         starter="""
@@ -364,7 +278,10 @@ def costruisci() -> Notebook:
             """,
             soluzione="""
                 # una chiamata per fascia: F1, F2 e F3 hanno consumi e prezzi diversi
-                totale_bolletta = costo_bolletta(1250, 0.21) + costo_bolletta(830, 0.19) + costo_bolletta(1040, 0.17)
+                costo_f1 = costo_bolletta(1250, 0.21)
+                costo_f2 = costo_bolletta(830, 0.19)
+                costo_f3 = costo_bolletta(1040, 0.17)
+                totale_bolletta = costo_f1 + costo_f2 + costo_f3
                 totale_bolletta
             """,
             verifica="""
@@ -417,77 +334,91 @@ def costruisci() -> Notebook:
             assert round(ricavo_ora([10, 10, 10, 10], 100), 2) == 1000.0, "❌ ricavo_ora([10, 10, 10, 10], 100): 10 MWh per 100 euro/MWh"
         """,
     )
-    with nb.solo("avanzata"):
-        nb.esercizio(
-            titolo="Pulizia con Ruff",
-            scenario="""
-                Un collega ha lasciato lo script `report_pod.py` qui sotto e vuole metterlo nel
-                repository del team, dove Ruff gira a ogni salvataggio e non lascia passare niente.
-                Prima di lanciarlo facciamo noi il lavoro di Ruff: leggiamo il file e scriviamo quali
-                avvisi darebbe.
-
-                ```python
-                import math
-
-                soglia_kwh = 1000
-                pod_anomali = ["IT001E45678901"]
-
-
-                def riepilogo(pod_anomali, soglia_kwh):
-                    n = len(pod_anomali)
-                    totale = 0
-                    return f"Trovati {n} POD sopra la soglia di {soglia_kwh} kWh nel file letture_pod_2025.csv: controllare le letture di luglio"
+    nb.esercizio(
+        titolo="La cella del turno di notte",
+        scenario="""
+            Ogni mattina l'ufficio Misure lancia questa cella per il costo dei consumi notturni di
+            una cabina: cinque letture in kWh, tutte in fascia F3. Il commento ripete il codice e
+            dello `0.17` non dice niente, ma è il prezzo F3 del listino 2025 e a gennaio cambierà.
+            Chi la apre a gennaio deve trovarlo al primo colpo.
+        """,
+        richiesta="""
+            Lascia la cella originale dov'è: serve al confronto. Sotto, riscrivila seguendo le
+            cinque regole: la lista si chiama `consumi_kwh`, il prezzo va in una variabile sua,
+            `prezzo_f3`, e il risultato in `costo_notte`. Al posto del commento che ripete il
+            codice scrivine uno che dica da dove viene lo `0.17`.
+        """,
+        suggerimento="Il commento va sulla riga sopra `prezzo_f3` e dice quello che dal codice non si vede.",
+        starter="""
+            L=[310,295 ,288,402,276]
+            c=sum( L )*0.17 # moltiplico la somma per 0.17
 
 
-                print(riepilogo(pod_anomali, soglia_kwh))
-                ```
-            """,
-            richiesta="""
-                Tre passi, il terzo facoltativo.
-
-                1. Metti in `avvisi` la lista dei codici Ruff che questo file farebbe scattare, come stringhe, uno per problema.
-                2. Riscrivi il codice corretto nella cella: niente avvisi, stesso testo in uscita, una docstring per `riepilogo`.
-                3. Salva l'originale in un file `report_pod.py` e lancia `uvx ruff check report_pod.py` nel terminale per confrontare.
-            """,
-            suggerimento="I codici sono nella tabella della sezione su Ruff; la stringa lunga si spezza tra parentesi.",
-            starter="""
-                avvisi = [...]
-
-                # qui sotto il codice corretto
-                soglia_kwh = 1000
-                pod_anomali = ["IT001E45678901"]
+            consumi_kwh = ...
+            prezzo_f3 = ...
+            costo_notte = ...
+            print(c, costo_notte)
+        """,
+        soluzione="""
+            L=[310,295 ,288,402,276]
+            c=sum( L )*0.17 # moltiplico la somma per 0.17
 
 
-                def riepilogo(pod_anomali, soglia_kwh):
-                    ...
+            consumi_kwh = [310, 295, 288, 402, 276]
+            # prezzo F3 del listino 2025, in euro/kWh: da aggiornare a gennaio
+            prezzo_f3 = 0.17
+            costo_notte = sum(consumi_kwh) * prezzo_f3
+            print(c, costo_notte)
+        """,
+        verifica="""
+            assert consumi_kwh == [310, 295, 288, 402, 276], "❌ consumi_kwh: le stesse cinque letture di L, con il nome nuovo"
+            assert prezzo_f3 == 0.17, "❌ prezzo_f3: lo 0.17 del listino, in una variabile sua"
+            assert round(costo_notte, 2) == round(c, 2), "❌ costo_notte deve dare lo stesso risultato di c: somma delle letture per il prezzo"
+        """,
+        perche="Il commento nuovo dice da dove viene il numero e quando scade, cose che dal codice non si vedono. Con il prezzo in una variabile, a gennaio si cambia una riga e si sa quale.",
+    )
+    nb.esercizio(
+        titolo="Le perdite della cabina",
+        bis=True,
+        scenario="""
+            L'ufficio Bilancio energetico stima ogni mese le perdite della rete in bassa tensione
+            con questa cella: l'energia immessa in cabina nelle tre decadi del mese, in MWh,
+            moltiplicata per `0.062`. Quel numero è il 6,2% di perdita concordato con la direzione
+            tecnica, ma il commento dice solo che si moltiplica. Il revisore interno vuole capirlo
+            senza ripescare la mail di due anni fa.
+        """,
+        richiesta="""
+            Lascia la cella originale dov'è: serve al confronto. Sotto, riscrivila seguendo le
+            cinque regole: la lista si chiama `immessa_mwh`, il fattore va in una variabile sua,
+            `quota_perdite`, e il risultato in `perdite_mwh`. Al posto del commento che ripete il
+            codice scrivine uno che dica da dove viene lo `0.062`.
+        """,
+        suggerimento="Il commento va sulla riga sopra `quota_perdite` e dice quello che dal codice non si vede.",
+        starter="""
+            E=[1820,1765 ,1910]
+            p=sum( E )*0.062  # moltiplico per 0.062
 
 
-                print(riepilogo(pod_anomali, soglia_kwh))
-            """,
-            soluzione="""
-                # un import mai usato, una variabile mai letta, una riga da 129 caratteri
-                avvisi = ["F401", "F841", "E501"]
-
-                soglia_kwh = 1000
-                pod_anomali = ["IT001E45678901"]
-
-
-                def riepilogo(pod_anomali, soglia_kwh):
-                    \"\"\"Una riga di testo con quanti POD superano la soglia.\"\"\"
-                    n = len(pod_anomali)
-                    return (
-                        f"Trovati {n} POD sopra la soglia di {soglia_kwh} kWh nel file letture_pod_2025.csv: "
-                        "controllare le letture di luglio"
-                    )
+            immessa_mwh = ...
+            quota_perdite = ...
+            perdite_mwh = ...
+            print(p, perdite_mwh)
+        """,
+        soluzione="""
+            E=[1820,1765 ,1910]
+            p=sum( E )*0.062  # moltiplico per 0.062
 
 
-                print(riepilogo(pod_anomali, soglia_kwh))
-            """,
-            verifica="""
-                assert sorted(avvisi) == ["E501", "F401", "F841"], "❌ avvisi: tre codici come stringhe: import inutilizzato, variabile mai usata, riga troppo lunga"
-                assert riepilogo(["IT001E45678901"], 1000) == "Trovati 1 POD sopra la soglia di 1000 kWh nel file letture_pod_2025.csv: controllare le letture di luglio", "❌ riepilogo: il testo in uscita deve restare identico"
-                assert riepilogo.__doc__, "❌ riepilogo: manca la docstring"
-            """,
-            perche="`import math` e `totale` si tolgono e basta. La riga lunga si spezza in due pezzi tra parentesi: il testo in uscita non cambia, e Ruff tace.",
-        )
+            immessa_mwh = [1820, 1765, 1910]
+            # perdita della rete BT concordata con la direzione tecnica: 6,2% dell'energia immessa
+            quota_perdite = 0.062
+            perdite_mwh = sum(immessa_mwh) * quota_perdite
+            print(p, perdite_mwh)
+        """,
+        verifica="""
+            assert immessa_mwh == [1820, 1765, 1910], "❌ immessa_mwh: gli stessi tre valori di E, con il nome nuovo"
+            assert quota_perdite == 0.062, "❌ quota_perdite: lo 0.062 concordato, in una variabile sua"
+            assert round(perdite_mwh, 2) == round(p, 2), "❌ perdite_mwh deve dare lo stesso risultato di p: somma dell'energia immessa per la quota"
+        """,
+    )
     return nb

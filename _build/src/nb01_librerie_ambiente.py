@@ -10,21 +10,21 @@ def costruisci() -> Notebook:
         titolo="Librerie e ambiente",
         blocco=1,
         giornata=1,
-        intento="Python da solo fa poco: il lavoro vero lo fanno le librerie, e il posto dove vivono è l'ambiente del progetto. Impariamo a chiamarle senza romperlo.",
+        intento="Python da solo fa poco: il lavoro vero lo fanno le librerie, e il posto dove vivono è l'ambiente del progetto. Qui vediamo come chiamarle senza romperlo.",
         obiettivi={
             "base": [
-                "capire cos'è una libreria e cosa fa `import`",
-                "aggiungere una libreria al progetto con uv, nel modo giusto",
-                "orientarci nella cartella del corso: notebook, dati e `pyproject.toml`",
+                "capire cos'è una libreria, cosa fa `import` e cosa distingue la libreria standard da quelle installate",
+                "aggiungere una libreria con uv e sapere cosa sono `.venv` e `pyproject.toml`",
+                "trasformare un notebook in uno script e lanciarlo con `uv run`",
             ],
             "avanzata": [
-                "usare `import` nelle sue tre forme e capire perché serve un ambiente per progetto",
+                "usare `import` nelle sue tre forme e distinguere la libreria standard da quelle installate",
                 "leggere `pyproject.toml` e `uv.lock` e gestire le librerie con uv",
                 "trasformare un notebook in uno script e lanciarlo con `uv run`",
             ],
         },
-        tempo={"base": 20, "avanzata": 40},
-        dati=[],
+        tempo={"base": 30, "avanzata": 40},
+        dati=["letture_pod_2025.csv"],
     )
 
     # ------------------------------------------------------------------ 1
@@ -72,6 +72,33 @@ def costruisci() -> Notebook:
         len("IT001E12345678")
     """)
     nb.md("""
+        Le librerie che incontreremo stanno da una parte o dall'altra:
+
+        | Libreria standard: arriva con Python | Installata nel progetto |
+        |---|---|
+        | `math`, `datetime`, `os` | `pandas`, `numpy` |
+        | `pathlib`, `json`, `sqlite3` | `plotly`, `requests`, `openpyxl` |
+
+        Regola pratica: se prima di importarla serve `uv add`, è una libreria installata.
+    """)
+    nb.md("""
+        Una libreria è una cartella di moduli, cioè di file Python, e le più grandi hanno cartelle
+        dentro cartelle. Il punto serve anche a scendere di un livello: `import plotly.express as px`
+        entra in `plotly` e prende il sottomodulo `express`, quello dei grafici veloci.
+        `from datetime import date`, invece, prende una cosa sola da un modulo.
+    """)
+    nb.code("""
+        import plotly.express as px
+
+        px.__name__
+    """)
+    nb.md("""
+        `plotly.express` è il percorso dentro la libreria. Dopo il punto può esserci una funzione, che
+        fa qualcosa e si chiama con le parentesi: `math.sqrt(1600)`. Oppure un dato che la libreria o
+        l'oggetto porta con sé, che si legge senza parentesi: `pd.__version__`, `px.__name__`. Il
+        secondo si chiama **attributo**; lo riprendiamo nel notebook sugli oggetti.
+    """)
+    nb.md("""
         Questa cella dà errore apposta: importiamo una libreria che non esiste.
     """)
     nb.code("import grafici_bollette", errore=True)
@@ -87,8 +114,9 @@ def costruisci() -> Notebook:
     """)
     nb.code("help(sqrt)")
     nb.box("nota", """
-        In VS Code basta anche passare il mouse sul nome della funzione, oppure scrivere `sqrt?` in una
-        cella ed eseguirla: compare la stessa documentazione, in un pannello a lato.
+        In VS Code basta anche passare il mouse sul nome della funzione: la documentazione compare in
+        un riquadro. Oppure si scrive `sqrt?` in una cella e la si esegue: la stessa documentazione
+        compare sotto la cella, come output.
     """)
     nb.prova_tu(
         richiesta="""
@@ -219,48 +247,54 @@ def costruisci() -> Notebook:
         - I dati sono in `../Dati/...`, visti dal notebook.
         - Una libreria nuova: nel terminale `uv add nome`, poi Restart del kernel.
         - Ambiente rotto o mancante: `uv sync`.
+        - Installazione, kernel, uv e i passi da notebook a script: [scheda uv e script](../Schede/Scheda_uv_e_script.md).
     """)
 
-    # ------------------------------------------------------------------ 3 (A)
+    # ------------------------------------------------------------------ 3
+    nb.sezione("Un ambiente per progetto", intro="""
+        Il notebook funziona sul nostro PC, lo mandiamo al collega e da lui non parte: ha una
+        versione di pandas di tre anni fa, installata per un altro progetto, e il nostro codice gli
+        dà errori che da noi non esistono. Due progetti, un solo Python condiviso: prima o poi uno
+        dei due si rompe. La soluzione è un ambiente per progetto.
+    """)
+    nb.md("""
+        L'ambiente virtuale, il virtual environment `.venv`, è una cartella: un Python e le sue
+        librerie, dedicati a questo progetto. Lo crea `uv sync`, lo usa il kernel che abbiamo scelto, e
+        si può cancellare e ricreare in un minuto. È il motivo per cui `sys.executable` doveva
+        contenere `.venv`. Dove vive pandas, per dire:
+    """)
+    nb.code("""
+        import pandas as pd
+
+        pd.__file__
+    """)
+    nb.md("""
+        Un file dentro `.venv`: la cartella di moduli di pandas, file Python come i nostri, solo
+        scritti da altri. Chi decide cosa finisce lì dentro è `pyproject.toml`:
+
+        ```toml
+        [project]
+        name = "python-base-utilities"
+        requires-python = ">=3.12"
+        dependencies = [
+            "pandas>=3.0",
+            "numpy>=2.0",
+            "plotly>=6.0",
+            "openpyxl>=3.1",
+            "requests>=2.32",
+            "ipykernel>=6.29",
+            "nbformat>=5.10",
+        ]
+        ```
+    """)
+    nb.md("""
+        `dependencies` è la lista delle librerie che il progetto dichiara di usare, con un vincolo
+        largo: "pandas, dalla 3.0 in su". Il file si legge per capire di cosa ha bisogno il progetto,
+        e `uv add` lo aggiorna da solo. Più sotto c'è anche `[dependency-groups]`: gli strumenti di chi
+        lavora sul codice e che non entrano nel programma, come Ruff, che controlla come è scritto il
+        codice.
+    """)
     with nb.solo("avanzata"):
-        nb.sezione("Un ambiente per progetto", intro="""
-            Il notebook funziona sul nostro PC, lo mandiamo al collega e da lui non parte: ha una
-            versione di pandas di tre anni fa, installata per un altro progetto, e il nostro codice gli
-            dà errori che da noi non esistono. Due progetti, un solo Python condiviso: prima o poi uno
-            dei due si rompe. La soluzione è un ambiente per progetto.
-        """)
-        nb.md("""
-            L'ambiente è la cartella `.venv`: un Python e le sue librerie, dedicati a questo progetto.
-            Lo crea `uv sync`, lo usa il kernel che abbiamo scelto, e si può cancellare e ricreare in un
-            minuto. È il motivo per cui `sys.executable` doveva contenere `.venv`. Dove vive pandas, per
-            dire:
-        """)
-        nb.code("""
-            import pandas as pd
-
-            pd.__file__
-        """)
-        nb.md("""
-            Un file dentro `.venv`: una libreria è una cartella di file Python come i nostri, solo
-            scritti da altri. Chi decide cosa finisce lì dentro è `pyproject.toml`:
-
-            ```toml
-            [project]
-            name = "python-base-utilities"
-            requires-python = ">=3.12"
-            dependencies = [
-                "pandas>=2.2",
-                "plotly>=6.0",
-                "openpyxl>=3.1",
-                "requests>=2.32",
-            ]
-            ```
-        """)
-        nb.md("""
-            `dependencies` è la lista delle librerie che il progetto dichiara di usare, con un vincolo
-            largo: "pandas, dalla 2.2 in su". È il file che si legge per capire di cosa ha bisogno un
-            progetto, e che `uv add` aggiorna da solo.
-        """)
         nb.md("""
             `uv.lock` è l'altra metà: la fotografia esatta di cosa è stato installato, versione per
             versione, dipendenze delle dipendenze comprese.
@@ -286,111 +320,118 @@ def costruisci() -> Notebook:
 
             ```bash
             uv add requests             # aggiunge a pyproject.toml, aggiorna uv.lock, installa
-            uv add "pandas>=2.2"        # con un vincolo di versione
+            uv add "pandas>=3.0"        # con un vincolo di versione
             uv remove requests          # toglie la libreria dal progetto
             uv run profilo_carico.py    # esegue un file Python dentro l'ambiente del progetto
-            uvx ruff check .            # esegue uno strumento una volta, senza aggiungerlo al progetto
+            uvx ruff check .            # lancia uno strumento al volo, anche dove il progetto non lo ha
             ```
         """)
         nb.md("""
             `uv run` usa `.venv` senza bisogno di "attivarlo": è il comando con cui lanceremo gli
-            script. `uvx` serve per gli strumenti che non fanno parte del progetto ma ci lavorano sopra,
-            come Ruff, che controlla e formatta il codice.
+            script, e anche Ruff, che nel nostro progetto è già installato. `uvx` serve per lanciare
+            uno strumento al volo senza aggiungerlo al progetto: comodo su una cartella qualsiasi.
         """)
-        nb.md("""
-            uv non è l'unico modo. `pip` con `venv` è lo strumento di base di Python: stessa idea, più
-            passaggi a mano, niente `uv.lock`. conda è diffuso in ambito scientifico, Poetry fa quello che
-            fa uv ma più lentamente. Chi entra in un progetto esistente usa quello che trova; chi ne apre
-            uno nuovo, oggi, usa uv.
-        """)
-        nb.prova_tu(
-            richiesta="""
-                Il collega ti passa la cartella del suo progetto: dentro ci sono `pyproject.toml` e
-                `uv.lock`, ma niente `.venv`, giustamente. Scrivi in `comando` il comando del terminale
-                che ricrea il suo ambiente, identico al suo.
-            """,
-            starter="""
-                comando = "..."
-                comando
-            """,
-            soluzione="""
-                comando = "uv sync"
-                comando
-            """,
-            verifica="""
-                assert comando.strip() == "uv sync", "❌ comando: quello che legge pyproject.toml e uv.lock e installa tutto"
-            """,
-        )
-        nb.box("nota", """
-            Se su un PC uv non c'è, si installa una volta sola seguendo le istruzioni su
-            docs.astral.sh/uv; poi vale per tutti i progetti. Non va nel `pyproject.toml`: è lo
-            strumento, non una libreria.
-        """)
-        nb.box("ricorda", """
-            - `pyproject.toml` dice cosa serve, `uv.lock` dice esattamente cosa è installato: viaggiano
-              insieme al progetto.
-            - `.venv` si ricrea con `uv sync`: non si passa a nessuno, non si ripara a mano.
-            - `uv add`, `uv remove`, `uv run`: dal terminale, nella cartella del progetto.
-        """)
+    nb.md("""
+        uv non è l'unico modo. `pip` con `venv` è lo strumento di base di Python: stessa idea, più
+        passaggi a mano, niente `uv.lock`. conda è diffuso in ambito scientifico, Poetry fa un lavoro
+        simile a uv. In un progetto che li usa, `environment.yml` (conda) o `poetry.lock` (Poetry) fanno
+        la parte di `pyproject.toml` e `uv.lock`: chi lo eredita usa quello che trova; chi ne apre uno
+        nuovo, oggi, usa uv.
+    """)
+    nb.prova_tu(
+        richiesta="""
+            Il collega ti passa la cartella del suo progetto: dentro ci sono `pyproject.toml` e
+            `uv.lock`, ma niente `.venv`, giustamente. Scrivi in `comando` il comando del terminale
+            che ricrea il suo ambiente, identico al suo.
+        """,
+        starter="""
+            comando = "..."
+            comando
+        """,
+        soluzione="""
+            comando = "uv sync"
+            comando
+        """,
+        verifica="""
+            assert comando.strip() == "uv sync", "❌ comando: quello che legge pyproject.toml e uv.lock e installa tutto"
+        """,
+    )
+    nb.box("nota", """
+        Se su un PC uv non c'è, si installa una volta sola seguendo le istruzioni su
+        docs.astral.sh/uv; poi vale per tutti i progetti. Non va nel `pyproject.toml`: è lo
+        strumento, non una libreria.
+    """)
+    nb.box("ricorda", """
+        - Un progetto, un ambiente: `.venv`, creato da `uv sync`.
+        - `pyproject.toml` elenca le librerie che servono: lo aggiorna `uv add`, viaggia insieme al progetto.
+        - `.venv` si ricrea con `uv sync`: non si passa a nessuno, non si ripara a mano.
+    """, aula="base")
+    nb.box("ricorda", """
+        - `pyproject.toml` dice cosa serve, `uv.lock` dice esattamente cosa è installato: viaggiano
+          insieme al progetto.
+        - `.venv` si ricrea con `uv sync`: non si passa a nessuno, non si ripara a mano.
+        - `uv add`, `uv remove`, `uv run`: dal terminale, nella cartella del progetto.
+    """, aula="avanzata")
 
-        # -------------------------------------------------------------- 4 (A)
-        nb.sezione("Script e notebook", intro="""
-            Il notebook è il posto per esplorare: si prova una cella, si guarda il risultato, si cambia
-            idea. Uno script è un file `.py` che fa sempre la stessa cosa, dall'inizio alla fine, senza
-            nessuno davanti: il report che parte alle sei di mattina, la funzione che tre notebook si
-            passano. Regola pratica: quando il notebook ha smesso di cambiare, diventa uno script.
-        """)
-        nb.md("""
-            Si crea in VS Code con **File → New File**, nome `profilo_carico.py`, salvato nella cartella
-            principale del progetto, accanto a `pyproject.toml`. Dentro, una funzione (`def`) che riceve
-            una lista di potenze e restituisce l'energia, e un `print` che la chiama. Funzioni e liste
-            le vediamo per bene nei prossimi notebook: qui ci interessa il file.
+    # ------------------------------------------------------------------ 4
+    nb.sezione("Script e notebook", intro="""
+        Il notebook è il posto per esplorare: si prova una cella, si guarda il risultato, si cambia
+        idea. Uno script è un file `.py` che fa sempre la stessa cosa, dall'inizio alla fine, senza
+        nessuno davanti: il report che parte alle sei di mattina, la funzione che tre notebook si
+        passano. Regola pratica: quando il notebook ha smesso di cambiare, diventa uno script.
+    """)
+    nb.md("""
+        Si crea in VS Code con **File → New File**, nome `profilo_carico.py`, salvato nella cartella
+        principale del progetto, accanto a `pyproject.toml`. Dentro, una funzione (`def`) che riceve
+        una lista di potenze e restituisce l'energia, e un `print` che la chiama. Funzioni e liste
+        le vediamo per bene nei prossimi notebook: qui ci interessa il file.
 
-            ```python
-            \"\"\"Dai MW medi di quattro quarti d'ora all'energia dell'ora.\"\"\"
-
-
-            def energia_mwh(potenze_mw):
-                \"\"\"Un quarto d'ora a potenza P vale P/4 MWh: somma e dividi per 4.\"\"\"
-                return sum(potenze_mw) / 4
-
-
-            quartorari = [12.4, 12.9, 13.1, 12.6]
-            print(f"Energia dell'ora: {energia_mwh(quartorari)} MWh")
-            ```
-        """)
-        nb.md("""
-            Nel terminale, dalla cartella del progetto:
-
-            ```bash
-            uv run profilo_carico.py
-            ```
-
-            ```
-            Energia dell'ora: 12.75 MWh
-            ```
-
-            `uv run` apre `.venv`, lancia Python sul file, stampa e chiude. Nessuna cella, nessun kernel:
-            può farlo anche un'attività pianificata alle sei di mattina, con tutti a casa.
-        """)
-        nb.md("""
-            Lo stesso codice, incollato in una cella, fa la stessa cosa. La differenza non è il codice:
-            è chi lo lancia, e quando.
-        """)
-        nb.code('''
-            def energia_mwh(potenze_mw):
-                """Un quarto d'ora a potenza P vale P/4 MWh: somma e dividi per 4."""
-                return sum(potenze_mw) / 4
+        ```python
+        \"\"\"Dai MW medi di quattro quarti d'ora all'energia dell'ora.\"\"\"
 
 
-            quartorari = [12.4, 12.9, 13.1, 12.6]
-            print(f"Energia dell'ora: {energia_mwh(quartorari)} MWh")
-        ''')
-        nb.box("nota", """
-            Il notebook parte dalla sua cartella, per questo i dati sono in `../Dati`. Uno script salvato
-            nella cartella principale parte da lì: per lui i dati stanno in `Dati/...`, senza `..`. È il
-            primo errore che si incontra passando dall'uno all'altro.
-        """)
+        def energia_mwh(potenze_mw):
+            \"\"\"Un quarto d'ora a potenza P vale P/4 MWh: somma e dividi per 4.\"\"\"
+            return sum(potenze_mw) / 4
+
+
+        quartorari = [12.4, 12.9, 13.1, 12.6]
+        print(f"Energia dell'ora: {energia_mwh(quartorari)} MWh")
+        ```
+    """)
+    nb.md("""
+        Nel terminale, dalla cartella del progetto:
+
+        ```bash
+        uv run profilo_carico.py
+        ```
+
+        ```
+        Energia dell'ora: 12.75 MWh
+        ```
+
+        `uv run` apre `.venv`, lancia Python sul file, stampa e chiude. Nessuna cella, nessun kernel:
+        può farlo anche un'attività pianificata alle sei di mattina, con tutti a casa.
+    """)
+    nb.md("""
+        Lo stesso codice, incollato in una cella, fa la stessa cosa. La differenza non è il codice:
+        è chi lo lancia, e quando.
+    """)
+    nb.code('''
+        def energia_mwh(potenze_mw):
+            """Un quarto d'ora a potenza P vale P/4 MWh: somma e dividi per 4."""
+            return sum(potenze_mw) / 4
+
+
+        quartorari = [12.4, 12.9, 13.1, 12.6]
+        print(f"Energia dell'ora: {energia_mwh(quartorari)} MWh")
+    ''')
+    nb.box("nota", """
+        Il notebook parte dalla sua cartella, per questo i dati sono in `../Dati`. Lo script parte dalla
+        cartella da cui lo lanci, non da quella in cui è salvato: dalla cartella principale i dati sono
+        in `Dati/...`, senza `..`. È il primo errore che si incontra passando dall'uno all'altro.
+    """)
+    with nb.solo("avanzata"):
         nb.box("approfondimento", """
             Quando lanci `uv run profilo_carico.py`, Python dà al file il nome speciale `__main__`;
             quando invece un altro file lo importa con `import profilo_carico`, il nome è
@@ -412,18 +453,23 @@ def costruisci() -> Notebook:
             Vale anche qui: per Python, il notebook è il programma principale.
         """)
         nb.code("__name__")
-        nb.box("ricorda", """
-            - Si esplora nel notebook, si automatizza nello script.
-            - `uv run nome.py` dal terminale: stesso ambiente, stesso codice, nessun kernel.
-            - Le funzioni in alto, le righe che le usano in basso: così lo script si può anche importare.
-        """)
+    nb.box("ricorda", """
+        - Si esplora nel notebook, si automatizza nello script.
+        - `uv run nome.py` dal terminale: stesso ambiente, stesso codice, nessun kernel.
+        - Lo script, lanciato dalla cartella principale, legge `Dati/...`; il notebook legge `../Dati/...`.
+    """, aula="base")
+    nb.box("ricorda", """
+        - Si esplora nel notebook, si automatizza nello script.
+        - `uv run nome.py` dal terminale: stesso ambiente, stesso codice, nessun kernel.
+        - Le funzioni in alto, le righe che le usano in basso: così lo script si può anche importare.
+    """, aula="avanzata")
 
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")
     nb.esercizio(
         titolo="La libreria che manca",
         scenario="""
-            Il collega del reporting, prima di andare in ferie, ha lasciato un notebook che fa i grafici
+            Marco, del reporting, prima di andare in ferie ha lasciato un notebook che fa i grafici
             con Plotly e scrive gli Excel con openpyxl. Prima di lanciarlo vogliamo sapere se le librerie
             ci sono, e lasciare scritto cosa fare se mancano: lui torna tra due settimane.
         """,
@@ -467,7 +513,7 @@ def costruisci() -> Notebook:
             testo="""
                 Il notebook del collega richiede una versione minima di Python: è scritta in
                 `pyproject.toml`, alla voce `requires-python`. Apri il file da VS Code e copia quel
-                valore, virgolette escluse, nella stringa `requisito`. Poi, con la libreria standard
+                valore, virgolette escluse, nel testo `requisito`. Poi, con la libreria standard
                 `platform`, metti in `versione_python` il risultato di `platform.python_version()`:
                 siamo a posto?
             """,
@@ -536,6 +582,64 @@ def costruisci() -> Notebook:
             assert rimedio == "Select Kernel", "❌ rimedio: non si installa niente, si cambia il Python che esegue il notebook"
         """,
         perche="La libreria c'è, lo dice `uv sync`: il notebook la cerca nel Python sbagliato. Si cambia kernel, non si installa due volte.",
+    )
+    nb.esercizio(
+        titolo="Da notebook a script",
+        aula="base",
+        scenario="""
+            Il collega della reperibilità vuole la media delle letture della notte ogni mattina alle
+            sei, lanciata da un'attività pianificata: niente notebook, niente clic. Le cinque letture
+            di stanotte, in kWh: 412.5, 398.0, 405.2, 410.8, 401.0.
+        """,
+        richiesta='''
+            1. Crea in VS Code il file `media_letture.py` nella cartella principale del progetto,
+               accanto a `pyproject.toml`, e incollaci questo codice:
+
+               ```python
+               letture = [412.5, 398.0, 405.2, 410.8, 401.0]
+
+
+               def media(valori):
+                   """Media aritmetica di una lista di numeri."""
+                   return sum(valori) / len(valori)
+
+
+               print(f"Media delle letture: {media(letture)} kWh")
+               ```
+
+            2. Nel terminale, `uv run media_letture.py`.
+            3. Copia la riga stampata dal terminale nella variabile `output_script` qui sotto.
+        ''',
+        suggerimento="Il file va salvato prima di lanciarlo: VS Code mette un pallino accanto al nome del file finché non salvi. `def`, lista e f-string li vediamo nei prossimi notebook: qui conta il file.",
+        starter="""
+            # il contenuto del file sta in media_letture.py; qui solo la riga copiata dal terminale
+            output_script = "..."
+            output_script
+        """,
+        soluzione="""
+            # la riga stampata dal terminale dopo: uv run media_letture.py
+            output_script = "Media delle letture: 405.5 kWh"
+        """,
+        verifica="""
+            assert output_script.strip() == "Media delle letture: 405.5 kWh", "❌ output_script: la riga stampata dal terminale, tale e quale"
+        """,
+        perche="Il file sta nella cartella principale, dove si apre il terminale: così `uv run media_letture.py` funziona senza percorsi. La riga finale è copiata dal terminale, non ricalcolata: è la prova che lo script è partito davvero.",
+        passo_in_piu=dict(
+            testo="""
+                Cambia l'ultima lettura da 401.0 a 421.0, salva, rilancia `uv run media_letture.py` e
+                copia la nuova riga in `output_script_bis`. Il codice è lo stesso: è cambiato solo il dato.
+            """,
+            starter="""
+                output_script_bis = "..."
+                output_script_bis
+            """,
+            soluzione="""
+                output_script_bis = "Media delle letture: 409.5 kWh"
+            """,
+            verifica="""
+                assert output_script_bis.strip() == "Media delle letture: 409.5 kWh", "❌ output_script_bis: la riga stampata dopo aver cambiato 401.0 in 421.0"
+            """,
+        ),
     )
     with nb.solo("avanzata"):
         nb.esercizio(

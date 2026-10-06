@@ -29,12 +29,12 @@ def costruisci() -> Notebook:
         giornata=1,
         intento="Da qui in avanti useremo quasi solo codice scritto da altri: pandas, Plotly, i suggerimenti di Copilot. Per leggerlo servono due cose: capire chi fa cosa in `dato.metodo()` e non farsi spaventare da un traceback.",
         obiettivi=[
-            "leggere `dato.metodo()` e capire chi fa cosa",
+            "dire cosa è cosa in una riga di codice: libreria, funzione, classe, oggetto, metodo, attributo",
             "leggere la documentazione e i type hint di una funzione",
             "leggere un traceback dal basso e riconoscere gli errori più comuni",
         ],
-        tempo={"base": 40, "avanzata": 30},
-        dati=["impianti_fv.csv"],
+        tempo={"base": 45, "avanzata": 35},
+        dati=["letture_pod_2025.csv", "impianti_fv.csv"],
     )
 
     # ------------------------------------------------------------------ 1
@@ -139,6 +139,120 @@ def costruisci() -> Notebook:
     """)
 
     # ------------------------------------------------------------------ 2
+    nb.sezione("Chi è chi in una riga di codice", intro="""
+        Con questi pezzi possiamo leggere una riga vera, di quelle che scrive un collega o che propone
+        Copilot. Prendiamo quella che nel prossimo notebook useremo per le letture dei contatori.
+    """)
+    nb.md("""
+        ```python
+        letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
+        ```
+
+        `pd` è la libreria pandas, importata con un alias più corto. `read_csv` è una funzione che vive
+        dentro la libreria. Tra parentesi ci sono gli argomenti: il primo per posizione, il percorso del
+        file; gli altri per nome, nella forma `nome=valore`. Il risultato finisce in `letture`.
+    """)
+    nb.code("""
+        letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
+        type(letture)
+    """)
+    nb.md("""
+        `pandas.DataFrame` si legge: la classe `DataFrame` della libreria `pandas`. Una classe è lo stampo;
+        `letture` è un oggetto fatto con quello stampo, un'**istanza**. Il `pd.DataFrame({...})` di prima
+        era la chiamata che ne costruisce uno a mano. Lo abbiamo già visto con `pod` e `consumi`: `str` e
+        `list` sono classi come `DataFrame`. Anche una colonna è un oggetto, di un'altra classe.
+    """)
+    nb.code('type(letture["kwh"])')
+    nb.md("""
+        Nel notebook 01 abbiamo scritto `from datetime import date` e `oggi = date.today()`. Ora sappiamo
+        leggerlo: `date` è una classe, anche se ha la minuscola come `str` e `list`: la maiuscola è la
+        convenzione, non l'obbligo. `date.today()` è un metodo chiamato sulla classe che costruisce un oggetto, `oggi.year` è un suo
+        attributo.
+    """)
+    nb.code("""
+        from datetime import date
+
+        oggi = date.today()
+        type(oggi), oggi.year
+    """)
+    nb.md("""
+        Le forme sono poche e si riconoscono dalla punteggiatura. Una regola vale per tutte: a sinistra
+        del punto c'è chi fa il lavoro.
+    """)
+    nb.md("""
+        | Forma | Cos'è | Esempio |
+        |---|---|---|
+        | `libreria.cosa(...)` | funzione della libreria | `pd.read_csv(...)` |
+        | `oggetto.cosa(...)` | metodo, un'azione dell'oggetto | `letture.head()` |
+        | `oggetto.cosa` senza parentesi | attributo, un dato dell'oggetto | `letture.shape` |
+        | `Nome(...)` con la maiuscola | classe chiamata: costruisce un oggetto | `pd.DataFrame({...})` |
+        | `cosa(...)` da sola | funzione di Python, o importata con `from` | `len(letture)` |
+        | `nome[...]` | selezione: posizione, chiave o colonna | `letture["kwh"]` |
+        | `@cosa` sulla riga sopra un `def` | decoratore: cambia come si comporta quello che sta sotto | lo incontreremo nell'11 |
+    """)
+    nb.prova_tu(
+        richiesta="""
+            Per ogni pezzo di codice scegli un'etichetta tra `"funzione di libreria"`, `"metodo"`,
+            `"attributo"`, `"classe"` e `"funzione di Python"`. Guarda la forma, come nella tabella:
+            punto, parentesi, maiuscola.
+        """,
+        starter="""
+            cosa_e = {
+                "pd.read_csv(...)": ...,
+                "letture.head()": ...,
+                "letture.shape": ...,
+                "pd.DataFrame(...)": ...,
+                "len(...)": ...,
+            }
+            cosa_e
+        """,
+        soluzione="""
+            cosa_e = {
+                "pd.read_csv(...)": "funzione di libreria",
+                "letture.head()": "metodo",
+                "letture.shape": "attributo",
+                "pd.DataFrame(...)": "classe",
+                "len(...)": "funzione di Python",
+            }
+            cosa_e
+        """,
+        verifica="""
+            assert cosa_e["pd.read_csv(...)"] == "funzione di libreria", "❌ pd.read_csv(...): libreria, punto, nome minuscolo con le parentesi"
+            assert cosa_e["letture.head()"] == "metodo", "❌ letture.head(): oggetto, punto, parentesi"
+            assert cosa_e["letture.shape"] == "attributo", "❌ letture.shape: oggetto, punto, niente parentesi"
+            assert cosa_e["pd.DataFrame(...)"] == "classe", "❌ pd.DataFrame(...): nome con la maiuscola chiamato con le parentesi"
+            assert cosa_e["len(...)"] == "funzione di Python", "❌ len(...): nessun punto davanti, l'oggetto va tra le parentesi"
+        """,
+    )
+    with nb.solo("avanzata"):
+        nb.box("approfondimento", """
+            Una classe si scrive con `class`. Il metodo `__init__` parte quando chiamiamo `Contatore(...)`
+            e salva i dati dentro l'oggetto; `self` è l'oggetto stesso, quello che starà a sinistra del
+            punto in `c.in_mwh()`. Per analizzare dati non serve quasi mai scriverne una: serve
+            riconoscerle quando le incontriamo in una libreria o nel codice di un agente.
+        """, titolo="Una classe nostra, per leggere quelle degli altri")
+        nb.code('''
+            class Contatore:
+                """Un contatore con il suo POD e i kWh letti."""
+
+                def __init__(self, pod, kwh):
+                    self.pod = pod
+                    self.kwh = kwh
+
+                def in_mwh(self):
+                    return self.kwh / 1000
+
+
+            c = Contatore("IT001E45678901", 1260.6)
+            c.pod, c.in_mwh()
+        ''')
+    nb.box("ricorda", """
+        - A sinistra del punto c'è chi fa il lavoro: una libreria, un oggetto o una classe.
+        - Con le parentesi si chiama qualcosa, senza si legge un attributo; di norma la maiuscola annuncia una classe.
+        - Cosa è cosa quando leggi una riga: [scheda leggere il codice](../Schede/Scheda_leggere_codice.md).
+    """)
+
+    # ------------------------------------------------------------------ 3
     nb.sezione("Leggere la documentazione", intro="""
         Nessuno ricorda a memoria i parametri di `read_csv`. Si legge la documentazione: `help(funzione)`
         nel notebook, oppure il nome seguito da `?`. In VS Code basta anche fermare il mouse sul nome.
@@ -148,7 +262,9 @@ def costruisci() -> Notebook:
     nb.md("""
         La prima riga è la firma: i parametri, nell'ordine. `number` non ha default, quindi è
         obbligatorio; `ndigits=None` ha un default, quindi si può omettere. `None` è il valore "niente" di
-        Python, e qui vuol dire: nessun decimale, restituisci un intero. Sotto, il testo spiega il resto.
+        Python, e qui vuol dire: nessun decimale, restituisci un intero. Per chiedere se qualcosa è `None`
+        si scrive `x is None` (oppure `x is not None`): nel codice degli agenti è la riga che controlla
+        se un parametro facoltativo è stato passato. Sotto, il testo spiega il resto.
     """)
     nb.md("""
         Ora una firma vera, quella di `pd.read_csv`. L'output è lungo, oltre quaranta parametri: nessuno
@@ -156,16 +272,18 @@ def costruisci() -> Notebook:
     """)
     nb.code("help(pd.read_csv)")
     nb.md("""
-        Leggiamola con calma, nei pezzi che contano.
+        Leggiamola con calma, nei pezzi che contano. Qui sotto è accorciata e senza i tipi dopo i due
+        punti, che vediamo tra poco: nell'output ogni parametro sta su una riga.
 
         ```python
         read_csv(filepath_or_buffer, *, sep=<no_default>, delimiter=None, header='infer', ...,
                  decimal='.', ..., encoding=None, ...)
         ```
-
+    """)
+    nb.md("""
         - `filepath_or_buffer` non ha default: è l'unico obbligatorio, il percorso del file.
         - L'asterisco `*` da solo significa che tutto quello che segue va passato per nome: `sep=";"`, non `";"` al secondo posto.
-        - `decimal='.'` ed `encoding=None` hanno un default: insieme a `sep` sono le manopole che gireremo nel prossimo notebook per i CSV italiani.
+        - `sep=<no_default>`, `decimal='.'` ed `encoding=None` hanno un `=`, quindi sono facoltativi. `<no_default>` vuol dire che sceglie pandas: qui la virgola. Sono le manopole girate per le letture; il perché lo vediamo nel prossimo notebook.
     """)
     nb.md("""
         Con il solo argomento obbligatorio, `read_csv` legge un file "all'americana": virgola come
@@ -177,7 +295,8 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Nelle firme moderne compaiono i type hint: dopo i due punti il tipo atteso, dopo la freccia il
-        tipo restituito. Python non li controlla, servono a chi legge. `def media(valori: list[float]) -> float`
+        tipo restituito. Python non li controlla, servono a chi legge, e nel codice scritto da un agente
+        ci sono quasi sempre. `def media(valori: list[float]) -> float`
         si legge: prende una lista di numeri con la virgola e restituisce un numero con la virgola.
     """)
     nb.code('''
@@ -190,8 +309,9 @@ def costruisci() -> Notebook:
     nb.code("help(media)")
     nb.md("""
         `help` mostra firma, type hint e docstring insieme: tutto quello che serve per usare la funzione
-        senza aprirla. Nella firma di `read_csv`, `encoding: str | None = None` si legge allo stesso modo:
-        una stringa oppure niente, e di default niente. La barra verticale vuol dire "oppure".
+        senza aprirla. Nella firma di `read_csv` trovi `encoding: 'str | None' = None`: pandas scrive il
+        tipo tra apici, ma si legge allo stesso modo. Una stringa oppure niente, e di default niente. La
+        barra verticale vuol dire "oppure".
     """)
     nb.prova_tu(
         richiesta="""
@@ -216,11 +336,11 @@ def costruisci() -> Notebook:
         - `nome: tipo` dice cosa entra, `-> tipo` cosa esce. Python non li controlla; noi li leggiamo.
     """)
 
-    # ------------------------------------------------------------------ 3
+    # ------------------------------------------------------------------ 4
     nb.sezione("Gli errori, uno alla volta", intro="""
-        Un errore in Python non è un giudizio: è un messaggio scritto per essere letto. Si chiama
-        traceback e si legge dal basso. L'ultima riga dice il tipo di errore e il perché; le righe sopra,
-        con la freccia, dicono dove. Li provochiamo uno alla volta, apposta, e li leggiamo.
+        Quando qualcosa va storto, Python ferma la cella e stampa un messaggio: si chiama traceback e si
+        legge dal basso. L'ultima riga dice il tipo di errore e il perché; le righe sopra, con la freccia,
+        dicono dove. Li provochiamo uno alla volta, apposta, e li leggiamo.
     """)
     nb.sottosezione("SyntaxError", intro="""
         È l'unico errore che Python trova prima di eseguire: la frase non è Python. Questa cella dà errore
@@ -269,8 +389,10 @@ def costruisci() -> Notebook:
         totale
     """)
     nb.sottosezione("KeyError", intro="""
-        La chiave non c'è. Su un dizionario capita con una chiave scritta diversa; su una Series di
-        pandas quando usiamo un numero come se fosse una posizione, mentre l'indice ha etichette.
+        La chiave non c'è. Su un dizionario capita con una chiave scritta diversa. Lo stesso succede con
+        una Series, cioè una colonna di pandas come `df["kwh"]`, che ha un'etichetta per ogni riga: se le
+        etichette sono testi e chiediamo `[0]` pensando alla prima posizione, pandas cerca un'etichetta 0
+        e non la trova.
     """)
     nb.code("""
         listino = {"F1": 0.28, "F2": 0.25, "F3": 0.21}
@@ -288,7 +410,7 @@ def costruisci() -> Notebook:
     nb.md("""
         Il traceback qui è lungo, perché attraversa il codice di pandas: le righe in mezzo non sono
         nostre e si saltano, fino all'ultima. Con le etichette si usa l'etichetta; per la posizione c'è
-        `.iloc[0]`, che riprenderemo con i DataFrame.
+        `.iloc[0]`. Series e `iloc` li vediamo con calma nel 07 e nell'08.
     """)
     nb.code("""
         print(consumi_pod["IT001E45678901"])
@@ -322,18 +444,31 @@ def costruisci() -> Notebook:
     """)
     nb.code('pd.read_csv("../Dati/impianti_fotovoltaici.csv")', errore=True)
     nb.md("""
-        `No such file or directory: '../Dati/impianti_fotovoltaici.csv'`. Anche qui il traceback
-        attraversa pandas: righe da saltare, fino all'ultima. Nove volte su dieci il nome è scritto
-        diverso, oppure manca il `../` perché il file è nella cartella accanto, non in questa.
+        L'ultima riga riporta il percorso che Python ha provato, `'../Dati/impianti_fotovoltaici.csv'`.
+        Anche qui il traceback attraversa pandas: righe da saltare, fino all'ultima. Nove volte su dieci
+        il nome è scritto diverso, oppure manca il `../` perché il file è nella cartella accanto, non in
+        questa.
     """)
     nb.code("""
         impianti = pd.read_csv("../Dati/impianti_fv.csv")
         impianti.shape
     """)
+    nb.sottosezione("AttributeError", intro="""
+        Il metodo o l'attributo non esiste su questo oggetto. Capita quando scriviamo un nome che ci sembra
+        giusto, e capita spesso nel codice suggerito da Copilot: un nome plausibile che pandas non ha.
+        Questa cella dà errore apposta.
+    """)
+    nb.code('impianti.sort("kwp")', errore=True)
+    nb.md("""
+        `'DataFrame' object has no attribute 'sort'`: l'ultima riga dice chi è l'oggetto a sinistra del
+        punto e quale nome non conosce. Il metodo giusto si trova con `dir(impianti)` o con il menu che
+        VS Code apre dopo il punto: qui è `sort_values`.
+    """)
+    nb.code('impianti.sort_values("kwp").head(3)')
     nb.sottosezione("try ed except, per saperli leggere", intro="""
         Nel codice dei colleghi si incontra `try/except`: "prova questo e, se salta fuori quel tipo di
-        errore, fai quest'altro". Serve saperlo leggere, non metterlo ovunque: un errore nascosto è un
-        errore che scopriremo più tardi, più lontano dalla causa.
+        errore, fai quest'altro". Bisogna saperlo leggere e usarlo con parsimonia: un errore nascosto si
+        scopre più tardi, più lontano dalla causa.
     """)
     nb.code("""
         testo = "12,5"
@@ -372,26 +507,26 @@ def costruisci() -> Notebook:
     nb.box("ricorda", """
         - Leggi l'ultima riga: tipo di errore e messaggio.
         - Risali fino alla freccia nel tuo codice: le righe dentro le librerie si saltano.
-        - Gli errori si leggono, non si nascondono con `try/except`.
+        - `try/except` si incontra e si legge; un `except:` senza tipo nasconde anche gli errori che volevi vedere.
     """)
 
-    # ------------------------------------------------------------------ 4
+    # ------------------------------------------------------------------ 5
     nb.sezione("Cosa fare quando non capisco l'errore", intro="""
-        Capita a tutti, ogni giorno. La differenza la fa il metodo, non l'esperienza.
+        Capita a tutti, ogni giorno. Queste cinque mosse, in quest'ordine, sbloccano quasi ogni caso.
     """)
     nb.md("""
         1. Leggi l'ultima riga, poi cerca la freccia nel tuo codice. Spesso basta.
         2. Esegui le celle sopra, dall'inizio: metà dei `NameError` sono celle saltate dopo un **Restart**.
         3. Spezza la riga: un'operazione per cella, finché l'errore si isola.
         4. Cerca su internet il nome dell'errore più il messaggio, tra virgolette, senza i tuoi nomi di variabile.
-        5. Chiedi a Copilot "spiegami questo errore" incollando il traceback intero. Poi verifica eseguendo.
+        5. Apri la chat di Copilot in VS Code (**Ctrl+Alt+I**), incolla il traceback intero e chiedi "spiegami questo errore". Poi verifica eseguendo.
     """)
     nb.box("nota", """
         A un collega, o a Copilot, si manda tutto il traceback: la riga con la freccia è quella che
-        fa risparmiare dieci minuti a chi legge.
+        fa risparmiare dieci minuti a chi legge. Come lavorare con un agente lo vediamo nel notebook 11.
     """)
     nb.md("""
-        I sette errori di oggi, con la riga da guardare per ciascuno, stanno in una pagina sola:
+        Gli errori di oggi, con la riga da guardare per ciascuno, stanno in una pagina sola:
         [Scheda errori](../Schede/Scheda_errori.md). Da tenere aperta nelle prossime settimane.
     """)
 
@@ -420,11 +555,14 @@ def costruisci() -> Notebook:
             totale_kwh = sum(consumi_kwh)
             totale_kwh
         """,
-        perche="Quattro errori, quattro ultime righe diverse: il nome, i tipi, la chiave, il valore. In ogni caso la correzione sta nella riga indicata dalla freccia, non altrove.",
+        perche="Quattro errori, quattro ultime righe diverse: il nome, i tipi, la chiave, il valore. In ogni caso la correzione sta nella riga indicata dalla freccia.",
     )
     _altra_cella_rotta(nb, starter="""
         letture = ["312", "298", "305"]
-        media_letture = sum(letture) / len(letture)
+        totale = 0
+        for lettura in letture:
+            totale += lettura
+        media_letture = totale / len(letture)
         media_letture
     """, soluzione="""
         letture = ["312", "298", "305"]
@@ -452,7 +590,7 @@ def costruisci() -> Notebook:
     """)
     _verifica_finale(nb, """
         assert round(totale_kwh, 1) == 1006.3, "❌ totale_kwh: la lista si chiama consumi_kwh"
-        assert media_letture == 305, "❌ media_letture: converti ogni lettura in numero prima di sommare"
+        assert media_letture == 305, "❌ media_letture: ogni lettura è testo, convertila con int() prima di sommarla"
         assert round(costo_f3, 2) == 31.5, "❌ costo_f3: la chiave del listino è F3, senza spazio"
         assert potenza_kw == 6.0, "❌ potenza_kw: float vuole il punto decimale, non la virgola"
     """)
@@ -486,7 +624,7 @@ def costruisci() -> Notebook:
                 taglia = "monofase"
             taglia
         """,
-        perche="`df.shape()` con le parentesi è l'errore speculare al `bound method`: un attributo si legge, non si chiama. Il nome del file si controlla nella cartella, non si indovina.",
+        perche="`df.shape()` con le parentesi è l'errore speculare al `bound method`: un attributo si legge, non si chiama. Il nome del file si copia dalla cartella.",
     )
     _altra_cella_rotta(nb, starter="""
         pod = ["IT001E45678901", "IT001E45678902"]
@@ -528,8 +666,8 @@ def costruisci() -> Notebook:
         titolo="Leggi la firma",
         scenario="""
             Quando chiederemo a Copilot un `read_csv` con i parametri giusti, dovremo controllare che
-            non li inventi. Per allenarci, il capo ci gira tre domande a cui rispondere leggendo la
-            documentazione, non a memoria.
+            non li inventi. Per allenarci, il capo ci gira tre domande a cui rispondere con la
+            documentazione aperta davanti.
         """,
         richiesta="""
             Esegui `help(round)`, `help(pd.read_csv)` e `help(media)` dove serve, poi compila il
@@ -571,7 +709,7 @@ def costruisci() -> Notebook:
             assert risposte["default_decimal"] == ".", "❌ default_decimal: nella firma di read_csv cerca decimal="
             assert risposte["tipo_restituito"] == "float", "❌ tipo_restituito: il tipo dopo la freccia ->"
         """,
-        perche="Tre risposte lette, non ricordate. `ndigits=None` nella firma vuol dire facoltativo; `decimal='.'` è il motivo per cui i CSV italiani si leggono con `decimal=\",\"`.",
+        perche="Tre risposte prese dalla firma. `ndigits=None` nella firma vuol dire facoltativo; `decimal='.'` è il motivo per cui i CSV italiani si leggono con `decimal=\",\"`.",
         passo_in_piu=dict(
             testo="""
                 Con `help(sorted)` trova il parametro che inverte l'ordine e scrivi il suo nome in
