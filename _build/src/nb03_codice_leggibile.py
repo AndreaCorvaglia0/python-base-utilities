@@ -77,8 +77,8 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 3
     nb.sezione("Docstring", intro="""
         Una funzione si definisce con `def`, un nome e i parametri tra parentesi tonde; il corpo è
-        indentato e `return` restituisce il risultato. Le funzioni le vediamo nel notebook sulle
-        funzioni: qui ci interessa la riga subito sotto il `def`.
+        indentato e `return` restituisce il risultato. Le vediamo per bene nel notebook su funzioni e
+        controllo del flusso: qui ci interessa la riga subito sotto il `def`.
     """)
     nb.code("""
         def area_rettangolo(base, altezza):

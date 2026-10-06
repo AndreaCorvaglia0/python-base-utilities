@@ -1,5 +1,7 @@
 """04 · Funzioni e controllo del flusso (dal notebook 03 del docente)."""
 
+import textwrap
+
 from nbkit import Notebook
 
 
@@ -308,7 +310,7 @@ def costruisci() -> Notebook:
             invertita. Esempio: input `'Python'`, output `'nohtyP'`.
         """,
         suggerimento="puoi pensare alla stringa come a una **lista** di caratteri.",
-        starter="""
+        starter=con_test("""
             def reverse_string(stringa):
                 return ...
         """,
@@ -386,6 +388,10 @@ def costruisci() -> Notebook:
         lista_parole = ['ciao', 'anna', 'radar', 'gatto', 'osso', 'madam']
         print(trova_palindrome(lista_parole))
     """
+
+    def con_test(codice):
+        return textwrap.dedent(codice).strip() + "\n\n" + textwrap.dedent(test_palindrome).strip()
+
     verifica_palindrome = """
         assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ Lista delle parole palindrome errata"
     """
@@ -403,8 +409,8 @@ def costruisci() -> Notebook:
                         ...
                 return palindrome
 
-        """ + test_palindrome,
-        soluzione="""
+        """),
+        soluzione=con_test("""
             def trova_palindrome(lista_parole):
                 palindrome = []
                 for parola in lista_parole:
@@ -412,7 +418,7 @@ def costruisci() -> Notebook:
                         palindrome.append(parola)
                 return palindrome
 
-        """ + test_palindrome,
+        """),
         verifica=verifica_palindrome,
     )
     nb.esercizio(
@@ -420,16 +426,16 @@ def costruisci() -> Notebook:
         titolo="Parole palindrome",
         scenario="",
         richiesta=richiesta_palindrome,
-        starter="""
+        starter=con_test("""
             def trova_palindrome(lista_parole):
                 return [... for ... if ...]  # completa la condizione parola == parola invertita
 
-        """ + test_palindrome,
-        soluzione="""
+        """),
+        soluzione=con_test("""
             def trova_palindrome(lista_parole):
                 return [parola for parola in lista_parole if parola == parola[::-1]]
 
-        """ + test_palindrome,
+        """),
         verifica=verifica_palindrome,
     )
     return nb
