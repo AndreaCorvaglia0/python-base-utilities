@@ -167,9 +167,9 @@ def costruisci() -> Notebook:
         print(f"Lun-ven:   {prezzi.loc[~weekend, 'eur_mwh'].mean():.2f} €/MWh")
     """)
     nb.md("""
-        Con l'ora in una colonna, il profilo orario è un `groupby` come quelli di ieri: prezzo medio per
-        ora del giorno, su tutte le zone e tutti i giorni. L'ora finisce nell'indice; `reset_index()` la
-        riporta colonna.
+        Con l'ora in una colonna, il profilo orario è un `groupby` come quelli appena visti: prezzo medio
+        per ora del giorno, su tutte le zone e tutti i giorni. L'ora finisce nell'indice; `reset_index()`
+        la riporta colonna.
     """)
     nb.code("""
         profilo = prezzi.groupby("ora")["eur_mwh"].mean().reset_index()
@@ -443,7 +443,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Una durata si somma a una data. Comodo per "una settimana dopo", e istruttivo sulla notte del
-        31 marzo: pandas non sa che quelle 2:00 non esistono, finché non gli diciamo il fuso.
+        31 marzo: pandas non sa che quelle 2:00 non sono mai esistite, per lui è un orologio e basta.
     """)
     nb.code("""
         print(pd.Timestamp("2025-06-02") + pd.Timedelta(days=7))
@@ -532,8 +532,8 @@ def costruisci() -> Notebook:
             print(confronto["variazione"].idxmax(), round(confronto["variazione"].max()))
         """)
         nb.md("""
-            Lo stesso lunedì alle 6:45 di dicembre, tutti accendono tutto. Con 672 righe il confronto è con
-            la settimana prima: stesso giorno, stessa ora.
+            Un giovedì di dicembre alle 6:45: si sveglia il Nord e accende tutto. Con 672 righe il
+            confronto è con la settimana prima, stesso giorno e stessa ora.
         """)
         nb.code("""
             confronto["settimana_prima"] = mw.shift(4 * 24 * 7)

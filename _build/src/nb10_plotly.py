@@ -126,8 +126,8 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Lo scatter mette un punto per riga e serve a vedere la relazione tra due numeri. Il caso da
-        manuale è la turbina: vento sulla x, potenza sulla y. Il timestamp lo costruiamo come ieri e
-        rinominiamo due colonne, perché `Wind speed | (m/s)` è scomodo da scrivere.
+        manuale è la turbina: vento sulla x, potenza sulla y. Il timestamp lo costruiamo come nel
+        notebook sulle date e rinominiamo due colonne, perché `Wind speed | (m/s)` è scomodo da scrivere.
     """)
     nb.code("""
         turbina = pd.read_csv("../Dati/TexasTurbine.csv")
@@ -142,9 +142,10 @@ def costruisci() -> Notebook:
         fig.show()
     """)
     nb.md("""
-        La S è la curva di potenza: sotto i 3 m/s niente, poi sale, poi satura a 3 MW. I punti fuori dalla
-        curva, con vento e potenza zero, sono le ore di fermo: in un grafico si vedono in un secondo, in
-        una tabella di 8760 righe mai. `opacity` serve proprio a far vedere dove i punti si accumulano.
+        La S è la curva di potenza: sotto i 3 m/s la turbina non parte, poi sale, poi satura a 3 MW. Un
+        punto con vento buono e potenza zero sarebbe un fermo o una misura da controllare: qui non ce ne
+        sono, e in un grafico lo si vede in un secondo, in una tabella di 8760 righe mai. `opacity` serve
+        a far vedere dove i punti si accumulano.
     """)
     nb.prova_tu(
         richiesta="""
@@ -169,7 +170,8 @@ def costruisci() -> Notebook:
     nb.sezione("Più serie e navigazione", intro="""
         I prezzi sono in formato long: una riga per ogni coppia (ora, zona), e `color` separa le serie.
         Terna è in formato wide: carico e previsione sono due colonne della stessa riga. Per il wide si
-        passa a `y` una lista di colonne. Carichiamo il 2024 con la pulizia di ieri e teniamo febbraio.
+        passa a `y` una lista di colonne. Carichiamo il 2024 con la pulizia del notebook sulle date e
+        teniamo febbraio.
     """)
     nb.code("""
         carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
@@ -258,7 +260,7 @@ def costruisci() -> Notebook:
         print(f"{Path('carico_febbraio.html').stat().st_size / 1_000_000:.1f} MB")
     """)
     nb.md("""
-        Quasi 5 MB per un grafico: dentro c'è tutta la libreria Plotly, così il file funziona anche senza
+        Cinque MB per un grafico: dentro c'è tutta la libreria Plotly, così il file funziona anche senza
         rete. Con `include_plotlyjs="cdn"` la libreria viene scaricata all'apertura e il file scende a
         poche centinaia di KB, ma chi lo apre deve essere connesso.
     """)
