@@ -242,6 +242,9 @@ def costruisci() -> Notebook:
         missing_timestamps = df_qh.index[df_qh["power_kw"].isna()]
         missing_timestamps[:10]
     """)
+    nb.md("""
+        I grafici qui sotto anticipano il notebook su Plotly: per ora si leggono e basta.
+    """)
     nb.code("""
         # i dati prima e dopo asfreq: nel secondo grafico i buchi interrompono la linea
         import plotly.express as px
@@ -261,6 +264,9 @@ def costruisci() -> Notebook:
     nb.md("""
         **Forward fill** (riempimento in avanti): copia l'ultimo valore valido nei buchi successivi. Utile
         quando il valore resta stabile per un po' (lo stato di un dispositivo). Comando: `df.ffill()`.
+    """)
+    nb.md("""
+        **Backward fill**: `df.bfill()` fa il contrario, copia all'indietro il prossimo valore valido.
     """)
     nb.code("""
         # lavoriamo SOLO su power_kw
@@ -440,8 +446,8 @@ def costruisci() -> Notebook:
         len(carico)
     """)
     nb.md("""
-        35.132 righe: un'ora persa su 8784. A marzo succede il contrario: l'ultima domenica le 2:00 non
-        esistono, e nel file mancano quattro quarti d'ora.
+        Restano 35.132 righe invece di 35.136 (8784 ore per 4): i quattro quarti d'ora mancanti sono quelli
+        dell'ora che a marzo non esiste.
     """)
 
     # ------------------------------------------------------------------ 12

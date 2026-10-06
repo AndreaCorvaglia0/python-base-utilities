@@ -10,7 +10,7 @@ def costruisci() -> Notebook:
         titolo="Pandas: operazioni sui DataFrame",
         blocco=3,
         giornata=2,
-        intento="Le operazioni di tutti i giorni su un DataFrame: selezionare, pulire, trasformare, ordinare, raggruppare e unire tabelle.",
+        intento="Selezione, pulizia, trasformazione, ordinamento, raggruppamento e unione di tabelle.",
         obiettivi=[
             "selezionare righe e colonne con `loc`, `iloc`, le condizioni e `.query()`",
             "gestire valori mancanti e duplicati, creare colonne nuove e ordinare",
@@ -112,8 +112,7 @@ def costruisci() -> Notebook:
         df.loc[(df["Età"] > 23) & (df["Età"] < 26), ["Nome"]]
     """)
     nb.md("""
-        Queste Series di `True` e `False` si chiamano maschere booleane: sono il modo standard per
-        filtrare i dati in pandas.
+        Queste Series di `True` e `False` si chiamano maschere booleane.
     """)
 
     nb.sottosezione("Il metodo query", intro="""

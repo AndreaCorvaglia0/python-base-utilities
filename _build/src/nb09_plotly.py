@@ -10,7 +10,7 @@ def costruisci() -> Notebook:
         titolo="Plotly per serie storiche",
         blocco=3,
         giornata=2,
-        intento="Plotly fa grafici interattivi: per una serie storica vuol dire zoom, intervalli e confronto tra serie senza riscrivere codice.",
+        intento="Plotly produce grafici interattivi: per una serie storica permette zoom, selezione di intervalli e confronto tra serie.",
         obiettivi=[
             "fare grafici a linee, istogrammi e scatter con Plotly Express",
             "confrontare più serie e navigarle con range slider e range selector",
@@ -250,7 +250,7 @@ def costruisci() -> Notebook:
         richiesta="""
             1. Da `carico` tieni il solo gennaio 2024 in `gennaio`.
             2. Costruisci `fig_carico` con `px.line`: `Total Load [MW]` sulla `Date`, titolo `Carico Nord, gennaio 2024`.
-            3. Accendi il range slider sotto l'asse x.
+            3. Attiva il range slider sotto l'asse x.
 
             Output atteso: una linea sola, con lo slider sotto il grafico.
         """,
