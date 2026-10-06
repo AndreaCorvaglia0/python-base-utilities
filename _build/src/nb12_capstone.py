@@ -195,7 +195,7 @@ def costruisci() -> Notebook:
         nb, titolo="Pulizia temporale",
         scenario="Due anni, otto doppioni e otto quartorari che mancano: sempre negli stessi due giorni dell'anno. Prima di togliere qualcosa, guardiamo che giorni sono.",
         soluzione=soluzione_2, verifica=verifica_2,
-        perche="Tenere la prima occorrenza basta: le due copie di ogni quartorario d'ottobre hanno valori quasi uguali. Il buco di marzo resta: quell'ora non è mai esistita.",
+        perche="Tenere la prima occorrenza basta: le due copie differiscono di qualche centinaio di MW su 11.000, una goccia sul totale dell'anno. Il buco di marzo resta: quell'ora non è mai esistita.",
         base=dict(
             richiesta="""
                 1. In `duplicati` metti le righe con un timestamp ripetuto, tutte le copie
@@ -257,10 +257,10 @@ def costruisci() -> Notebook:
         """)
         nb.code('carico["data"].dt.tz_localize("Europe/Rome", ambiguous="infer")', errore=True)
         nb.md("""
-            L'ultima riga dice `ValueError` e cita le 2:00 del 27 ottobre 2024: nel fuso italiano le 2:00
-            dell'ultima domenica di ottobre esistono due volte, e dalla copia rimasta pandas non capisce
-            quale delle due sia. Per questa analisi basta l'ora locale, senza fuso: i doppioni li abbiamo
-            già tolti e il resto lo lasciamo stare.
+            L'ultima riga è `ValueError: 2024-10-27 02:00:00 is an ambiguous time and cannot be inferred`.
+            Nel fuso italiano le 2:00 dell'ultima domenica di ottobre esistono due volte, e dalla copia
+            rimasta pandas non capisce quale delle due sia. Per questa analisi basta l'ora locale, senza
+            fuso: i doppioni li abbiamo già tolti e il buco di marzo resta com'è.
         """)
 
     # ------------------------------------------------------------------ 3
@@ -285,6 +285,21 @@ def costruisci() -> Notebook:
         estremi = giornaliero.loc[[giornaliero["mwh"].idxmin(), giornaliero["mwh"].idxmax()]]
         estremi
     """
+    soluzione_3_base = """
+        indice_tempo = carico.set_index("data")
+        giornaliero = indice_tempo["mw"].resample("D").sum()
+        giornaliero = giornaliero.reset_index()
+        giornaliero["mwh"] = giornaliero["mw"] / 4
+        giornaliero = giornaliero.drop(columns="mw")
+
+        fig = px.line(giornaliero, x="data", y="mwh", title="Energia giornaliera, zona Nord",
+                      labels={"mwh": "MWh", "data": ""})
+        fig.update_xaxes(rangeslider_visible=True)
+        fig.show()
+
+        estremi = giornaliero.loc[[giornaliero["mwh"].idxmin(), giornaliero["mwh"].idxmax()]]
+        estremi
+    """
     verifica_3 = """
         assert set(giornaliero.columns) == {"data", "mwh"}, "❌ giornaliero: due colonne, data e mwh"
         assert len(giornaliero) == 731, "❌ giornaliero: 366 + 365 giorni"
@@ -295,7 +310,7 @@ def costruisci() -> Notebook:
     step(
         nb, titolo="La serie giornaliera",
         scenario="Il capo vuole \"vedere i due anni\". Un grafico con lo slider sotto, e due numeri: il giorno più leggero e quello più pesante.",
-        soluzione=soluzione_3, verifica=verifica_3,
+        soluzione={"base": soluzione_3_base, "avanzata": soluzione_3}, verifica=verifica_3,
         perche="Somma dei quartorari e poi diviso 4: un quarto d'ora a P MW vale P/4 MWh. La media moltiplicata per 24 darebbe quasi lo stesso, ma nel giorno del buco di marzo conterebbe un'ora che non c'è stata.",
         base=dict(
             richiesta="""
@@ -311,7 +326,8 @@ def costruisci() -> Notebook:
                 # 1. il tempo come indice: serve a resample
                 indice_tempo = carico.set_index("data")
                 # 2. energia di ogni giorno: somma dei quartorari, poi da MW a MWh
-                giornaliero = indice_tempo["mw"].resample("D").sum().reset_index()
+                giornaliero = indice_tempo["mw"].resample("D").sum()
+                giornaliero = giornaliero.reset_index()
                 giornaliero["mwh"] = ...
                 giornaliero = giornaliero.drop(columns="mw")
 
@@ -382,7 +398,7 @@ def costruisci() -> Notebook:
         nb, titolo="I profili",
         scenario="Il collega della sala controllo giura che i picchi sono due. Il commerciale vuole sapere quanto cala il weekend, in percentuale, per un'offerta.",
         soluzione=soluzione_4, verifica=verifica_4,
-        perche="Il calo del weekend si calcola sulle medie dei due gruppi, non sulle due linee: il profilo medio è già una media, e la media di medie inganna.",
+        perche="Il calo si calcola sulle medie dei due gruppi. Qui anche la media delle 24 medie orarie darebbe lo stesso numero, ma solo perché ogni ora ha lo stesso numero di righe: con dati a buchi no.",
         base=dict(
             richiesta="""
                 1. Aggiungi a `carico` la colonna `ora` (`dt.hour`) e la colonna `weekend`: `True` se il

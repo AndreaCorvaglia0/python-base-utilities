@@ -33,9 +33,9 @@ letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", enco
 | `df["kwh"]`, `lista[0]`, `d["F1"]` | selezione con le quadre | colonna, posizione o chiave, a seconda dell'oggetto a sinistra | `lista[-1]`, `lista[1:3]`, `df.loc[mask, "kwh"]` |
 | `[1, 2]`, `{"F1": 0.28}`, `(1, 2)`, `{"a", "b"}` | letterali | una lista, un dizionario, una tupla, un set scritti a mano | `[]` lista vuota |
 | `def nome(a, b=2):` ... `return` | definizione di funzione | il corpo indentato parte solo quando qualcuno la chiama; `return` è il risultato | |
-| `def f(x: float) -> float:` | type hint | cosa entra e cosa esce; Python non li controlla, servono a chi legge | `path: Path`, `fasce: list[str] \| None = None` |
+| `def f(x: float) -> float:` | type hint | cosa entra e cosa esce; Python non li controlla, servono a chi legge; `list[str] \| None` si legge "lista di stringhe oppure `None`" | `path: Path`, `fasce: list[str] \| None = None` |
 | `if ...:` / `elif ...:` / `else:` | condizione | un ramo solo viene eseguito | |
-| `for riga in letture:` | ciclo | il corpo parte una volta per ogni elemento | `for i in range(4):` |
+| `for pod in lista_pod:` | ciclo | il corpo parte una volta per ogni elemento | `for i in range(4):` |
 | `while condizione:` | ciclo a condizione | ripete finché la condizione è vera | |
 | `f"Totale: {kwh:.1f} kWh"` | f-string | testo con valori dentro le graffe; dopo i due punti il formato | `{data:%d/%m/%Y}` |
 | `with open(p) as f:` | context manager | apre e chiude da solo, anche se qualcosa va storto | `with pd.ExcelWriter(p) as w:` |
@@ -46,7 +46,8 @@ letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", enco
 | `lambda x: x / 4` | funzione senza nome | una riga sola, di solito dentro `sorted(key=...)` o `.apply(...)` | |
 | `[p / 4 for p in potenze]` | comprehension | un ciclo che costruisce una lista in una riga | `{k: v for k, v in ...}` |
 | `*args`, `**kwargs` | argomenti raccolti | tutti quelli per posizione, tutti quelli per nome, di solito passati avanti a un'altra funzione | `pd.read_csv(path, **opzioni)` |
-| `if __name__ == "__main__":` | guardia dello script | quel blocco parte solo se il file è lanciato con `uv run`, non se viene importato | |
+| `logger.info("...")` | log | un `print` con il livello davanti (`INFO:__main__:...`), va nel terminale; si accende con `logging.basicConfig` | |
+| `if __name__ == "__main__":` | blocco main (guardia dello script) | quel blocco parte se il file è il programma lanciato, con `uv run` o incollato in una cella; non se viene importato | |
 | `yield` | generatore | una funzione che restituisce un elemento alla volta invece di una lista intera | |
 | `async def` / `await` | codice asincrono | si legge come una funzione normale con una parola in più; nelle analisi dati è raro | |
 | `None` | il valore "niente" | default dei parametri facoltativi; quel che restituisce una funzione senza `return` | `if fasce is not None:` |
