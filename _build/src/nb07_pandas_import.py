@@ -285,7 +285,7 @@ def costruisci() -> Notebook:
         caffe.head()
     """)
     nb.box("attenzione", """
-        `encoding="latin-1"` non va messo sempre, per sicurezza: su un file UTF-8 con lettere accentate
+        `encoding="latin-1"` non si mette "per sicurezza" su ogni file: su un UTF-8 con lettere accentate
         produce caratteri strani senza dare nessun errore. Si aggiunge solo dopo aver visto
         l'`UnicodeDecodeError`.
     """)
@@ -777,9 +777,9 @@ def costruisci() -> Notebook:
 
         nb.sezione("Il wrapper", intro="""
             Abbiamo scritto quattro volte le stesse tre righe: `requests.get`, `raise_for_status()`, `.json()`.
-            Quando un pezzo di codice si ripete uguale lo chiudiamo in una funzione: si riusa con una riga
-            e, se c'è da correggere qualcosa (il timeout, una chiave di accesso), si corregge in un posto
-            solo.
+            Quando un pezzo di codice si ripete uguale lo chiudiamo in una funzione, un **wrapper**: si riusa
+            con una riga e, se c'è da correggere qualcosa (il timeout, una chiave di accesso), si corregge in
+            un posto solo.
         """)
         nb.code('''
             def get_json(url: str, params: dict) -> dict | list:
@@ -843,9 +843,9 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 6 (Base)
     with nb.solo("base"):
-        nb.sezione("Esercitazioni extra su file e database", intro="""
-            Tre esercizi brevi, uno per formato, per fissare i gesti di oggi prima degli esercizi veri. Sono
-            guidati passo per passo: l'obiettivo è scrivere le righe senza tornare a guardare sopra.
+        nb.sezione("Ripasso: CSV, Excel e SQL", intro="""
+            Un esercizio breve per ogni formato, con i passi scritti uno per uno. L'obiettivo è arrivare in
+            fondo senza tornare a guardare sopra.
         """)
         nb.prova_tu(
             richiesta="""
@@ -996,14 +996,15 @@ def costruisci() -> Notebook:
         """,
     )
     nb.esercizio(
-        titolo="I file del mese",
+        titolo="I file dei turni",
         bis=True,
         scenario="""
             La sala controllo salva le potenze medie orarie della cabina in un CSV per turno, tre al
-            giorno. Il responsabile vuole la giornata intera in una tabella sola, e l'energia totale.
+            giorno. Il responsabile vuole la giornata intera in una tabella sola, e l'energia totale: oggi
+            incolla i tre file uno sotto l'altro a mano.
         """,
         richiesta="""
-            I tre file dei turni vengono scritti dalle prime righe della cella (già fatte). Poi:
+            Le prime righe della cella, già scritte, creano i tre file dei turni. Poi:
 
             1. Elenca i file `cabina_turno_*.csv` della cartella del notebook, in ordine, in `file_turni`.
             2. Con un ciclo leggi ogni file e aggiungilo alla lista `tabelle`.
@@ -1231,7 +1232,7 @@ def costruisci() -> Notebook:
                    arrotondata a un decimale).
                 4. Metti in `temperatura_max` il massimo orario dei sette giorni.
             """,
-            suggerimento="I giorni distinti, in ordine: `sorted(set(previsione[\"giorno\"]))`. Se l'API non risponde, nella cella ci sono due righe commentate che leggono la risposta salvata: usale al posto di `get_json`.",
+            suggerimento="I giorni distinti, in ordine: `sorted(set(previsione[\"giorno\"]))`. Senza rete, le due righe commentate nella cella leggono la risposta salvata.",
             starter="""
                 import json
 

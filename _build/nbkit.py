@@ -315,7 +315,8 @@ class Notebook:
                 testa = f"**{BOX['esercizio'][0]} {self.etichetta_esercizio} {numero} · {e['titolo']}**"
                 corpo = [testa, ""]
                 if e["bis"]:
-                    corpo += [f"*In alternativa al {ultimo_es}: stesso obiettivo, scenario diverso.*", ""]
+                    articolo = "all'" if ultimo_es.split(".")[0] in ("1", "8", "11") else "al "
+                    corpo += [f"*In alternativa {articolo}{ultimo_es}: stesso obiettivo, scenario diverso.*", ""]
                 if "\n" in e["richiesta"]:
                     corpo += [e["scenario"], "", "**Cosa fare.**", "", e["richiesta"]]
                 else:

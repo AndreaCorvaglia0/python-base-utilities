@@ -70,9 +70,10 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         `len()` conta gli elementi, come contava i caratteri di una stringa. Una lista accetta valori
-        di tipo diverso, ma in pratica ne contiene uno solo: numeri con numeri, testi con testi.
-        Le zone di mercato sono le sei aree in cui si forma il prezzo dell'energia in Italia; le
-        ritroveremo nei prezzi orari.
+        di tipo diverso, ma in pratica si tiene a un tipo solo: numeri con numeri, testi con testi.
+        Due parole sui dati: le zone di mercato sono le sei aree in cui si forma il prezzo
+        dell'energia in Italia; il POD è il codice del punto di prelievo, comincia con IT001E e
+        identifica il contatore, non il cliente.
     """)
 
     nb.sottosezione("Indici e slicing", intro="""
@@ -223,7 +224,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Funziona, ma `[1][2]` non dice niente a chi legge. Per le tabelle useremo i DataFrame di
-        pandas, dove le colonne hanno un nome: qui ci fermiamo al cenno.
+        pandas, dove le colonne hanno un nome: ci arriviamo nel notebook sui DataFrame.
     """)
     nb.box("ricorda", """
         - Si conta da 0: il primo elemento è `[0]`, l'ultimo è `[-1]`.
@@ -312,10 +313,9 @@ def costruisci() -> Notebook:
         cliente["comune"]   # Output: 'Monza'
     """)
     nb.md("""
-        La chiave va tra quadre come un indice, ma è un nome, non una posizione. Il POD è il codice
-        del punto di prelievo: comincia con IT001E e identifica il contatore, non il cliente.
-        Chiedere una chiave che non esiste dà `KeyError`; quando non siamo sicuri che ci sia,
-        `.get()` restituisce un valore di riserva al posto dell'errore.
+        La chiave va tra quadre come un indice, ma è un nome, non una posizione. Chiedere una
+        chiave che non esiste dà `KeyError`; quando non siamo sicuri che ci sia, `.get()`
+        restituisce un valore di riserva al posto dell'errore.
     """)
     nb.code("""
         print(cliente.get("comune"))           # Output: Monza
@@ -375,8 +375,8 @@ def costruisci() -> Notebook:
 
     nb.sottosezione("Un dizionario di liste", intro="""
         Un dizionario può avere liste come valori: una chiave per colonna, una lista con i valori di
-        quella colonna. È una tabella scritta per colonne, ed è esattamente quello che pandas si
-        aspetta per costruire un DataFrame.
+        quella colonna. È una tabella scritta per colonne, ed è quello che pandas si aspetta per
+        costruire un DataFrame.
     """)
     nb.code("""
         consumi = {
@@ -424,9 +424,10 @@ def costruisci() -> Notebook:
         print(sorted(zone_distinte))     # Output: ['CSUD', 'NORD', 'SICI']
     """)
     nb.md("""
-        `in` risponde se un valore c'è, e sui set è immediato anche con milioni di elementi. Funziona
-        anche su liste, tuple e stringhe: `"NORD" in zone`, `"IT" in "IT001E12345678"`. Tra due set si fanno le
-        operazioni degli insiemi: `|` unisce, `&` tiene quello che hanno in comune, `-` toglie.
+        `in` risponde se un valore c'è, e sui set è immediato anche con milioni di elementi. Vale
+        allo stesso modo per liste, tuple e stringhe: `"NORD" in zone`, `"IT" in "IT001E12345678"`.
+        Tra due set si fanno le operazioni degli insiemi: `|` unisce, `&` tiene quello che hanno in
+        comune, `-` toglie.
     """)
     nb.code("""
         pod_gennaio = {"IT001E12345678", "IT001E23456789", "IT001E34567890"}
@@ -494,11 +495,12 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Le 24 letture della cabina",
         scenario="""
-            In sala controllo arrivano ogni mattina le 24 letture orarie, in kWh, della cabina del
-            polo logistico di Lodi: la lettura delle 0 in posizione 0, quella delle 23 in posizione 23.
-            Il collega di turno vuole totale, media e picco della fascia F1, e oggi conta le celle in
-            Excel con il dito. Le fasce orarie sono i tre prezzi della settimana: F1 lunedì-venerdì
-            8-19, F2 lunedì-venerdì 7-8 e 19-23 più il sabato 7-23, F3 notte, domenica e festivi.
+            Siamo nell'ufficio misure. Ogni mattina arrivano le 24 letture orarie, in kWh, della
+            cabina del polo logistico di Lodi: la lettura delle 0 in posizione 0, quella delle 23 in
+            posizione 23. Il collega vuole totale, media e picco della fascia F1, e oggi conta le
+            celle in Excel con il dito. Le fasce orarie sono i tre prezzi della bolletta secondo
+            l'ora: F1 lunedì-venerdì 8-19, F2 lunedì-venerdì 7-8 e 19-23 più il sabato 7-23, F3
+            notte, domenica e festivi.
         """,
         richiesta="""
             È un giorno feriale.

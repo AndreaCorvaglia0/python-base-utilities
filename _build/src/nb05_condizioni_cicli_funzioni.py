@@ -42,7 +42,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Le righe rientrate di quattro spazi sono il blocco dell'`if`: partono solo se la condizione è vera.
-        Prova a cambiare `consumo_kwh` in 800 e a rieseguire: non succede niente, ed è giusto così. Per
+        Se cambiamo `consumo_kwh` in 800 e rieseguiamo, non succede niente, ed è giusto così. Per
         fare qualcos'altro nel caso contrario c'è `else`.
     """)
     nb.code("""
@@ -53,8 +53,9 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Quando le strade sono più di due si aggiunge `elif` ("altrimenti, se"). Python prova le condizioni
-        dall'alto e si ferma alla prima vera. L'esempio che ci accompagna oggi sono le fasce orarie della
-        bolletta: in un giorno lavorativo F1 dalle 8 alle 19, F2 dalle 7 alle 8 e dalle 19 alle 23, F3 di notte.
+        dall'alto e si ferma alla prima vera. L'esempio che ci accompagna oggi: le fasce orarie, i tre
+        prezzi della bolletta che dipendono dall'ora. In un giorno lavorativo F1 dalle 8 alle 19, F2 dalle
+        7 alle 8 e dalle 19 alle 23, F3 di notte.
     """)
     nb.code("""
         ora = 21
@@ -204,7 +205,7 @@ def costruisci() -> Notebook:
         sopra_soglia
     """)
     nb.md("""
-        Quando servono i numeri da 0 a n-1, o ripetere n volte, c'è `range(n)`. Come lo slicing: parte
+        Quando servono i numeri da 0 a `n - 1`, o ripetere `n` volte, c'è `range(n)`. Come lo slicing: parte
         da 0 e la fine è esclusa. Con due argomenti si sceglie l'inizio, con tre anche il passo.
     """)
     nb.code("""
@@ -332,8 +333,9 @@ def costruisci() -> Notebook:
             scarica_oraria_kwh = 7.5
             ore = 0
 
-            while ...:
-                ...
+            while livello_kwh >= ...:
+                livello_kwh = ...
+                ore = ...
 
             print(f"Dopo {ore} ore il livello è {livello_kwh} kWh")
         """,
@@ -386,7 +388,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         `return` e `print` si confondono spesso, quindi li mettiamo uno accanto all'altro. Questa prima
-        versione stampa il costo: il numero si vede sullo schermo, ma non torna indietro.
+        funzione stampa il costo: il numero si vede sullo schermo, ma non torna indietro.
     """)
     nb.code("""
         def costo_stampato(kwh, prezzo):
@@ -547,7 +549,7 @@ def costruisci() -> Notebook:
     with nb.solo("avanzata"):
         nb.sezione("Scrivere meno: comprehension, lambda, generatori", intro="""
             Il giro for-più-append è così frequente che Python ha una scrittura compatta, la list
-            comprehension: stesso risultato, una riga, e si legge come una frase: "il consumo, per ogni
+            comprehension. Stesso risultato in una riga, e si legge come una frase: "il consumo, per ogni
             consumo nella lista, se supera la soglia".
         """)
         nb.code("""
@@ -684,7 +686,7 @@ def costruisci() -> Notebook:
         """)
         nb.md("""
             `next` chiede il valore successivo. Quando finiscono, il generatore è esaurito: non si torna
-            indietro, se serve si ricrea. Un `for` fa esattamente questo, chiama `next` finché c'è qualcosa.
+            indietro, se serve si ricrea. Un `for` fa proprio questo: chiama `next` finché c'è qualcosa.
         """)
         nb.code("""
             print(next(consumi_mwh))
@@ -725,8 +727,8 @@ def costruisci() -> Notebook:
         scenario="""
             Siamo nell'ufficio tariffe. Ogni lettura oraria va assegnata a una fascia, perché il listino
             del cliente ha tre prezzi. Il collega lo faceva con un foglio Excel di 168 righe, una per ora
-            della settimana, e un CERCA.VERT; è in ferie e il foglio ha una riga sbagliata che nessuno
-            trova. Ci chiedono una funzione che dica la fascia a partire da ora e giorno.
+            della settimana, e un CERCA.VERT; ha cambiato ufficio e il foglio ha una riga sbagliata che
+            nessuno trova. Ci chiedono una funzione che dica la fascia a partire da ora e giorno.
         """,
         richiesta="""
             Scrivi `fascia(ora, giorno)` che restituisce `"F1"`, `"F2"` o `"F3"`. Le regole: la domenica
@@ -829,9 +831,9 @@ def costruisci() -> Notebook:
         doppio della precedente.
     """
     richiesta_anomalie = """
-        1. Con un `for` su `range(1, len(letture))`, confronta ogni lettura con la precedente e raccogli
-           in `posizioni_anomale` le posizioni delle letture che superano il doppio della precedente.
-           Stampa anche il mese, preso da `mesi` con la stessa posizione.
+        1. Con un `for` su `range(1, len(letture))`, confronta ogni lettura con quella prima e raccogli
+           in `posizioni_anomale` le posizioni che superano il doppio della precedente. Stampa anche il
+           mese, preso da `mesi` con la stessa posizione.
         2. Chiudi lo stesso ciclo in `trova_anomalie(letture, fattore=2)`, che restituisce la lista
            delle posizioni; `fattore` è il moltiplicatore rispetto alla lettura precedente.
     """
@@ -880,7 +882,7 @@ def costruisci() -> Notebook:
         assert trova_anomalie([100, 100, 100]) == [], "❌ Senza anomalie la funzione restituisce una lista vuota"
     """
     perche_anomalie = "Il ciclo parte da 1 perché la prima lettura non ha una precedente. La funzione è lo stesso ciclo con `fattore` al posto del 2 fisso: cambiare il criterio diventa cambiare un argomento."
-    suggerimento_anomalie = "`letture[i - 1]` è la lettura precedente a `letture[i]`."
+    suggerimento_anomalie = "Qui il `for` gira sulle posizioni perché ci serve la lettura prima: `letture[i - 1]` è la precedente di `letture[i]`."
 
     nb.esercizio(
         aula="base",
@@ -967,13 +969,13 @@ def costruisci() -> Notebook:
         titolo="Chi fa più notti",
         bis=True,
         scenario="""
-            In sala controllo i turni del mese sono in una lista di coppie (operatore, turno). La
+            Al pronto intervento i turni del mese sono in una lista di coppie (operatore, turno). La
             responsabile vuole sapere quante notti ha fatto ciascuno e chi ne ha fatte di più, per
             riequilibrare il mese prossimo. Oggi le conta sul foglio stampato, con la matita.
         """,
         richiesta="""
-            1. Con un `for` sulle coppie, costruisci il dizionario `notti`: operatore → numero di turni
-               `"notte"`.
+            1. Con un `for` sulle coppie, costruisci il dizionario `notti`: l'operatore come chiave, il
+               numero dei suoi turni `"notte"` come valore.
             2. Trova in `chi_piu_notti` il nome con il valore più alto, scorrendo `notti.items()`.
             3. Chiudi il conteggio in `conta_turni(turni, tipo="notte")`, che restituisce il dizionario
                per il tipo di turno indicato.

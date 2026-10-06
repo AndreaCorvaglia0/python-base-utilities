@@ -277,9 +277,9 @@ def costruisci() -> Notebook:
             ```
         """)
         nb.md("""
-            Lo scrive uv, non si tocca a mano, e si committa insieme a `pyproject.toml`: così il collega
+            Lo scrive uv, non si tocca a mano, e viaggia insieme a `pyproject.toml`: così il collega
             che fa `uv sync` ottiene lo stesso identico ambiente, oggi e tra un anno. `.venv`, invece,
-            non si committa mai: pesa centinaia di megabyte e si ricrea dal lock in un minuto.
+            non si passa a nessuno: pesa centinaia di megabyte e si ricrea da `uv.lock` in un minuto.
         """)
         nb.md("""
             I comandi di uv che useremo, sempre dal terminale, nella cartella del progetto:
@@ -298,9 +298,9 @@ def costruisci() -> Notebook:
             come Ruff, che controlla e formatta il codice.
         """)
         nb.md("""
-            uv non è l'unico modo. `pip` con `venv` è lo strumento di base di Python (stessa idea, più
-            passaggi a mano, nessun lock), conda è diffuso in ambito scientifico, Poetry fa quello che fa
-            uv ma più lentamente. Chi entra in un progetto esistente usa quello che trova; chi ne apre
+            uv non è l'unico modo. `pip` con `venv` è lo strumento di base di Python: stessa idea, più
+            passaggi a mano, niente `uv.lock`. conda è diffuso in ambito scientifico, Poetry fa quello che
+            fa uv ma più lentamente. Chi entra in un progetto esistente usa quello che trova; chi ne apre
             uno nuovo, oggi, usa uv.
         """)
         nb.prova_tu(
@@ -327,9 +327,9 @@ def costruisci() -> Notebook:
             strumento, non una libreria.
         """)
         nb.box("ricorda", """
-            - `pyproject.toml` dice cosa serve, `uv.lock` dice esattamente cosa è installato: si
-              committano entrambi.
-            - `.venv` si ricrea con `uv sync`: non si committa, non si ripara a mano.
+            - `pyproject.toml` dice cosa serve, `uv.lock` dice esattamente cosa è installato: viaggiano
+              insieme al progetto.
+            - `.venv` si ricrea con `uv sync`: non si passa a nessuno, non si ripara a mano.
             - `uv add`, `uv remove`, `uv run`: dal terminale, nella cartella del progetto.
         """)
 

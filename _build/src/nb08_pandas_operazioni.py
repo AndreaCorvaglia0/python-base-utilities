@@ -38,7 +38,7 @@ def costruisci() -> Notebook:
         letture.head()
     """)
     nb.md("""
-        Prima domanda di ogni analisi: quali colonne mi servono. Una colonna tra parentesi quadre è
+        Prima domanda di ogni analisi: quali colonne ci servono. Una colonna tra parentesi quadre è
         una Series; una lista di colonne (doppie quadre) è un DataFrame più stretto.
     """)
     nb.code("""
@@ -163,7 +163,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Chi viene da SQL può scrivere la condizione come testo con `query`. Stesso risultato della
-        maschera: lo mostriamo perché lo troverai nel codice dei colleghi.
+        maschera: lo mostriamo perché capita di trovarlo nel codice dei colleghi.
     """)
     nb.code("""
         letture.query("fascia == 'F1' and kwh > 1300")
@@ -246,8 +246,8 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Doppioni: `duplicated()` segna con `True` la seconda copia di una riga identica,
-        `drop_duplicates()` la toglie. Con `subset=["giorno"]` si decide che per dire "identica"
-        basta la stessa colonna.
+        `drop_duplicates()` la toglie. Con `subset=["giorno"]` basta lo stesso giorno per dire
+        "identica", anche se il resto della riga cambia.
     """)
     nb.code("""
         contatore.duplicated()
@@ -270,12 +270,6 @@ def costruisci() -> Notebook:
     nb.code("""
         prezzi_completi = prezzi.dropna(subset=["customers"])
         print(f"prima: {len(prezzi)} righe, dopo: {len(prezzi_completi)} righe")
-    """)
-    nb.code("""
-        prezzi.duplicated().sum()
-    """)
-    nb.md("""
-        Zero doppioni: buona notizia, ma la domanda va fatta sempre, in due secondi.
     """)
     nb.prova_tu(
         richiesta="""
@@ -510,12 +504,8 @@ def costruisci() -> Notebook:
         prezzi["settore"].value_counts()
     """)
     nb.md("""
-        Con 85 mila righe `groupby` fa lo stesso lavoro senza battere ciglio: prezzo medio per
-        settore (centesimi di dollaro al kWh) e, con due chiavi, per settore e anno.
-    """)
-    nb.code("""
-        prezzo_settore = prezzi.groupby("settore")["prezzo"].mean()
-        prezzo_settore.round(2)
+        Con 85 mila righe `groupby` fa lo stesso lavoro senza battere ciglio: il prezzo medio
+        (centesimi di dollaro al kWh) per settore e anno.
     """)
     nb.code("""
         prezzo_settore_anno = prezzi.groupby(["settore", "anno"])["prezzo"].mean()
@@ -591,21 +581,15 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Vediamolo su una tabella piccola: tre offerte commerciali, una delle quali per un POD che
-        non è nostro.
+        non è nostro. `how="inner"` tiene solo le corrispondenze, `how="outer"` tiene tutto da
+        entrambe le parti. Con `indicator=True` la colonna `_merge` dice da dove viene ogni riga: è
+        il modo più rapido per trovare chi è rimasto senza corrispondenza.
     """)
     nb.code("""
         offerte = pd.DataFrame({
             "pod": ["IT001E12345678", "IT001E45678901", "IT001E99999999"],
             "sconto_pct": [5, 10, 7],
         })
-        pd.merge(anagrafica, offerte, on="pod", how="left")
-    """)
-    nb.md("""
-        `how="inner"` tiene solo le corrispondenze, `how="outer"` tiene tutto da entrambe le parti.
-        Con `indicator=True` la colonna `_merge` dice da dove viene ogni riga: è il modo più rapido
-        per trovare chi non ha trovato il partner.
-    """)
-    nb.code("""
         tutto = pd.merge(anagrafica, offerte, on="pod", how="outer", indicator=True)
         tutto[["pod", "cliente", "sconto_pct", "_merge"]]
     """)
@@ -632,8 +616,8 @@ def costruisci() -> Notebook:
     """)
     nb.box("attenzione", """
         Se la chiave non è unica nella tabella di destra, le righe si moltiplicano: 20 clienti
-        diventano 34 righe perché alcuni hanno più POD. Quando dopo un merge le righe aumentano e non
-        te lo aspettavi, controlla la chiave con `duplicated()` prima di andare avanti.
+        diventano 34 righe perché alcuni hanno più POD. Se dopo un merge le righe aumentano senza un
+        motivo, la chiave va controllata con `duplicated()` prima di andare avanti.
     """)
     nb.prova_tu(
         richiesta="""
@@ -677,19 +661,19 @@ def costruisci() -> Notebook:
     """)
     nb.box("nota", """
         `merge` e `concat` lavorano sulle colonne. Esiste anche `df.join(altro)`, che unisce
-        sull'indice: lo incontrerai nel codice degli altri, ma `merge` fa lo stesso lavoro e si legge
-        meglio.
+        sull'indice: capita di incontrarlo nel codice degli altri, ma `merge` fa lo stesso lavoro e si
+        legge meglio.
     """)
     nb.box("ricorda", """
         - Prima e dopo il merge: `len()`.
-        - `how="left"` è il CERCA.VERT; `indicator=True` per vedere chi non trova il partner.
+        - `how="left"` è il CERCA.VERT; `indicator=True` per vedere chi resta senza corrispondenza.
         - `concat` per impilare, `merge` per incrociare.
     """)
 
     # ------------------------------------------------------------------ 6
     nb.sezione("Data Wrangler", intro="""
         Data Wrangler è un'estensione di VS Code che mostra un DataFrame come un foglio di calcolo e
-        traduce i click in codice pandas. Serve per esplorare in fretta e per imparare: ogni
+        traduce i clic in codice pandas. Serve per esplorare in fretta e per imparare: ogni
         operazione fatta con il mouse mostra la riga di pandas che la fa.
     """)
     nb.md("""
@@ -734,10 +718,9 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Il POD con la lettura sballata",
         scenario="""
-            Il fornitore ha rimandato il file delle letture, quello grezzo, e il collega che lo
-            controllava a occhio è in ferie. Il controllo qualità vuole una procedura che trovi da sola
-            la lettura digitata male: quella che, in fascia F1, è fuori scala rispetto alle altre
-            letture dello stesso POD.
+            Il fornitore ha rimandato il file delle letture, quello grezzo. Il controllo qualità è stanco
+            di cercare a occhio la lettura digitata male e vuole una procedura che la trovi da sola:
+            quella che, in fascia F1, è fuori scala rispetto alle altre letture dello stesso POD.
         """,
         richiesta="""
             1. Rileggi `../Dati/letture_pod_2025.csv` in `letture` (separatore, decimale e codifica

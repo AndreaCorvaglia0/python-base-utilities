@@ -24,7 +24,8 @@ def costruisci() -> Notebook:
             ],
         },
         tempo={"base": 70, "avanzata": 90},
-        dati=["prezzi_zonali_2025_settimana.csv", "load_total_north_hourly_2024.xlsx", "TexasTurbine.csv"],
+        dati=["prezzi_zonali_2025_settimana.csv", "load_total_north_hourly_2024.xlsx",
+              "load_total_north_hourly_2025.xlsx", "TexasTurbine.csv"],
     )
 
     # ------------------------------------------------------------------ 1
@@ -56,7 +57,7 @@ def costruisci() -> Notebook:
         pd.to_datetime("04/06/2025 14:30", format="%d/%m/%Y %H:%M")
     """)
     nb.md("""
-        Perché insistere sul formato: `01/02/2025` è il primo febbraio o il 2 gennaio? Se non glielo
+        Perché insistere sul formato: `01/02/2025` è il 1° febbraio o il 2 gennaio? Se non glielo
         diciamo, pandas ragiona all'americana. `dayfirst=True` gli dice che il giorno viene prima.
     """)
     nb.code("""
@@ -88,7 +89,7 @@ def costruisci() -> Notebook:
         pd.to_datetime(date_sporche, format="%d/%m/%Y", errors="coerce")
     """)
     nb.box("attenzione", """
-        `errors="coerce"` nasconde i problemi dentro ai `NaT`. Subito dopo contiamoli con
+        `errors="coerce"` nasconde i problemi dentro i `NaT`. Subito dopo contiamoli con
         `.isna().sum()`: se sono 2 su 8760 è una svista del fornitore, se sono 4000 è il formato sbagliato.
     """)
 
@@ -278,7 +279,7 @@ def costruisci() -> Notebook:
         len(carico)
     """)
     nb.md("""
-        35 136 righe: 366 giorni per 96 quarti d'ora, il conto torna alla perfezione. Teniamolo a mente,
+        35.136 righe: 366 giorni per 96 quarti d'ora, il conto torna alla perfezione. Teniamolo a mente,
         perché tra poco scopriremo che torna per caso.
     """)
 
@@ -336,7 +337,7 @@ def costruisci() -> Notebook:
         """,
         verifica="""
             assert nord_riempito.isna().sum() == 0, "❌ Dopo interpolate() non devono restare NaN"
-            assert round(nord_riempito.loc["2025-06-04 14:00"], 2) == 123.47, "❌ Alle 14:00 ci aspettiamo un valore a metà strada tra le 13:00 e le 16:00: usa interpolate, non ffill"
+            assert round(nord_riempito.loc["2025-06-04 14:00"], 2) == 123.47, "❌ Alle 14:00 ci aspettiamo un valore tra quello delle 13:00 e quello delle 16:00: usa interpolate, non ffill"
         """,
     )
     nb.box("ricorda", """
@@ -367,7 +368,7 @@ def costruisci() -> Notebook:
         len(carico)
     """)
     nb.md("""
-        35 132 righe: un'ora di dati persa su 8784, e lo si scrive nel report. Ora il buco di marzo. La
+        35.132 righe: un'ora di dati persa su 8784 ore, e lo si scrive nel report. Ora il buco di marzo. La
         distanza tra righe consecutive dovrebbe essere sempre un quarto d'ora.
     """)
     nb.code("""
@@ -409,7 +410,7 @@ def costruisci() -> Notebook:
         """)
         nb.md("""
             Su un periodo senza cambio d'ora non c'è niente da decidere. Febbraio si localizza senza
-            discussioni, e `tz_convert("UTC")` lo porta nel fuso che usano la maggior parte dei sistemi
+            discussioni, e `tz_convert("UTC")` lo porta nel fuso che usa la maggior parte dei sistemi
             di misura e delle API.
         """)
         nb.code("""
@@ -504,7 +505,7 @@ def costruisci() -> Notebook:
             print(f"Giorno di minimo consumo:  {energia_giorno.idxmin():%d/%m/%Y}, {energia_giorno.min():,.0f} MWh")
         """)
         nb.md("""
-            Il 17 luglio contro il primo gennaio: l'aria condizionata contro il giorno in cui il paese
+            Il 17 luglio contro il 1° gennaio: l'aria condizionata contro il giorno in cui il paese
             dorme. Il 31 marzo ha 92 quarti d'ora e il 27 ottobre ne avrebbe 100: la somma di quei due
             giorni è sbagliata di un'ora. Su un report annuale è rumore, su un bilancio orario no.
         """)
@@ -652,7 +653,8 @@ def costruisci() -> Notebook:
         scenario="""
             Il carico 2024 di Terna sta per entrare nel report mensile. Prima di aggregare qualunque cosa
             il responsabile vuole la risposta a una domanda sola: ogni giorno ha davvero 96 quarti d'ora?
-            Il collega che controllava a occhio in Excel è in ferie.
+            Finora lo controllava un collega scorrendo il file in Excel, e a 35 mila righe l'occhio non
+            basta più.
         """,
         richiesta="""
             1. Leggi `../Dati/load_total_north_hourly_2024.xlsx` in `carico` e ordina le righe per `Date`.

@@ -22,10 +22,14 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("I quattro pezzi di un grafico", intro="""
-        Un grafico Plotly è fatto di quattro pezzi: i dati (un DataFrame), il mapping (quale colonna va
-        sulla x, quale sulla y, quale decide il colore), le tracce (le linee o i punti che ne risultano) e
-        il layout (titolo, assi, dimensioni). Plotly Express, `px`, costruisce i primi tre con una
-        chiamata sola. Ripartiamo dai prezzi zonali.
+        Un grafico Plotly è fatto di quattro pezzi.
+
+        - I dati: un DataFrame.
+        - Il mapping: quale colonna va sulla x, quale sulla y, quale decide il colore.
+        - Le tracce: le linee o i punti che ne risultano.
+        - Il layout: titolo, assi, dimensioni.
+
+        Plotly Express, `px`, costruisce i primi tre con una chiamata sola. Ripartiamo dai prezzi zonali.
     """)
     nb.code("""
         import pandas as pd
@@ -39,15 +43,15 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Dati, x, y: il grafico a linee più semplice che esista. `fig` è l'oggetto grafico; `fig.show()`
-        lo disegna. Passa il mouse sopra la linea, trascina per ingrandire una zona, doppio clic per
-        tornare indietro.
+        lo disegna. Con il mouse sopra la linea compaiono i valori, trascinando si ingrandisce una zona,
+        con un doppio clic si torna indietro.
     """)
     nb.code("""
         fig = px.line(nord, x="timestamp", y="eur_mwh")
         fig.show()
     """)
     nb.md("""
-        Dentro `fig` ci sono le tracce (`fig.data`) e il layout (`fig.layout`). Una linea è una traccia
+        Dentro `fig` ci sono le tracce, `fig.data`, e il layout, `fig.layout`. Una linea è una traccia
         di tipo `scatter` disegnata in modalità linee: in Plotly linee e punti sono la stessa famiglia.
     """)
     nb.code("""
@@ -68,7 +72,7 @@ def costruisci() -> Notebook:
         fig.show()
     """)
     nb.md("""
-        La legenda è viva: un clic su una zona la nasconde, un doppio clic la isola. La Sicilia sopra a
+        La legenda è viva: un clic su una zona la nasconde, un doppio clic la isola. La SICI sopra a
         tutte e il NORD con il buco del 4 giugno si vedono senza calcolare niente.
     """)
     nb.md("""
@@ -273,7 +277,7 @@ def costruisci() -> Notebook:
         (`kaleido`, con `uv add`). Per il corso basta l'HTML: nessuno deve installare niente per aprirlo.
     """)
     nb.box("ricorda", """
-        - `px.line`, `px.histogram`, `px.scatter`: `(df, x=, y=, color=, labels=, title=)` e hai `fig`.
+        - `px.line`, `px.histogram`, `px.scatter`: stessi argomenti, `(df, x=, y=, color=, labels=, title=)`, e restituiscono `fig`.
         - `fig.update_layout(...)` e `fig.update_xaxes(...)` ritoccano dopo; `fig.show()` disegna.
         - `fig.write_html("nome.html")` per chi non ha Python.
     """)
@@ -321,7 +325,7 @@ def costruisci() -> Notebook:
         titolo="Zone a confronto",
         bis=True,
         scenario="""
-            Il collega del trading vuole vedere NORD e Sicilia sullo stesso grafico, e solo quelle due:
+            Il collega del trading vuole vedere NORD e SICI sullo stesso grafico, e solo quelle due:
             con sei linee non ci capisce niente. Il file HTML lo allega alla mail del lunedì.
         """,
         richiesta="""

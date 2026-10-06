@@ -115,7 +115,7 @@ def costruisci() -> Notebook:
             3. Calcola `quota_forno`: quanto pesa il forno sul totale, in percentuale, arrotondata a un decimale.
             4. Metti in `picco` la lettura più alta della giornata.
         """,
-        suggerimento="La posizione nella lista è l'ora: la lettura delle 4 è `letture[4]`. La fine dello slicing è esclusa: controlla con `len()` di avere cinque valori.",
+        suggerimento="La posizione nella lista è l'ora, quindi `letture[4]` è la lettura delle 4; la fine dello slicing è esclusa.",
         starter="""
             letture = [0.8, 0.7, 0.9, 1.1, 9.5, 11.2, 10.8, 9.9, 8.4, 4.2, 3.9, 3.5,
                        3.1, 2.4, 2.0, 1.8, 2.2, 2.6, 2.9, 1.5, 1.2, 1.0, 0.9, 0.8]
@@ -150,9 +150,9 @@ def costruisci() -> Notebook:
 
     # Passo 3 · mercoledì (cambia la cella: ciclo in Base, comprehension in Avanzata)
     scenario_3 = """
-        Mercoledì il collega del foglio Excel, prima di partire per le ferie, ti lascia i consumi di
-        febbraio degli otto POD, già sommati, in un dizionario. Il commerciale chiama chi supera i
-        2000 kWh al mese per proporre un altro contratto e vuole la lista; il capo vuole anche il totale.
+        Mercoledì. Il collega in ferie, prima di partire, aveva lasciato i consumi di febbraio degli
+        otto POD, già sommati, in un dizionario. Il commerciale chiama chi supera i 2000 kWh al mese
+        per proporre un altro contratto e vuole la lista; il capo vuole anche il totale.
     """
     starter_3 = """
         consumi_febbraio = {

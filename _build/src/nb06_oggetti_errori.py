@@ -50,7 +50,7 @@ def costruisci() -> Notebook:
         print(type(consumi))
     """)
     nb.md("""
-        Le operazioni di un oggetto si chiamano metodi e si chiamano con il punto e le parentesi.
+        Le operazioni di un oggetto sono i metodi, e si chiamano con il punto e le parentesi.
         `pod.upper()` si legge "chiedi alla stringa `pod` di darsi in maiuscolo". La forma
         `dato.metodo()` è sempre la stessa; cosa succede lo decide l'oggetto a sinistra del punto.
     """)
@@ -224,7 +224,7 @@ def costruisci() -> Notebook:
     """)
     nb.sottosezione("SyntaxError", intro="""
         È l'unico errore che Python trova prima di eseguire: la frase non è Python. Questa cella dà errore
-        apposta: manca il due punti dopo la condizione dell'`if`.
+        apposta: mancano i due punti dopo la condizione dell'`if`.
     """)
     nb.code("""
         consumo_kwh = 1350
@@ -277,8 +277,8 @@ def costruisci() -> Notebook:
         listino["f1"]
     """, errore=True)
     nb.md("""
-        `KeyError: 'f1'`: l'ultima riga riporta esattamente la chiave che abbiamo chiesto, e si vede al
-        volo che è minuscola. Stesso errore su una Series con le etichette, se chiediamo `[0]` pensando
+        `KeyError: 'f1'`: l'ultima riga riporta la chiave che abbiamo chiesto, tale e quale, e si vede
+        al volo che è minuscola. Stesso errore su una Series con le etichette, se chiediamo `[0]` pensando
         alla prima posizione.
     """)
     nb.code("""
@@ -307,8 +307,8 @@ def costruisci() -> Notebook:
         `consumi[-1]` se non vogliamo contare.
     """)
     nb.sottosezione("ValueError", intro="""
-        Il tipo è giusto ma il valore non va: una stringa a `float` va benissimo, purché contenga un
-        numero. Con la virgola decimale italiana non lo è.
+        Il tipo è giusto ma il valore non va: `float` accetta una stringa, purché dentro ci sia un
+        numero scritto come lo vuole Python. Con la virgola decimale italiana non lo riconosce.
     """)
     nb.code('float("12,5")', errore=True)
     nb.md("""
@@ -387,8 +387,8 @@ def costruisci() -> Notebook:
         5. Chiedi a Copilot "spiegami questo errore" incollando il traceback intero. Poi verifica eseguendo.
     """)
     nb.box("nota", """
-        Quando mandi un errore a un collega o a Copilot, manda tutto il traceback: la riga con la freccia
-        è quella che fa risparmiare dieci minuti a chi legge.
+        A un collega, o a Copilot, si manda tutto il traceback: la riga con la freccia è quella che
+        fa risparmiare dieci minuti a chi legge.
     """)
     nb.md("""
         I sette errori di oggi, con la riga da guardare per ciascuno, stanno in una pagina sola:
@@ -486,7 +486,7 @@ def costruisci() -> Notebook:
                 taglia = "monofase"
             taglia
         """,
-        perche="`shape` senza parentesi è la trappola speculare a quella del `bound method`: un attributo si legge, non si chiama. Il nome del file si controlla nella cartella, non si indovina.",
+        perche="`df.shape()` con le parentesi è l'errore speculare al `bound method`: un attributo si legge, non si chiama. Il nome del file si controlla nella cartella, non si indovina.",
     )
     _altra_cella_rotta(nb, starter="""
         pod = ["IT001E45678901", "IT001E45678902"]
@@ -533,10 +533,11 @@ def costruisci() -> Notebook:
         """,
         richiesta="""
             Esegui `help(round)`, `help(pd.read_csv)` e `help(media)` dove serve, poi compila il
-            dizionario `risposte` con tre valori: `"ndigits_obbligatorio"` (`True` o `False`: in `round`,
-            `ndigits` è obbligatorio?), `"default_decimal"` (il valore di default di `decimal` in
-            `read_csv`, come stringa), `"tipo_restituito"` (il tipo che `media` dichiara di restituire,
-            come stringa).
+            dizionario `risposte` con tre valori.
+
+            1. `"ndigits_obbligatorio"`: `True` o `False`, a seconda che in `round` il parametro `ndigits` sia obbligatorio.
+            2. `"default_decimal"`: il valore di default di `decimal` in `read_csv`, come stringa.
+            3. `"tipo_restituito"`: il tipo che `media` dichiara di restituire, come stringa.
         """,
         suggerimento="Un parametro è obbligatorio se nella firma non ha `=`; il tipo restituito è quello dopo la freccia `->`.",
         starter='''

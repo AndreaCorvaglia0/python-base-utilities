@@ -38,9 +38,9 @@ def costruisci() -> Notebook:
     nb.code("consumo_kwh")
     nb.code("type(consumo_kwh)")
     nb.md("""
-        I quattro tipi di base sono `int` (interi), `float` (con la virgola), `str` (testo) e `bool`
-        (`True` o `False`). Il tipo decide cosa possiamo fare con il valore: due numeri si sommano,
-        due testi si attaccano, un numero e un testo non si mischiano. Lo vediamo tra poco.
+        I quattro tipi di base: `int` per gli interi, `float` per i numeri con la virgola, `str` per il
+        testo, `bool` per `True` e `False`. Il tipo decide cosa possiamo fare con il valore: due numeri
+        si sommano, due testi si attaccano, un numero e un testo non si mischiano. Lo vediamo tra poco.
     """)
     nb.code("""
         print(type(potenza_kw))   # Output: <class 'int'>
@@ -97,8 +97,8 @@ def costruisci() -> Notebook:
         print(3 ** 2)    # Output: 9   (potenza)
     """)
     nb.md("""
-        Due operatori meno ovvi ma utilissimi: `//` è la divisione intera (quante volte ci sta) e `%` è
-        il resto. Con i minuti si vede bene: 135 minuti sono 2 ore e 15 minuti.
+        Due operatori meno ovvi: `//` è la divisione intera (quante volte ci sta) e `%` è il resto.
+        Con i minuti si vede bene: 135 minuti sono 2 ore e 15 minuti.
     """)
     nb.code("""
         minuti = 135
@@ -177,9 +177,9 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Stringhe", intro="""
-        Un testo in Python è una stringa: una sequenza di caratteri tra virgolette, singole o doppie,
-        è uguale. Nomi, codici, messaggi, e quasi tutto quello che arriva da un file prima di essere
-        convertito in numero.
+        Un testo in Python è una stringa: una sequenza di caratteri tra virgolette, singole o doppie
+        è uguale. Sono stringhe i nomi, i codici, i messaggi e quasi tutto quello che arriva da un
+        file prima di essere convertito in numero.
     """)
     nb.code("""
         cliente = "Caffè del Corso"

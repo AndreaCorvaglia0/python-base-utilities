@@ -153,8 +153,8 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 4
     nb.sezione("PEP 8 in cinque regole", intro="""
         PEP 8 è la guida di stile ufficiale di Python: come spaziare, come chiamare le cose, dove
-        andare a capo. Sono decine di pagine e ne contano cinque. Prima la versione che si vede
-        troppo spesso.
+        andare a capo. Sono decine di pagine e ne contano cinque. Prima com'è scritto troppo
+        spesso.
     """)
     nb.code("""
         PrezzoKwh=0.21
@@ -219,8 +219,8 @@ def costruisci() -> Notebook:
     )
     nb.box("nota", """
         Esistono strumenti che applicano queste regole al posto nostro: si chiamano formattatori, e
-        Ruff è quello che oggi si usa di più. Quando lavorerai su script veri, cercalo: in VS Code è
-        un'estensione, si installa in un minuto.
+        Ruff è quello che oggi si usa di più. In VS Code è un'estensione che si installa in un
+        minuto, da cercare quando lavoreremo su script veri.
     """, aula="base")
     nb.md("""
         Queste regole non si applicano a mano, a meno di volerci passare le serate: le applica Ruff,
@@ -230,14 +230,14 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 5 (solo Avanzata)
     with nb.solo("avanzata"):
         nb.sezione("Ruff in VS Code", intro="""
-            Ruff è il linter e formattatore di Python: segnala quello che non va (`check`) e rimette
-            in forma il codice da solo (`format`). È già tra le dipendenze di sviluppo del progetto e
+            Ruff è linter e formattatore in uno: segnala quello che non va (`check`) e rimette in
+            forma il codice da solo (`format`). È già tra le dipendenze di sviluppo del progetto e
             si lancia dal terminale con `uvx ruff`.
         """)
         nb.md("""
             In VS Code si installa l'estensione **Ruff** dal pannello delle estensioni. Poi si attiva
             la formattazione al salvataggio: ogni **Ctrl+S** su un file `.py` rimette a posto spazi,
-            virgole e righe vuote. In `settings.json` sono queste righe:
+            virgole e righe vuote. In `settings.json` servono queste righe:
 
             ```json
             {
@@ -314,9 +314,9 @@ def costruisci() -> Notebook:
         """,
         richiesta="""
             Lascia `f` dov'è: serve al confronto. Sotto, riscrivila come `costo_bolletta` con due
-            parametri che dicono cosa sono (`consumo_kwh` e `prezzo_kwh`), una docstring di una riga
-            che spieghi anche cos'è il fattore `1.1` (è l'IVA al 10%) e lo stesso risultato. Dentro
-            la funzione, dai un nome anche a quel numero.
+            parametri che dicono cosa sono, `consumo_kwh` e `prezzo_kwh`, e una docstring di una
+            riga che spieghi anche il fattore `1.1`: è l'IVA al 10%. Il risultato deve restare lo
+            stesso, e dentro la funzione anche quel numero prende un nome.
         """,
         suggerimento="La docstring è la prima riga sotto il `def`, tra tre virgolette.",
         starter="""
@@ -465,7 +465,8 @@ def costruisci() -> Notebook:
                 print(riepilogo(pod_anomali, soglia_kwh))
             """,
             soluzione="""
-                avvisi = ["F401", "F841", "E501"]  # import mai usato, variabile mai usata, riga da 129 caratteri
+                # un import mai usato, una variabile mai letta, una riga da 129 caratteri
+                avvisi = ["F401", "F841", "E501"]
 
                 soglia_kwh = 1000
                 pod_anomali = ["IT001E45678901"]
