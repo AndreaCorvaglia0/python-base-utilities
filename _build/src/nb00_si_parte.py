@@ -34,8 +34,8 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Un notebook come questo è il posto dove si scrive e si prova il codice un pezzo alla volta, con
-        il risultato subito sotto. È lo strumento di chi analizza dati: si prova, si guarda, si
-        corregge. Prima però serve il programma che lo apre: VS Code.
+        il risultato subito sotto: per chi analizza dati è lo strumento di lavoro. Prima però serve il
+        programma che lo apre: VS Code.
     """)
 
     # ------------------------------------------------------------------ 2
@@ -46,14 +46,14 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Servono due estensioni, **Python** e **Jupyter**, entrambe di Microsoft: si installano
-        dall'icona dei quattro quadratini nella barra a sinistra, cercando il nome. Se stai leggendo
-        questo notebook con il codice colorato e i pulsanti sopra le celle, ci sono già.
+        dall'icona dei quattro quadratini nella barra a sinistra, cercando il nome. Se questo notebook
+        si vede con il codice colorato e i pulsanti sopra le celle, ci sono già.
     """)
     nb.md("""
         Il kernel è il Python che esegue le celle. In alto a destra c'è **Select Kernel**: scegli
         **Python Environments** e poi la voce con `.venv` nel nome. Quello è l'ambiente del corso, con
         dentro Python e tutte le librerie che servono. Controlliamo subito di aver preso quello giusto:
-        clicca nella cella qui sotto e premi **Shift+Invio**.
+        un clic nella cella qui sotto e **Shift+Invio**.
     """)
     nb.code("""
         import sys
@@ -125,8 +125,7 @@ def costruisci() -> Notebook:
         Due pulsanti in cima al notebook fanno il grosso del lavoro. **Run All** esegue tutte le celle
         dall'alto in basso: è la prova che il notebook funziona per intero. **Restart** riavvia il
         kernel: la memoria si svuota, le variabili spariscono, il codice resta. Si usa quando "non torna
-        niente": una variabile ha un valore che non ci spieghiamo, una cella non finisce mai, l'output
-        non cambia. Restart, poi Run All.
+        niente": un valore che non ci spieghiamo, una cella che non finisce mai. Restart, poi Run All.
     """)
     nb.prova_tu(
         richiesta="""
@@ -176,7 +175,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 5
     nb.sezione("Markdown e i riquadri", intro="""
         Le celle di testo si scrivono in Markdown: testo semplice con qualche segno per la
-        formattazione. Le regole che servono stanno in sei righe, e il modo migliore per vederle è
+        formattazione. Le regole che servono stanno in cinque righe, e il modo migliore per vederle è
         guardare una cella da dentro.
     """)
     nb.md("""
@@ -190,15 +189,15 @@ def costruisci() -> Notebook:
         - una riga vuota separa i paragrafi
     """)
     nb.md("""
-        Nei notebook incontrerai questi riquadri, sempre con gli stessi colori: grigio per una nota a
+        Nei notebook ci sono questi riquadri, sempre con gli stessi colori: grigio per una nota a
         margine, rosso quando qualcosa può andare storto, viola per un approfondimento che si può
         saltare, verde per gli esercizi, ambra per le cose da ricordare a fine sezione. Uno per tipo,
         qui sotto.
     """)
     nb.box("nota", """
         Una precisazione a margine, come questa: il file di un notebook finisce in `.ipynb` (IPython
-        Notebook, il vecchio nome di Jupyter) e contiene celle e output insieme. Se hai fretta, le note
-        si saltano e ci si torna dopo.
+        Notebook, il vecchio nome di Jupyter) e contiene celle e output insieme. Quando c'è fretta, le
+        note si saltano e ci si torna dopo.
     """)
     nb.box("attenzione", """
         Una cella modificata non è una cella eseguita: finché non premi **Shift+Invio**, il kernel usa
@@ -206,7 +205,7 @@ def costruisci() -> Notebook:
         risultato non ha senso, è la prima cosa da controllare.
     """)
     nb.box("approfondimento", """
-        Un pezzo in più per chi vuole il perché: non serve per gli esercizi, e la coda nel titolo è seria.
+        Un pezzo in più per chi vuole il perché: per gli esercizi non serve.
 
         Quando esegui una cella, VS Code manda il testo al kernel, un processo Python che gira in
         sottofondo. Il kernel esegue, tiene in memoria le variabili e rimanda l'output, che VS Code

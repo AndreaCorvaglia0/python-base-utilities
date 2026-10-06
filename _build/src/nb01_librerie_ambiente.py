@@ -29,8 +29,8 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Librerie e import", intro="""
-        Una libreria è codice scritto da altri, pronto da usare: funzioni che qualcuno ha già scritto,
-        provato e corretto. Alcune arrivano insieme a Python (`math`, `os`, `datetime`: la libreria
+        Una libreria è codice scritto da altri, pronto da usare: funzioni già provate e corrette.
+        Alcune arrivano insieme a Python (`math`, `os`, `datetime`: la libreria
         standard), altre vanno installate nel progetto (pandas, Plotly, requests). In entrambi i casi
         entrano in gioco con `import`.
     """)
