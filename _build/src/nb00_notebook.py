@@ -55,8 +55,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Come si usa un notebook", intro="""
-        I notebook del corso si aprono in VS Code, con un doppio clic sul file `.ipynb`: qui il docente
-        mostra l'editor.
+        I notebook del corso si aprono in VS Code, con un doppio clic sul file `.ipynb`.
     """)
     nb.md("""
         Per eseguire una cella di codice, clicca sulla cella e premi il pulsante **Run** (il triangolo a
@@ -86,7 +85,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Il percorso deve contenere `.venv`, la cartella con il Python e le librerie del corso. Se non la
-        contiene, il kernel va cambiato: qui il docente mostra come.
+        contiene, il kernel va cambiato con **Select Kernel**, in alto a destra.
     """)
 
     # ------------------------------------------------------------------ 6

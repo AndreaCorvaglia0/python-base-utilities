@@ -468,7 +468,6 @@ def costruisci() -> Notebook:
             )
             fig.show()
         """)
-        nb.md("Qui il docente mostra come raccogliere queste chiamate in una funzione da riusare.")
 
     # ------------------------------------------------------------------ 8
     nb.sezione("Esercizi")

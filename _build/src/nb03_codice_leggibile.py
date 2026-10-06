@@ -139,7 +139,6 @@ def costruisci() -> Notebook:
         cosa fa. Anche le due righe vuote prima e dopo il `def` vengono da PEP 8: separano la
         definizione dal codice che la usa.
     """)
-    nb.md("Qui il docente mostra Ruff, che sistema da solo spazi, rientri e righe lunghe.", aula="avanzata")
 
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")
