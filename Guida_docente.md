@@ -18,7 +18,7 @@ stanno nei notebook: il materiale per prepararle è nella cartella `Extra/`, e q
 | Quando | Cosa mostrare | Materiale | Base | Avanzata |
 |---|---|---|---|---|
 | Giornata 1, apertura | VS Code: aprire la cartella, le estensioni, **Select Kernel** → `.venv`, eseguire una cella, Run All e Restart, le scorciatoie | `Extra/VS_Code_e_notebook.ipynb` | 15 min | 15 min |
-| Giornata 1, dopo il 06 | L'ambiente del progetto: `.venv`, `pyproject.toml`, `uv add`, `uv sync`; uno script `.py` lanciato con `uv run` | `Extra/Ambiente_uv_e_script.ipynb` | 5 min (solo l'idea) | 15 min |
+| Giornata 1, dopo l'Esercitazione 2 | L'ambiente del progetto: `.venv`, `pyproject.toml`, `uv add`, `uv sync`; uno script `.py` lanciato con `uv run` | `Extra/Ambiente_uv_e_script.ipynb` | 5 min (solo l'idea) | 15 min |
 | Giornata 1, dopo il 03 | Ruff: `uv run ruff check` e `format`, l'estensione, i tre codici che si vedono più spesso | `Extra/Ruff.ipynb` | — | 10 min |
 | Giornata 1, nel 06 (A) | Il wrapper: chiudere la chiamata all'API in una funzione riutilizzabile | `Extra/API_wrapper.ipynb` | — | 10 min |
 | Giornata 2, dopo il 07 | Data Wrangler: aprire un DataFrame, Editing mode, un filtro e una colonna tolta, il codice pandas che genera | `Extra/Data_Wrangler.ipynb` | 15 min | 15 min |
@@ -58,7 +58,7 @@ Giornata 2 (Blocchi 3 e 4)
 | 11 Capstone | 110 | 110 |
 | **Totale** | **415** | **420** |
 
-Sette ore nette per giornata sono 420 minuti: le giornate sono piene. Si taglia a fine sezione, mai a metà.
+Sette ore nette per giornata sono 420 minuti: le giornate sono piene, e la prima giornata dell'Avanzata va oltre di dieci minuti. Si taglia a fine sezione, mai a metà.
 
 ## Dove tagliare se si è in ritardo
 

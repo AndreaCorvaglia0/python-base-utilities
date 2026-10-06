@@ -80,7 +80,7 @@ def costruisci() -> Notebook:
     nb.md("""
         Le istruzioni che valgono sempre si scrivono una volta in un file del progetto, che l'agente legge a
         ogni richiesta: `.github/copilot-instructions.md` per Copilot, `CLAUDE.md` per Claude Code, `AGENTS.md`
-        per Codex. Per esempio: "le librerie si aggiungono con `uv add`, mai con `pip install`".
+        per Codex. Per esempio: "i nomi delle colonne e delle variabili sono in italiano".
     """)
 
     # ------------------------------------------------------------------ 3

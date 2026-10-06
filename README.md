@@ -40,7 +40,7 @@ Serve una libreria in più? Nel terminale `uv add nome`, poi **Restart** del ker
 | 2 | `10_Agenti_per_il_coding` · Copilot in VS Code, leggere il codice scritto da un agente | 45 min | 55 min |
 | 2 | `11_Capstone` · il carico del Nord e la temperatura | 110 min | 110 min |
 
-Ogni notebook finisce con due o tre esercizi; quelli segnati **(facoltativo)** si fanno se c'è tempo o a casa. Le tre
+Ogni notebook finisce con due o tre esercizi, a volte un quarto facoltativo; quelli segnati **(facoltativo)** si fanno se c'è tempo o a casa. Le tre
 Esercitazioni chiudono i blocchi con qualche domanda e un po' di esercizi in più. Le soluzioni stanno in
 `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 

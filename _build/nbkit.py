@@ -12,7 +12,7 @@ Uso tipico:
     from nbkit import Notebook
 
     def costruisci():
-        nb = Notebook(num="05", file="05_Condizioni_cicli_funzioni", titolo="Condizioni, cicli e funzioni",
+        nb = Notebook(num="05", file="05_Oggetti_ed_errori", titolo="Oggetti ed errori",
                       blocco=2, giornata=1, intento="...", obiettivi=["...", "...", "..."],
                       tempo={"base": 90, "avanzata": 95}, dati=[])
         nb.sezione("Decidere con if")
