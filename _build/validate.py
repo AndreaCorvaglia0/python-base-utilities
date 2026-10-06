@@ -6,7 +6,7 @@ Esegue i notebook e segnala le celle che vanno in errore.
 
 Le celle taggate `rete` (chiamate ad API) vengono saltate, a meno di passare --rete.
 Le celle taggate `errore-voluto` possono dare errore: è previsto.
-La directory di lavoro è la cartella del notebook, come in VS Code.
+La cartella di lavoro è quella del notebook, come in VS Code.
 """
 
 from __future__ import annotations

@@ -22,14 +22,15 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Perché Python, se il codice lo scrive un agente", intro="""
-        Oggi il codice lo scrive spesso un agente: Copilot in VS Code, Claude Code, Codex. Scrive in
-        fretta e sbaglia con grande sicurezza. Il lavoro che resta a noi è un altro: dire cosa vogliamo,
-        leggere quello che torna, capire se è giusto, correggere la rotta.
+        Oggi molto codice lo scrive un agente: Copilot dentro VS Code, Claude Code, Codex. Gli si chiede
+        una cosa a parole e lui scrive il codice, in fretta. A volte sbaglia, e il codice sbagliato ha lo
+        stesso aspetto di quello giusto. Tocca a noi chiedere la cosa giusta e controllare quello che
+        torna.
     """)
     nb.md("""
-        Per farlo serve sapere come è fatto Python: cosa sono una libreria e un metodo, cosa dice un
-        errore, dove vive il codice e come si lancia. In due giorni scriveremo molto codice a mano: è il
-        modo più rapido per imparare a leggerlo.
+        Per controllarlo bisogna saperlo leggere: riconoscere una libreria e un metodo, capire un
+        messaggio di errore, sapere dove sta il codice e come si lancia. Si impara scrivendone molto a
+        mano, ed è quello che faremo.
     """)
     nb.md("""
         Una riga vera, di quelle che si incontrano ogni giorno:
@@ -45,14 +46,14 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 2
     nb.sezione("Python e le librerie", intro="""
         Python è un linguaggio di programmazione: un modo di scrivere istruzioni che il computer esegue
-        una riga dopo l'altra. Per noi vuol dire tre cose: legge i file Excel e i CSV senza aprirli,
-        parla con le API da cui arrivano prezzi e misure, e disegna i grafici che il capo vuole per ieri.
+        una riga dopo l'altra. A noi serve per lavorare sui dati: leggere file Excel e CSV senza passare
+        da Excel, scaricare prezzi e misure dai servizi web (le API), farne tabelle e grafici.
     """)
     nb.md("""
-        Da solo, però, Python sa fare poco più di una calcolatrice. Il resto lo fanno le librerie:
-        codice scritto da altri, già provato e corretto, che portiamo dentro al nostro con una riga di
-        `import`. Nel corso ne useremo tre su tutte: pandas per le tabelle, Plotly per i grafici,
-        requests per le API.
+        Python porta con sé una libreria standard per le cose di base; per tabelle, grafici e API
+        servono librerie installate a parte: codice scritto da altri, già provato, che portiamo nel
+        nostro con una riga di `import`. Ne useremo soprattutto tre: pandas per le tabelle, Plotly per
+        i grafici, requests per le API.
     """)
     nb.md("""
         Un notebook come questo è il posto dove si scrive e si prova il codice un pezzo alla volta, con
@@ -74,8 +75,8 @@ def costruisci() -> Notebook:
     nb.md("""
         Il kernel è il Python che esegue le celle. In alto a destra c'è **Select Kernel**. Se nel menu
         compare già una voce con `.venv` nel nome, è quella. Se no, **Select Another Kernel... → Python
-        Environments...** e lì trovi la `.venv`. Quello è l'ambiente del corso, con dentro Python e
-        tutte le librerie che servono. Controlliamo subito di aver preso quello giusto: un clic nella
+        Environments...** e lì trovi la `.venv`. È l'ambiente virtuale, il virtual environment,
+        del corso: dentro ci sono Python e tutte le librerie che servono. Controlliamo subito di aver preso quello giusto: un clic nella
         cella qui sotto e **Shift+Invio**.
     """)
     nb.code("""
@@ -115,7 +116,7 @@ def costruisci() -> Notebook:
     nb.code("3 + 4")
     nb.md("""
         L'ultima riga di una cella, se è un'espressione (un conto o un nome che ha un valore), viene
-        mostrata sotto: è l'output, e non serve chiedere niente. Diamo un nome al risultato, così possiamo riusarlo.
+        mostrata sotto: è l'output, e non serve chiedere niente. Ora diamo un nome a un valore, così possiamo riusarlo.
     """)
     nb.code("consumo_kwh = 1480")
     nb.md("""
@@ -154,9 +155,9 @@ def costruisci() -> Notebook:
     nb.prova_tu(
         richiesta="""
             Un contatore registra una lettura ogni quarto d'ora. Nella cella qui sotto, al posto dei tre
-            puntini `...`, scrivi il conto delle letture in un giorno (24 ore, 4 letture l'ora): il
-            risultato va in `letture_giorno` e resta come ultima riga. Poi esegui la cella di verifica
-            senza modificarla.
+            puntini `...`, scrivi il conto delle letture in un giorno (24 ore, 4 letture l'ora; in
+            Python il per si scrive `*`): il risultato va in `letture_giorno`. Poi esegui la cella di
+            verifica senza modificarla.
         """,
         starter="""
             letture_giorno = ...
@@ -230,8 +231,6 @@ def costruisci() -> Notebook:
         risultato non ha senso, è la prima cosa da controllare.
     """)
     nb.box("approfondimento", """
-        Un pezzo in più per chi vuole il perché: per gli esercizi non serve.
-
         Quando esegui una cella, VS Code manda il testo al kernel, un processo Python che gira in
         background. Il kernel esegue, tiene in memoria le variabili e rimanda l'output, che VS Code
         mostra sotto la cella e salva nel file `.ipynb` insieme al codice. Per questo un notebook
@@ -286,14 +285,14 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Il primo report",
         scenario="""
-            Ufficio Analisi Consumi, ore 9. Il capo passa e chiede quanto ha consumato il Panificio
-            Bianchi a settembre. Lo sappiamo: 1480 kWh. Vorremmo che la risposta la desse Python, così
-            la prossima volta cambiamo due numeri e non riscriviamo la frase.
+            Ufficio Analisi Consumi, ore 9. Il capo passa e chiede quanto ha consumato l'Officina
+            Rossi ad agosto. Lo sappiamo: 2310 kWh. Vorremmo che la risposta la desse Python, così
+            la prossima volta cambiamo nome e numero e non riscriviamo la frase.
         """,
         richiesta="""
-            Crea `cliente` con il testo `Panificio Bianchi` e `consumo_kwh` con il numero 1480. Poi, con
+            Crea `cliente` con il testo `Officina Rossi` e `consumo_kwh` con il numero 2310. Poi, con
             un solo `print`, stampa una riga con il nome e il consumo, tipo:
-            `Consumo di Panificio Bianchi a settembre: 1480 kWh`.
+            `Consumo di Officina Rossi ad agosto: 2310 kWh`.
         """,
         suggerimento="`print` accetta più valori separati da virgola: testi tra virgolette, variabili senza.",
         starter="""
@@ -303,14 +302,14 @@ def costruisci() -> Notebook:
             print(...)
         """,
         soluzione="""
-            cliente = "Panificio Bianchi"
-            consumo_kwh = 1480
+            cliente = "Officina Rossi"
+            consumo_kwh = 2310
 
-            print("Consumo di", cliente, "a settembre:", consumo_kwh, "kWh")
+            print("Consumo di", cliente, "ad agosto:", consumo_kwh, "kWh")
         """,
         verifica="""
-            assert cliente == "Panificio Bianchi", "❌ cliente: il nome esatto, tra virgolette"
-            assert consumo_kwh == 1480, "❌ consumo_kwh: un numero, senza virgolette"
+            assert cliente == "Officina Rossi", "❌ cliente: il nome esatto, tra virgolette"
+            assert consumo_kwh == 2310, "❌ consumo_kwh: un numero, senza virgolette"
         """,
         perche="Il nome tra virgolette, il numero senza: `print` accetta entrambi e mette gli spazi da solo.",
     )
@@ -319,11 +318,11 @@ def costruisci() -> Notebook:
         bis=True,
         scenario="""
             Primo giorno in sala controllo: all'ingresso chiedono nome e ruolo per il badge. Lo
-            compiliamo con Python, tanto per cominciare a scrivere qualcosa di nostro.
+            compiliamo con Python.
         """,
         richiesta="""
             Crea `nome` con il tuo nome e `ruolo` con il tuo ruolo in azienda, entrambi testi tra
-            virgolette. Poi stampa una riga con tutti e due, tipo `Giulia Ferri · Analista consumi`.
+            virgolette. Poi stampa una riga con tutti e due, tipo `Giulia Ferri - Analista consumi`.
         """,
         starter="""
             nome = ...
@@ -335,7 +334,7 @@ def costruisci() -> Notebook:
             nome = "Giulia Ferri"
             ruolo = "Analista consumi"
 
-            print(nome, "·", ruolo)
+            print(nome, "-", ruolo)
         """,
         verifica="""
             assert type(nome) is str and len(nome) > 0, "❌ nome: un testo tra virgolette, non vuoto"

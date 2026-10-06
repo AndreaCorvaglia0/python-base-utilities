@@ -52,7 +52,7 @@ COMUNI = [
 
 
 def letture_pod() -> None:
-    """CSV 'all'italiana': separatore ';', virgola decimale, date gg/mm/aaaa, codifica latin-1."""
+    """CSV 'all'italiana': separatore ';', virgola decimale, date gg/mm/aaaa, encoding latin-1."""
     righe = []
     quote = {"F1": 0.45, "F2": 0.30, "F3": 0.25}
     base = {pod: rng.uniform(600, 2500) for pod, _, _ in CLIENTI}

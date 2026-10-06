@@ -5,7 +5,7 @@ Una riga di Python si legge come una frase: a sinistra del punto c'è chi fa il 
 ## La riga tipo
 
 ```python
-letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",")
+letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
 ```
 
 | Pezzo | Cos'è |
@@ -16,6 +16,7 @@ letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",")
 | `.read_csv` | una funzione della libreria |
 | `"../Dati/letture_pod_2025.csv"` | il primo argomento, passato per posizione: il percorso del file |
 | `sep=";"`, `decimal=","` | argomenti passati per nome: parametri facoltativi, con un default che qui cambiamo |
+| `encoding="latin-1"` | argomento per nome: come sono scritti i caratteri accentati nel file |
 
 ## Le forme, una per riga
 
@@ -28,7 +29,7 @@ letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",")
 | `df.head()` | metodo | un'azione dell'oggetto a sinistra del punto; parentesi sempre, anche vuote | `pod.upper()`, `lista.append(3)` |
 | `df.shape` | attributo | un dato dell'oggetto, senza parentesi | `df.columns`, `oggi.year` |
 | `pd.DataFrame({...})`, `Path("..")` | classe chiamata | la maiuscola iniziale è la convenzione: costruisce un oggetto di quella classe | `date(2025, 3, 1)` |
-| `len(df)`, `print(x)`, `round(x, 2)` | funzione di Python | sempre disponibile, senza import; l'oggetto va tra le parentesi | `type(x)`, `sorted(lista)`, `sum(lista)` |
+| `len(df)`, `print(x)`, `round(x, 2)` | funzione di Python | funzione di Python (`len`, `print`), sempre disponibile, senza import; se il nome viene da un `from … import`, è della libreria indicata in testa | `type(x)`, `sorted(lista)`, `sum(lista)` |
 | `df["kwh"]`, `lista[0]`, `d["F1"]` | selezione con le quadre | colonna, posizione o chiave, a seconda dell'oggetto a sinistra | `lista[-1]`, `lista[1:3]`, `df.loc[mask, "kwh"]` |
 | `[1, 2]`, `{"F1": 0.28}`, `(1, 2)`, `{"a", "b"}` | letterali | una lista, un dizionario, una tupla, un set scritti a mano | `[]` lista vuota |
 | `def nome(a, b=2):` ... `return` | definizione di funzione | il corpo indentato parte solo quando qualcuno la chiama; `return` è il risultato | |

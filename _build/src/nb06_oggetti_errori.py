@@ -29,11 +29,11 @@ def costruisci() -> Notebook:
         giornata=1,
         intento="Da qui in avanti useremo quasi solo codice scritto da altri: pandas, Plotly, i suggerimenti di Copilot. Per leggerlo servono due cose: capire chi fa cosa in `dato.metodo()` e non farsi spaventare da un traceback.",
         obiettivi=[
-            "dire cosa è cosa in una riga di codice: libreria, funzione, classe, oggetto, metodo, attributo",
+            "dire cosa è cosa in una riga di codice: libreria e modulo, funzione, classe, oggetto, metodo, attributo",
             "leggere la documentazione e i type hint di una funzione",
             "leggere un traceback dal basso e riconoscere gli errori più comuni",
         ],
-        tempo={"base": 45, "avanzata": 35},
+        tempo={"base": 55, "avanzata": 40},
         dati=["letture_pod_2025.csv", "impianti_fv.csv"],
     )
 
@@ -97,9 +97,10 @@ def costruisci() -> Notebook:
     """)
     nb.code("df.head")
     nb.md("""
-        Alcune operazioni non sono metodi ma funzioni di Python che accettano oggetti di tipo diverso:
-        `len` conta i caratteri di una stringa, gli elementi di una lista, le righe di un DataFrame. Si
-        riconoscono perché l'oggetto va tra le parentesi, non prima del punto.
+        L'output è `bound method NDFrame.head` (`NDFrame` è la classe da cui pandas costruisce DataFrame
+        e Series: si ignora). Alcune operazioni non sono metodi ma funzioni di Python che accettano
+        oggetti di tipo diverso: `len` conta i caratteri di una stringa, gli elementi di una lista, le
+        righe di un DataFrame. Si riconoscono perché l'oggetto va tra le parentesi, non prima del punto.
     """)
     nb.code("print(len(pod), len(consumi), len(df))")
     nb.md("""
@@ -129,6 +130,7 @@ def costruisci() -> Notebook:
         """,
         verifica="""
             assert n_righe == 3, "❌ n_righe: il primo elemento di df.shape, letto senza parentesi"
+            assert isinstance(prime_due, pd.DataFrame), "❌ prime_due: head è un metodo, servono le parentesi con il 2 dentro"
             assert len(prime_due) == 2, "❌ prime_due: head accetta il numero di righe tra parentesi"
         """,
     )
@@ -148,26 +150,32 @@ def costruisci() -> Notebook:
         letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
         ```
 
-        `pd` è la libreria pandas, importata con un alias più corto. `read_csv` è una funzione che vive
-        dentro la libreria. Tra parentesi ci sono gli argomenti: il primo per posizione, il percorso del
-        file; gli altri per nome, nella forma `nome=valore`. Il risultato finisce in `letture`.
+        `pd` è la libreria pandas, importata con un alias più corto. Una libreria è una cartella di
+        moduli, come abbiamo visto nel notebook sulle librerie: `pd.read_csv` è una funzione che pandas
+        mette a disposizione, `import plotly.express as px` scende in un sottomodulo.
+    """)
+    nb.md("""
+        Tra parentesi ci sono gli argomenti: il primo per posizione, il percorso del file; gli altri per
+        nome, nella forma `nome=valore`. Il risultato finisce in `letture`. `encoding` lo spieghiamo nel
+        notebook sull'import dei dati, con l'errore che lo rende necessario.
     """)
     nb.code("""
         letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
         type(letture)
     """)
     nb.md("""
-        `pandas.DataFrame` si legge: la classe `DataFrame` della libreria `pandas`. Una classe è lo stampo;
-        `letture` è un oggetto fatto con quello stampo, un'**istanza**. Il `pd.DataFrame({...})` di prima
+        `pandas.DataFrame` si legge: la classe `DataFrame` della libreria `pandas`. Una **classe** è lo stampo;
+        `letture` è un oggetto fatto con quello stampo, un'istanza. Il `pd.DataFrame({...})` di prima
         era la chiamata che ne costruisce uno a mano. Lo abbiamo già visto con `pod` e `consumi`: `str` e
         `list` sono classi come `DataFrame`. Anche una colonna è un oggetto, di un'altra classe.
     """)
     nb.code('type(letture["kwh"])')
     nb.md("""
         Nel notebook 01 abbiamo scritto `from datetime import date` e `oggi = date.today()`. Ora sappiamo
-        leggerlo: `date` è una classe, anche se ha la minuscola come `str` e `list`: la maiuscola è la
-        convenzione, non l'obbligo. `date.today()` è un metodo chiamato sulla classe che costruisce un oggetto, `oggi.year` è un suo
-        attributo.
+        leggerlo. `datetime` è un modulo della libreria standard e `from` ne prende una cosa sola, `date`.
+        È una classe anche se è minuscola, come `str` e `list`: la maiuscola è una convenzione.
+        `date.today()` è un metodo chiamato sulla classe stessa e restituisce l'oggetto con la data di
+        oggi; `oggi.year` è un suo attributo.
     """)
     nb.code("""
         from datetime import date
@@ -176,52 +184,65 @@ def costruisci() -> Notebook:
         type(oggi), oggi.year
     """)
     nb.md("""
-        Le forme sono poche e si riconoscono dalla punteggiatura. Una regola vale per tutte: a sinistra
-        del punto c'è chi fa il lavoro.
+        Lo stesso per il sottomodulo di Plotly che useremo per i grafici: `express` sta dentro la
+        cartella della libreria `plotly`, e `px` è il suo alias.
+    """)
+    nb.code("""
+        import plotly.express as px
+
+        type(px), px.__name__
+    """)
+    nb.md("""
+        L'output dice `module`: `px` è un modulo, e `px.line(...)` sarà una sua funzione. Le forme sono
+        poche e si riconoscono dalla punteggiatura.
     """)
     nb.md("""
         | Forma | Cos'è | Esempio |
         |---|---|---|
-        | `libreria.cosa(...)` | funzione della libreria | `pd.read_csv(...)` |
-        | `oggetto.cosa(...)` | metodo, un'azione dell'oggetto | `letture.head()` |
-        | `oggetto.cosa` senza parentesi | attributo, un dato dell'oggetto | `letture.shape` |
-        | `Nome(...)` con la maiuscola | classe chiamata: costruisce un oggetto | `pd.DataFrame({...})` |
-        | `cosa(...)` da sola | funzione di Python, o importata con `from` | `len(letture)` |
-        | `nome[...]` | selezione: posizione, chiave o colonna | `letture["kwh"]` |
-        | `@cosa` sulla riga sopra un `def` | decoratore: cambia come si comporta quello che sta sotto | lo incontreremo nell'11 |
+        | `import plotly.express as px` | import di un sottomodulo: il punto scende nella cartella | `px.line(...)` |
+        | `libreria.nome(...)`, nome minuscolo | funzione di libreria | `pd.read_csv(...)` |
+        | `oggetto.nome(...)` | metodo, un'azione dell'oggetto | `letture.head()` |
+        | `oggetto.nome` senza parentesi | attributo, un dato dell'oggetto (se l'output dice `bound method` era un metodo senza parentesi) | `letture.shape` |
+        | `Nome(...)` o `libreria.Nome(...)`, con la maiuscola | classe chiamata: costruisce un oggetto | `pd.DataFrame({...})` |
+        | `nome(...)` da sola | funzione di Python (`len`, `print`), sempre disponibile; se il nome viene da un `from … import`, è della libreria indicata in testa | `len(letture)` |
+        | `nome[...]` | selezione con le quadre: posizione, chiave o colonna | `letture["kwh"]` |
+        | `@nome` sulla riga sopra un `def` o una `class` | decoratore: cambia come si comporta quello che sta sotto | lo incontreremo nell'11 |
     """)
     nb.prova_tu(
         richiesta="""
             Per ogni pezzo di codice scegli un'etichetta tra `"funzione di libreria"`, `"metodo"`,
-            `"attributo"`, `"classe"` e `"funzione di Python"`. Guarda la forma, come nella tabella:
-            punto, parentesi, maiuscola.
+            `"attributo"`, `"classe"` e `"funzione di Python"`. Alcune etichette servono più di una
+            volta. Guarda la forma, come nella tabella: punto, parentesi, maiuscola.
         """,
         starter="""
             cosa_e = {
-                "pd.read_csv(...)": ...,
-                "letture.head()": ...,
-                "letture.shape": ...,
-                "pd.DataFrame(...)": ...,
-                "len(...)": ...,
+                "px.line(...)": ...,
+                "impianti.sort_values(...)": ...,
+                "oggi.year": ...,
+                "pd.Series(...)": ...,
+                "round(...)": ...,
+                "pod.upper()": ...,
             }
             cosa_e
         """,
         soluzione="""
             cosa_e = {
-                "pd.read_csv(...)": "funzione di libreria",
-                "letture.head()": "metodo",
-                "letture.shape": "attributo",
-                "pd.DataFrame(...)": "classe",
-                "len(...)": "funzione di Python",
+                "px.line(...)": "funzione di libreria",
+                "impianti.sort_values(...)": "metodo",
+                "oggi.year": "attributo",
+                "pd.Series(...)": "classe",
+                "round(...)": "funzione di Python",
+                "pod.upper()": "metodo",
             }
             cosa_e
         """,
         verifica="""
-            assert cosa_e["pd.read_csv(...)"] == "funzione di libreria", "❌ pd.read_csv(...): libreria, punto, nome minuscolo con le parentesi"
-            assert cosa_e["letture.head()"] == "metodo", "❌ letture.head(): oggetto, punto, parentesi"
-            assert cosa_e["letture.shape"] == "attributo", "❌ letture.shape: oggetto, punto, niente parentesi"
-            assert cosa_e["pd.DataFrame(...)"] == "classe", "❌ pd.DataFrame(...): nome con la maiuscola chiamato con le parentesi"
-            assert cosa_e["len(...)"] == "funzione di Python", "❌ len(...): nessun punto davanti, l'oggetto va tra le parentesi"
+            assert cosa_e["px.line(...)"] == "funzione di libreria", "❌ px.line(...): a sinistra del punto c'è un modulo, poi un nome minuscolo con le parentesi"
+            assert cosa_e["impianti.sort_values(...)"] == "metodo", "❌ impianti.sort_values(...): a sinistra del punto c'è un oggetto, non una libreria, e dopo il nome le parentesi"
+            assert cosa_e["oggi.year"] == "attributo", "❌ oggi.year: oggetto, punto, niente parentesi"
+            assert cosa_e["pd.Series(...)"] == "classe", "❌ pd.Series(...): maiuscola e parentesi, è una classe chiamata: costruisce un oggetto"
+            assert cosa_e["round(...)"] == "funzione di Python", "❌ round(...): nessun punto davanti, il numero va tra le parentesi"
+            assert cosa_e["pod.upper()"] == "metodo", "❌ pod.upper(): oggetto, punto, parentesi anche vuote"
         """,
     )
     with nb.solo("avanzata"):
@@ -233,8 +254,6 @@ def costruisci() -> Notebook:
         """, titolo="Una classe nostra, per leggere quelle degli altri")
         nb.code('''
             class Contatore:
-                """Un contatore con il suo POD e i kWh letti."""
-
                 def __init__(self, pod, kwh):
                     self.pod = pod
                     self.kwh = kwh
@@ -333,7 +352,7 @@ def costruisci() -> Notebook:
     nb.box("ricorda", """
         - Parametro senza `=`: obbligatorio. Con `= valore`: facoltativo, e quel valore è il default.
         - Dopo un `*` da solo, tutto si passa per nome.
-        - `nome: tipo` dice cosa entra, `-> tipo` cosa esce. Python non li controlla; noi li leggiamo.
+        - `nome: tipo` dice cosa entra, `-> tipo` cosa esce. Python non li controlla: servono a chi legge.
     """)
 
     # ------------------------------------------------------------------ 4
@@ -367,7 +386,7 @@ def costruisci() -> Notebook:
     nb.md("""
         Questo traceback ha la forma tipica. In fondo, `NameError: name 'consumo_kw' is not defined`, e
         spesso anche il suggerimento `Did you mean`. Sopra, la riga con la freccia `---->` è quella della
-        nostra cella che ha fallito. Dal basso: cosa, poi dove.
+        nostra cella che ha fallito. Si legge dal basso: prima cosa è successo, poi dove.
     """)
     nb.sottosezione("TypeError", intro="""
         I tipi non vanno d'accordo. Il caso che incontreremo di più: numeri letti da un file che sembrano
@@ -389,10 +408,8 @@ def costruisci() -> Notebook:
         totale
     """)
     nb.sottosezione("KeyError", intro="""
-        La chiave non c'è. Su un dizionario capita con una chiave scritta diversa. Lo stesso succede con
-        una Series, cioè una colonna di pandas come `df["kwh"]`, che ha un'etichetta per ogni riga: se le
-        etichette sono testi e chiediamo `[0]` pensando alla prima posizione, pandas cerca un'etichetta 0
-        e non la trova.
+        La chiave non c'è. Su un dizionario capita con una chiave scritta diversa; lo stesso vale per una
+        Series, cioè una colonna di pandas come `df["kwh"]`, che ha un'etichetta per ogni riga.
     """)
     nb.code("""
         listino = {"F1": 0.28, "F2": 0.25, "F3": 0.21}
@@ -467,8 +484,8 @@ def costruisci() -> Notebook:
     nb.code('impianti.sort_values("kwp").head(3)')
     nb.sottosezione("try ed except, per saperli leggere", intro="""
         Nel codice dei colleghi si incontra `try/except`: "prova questo e, se salta fuori quel tipo di
-        errore, fai quest'altro". Bisogna saperlo leggere e usarlo con parsimonia: un errore nascosto si
-        scopre più tardi, più lontano dalla causa.
+        errore, fai quest'altro". Va saputo leggere: un errore nascosto si scopre più tardi, più lontano
+        dalla causa.
     """)
     nb.code("""
         testo = "12,5"
@@ -482,7 +499,7 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         Si legge: prova a convertire; se arriva un `ValueError`, riprova con il punto. Qualsiasi altro
-        errore passa oltre e si vede, ed è giusto così. Un `except:` senza il tipo cattura tutto, anche
+        errore passa oltre e si vede. Un `except:` senza il tipo cattura tutto, anche
         quello che volevamo vedere: nel codice che leggiamo è un campanello d'allarme.
     """)
     nb.prova_tu(
@@ -775,5 +792,6 @@ def costruisci() -> Notebook:
             assert risposte["default_maxsplit"] == -1, "❌ default_maxsplit: il valore dopo maxsplit= nella firma"
             assert campi == ["IT001E45678901", "320,5", "F1"], "❌ campi: il separatore è il punto e virgola"
         """,
+        perche="`sep` è il primo parametro dopo `self`; `maxsplit=-1` vuol dire nessun limite di tagli.",
     )
     return nb

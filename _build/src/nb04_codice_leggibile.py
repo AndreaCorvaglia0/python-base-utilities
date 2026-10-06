@@ -10,13 +10,13 @@ def costruisci() -> Notebook:
         titolo="Codice leggibile",
         blocco=1,
         giornata=1,
-        intento="Il codice si scrive una volta e si legge venti: dal collega domani, da noi tra tre mesi. Le poche abitudini che fanno la differenza tra un notebook e un rebus.",
+        intento="Un notebook lo rileggono il collega domani e noi tra tre mesi: commenti, docstring e qualche regola di stile bastano a farlo capire senza eseguirlo.",
         obiettivi=[
             "commentare quando serve e scrivere una docstring",
             "usare le celle Markdown per raccontare un'analisi",
             "applicare le cinque regole di stile che contano",
         ],
-        tempo={"base": 20, "avanzata": 20},
+        tempo={"base": 30, "avanzata": 25},
         dati=[],
     )
 
@@ -46,8 +46,8 @@ def costruisci() -> Notebook:
         letture_kwh
     """)
     nb.md("""
-        Stesso codice, e adesso si sa che il 10 non è un parametro ma un rimedio, e che un giorno la
-        riga andrà tolta. Forma: sulla riga sopra, in italiano con gli accenti, minuscola iniziale,
+        Stesso codice, e adesso si sa che il 10 non fa parte del calcolo ma è una pezza, e che un giorno
+        la riga andrà tolta. Forma: sulla riga sopra, in italiano con gli accenti, minuscola iniziale,
         senza punto finale. In coda alla riga solo se è cortissimo.
     """)
     nb.box("nota", """
@@ -96,12 +96,12 @@ def costruisci() -> Notebook:
         condizioni, i cicli e le funzioni: qui ci interessa la riga subito sotto il `def`.
     """)
     nb.code("""
-        def energia_mwh(potenza_mw, ore):
+        def energia_intervallo_mwh(potenza_mw, ore):
             \"\"\"Energia in MWh di un intervallo a potenza costante.\"\"\"
             return potenza_mw * ore
 
 
-        energia_mwh(12.4, 0.25)   # Output: 3.1
+        energia_intervallo_mwh(12.4, 0.25)   # Output: 3.1
     """)
     nb.md("""
         La stringa tra tre virgolette è la docstring: una riga che dice cosa fa la funzione e, se
