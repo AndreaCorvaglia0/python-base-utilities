@@ -385,7 +385,7 @@ class Notebook:
         nb.metadata["kernelspec"] = {"display_name": "Python 3 (ipykernel)", "language": "python", "name": "python3"}
         nb.metadata["language_info"] = {"name": "python", "version": "3.13", "pygments_lexer": "ipython3"}
         nb.metadata["corso"] = {"aula": aula, "numero": self.num, "soluzioni": soluzioni, "versione": VERSIONE,
-                                "sorgente": f"_build/src/nb{self.num.lower()}_*.py"}
+                                "sorgente": f"_build/src/nb{self.num}_*.py"}
 
         if lint:
             errori, avvisi = lint_notebook(self, aula, cells)
@@ -463,6 +463,7 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
             avvisi.append(f"punto esclamativo nel testo: {c['source'][:50]!r}")
     # la sezione Esercizi deve essere l'ultima
     sezioni = [c["source"].splitlines()[1] for c in md if "sezione" in c.get("metadata", {}).get("tags", [])]
-    if sezioni and not sezioni[-1].endswith("Esercizi") and nb.num != COMPITO[0]:
+    # il capstone ha gli Step dentro ogni sezione, per scelta didattica
+    if sezioni and not sezioni[-1].endswith("Esercizi") and nb.num != COMPITO[0] and nb.etichetta_esercizio == "Esercizio":
         avvisi.append(f"l'ultima sezione non è 'Esercizi' ma {sezioni[-1]!r}")
     return errori, avvisi

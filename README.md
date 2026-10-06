@@ -10,7 +10,7 @@ Alla fine delle due giornate chi ha seguito il corso sa:
 
 - aprire VS Code, un notebook e uno script e farli girare nell'ambiente giusto (uv, kernel, estensioni), aggiungere
   una libreria, importarla e usarne una funzione;
-- dire cosa è cosa in una riga di codice: libreria, modulo, funzione, classe, oggetto, metodo, attributo, type hint;
+- dire cosa è cosa in una riga di codice: libreria, modulo, funzione, classe, oggetto, metodo, attributo, type hint, decoratore;
 - distinguere la libreria standard dalle librerie installate, e sapere dove vivono (`.venv`, `pyproject.toml`);
 - usare liste, dizionari, condizioni, cicli e funzioni, e leggere un traceback dal basso;
 - leggere file, Excel, database e API con pandas, pulire e aggregare, lavorare con le date, fare grafici
@@ -23,7 +23,7 @@ da zero, **Aula Avanzata** per chi ha già visto un po' di Python e vuole andare
 
 ## Come si parte
 
-1. Installa [uv](https://docs.astral.sh/uv/): su Windows `winget install astral-sh.uv`, su Mac `brew install uv`.
+1. Installa [uv](https://docs.astral.sh/uv/): su Windows `winget install --id=astral-sh.uv -e`, su Mac `brew install uv`.
 2. Scarica questo repository (pulsante **Code → Download ZIP**, oppure `git clone`) e apri la cartella in VS Code.
 3. Nel terminale di VS Code: `uv sync`. Crea la cartella `.venv` con Python e tutte le librerie del corso.
 4. Apri un notebook, premi **Select Kernel** in alto a destra e scegli l'interprete dentro `.venv`.
@@ -75,9 +75,9 @@ Se in aula la rete non collabora, i notebook leggono le risposte delle API salva
   sostituisce con i dati veri (temperatura di Milano, sensori della Regione Lombardia).
 - Estensioni di VS Code sui PC dell'aula, per tutte e due le aule: Python, Jupyter, Data Wrangler, Ruff, GitHub Copilot.
 - Ogni notebook ha nel banner il tempo previsto; se si è in ritardo si taglia a fine sezione, mai a metà. La prima
-  giornata dell'Aula Base è piena: i punti dove tagliare senza perdere il filo sono, nel 01, la sezione "Script e
-  notebook" fatta come dimostrazione dal docente; nel 06 gli esercizi "bis"; nel 07 Base la sezione di ripasso; nel 08 il tour di Data Wrangler (si può fare solo come
-  dimostrazione); nel 09 i fusi orari; nell'11 l'esercizio su Ruff, come dimostrazione.
+  giornata dell'Aula Base è piena: si può tagliare, nel 01, la sezione "Script e notebook", fatta come dimostrazione
+  dal docente; nel 06 gli esercizi "bis"; nel 07 Base la sezione di ripasso. Nella seconda giornata: nel 08 il tour di
+  Data Wrangler si può fare solo come dimostrazione; nel 09 i fusi orari; nell'11 l'esercizio su Ruff, come dimostrazione.
 - I notebook sono generati dagli script in `_build/src/`: per cambiare un testo o un esercizio in tutte e quattro
   le versioni, si modifica lo script e si lancia `uv run python _build/build.py NN`. Le Soluzioni si eseguono da
   capo a fondo con `uv run python _build/validate.py Soluzioni_Base/NN_*.ipynb` (serve la rete per le celle delle API).

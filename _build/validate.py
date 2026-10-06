@@ -1,8 +1,8 @@
 """
 Esegue i notebook e segnala le celle che vanno in errore.
 
-    uv run python _build/validate.py Aula_Base/Soluzioni/*.ipynb
-    uv run python _build/validate.py --rete Aula_Avanzata/Soluzioni/07_*.ipynb   # prova anche le celle di rete
+    uv run python _build/validate.py Soluzioni_Base/*.ipynb
+    uv run python _build/validate.py --rete Soluzioni_Avanzata/07_*.ipynb   # prova anche le celle di rete
 
 Le celle taggate `rete` (chiamate ad API) vengono saltate, a meno di passare --rete.
 Le celle taggate `errore-voluto` possono dare errore: è previsto.

@@ -5,7 +5,7 @@ description = "Corso base di Python per chi lavora con i dati nelle utility: pan
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "pandas>=2.2",
+    "pandas>=3.0",
     "numpy>=2.0",
     "plotly>=6.0",
     "openpyxl>=3.1",

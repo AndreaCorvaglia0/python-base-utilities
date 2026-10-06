@@ -4,7 +4,7 @@ uv è il package manager del corso: crea l'ambiente virtuale `.venv`, installa l
 
 ## Mettere in piedi il progetto
 
-1. Installa uv. Windows: `winget install astral-sh.uv`. Mac: `brew install uv`. Poi chiudi e riapri il terminale.
+1. Installa uv. Windows: `winget install --id=astral-sh.uv -e`. Mac: `brew install uv`. Poi chiudi e riapri il terminale.
 2. Scarica il repository: `git clone https://github.com/AndreaCorvaglia0/python-base-utilities` oppure, da GitHub, **Code → Download ZIP** e scompatta la cartella.
 3. Entra nella cartella (`cd python-base-utilities`) e lancia `uv sync`: crea `.venv` con la versione giusta di Python e tutte le librerie. La prima volta ci vuole un minuto.
 4. Apri la cartella in VS Code: **File → Open Folder**. Servono le estensioni Python e Jupyter.
@@ -13,11 +13,11 @@ uv è il package manager del corso: crea l'ambiente virtuale `.venv`, installa l
 
 Una libreria in più: nel terminale `uv add nome`, poi **Restart** del kernel, poi `import nome`. Mai `!pip install` dentro il notebook: la libreria non finisce in `pyproject.toml` e al prossimo `uv sync` sparisce.
 
-Uno script si lancia con `uv run script.py` dalla cartella in cui sta: usa `.venv` senza attivare niente.
+Uno script sta nella cartella principale del progetto e si lancia da lì con `uv run script.py`: usa `.venv` senza attivare niente.
 
 ## Da notebook a script in 6 passi
 
-1. Crea `nome.py` nella stessa cartella del notebook: i percorsi `../Dati/...` restano validi.
+1. Crea `nome.py` nella cartella principale del progetto, accanto a `pyproject.toml`: da lì i dati stanno in `Dati/...`, senza `../`.
 2. Copia solo le celle che portano al risultato: via le prove, gli `head()`, i "prova tu" e le celle di esplorazione.
 3. Gli `import` tutti in testa, una volta sola.
 4. In uno script l'ultima espressione di una cella non mostra niente: togli le righe tipo `df` da solo, oppure mettile in un `print()`.
@@ -36,7 +36,7 @@ def consumo_per_pod(percorso, fascia="F1"):
     return totali.reset_index()
 
 
-risultato = consumo_per_pod("../Dati/letture_pod_2025.csv")
+risultato = consumo_per_pod("Dati/letture_pod_2025.csv")
 print(risultato)
 ```
 
@@ -61,7 +61,7 @@ Dal terminale, nella cartella del progetto:
 | `uvx ruff format script.py` | riscrive il file nella forma giusta |
 | `uvx ruff check --fix script.py` | corregge quello che sa correggere (gli import inutilizzati, per esempio) |
 
-I tre codici che si vedono più spesso: `F401` import mai usato, `F841` variabile assegnata e mai letta, `E501` riga oltre il limite scritto in `pyproject.toml` (`line-length = 100`). La `F` sono errori veri, la `E` è stile.
+I tre codici che si vedono più spesso: `F401` import mai usato, `F841` variabile assegnata e mai letta, `E501` riga oltre il limite scritto in `pyproject.toml` (`line-length = 100`). I codici `F` segnalano problemi veri, il codice potrebbe non funzionare; i codici `E` riguardano lo stile.
 
 ## I comandi uv
 
