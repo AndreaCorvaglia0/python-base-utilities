@@ -313,7 +313,7 @@ def costruisci() -> Notebook:
         """,
         richiesta="""
             Salva `fig_carico` in `carico_gennaio.html` con `include_plotlyjs="cdn"`, poi aprilo con un
-            doppio clic dalla cartella del notebook. Output atteso: un file di qualche centinaio di KB.
+            doppio clic dalla cartella del notebook. Output atteso: un file leggero, sotto 1 MB.
         """,
         starter="""
             fig_carico.write_html(...)
