@@ -323,10 +323,12 @@ class Notebook:
                     primo = ultimo_es.split(".")[0]
                     articolo = "all'" if primo in ("1", "8", "11") else ("allo " if primo == "0" else "al ")
                     corpo += [f"*In alternativa {articolo}{ultimo_es}: stesso obiettivo, scenario diverso.*", ""]
+                if e["scenario"]:
+                    corpo += [e["scenario"], ""]
                 if "\n" in e["richiesta"]:
-                    corpo += [e["scenario"], "", "**Cosa fare.**", "", e["richiesta"]]
+                    corpo += ["**Cosa fare.**", "", e["richiesta"]]
                 else:
-                    corpo += [e["scenario"], "", "**Cosa fare.** " + e["richiesta"]]
+                    corpo += ["**Cosa fare.** " + e["richiesta"]]
                 if e["suggerimento"]:
                     corpo += ["", "*Suggerimento:* " + e["suggerimento"]]
                 indice.append(f"    - [{self.etichetta_esercizio} {numero} · {e['titolo']}](#{anc})")
