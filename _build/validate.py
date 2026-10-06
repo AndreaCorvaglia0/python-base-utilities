@@ -5,6 +5,7 @@ Esegue i notebook e segnala le celle che vanno in errore.
     uv run python _build/validate.py --rete Aula_Avanzata/Soluzioni/07_*.ipynb   # prova anche le celle di rete
 
 Le celle taggate `rete` (chiamate ad API) vengono saltate, a meno di passare --rete.
+Le celle taggate `errore-voluto` possono dare errore: è previsto.
 La directory di lavoro è la cartella del notebook, come in VS Code.
 """
 
@@ -29,6 +30,8 @@ def esegui(path: Path, con_rete: bool) -> list[str]:
     errori = []
     for i, cell in enumerate(nb.cells):
         if cell.cell_type != "code":
+            continue
+        if "errore-voluto" in cell.metadata.get("tags", []):
             continue
         for out in cell.get("outputs", []):
             if out.get("output_type") == "error":

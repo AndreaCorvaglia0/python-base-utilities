@@ -1,37 +1,62 @@
-# python-base-utilities
-Corso base di Python per applicazioni pratiche nelle utility: serie temporali, API, visualizzazione e forecasting introduttivo.
+# Python base per le utility
 
-## Come utilizzare il corso con GitHub Codespaces
+Corso di due giornate per chi lavora con i dati in una utility e vuole smettere di farlo a mano:
+leggere file, Excel, database e API con pandas, pulire e aggregare, lavorare con le date, fare grafici
+interattivi, e usare gli agenti per il coding senza fidarsi alla cieca.
 
-GitHub Codespaces ti permette di eseguire questo corso direttamente nel browser senza dover installare Python o altre dipendenze sul tuo computer locale.
+Il materiale esiste in due versioni, una per aula, con lo stesso programma: **Aula Base** per chi parte
+da zero, **Aula Avanzata** per chi ha già visto un po' di Python e vuole andare oltre.
 
-### Avviare Codespaces
+## Come si parte
 
-1. **Vai al repository su GitHub**
-2. **Clicca sul pulsante verde "Code"**
-3. **Seleziona la tab "Codespaces"**
-4. **Clicca su "Create codespace on main"** (o sul branch desiderato)
+1. Installa [uv](https://docs.astral.sh/uv/): su Windows `winget install astral-sh.uv`, su Mac `brew install uv`.
+2. Scarica questo repository (pulsante **Code → Download ZIP**, oppure `git clone`) e apri la cartella in VS Code.
+3. Nel terminale di VS Code: `uv sync`. Crea la cartella `.venv` con Python e tutte le librerie del corso.
+4. Apri un notebook, premi **Select Kernel** in alto a destra e scegli l'interprete dentro `.venv`.
+5. Esegui la prima cella del notebook `00_Si_parte`: se stampa un percorso che contiene `.venv`, sei a posto.
 
-GitHub creerà automaticamente un ambiente di sviluppo completo nel cloud con Python e Jupyter già configurati.
+Serve una libreria in più? Nel terminale `uv add nome`, poi **Restart** del kernel. Le estensioni di VS Code
+da avere: **Python**, **Jupyter** e, per chi vuole, **Data Wrangler** e **Ruff**.
 
-### Lavorare con i Notebook
+## La mappa del corso
 
-Una volta avviato Codespaces:
+| Giornata | Notebook | Aula Base | Aula Avanzata |
+|---|---|---|---|
+| 1 | `00_Si_parte` · VS Code, notebook e primo codice | 40 min | 30 min |
+| 1 | `01_Librerie_e_ambiente` · librerie e uv (Avanzata: ambienti, script vs notebook) | 20 min | 40 min |
+| 1 | `02_Sintassi_di_base` · variabili, numeri, stringhe | 60 min | 40 min |
+| 1 | `03_Strutture_dati` · liste, tuple, dizionari, set | 60 min | 40 min |
+| 1 | `04_Codice_leggibile` · commenti, docstring, PEP 8 (Avanzata: Ruff) | 20 min | 30 min |
+| 1 | `05_Condizioni_cicli_funzioni` (Avanzata: comprehension, lambda, generatori) | 90 min | 95 min |
+| 1 | `06_Oggetti_ed_errori` · leggere il codice e i traceback | 40 min | 30 min |
+| 1 | `07_Pandas_import_dati` · DataFrame, CSV, Excel, SQL (Avanzata: API e wrapper) | 80 min | 120 min |
+| tra le due | `Compito_a_casa` · una settimana nell'ufficio Analisi Consumi | 30-45 min | 30-45 min |
+| 2 | `08_Pandas_operazioni` · selezione, pulizia, groupby, merge, Data Wrangler | 135 min | 115 min |
+| 2 | `09_Pandas_date` · date, indice temporale, ora legale (Avanzata: resample, rolling) | 70 min | 90 min |
+| 2 | `10_Plotly` · linee, istogrammi, scatter, slider, export HTML | 40 min | 30 min |
+| 2 | `11_Agenti_per_il_coding` · Copilot in VS Code, token, contesto, tre regole | 40 min | 40 min |
+| 2 | `12_Capstone` · il carico del Nord e la temperatura | 120 min | 130 min |
 
-1. I notebook Jupyter (file `.ipynb`) sono già disponibili nella struttura del progetto
-2. Clicca su un notebook per aprirlo
-3. VS Code nel browser riconoscerà automaticamente i notebook Jupyter
-4. Seleziona il kernel Python quando richiesto
-5. Puoi eseguire le celle del notebook cliccando sul pulsante "Run" o premendo `Shift + Enter`
+Ogni notebook finisce con una sezione di esercizi: due esercizi di applicazione, ciascuno con un'alternativa
+("bis") e, dove ha senso, un passo in più facoltativo. Le verifiche con ✅ e ❌ dicono subito se il risultato
+torna. Le soluzioni di tutto stanno in `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 
-### Vantaggi di Codespaces
+## Cosa c'è nelle cartelle
 
-- ✅ Nessuna installazione locale necessaria
-- ✅ Ambiente pre-configurato con tutte le dipendenze
-- ✅ Accessibile da qualsiasi computer con un browser
-- ✅ Sincronizzazione automatica con GitHub
-- ✅ Include VS Code completo nel browser
+| Cartella | Contenuto |
+|---|---|
+| `Aula_Base/`, `Aula_Avanzata/` | i notebook del corso, uno per argomento, più il compito a casa |
+| `Soluzioni_Base/`, `Soluzioni_Avanzata/` | gli stessi notebook con gli esercizi risolti |
+| `Dati/` | i dati usati nel corso: carico Terna, turbina eolica, prezzi, più i file di esempio (vedi `Dati/README.md`) |
+| `Schede/` | tre schede di una pagina: Excel → pandas, uv e script, gli errori più comuni |
+| `Slides/` | la presentazione del corso |
+| `_build/` | gli script che generano i notebook e i dati di esempio (non servono per seguire il corso) |
 
-### Nota sui limiti gratuiti
+Prima del corso, con la rete disponibile, `uv run python _build/scarica_fallback.py` salva in `Dati/fallback/`
+le risposte delle API usate nei notebook: se in aula la rete non collabora, i notebook leggono quelle.
 
-GitHub offre un numero di ore gratuite al mese per Codespaces. Ricordati di fermare o eliminare i Codespaces quando non li utilizzi per non consumare il tuo quota gratuito.
+## I riquadri nei notebook
+
+Nei notebook incontrerai riquadri colorati: 💡 **Nota** (una precisazione utile adesso), ⚠️ **Attenzione**
+(l'errore che succede davvero), 📘 **Approfondimento** (si può saltare), 📌 **Ricorda** (la regola da portare
+a casa), ✏️ **Esercizio** e **Prova tu** (tocca a te), ✅ **Soluzione** (solo nelle cartelle delle soluzioni).

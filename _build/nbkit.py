@@ -1,25 +1,36 @@
 """
-nbkit: piccolo generatore di notebook per il corso.
+nbkit: il generatore dei notebook del corso.
 
-Ogni notebook del corso è descritto da uno script Python in `_build/src/` che usa
-questa libreria. Dallo stesso sorgente si ottengono:
+Ogni notebook è descritto da uno script in `_build/src/` che espone una funzione `costruisci()`
+e restituisce un `Notebook`. Dallo stesso sorgente si ottengono quattro file:
 
-- la versione per l'Aula Base e quella per l'Aula Avanzata (celle taggate);
-- la versione "studente" (esercizi da completare) e quella "soluzioni".
+    Aula_Base/NN_Titolo.ipynb          Aula_Avanzata/NN_Titolo.ipynb
+    Soluzioni_Base/NN_Titolo.ipynb     Soluzioni_Avanzata/NN_Titolo.ipynb
 
-Uso tipico (vedi gli script in src/):
+Uso tipico:
 
     from nbkit import Notebook
-    nb = Notebook(num="04", slug="Condizioni_cicli_funzioni", titolo="...", ...)
-    nb.md("## 1. ...")
-    nb.code("x = 4")
-    nb.box("nota", "testo in markdown")
-    nb.esercizio(id="1", titolo="...", scenario="...", richiesta="...", starter="...", soluzione="...", verifica="...")
-    nb.build(root, aula="base", soluzioni=False)
+
+    def costruisci():
+        nb = Notebook(num="05", file="05_Condizioni_cicli_funzioni", titolo="Condizioni, cicli e funzioni",
+                      blocco=2, giornata=1, intento="...", obiettivi=["...", "...", "..."],
+                      tempo={"base": 90, "avanzata": 95}, dati=[])
+        nb.sezione("Decidere con if")
+        nb.md("Testo in markdown.")
+        nb.code("x = 4\\nx > 2")
+        nb.box("nota", "Una precisazione.")
+        with nb.solo("avanzata"):
+            nb.sezione("List comprehension")
+            ...
+        nb.sezione("Esercizi")
+        nb.esercizio(titolo="...", scenario="...", richiesta="...", suggerimento="...",
+                     starter="...", soluzione="...", verifica="assert ...", perche="...")
+        return nb
 """
 
 from __future__ import annotations
 
+import contextlib
 import re
 import textwrap
 from dataclasses import dataclass, field
@@ -28,98 +39,89 @@ from pathlib import Path
 import nbformat
 from nbformat.v4 import new_code_cell, new_markdown_cell, new_notebook
 
-# ---------------------------------------------------------------------------
-# Sistema visivo (colori e HTML dei box). Un posto solo: cambiare qui cambia tutto.
-# ---------------------------------------------------------------------------
+VERSIONE = "2026.1"
+AULE = ("base", "avanzata")
+NOMI_AULA = {"base": "Aula Base", "avanzata": "Aula Avanzata"}
 
-COLORI = {
-    "esercizio": "#5cb85c",      # verde
-    "soluzione": "#20a8a0",      # verde acqua
-    "nota": "#6c8ebf",           # azzurro
-    "attenzione": "#d9534f",     # rosso
-    "approfondimento": "#8e6bbf",  # viola
-    "ricorda": "#f0ad4e",        # ambra
-    "banner": "#9b1b5a",         # magenta (richiama le slide)
-}
-
-TITOLI_BOX = {
-    "nota": "📘 Nota",
-    "attenzione": "⚠️ Attenzione",
-    "approfondimento": "🔍 Approfondimento (si può saltare)",
-    "ricorda": "📌 Da ricordare",
-    "esercizio": "✏️ Esercizio",
-    "soluzione": "✅ Soluzione",
-}
+# ---------------------------------------------------------------------------
+# Programma: numero -> (file, titolo). Serve per i link "prossimo notebook".
+# ---------------------------------------------------------------------------
+PROGRAMMA = [
+    ("00", "00_Si_parte", "Si parte: VS Code, notebook e primo codice"),
+    ("01", "01_Librerie_e_ambiente", "Librerie e ambiente"),
+    ("02", "02_Sintassi_di_base", "Sintassi di base: variabili, numeri e stringhe"),
+    ("03", "03_Strutture_dati", "Strutture dati: liste, tuple, dizionari e set"),
+    ("04", "04_Codice_leggibile", "Codice leggibile"),
+    ("05", "05_Condizioni_cicli_funzioni", "Condizioni, cicli e funzioni"),
+    ("06", "06_Oggetti_ed_errori", "Oggetti ed errori"),
+    ("07", "07_Pandas_import_dati", "pandas: DataFrame e import dei dati"),
+    ("08", "08_Pandas_operazioni", "pandas: operazioni sui DataFrame"),
+    ("09", "09_Pandas_date", "pandas: le date"),
+    ("10", "10_Plotly", "Grafici con Plotly"),
+    ("11", "11_Agenti_per_il_coding", "Agenti per il coding"),
+    ("12", "12_Capstone", "Capstone: il carico del Nord e la temperatura"),
+]
+COMPITO = ("C", "Compito_a_casa", "Compito a casa")
 
 NOMI_BLOCCO = {
     1: "Blocco 1 · Setup, Python e sintassi di base",
     2: "Blocco 2 · Controllo del flusso, funzioni e primi dati in pandas",
     3: "Blocco 3 · Analisi dei dati con pandas e visualizzazione",
     4: "Blocco 4 · Agenti per il coding e caso d'uso end-to-end",
-    0: "Compito a casa",
+    0: "Tra le due giornate",
 }
 
-NOMI_AULA = {"base": "Aula Base", "avanzata": "Aula Avanzata"}
+# ---------------------------------------------------------------------------
+# Sistema visivo. Un posto solo: cambiare qui cambia tutto.
+# Sfondi trasparenti e nessun `color` forzato: leggibile in tema chiaro e scuro.
+# ---------------------------------------------------------------------------
+BOX = {
+    #  tipo              icona  titolo           bordo       sfondo
+    "nota":            ("💡", "Nota",            "#8c8c8c", "rgba(140,140,140,0.12)"),
+    "attenzione":      ("⚠️", "Attenzione",      "#d9534f", "rgba(217,83,79,0.12)"),
+    "approfondimento": ("📘", "Approfondimento", "#7e57c2", "rgba(126,87,194,0.12)"),
+    "ricorda":         ("📌", "Ricorda",         "#e0a800", "rgba(224,168,0,0.14)"),
+    "esercizio":       ("✏️", "Esercizio",       "#5cb85c", "rgba(92,184,92,0.12)"),
+    "soluzione":       ("✅", "Soluzione",       "#2e9fd6", "rgba(46,159,214,0.12)"),
+}
+BANNER_BORDO, BANNER_SFONDO = "#607d8b", "rgba(96,125,139,0.08)"
 
 
-def _rgba(hex_color: str, alpha: float) -> str:
-    h = hex_color.lstrip("#")
-    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-    return f"rgba({r},{g},{b},{alpha})"
+def _div(sfondo: str, bordo: str, corpo: str, padding: str = "12px 14px") -> str:
+    return (
+        f'<div style="background:{sfondo}; border-left:4px solid {bordo}; padding:{padding}; '
+        f'border-radius:4px; margin:8px 0 12px 0;">\n\n{corpo}\n\n</div>'
+    )
 
 
 def box_html(tipo: str, corpo: str, titolo: str | None = None) -> str:
-    """Box colorato leggibile in tema chiaro e scuro (sfondo trasparente, niente color forzato)."""
-    colore = COLORI[tipo]
-    titolo = titolo or TITOLI_BOX[tipo]
+    icona, nome, bordo, sfondo = BOX[tipo]
     corpo = textwrap.dedent(corpo).strip()
-    return (
-        f'<div style="background-color:{_rgba(colore, 0.10)}; border-left:4px solid {colore}; '
-        f'padding:12px 14px; border-radius:4px; margin:8px 0;">\n\n'
-        f"**{titolo}**\n\n{corpo}\n\n</div>"
-    )
-
-
-def banner_html(
-    num: str,
-    titolo: str,
-    blocco: int,
-    giornata: int,
-    aula: str,
-    obiettivi: list[str],
-    tempo: int,
-    prerequisito: str | None,
-) -> str:
-    colore = COLORI["banner"]
-    obiettivi_md = "\n".join(f"- {o}" for o in obiettivi)
-    riga_blocco = NOMI_BLOCCO.get(blocco, "")
-    sotto = f"{riga_blocco} · Giornata {giornata} · {NOMI_AULA[aula]}" if giornata else f"{riga_blocco} · {NOMI_AULA[aula]}"
-    pre = f"\n\n*Prima di questo notebook:* {prerequisito}" if prerequisito else ""
-    return (
-        f'<div style="border-left:6px solid {colore}; padding:14px 18px; margin:4px 0 12px 0; '
-        f'background-color:{_rgba(colore, 0.06)}; border-radius:4px;">\n\n'
-        f"# {num} · {titolo}\n\n"
-        f"**{sotto}** · ⏱ circa {tempo} min\n\n"
-        f"**Alla fine di questo notebook sappiamo:**\n\n{obiettivi_md}{pre}\n\n</div>"
-    )
+    if tipo == "approfondimento":
+        if not titolo:
+            raise ValueError("Un Approfondimento ha sempre un titolo")
+        testa = f"**{icona} {nome} · {titolo} (puoi saltarlo)**"
+    elif titolo:
+        testa = f"**{icona} {titolo}**"
+    else:
+        testa = f"**{icona} {nome}**"
+    return _div(sfondo, bordo, f"{testa}\n\n{corpo}")
 
 
 # ---------------------------------------------------------------------------
 # Modello delle celle
 # ---------------------------------------------------------------------------
-
-AULE = ("base", "avanzata")
-
-
 @dataclass
 class Cella:
-    tipo: str                 # "md" | "code"
-    src: str
-    aula: str | None = None   # None = entrambe, "base" | "avanzata" = solo quella
-    solo_soluzioni: bool = False   # cella che compare solo nella versione soluzioni
-    solo_studente: bool = False    # cella che compare solo nella versione studente
-    rete: bool = False        # cella che usa la rete (il validatore la ignora se fallisce)
-    tags: list[str] = field(default_factory=list)
+    tipo: str                       # "md" | "code" | "sezione" | "sottosezione" | "esercizio" | "prova"
+    src: str = ""
+    aula: str | None = None         # None = entrambe
+    solo_soluzioni: bool = False
+    solo_studente: bool = False
+    rete: bool = False
+    errore: bool = False            # cella che dà errore apposta (il validatore la accetta)
+    ruolo: str | None = None        # tag di ruolo (starter, verifica, soluzione, ...)
+    extra: dict = field(default_factory=dict)
 
     def visibile(self, aula: str, soluzioni: bool) -> bool:
         if self.aula is not None and self.aula != aula:
@@ -131,124 +133,332 @@ class Cella:
         return True
 
 
+def _d(testo: str) -> str:
+    return textwrap.dedent(testo).strip("\n")
+
+
 @dataclass
 class Notebook:
     num: str
-    slug: str
+    file: str
     titolo: str
     blocco: int
     giornata: int
-    obiettivi: list[str]
+    intento: str
+    obiettivi: list[str] | dict[str, list[str]]
     tempo: int | dict[str, int] = 45
-    prerequisito: str | None = None
-    successivo: str | None = None
+    dati: list[str] | dict[str, list[str]] = field(default_factory=list)
+    aule: tuple[str, ...] = AULE
+    etichetta_esercizio: str = "Esercizio"
+    prefisso_esercizi: str | None = None     # default: num
+    prossimo: str | None = None              # testo markdown della chiusura, se diverso dal programma
     celle: list[Cella] = field(default_factory=list)
-    _n_esercizi: int = 0
+    _aula_corrente: str | None = None
 
-    # --- celle semplici ---------------------------------------------------
-    def md(self, testo: str, aula: str | None = None, **kw) -> None:
-        self.celle.append(Cella("md", textwrap.dedent(testo).strip("\n"), aula=aula, **kw))
+    # ------------------------------------------------------------------ celle
+    def _aula(self, aula: str | None) -> str | None:
+        return aula if aula is not None else self._aula_corrente
 
-    def code(self, src: str, aula: str | None = None, rete: bool = False, **kw) -> None:
-        self.celle.append(Cella("code", textwrap.dedent(src).strip("\n"), aula=aula, rete=rete, **kw))
+    @contextlib.contextmanager
+    def solo(self, aula: str):
+        """Tutte le celle aggiunte nel blocco `with` appartengono solo a quell'aula."""
+        assert aula in AULE
+        prima = self._aula_corrente
+        self._aula_corrente = aula
+        try:
+            yield
+        finally:
+            self._aula_corrente = prima
+
+    def sezione(self, titolo: str, intro: str | None = None, aula: str | None = None) -> None:
+        self.celle.append(Cella("sezione", _d(intro) if intro else "", aula=self._aula(aula), extra={"titolo": titolo}))
+
+    def sottosezione(self, titolo: str, intro: str | None = None, aula: str | None = None) -> None:
+        self.celle.append(Cella("sottosezione", _d(intro) if intro else "", aula=self._aula(aula), extra={"titolo": titolo}))
+
+    def md(self, testo: str, aula: str | None = None) -> None:
+        self.celle.append(Cella("md", _d(testo), aula=self._aula(aula)))
+
+    def code(self, src: str, aula: str | None = None, rete: bool = False, errore: bool = False) -> None:
+        """Cella di codice. rete=True se chiama un'API; errore=True se deve dare errore apposta."""
+        self.celle.append(Cella("code", _d(src), aula=self._aula(aula), rete=rete, errore=errore))
 
     def box(self, tipo: str, testo: str, titolo: str | None = None, aula: str | None = None) -> None:
-        self.md(box_html(tipo, testo, titolo), aula=aula)
+        if tipo not in ("nota", "attenzione", "approfondimento", "ricorda"):
+            raise ValueError(f"box: tipo non previsto {tipo!r}")
+        self.celle.append(Cella("md", box_html(tipo, testo, titolo), aula=self._aula(aula)))
 
-    # --- esercizi -----------------------------------------------------------
-    def sezione_esercizi(self, intro: str | None = None, aula: str | None = None) -> None:
-        testo = '<a id="esercizi"></a>\n## Esercizi'
-        if intro:
-            testo += "\n\n" + textwrap.dedent(intro).strip()
-        self.md(testo, aula=aula)
-
-    def esercizio(
-        self,
-        id: str,
-        titolo: str,
-        scenario: str,
-        richiesta: str,
-        starter: str,
-        soluzione: str,
-        verifica: str | None = None,
-        suggerimento: str | None = None,
-        tipo: str = "base",       # "base" | "passo" (un passo in più) | "alternativo"
-        aula: str | None = None,
-        rete: bool = False,
-        nota_soluzione: str | None = None,
-    ) -> None:
-        etichetta = {"base": "Esercizio", "passo": "Esercizio · un passo in più", "alternativo": "Esercizio alternativo"}[tipo]
-        intest = f"✏️ {etichetta} {id} · {titolo}"
-        corpo = textwrap.dedent(scenario).strip() + "\n\n**Cosa fare.** " + textwrap.dedent(richiesta).strip()
-        if suggerimento:
-            corpo += "\n\n*Suggerimento:* " + textwrap.dedent(suggerimento).strip()
-        self.md(box_html("esercizio", corpo, titolo=intest), aula=aula)
-        # versione studente: scheletro da completare
-        self.celle.append(Cella("code", textwrap.dedent(starter).strip("\n"), aula=aula, solo_studente=True, rete=rete))
-        # versione soluzioni: box + codice completo
-        testo_sol = nota_soluzione or ""
-        self.celle.append(Cella("md", box_html("soluzione", testo_sol or f"Esercizio {id} · {titolo}"), aula=aula, solo_soluzioni=True))
-        self.celle.append(Cella("code", textwrap.dedent(soluzione).strip("\n"), aula=aula, solo_soluzioni=True, rete=rete))
+    def prova_tu(self, richiesta: str, starter: str, soluzione: str, verifica: str | None = None,
+                 aula: str | None = None, rete: bool = False) -> None:
+        """Micro-esercizio inline da 2-3 minuti: box verde, cella da completare, verifica."""
+        a = self._aula(aula)
+        self.celle.append(Cella("prova", _d(richiesta), aula=a))
+        self.celle.append(Cella("code", _d(starter), aula=a, solo_studente=True, rete=rete, ruolo="starter"))
+        self.celle.append(Cella("code", _d(soluzione), aula=a, solo_soluzioni=True, rete=rete, ruolo="soluzione"))
         if verifica:
-            self.celle.append(Cella("code", textwrap.dedent(verifica).strip("\n"), aula=aula, rete=rete, tags=["verifica"]))
-        self._n_esercizi += 1
+            self.celle.append(Cella("code", _d(verifica), aula=a, rete=rete, ruolo="verifica", extra={"prova": True}))
 
-    # --- costruzione ----------------------------------------------------------
-    def _tempo(self, aula: str) -> int:
-        return self.tempo[aula] if isinstance(self.tempo, dict) else self.tempo
+    def esercizio(self, titolo: str, scenario: str, richiesta: str, starter: str, soluzione: str,
+                  verifica: str | None = None, suggerimento: str | None = None, perche: str | None = None,
+                  bis: bool = False, passo_in_piu: dict | None = None, aula: str | None = None,
+                  rete: bool = False) -> None:
+        """Esercizio di fine notebook: box verde, starter, verifica (+ soluzione nelle Soluzioni).
 
-    def nome_file(self) -> str:
-        return f"{self.num}_{self.slug}.ipynb"
+        passo_in_piu: dict(testo=..., starter=..., soluzione=..., verifica=...) facoltativo.
+        bis=True: è l'alternativa dell'esercizio precedente (stesso numero + "bis").
+        """
+        a = self._aula(aula)
+        self.celle.append(Cella("esercizio", "", aula=a, extra={
+            "titolo": titolo, "scenario": _d(scenario), "richiesta": _d(richiesta),
+            "suggerimento": _d(suggerimento) if suggerimento else None, "bis": bis,
+            "passo": _d(passo_in_piu["testo"]) if passo_in_piu else None, "perche": _d(perche) if perche else None,
+        }))
+        self.celle.append(Cella("code", _d(starter), aula=a, solo_studente=True, rete=rete, ruolo="starter"))
+        self.celle.append(Cella("md", "", aula=a, solo_soluzioni=True, ruolo="box-soluzione", extra={"perche": _d(perche) if perche else None}))
+        self.celle.append(Cella("code", _d(soluzione), aula=a, solo_soluzioni=True, rete=rete, ruolo="soluzione"))
+        if verifica:
+            self.celle.append(Cella("code", _d(verifica), aula=a, rete=rete, ruolo="verifica"))
+        if passo_in_piu:
+            self.celle.append(Cella("md", "", aula=a, ruolo="box-passo", extra={"testo": _d(passo_in_piu["testo"])}))
+            self.celle.append(Cella("code", _d(passo_in_piu["starter"]), aula=a, solo_studente=True, rete=rete, ruolo="starter"))
+            self.celle.append(Cella("code", _d(passo_in_piu["soluzione"]), aula=a, solo_soluzioni=True, rete=rete, ruolo="soluzione"))
+            if passo_in_piu.get("verifica"):
+                self.celle.append(Cella("code", _d(passo_in_piu["verifica"]), aula=a, rete=rete, ruolo="verifica", extra={"passo": True}))
 
-    def build(self, root: Path | str, aula: str, soluzioni: bool = False) -> Path:
+    # ------------------------------------------------------------------ build
+    def _per_aula(self, valore, aula: str):
+        return valore[aula] if isinstance(valore, dict) else valore
+
+    def _link_prossimo(self) -> str | None:
+        if self.prossimo is not None:
+            return self.prossimo
+        nums = [p[0] for p in PROGRAMMA]
+        if self.num not in nums:
+            return None
+        i = nums.index(self.num)
+        if i + 1 >= len(PROGRAMMA):
+            return None
+        n, f, t = PROGRAMMA[i + 1]
+        testo = f"Prossimo: [{n} · {t}]({f}.ipynb)"
+        if self.num == "07":
+            testo += f" · e, prima della seconda giornata, il [{COMPITO[2]}]({COMPITO[1]}.ipynb)"
+        return testo
+
+    def banner(self, aula: str, soluzioni: bool) -> str:
+        obiettivi = self._per_aula(self.obiettivi, aula)
+        dati = self._per_aula(self.dati, aula)
+        tempo = self._per_aula(self.tempo, aula)
+        titolo = f"{self.num} · {self.titolo}" if self.num != COMPITO[0] else self.titolo
+        if soluzioni:
+            titolo += " · Soluzioni"
+        kicker = NOMI_BLOCCO[self.blocco]
+        if self.giornata:
+            kicker += f" · Giornata {self.giornata}"
+        kicker += f" · {NOMI_AULA[aula]} &nbsp;·&nbsp; ⏱ ~{tempo} min"
+        righe = [f"**{kicker}**", "", self.intento, "", "**In questo notebook impariamo a**", ""]
+        righe += [f"- {o}" for o in obiettivi]
+        pre = []
+        nums = [p[0] for p in PROGRAMMA]
+        if self.num in nums and nums.index(self.num) > 0:
+            n, f, t = PROGRAMMA[nums.index(self.num) - 1]
+            pre.append(f"Prima di questo: [{n} · {t}]({f}.ipynb)")
+        pre.append("Dati: " + (", ".join(f"`../Dati/{d}`" for d in dati) if dati else "nessuno"))
+        righe += ["", " &nbsp;·&nbsp; ".join(pre)]
+        return f'<a id="inizio"></a>\n# {titolo}\n\n' + _div(BANNER_SFONDO, BANNER_BORDO, "\n".join(righe), padding="12px 16px")
+
+    def build(self, root: Path | str, aula: str, soluzioni: bool = False, lint: bool = True) -> Path:
         assert aula in AULE
         root = Path(root)
-        cells = []
-        banner = banner_html(
-            self.num, self.titolo + (" · Soluzioni" if soluzioni else ""), self.blocco, self.giornata,
-            aula, self.obiettivi, self._tempo(aula), self.prerequisito,
-        )
-        cells.append(new_markdown_cell(banner))
-        for c in self.celle:
-            if not c.visibile(aula, soluzioni):
-                continue
-            if c.tipo == "md":
-                cells.append(new_markdown_cell(c.src))
+        prefisso = (self.num.lstrip("0") or "0") if self.prefisso_esercizi is None else self.prefisso_esercizi
+        visibili = [c for c in self.celle if c.visibile(aula, soluzioni)]
+
+        # numerazione di sezioni ed esercizi, calcolata per aula
+        n_sez = 0
+        n_sotto = 0
+        n_es = 0
+        indice: list[str] = []
+        out: list[tuple[str, str, dict]] = []   # (tipo, src, metadata)
+        ultimo_es = ""      # numero base dell'ultimo esercizio (per il "bis")
+        corrente = ""       # numero dell'esercizio in corso (base o bis)
+        for c in visibili:
+            if c.tipo == "sezione":
+                n_sez += 1
+                n_sotto = 0
+                anc = f"sez-{n_sez}"
+                indice.append(f"- [{n_sez}. {c.extra['titolo']}](#{anc})")
+                src = f'<a id="{anc}"></a>\n## {n_sez}. {c.extra["titolo"]}'
+                if c.src:
+                    src += "\n\n" + c.src
+                out.append(("md", src, {"tags": ["sezione"]}))
+            elif c.tipo == "sottosezione":
+                n_sotto += 1
+                anc = f"sez-{n_sez}-{n_sotto}"
+                indice.append(f"    - [{n_sez}.{n_sotto} {c.extra['titolo']}](#{anc})")
+                src = f'<a id="{anc}"></a>\n### {n_sez}.{n_sotto} {c.extra["titolo"]}'
+                if c.src:
+                    src += "\n\n" + c.src
+                out.append(("md", src, {"tags": ["sottosezione"]}))
+            elif c.tipo == "prova":
+                corpo = f"**{BOX['esercizio'][0]} Prova tu**\n\n{c.src}"
+                out.append(("md", _div(BOX["esercizio"][3], BOX["esercizio"][2], corpo), {"tags": ["prova-tu"]}))
+                corrente = "Prova tu"
+            elif c.tipo == "esercizio":
+                e = c.extra
+                if e["bis"]:
+                    numero = f"{ultimo_es} bis"
+                else:
+                    n_es += 1
+                    numero = f"{prefisso}.{n_es}" if prefisso else f"{n_es}"
+                    ultimo_es = numero
+                corrente = numero
+                anc = "es-" + re.sub(r"[^a-z0-9]+", "-", numero.lower()).strip("-")
+                testa = f"**{BOX['esercizio'][0]} {self.etichetta_esercizio} {numero} · {e['titolo']}**"
+                corpo = [testa, ""]
+                if e["bis"]:
+                    corpo += [f"*In alternativa al {ultimo_es}: stesso obiettivo, scenario diverso.*", ""]
+                if "\n" in e["richiesta"]:
+                    corpo += [e["scenario"], "", "**Cosa fare.**", "", e["richiesta"]]
+                else:
+                    corpo += [e["scenario"], "", "**Cosa fare.** " + e["richiesta"]]
+                if e["suggerimento"]:
+                    corpo += ["", "*Suggerimento:* " + e["suggerimento"]]
+                indice.append(f"    - [{self.etichetta_esercizio} {numero} · {e['titolo']}](#{anc})")
+                out.append(("md", f'<a id="{anc}"></a>\n' + _div(BOX["esercizio"][3], BOX["esercizio"][2], "\n".join(corpo)), {"tags": ["esercizio"]}))
+                c.extra["_numero"] = numero
+            elif c.ruolo == "box-soluzione":
+                perche = c.extra.get("perche")
+                corpo = f"**{BOX['soluzione'][0]} Soluzione {corrente}**"
+                if perche:
+                    corpo += "\n\n" + perche
+                out.append(("md", _div(BOX["soluzione"][3], BOX["soluzione"][2], corpo), {"tags": ["soluzione"]}))
+            elif c.ruolo == "box-passo":
+                corpo = f"**{BOX['esercizio'][0]} Un passo in più (facoltativo)**\n\n{c.extra['testo']}"
+                out.append(("md", _div(BOX["esercizio"][3], BOX["esercizio"][2], corpo), {"tags": ["passo-in-piu"]}))
+            elif c.tipo == "md":
+                out.append(("md", c.src, {}))
+            elif c.tipo == "code":
+                src = c.src
+                tags = []
+                if c.ruolo == "verifica":
+                    tags.append("verifica")
+                    if not src.startswith("# Verifica"):
+                        src = "# Verifica: esegui senza modificare\n" + src
+                    if "✅" not in src:
+                        cosa = "Prova tu" if c.extra.get("prova") else f"{self.etichetta_esercizio} {corrente}"
+                        if c.extra.get("passo"):
+                            cosa += " · un passo in più"
+                        src += f'\nprint("✅ {cosa} completato")' if cosa != "Prova tu" else '\nprint("✅ Tutto corretto")'
+                elif c.ruolo:
+                    tags.append(c.ruolo)
+                if c.rete:
+                    tags.append("rete")
+                if c.errore:
+                    tags.append("errore-voluto")
+                if soluzioni and c.ruolo == "soluzione":
+                    tags = [t for t in tags if t != "soluzione"] + ["soluzione"]
+                out.append(("code", src, {"tags": tags} if tags else {}))
+
+        cells = [new_markdown_cell(self.banner(aula, soluzioni), metadata={"tags": ["banner"]})]
+        if indice:
+            cells.append(new_markdown_cell('<a id="indice"></a>\n**Indice**\n\n' + "\n".join(indice), metadata={"tags": ["indice"]}))
+        for tipo, src, meta in out:
+            if tipo == "md":
+                cells.append(new_markdown_cell(src, metadata=meta))
             else:
-                meta = {"tags": c.tags + (["rete"] if c.rete else [])} if (c.tags or c.rete) else {}
-                cells.append(new_code_cell(c.src, metadata=meta))
-        if self.successivo:
-            cells.append(new_markdown_cell(f"---\n\n➡️ Prossimo notebook: **{self.successivo}**"))
+                cells.append(new_code_cell(src, metadata=meta))
+        chiusura = f"---\n\n**Fine del notebook {self.num}.**" if self.num != COMPITO[0] else "---\n\n**Fine del compito.**"
+        link = self._link_prossimo()
+        if link:
+            chiusura += " " + link
+        cells.append(new_markdown_cell(chiusura, metadata={"tags": ["chiusura"]}))
+
+        # id deterministici e output vuoti
+        for i, cell in enumerate(cells):
+            cell["id"] = f"{self.num.lower()}-{aula}-{'sol' if soluzioni else 'stu'}-{i:03d}"
+            if cell["cell_type"] == "code":
+                cell["outputs"] = []
+                cell["execution_count"] = None
+
         nb = new_notebook(cells=cells)
-        nb.metadata["kernelspec"] = {"display_name": "Python 3 (.venv)", "language": "python", "name": "python3"}
-        nb.metadata["language_info"] = {"name": "python"}
-        out = root / self.nome_file()
-        out.parent.mkdir(parents=True, exist_ok=True)
-        nbformat.write(nb, out)
-        return out
+        nb.metadata["kernelspec"] = {"display_name": "Python 3 (ipykernel)", "language": "python", "name": "python3"}
+        nb.metadata["language_info"] = {"name": "python", "version": "3.13", "pygments_lexer": "ipython3"}
+        nb.metadata["corso"] = {"aula": aula, "numero": self.num, "soluzioni": soluzioni, "versione": VERSIONE,
+                                "sorgente": f"_build/src/nb{self.num.lower()}_*.py"}
+
+        if lint:
+            errori, avvisi = lint_notebook(self, aula, cells)
+            for a in avvisi:
+                print(f"  [avviso] {self.file} ({aula}): {a}")
+            if errori:
+                raise ValueError(f"{self.file} ({aula}):\n  - " + "\n  - ".join(errori))
+
+        out_path = root / f"{self.file}.ipynb"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        nbformat.validate(nb)
+        nbformat.write(nb, out_path)
+        return out_path
 
 
 # ---------------------------------------------------------------------------
-# Indice automatico: costruito dai titoli ## e ### presenti nelle celle markdown
+# Lint: errori bloccanti e avvisi
 # ---------------------------------------------------------------------------
+FRASI_VIETATE = [
+    "come richiesto", "in questa versione", "per l'aula", "aula base", "aula avanzata",
+    "questa sezione è pensata", "questo notebook è pensato", "versione del corso", "istruzioni del corso",
+]
+PAROLE_SOSPETTE = [
+    "esploreremo", "fondamentale", "cruciale", "potente", "robusto", "sfruttare", "in sintesi",
+    "ricapitolando", "vale la pena", "buon lavoro", "ottimo lavoro", "perfetto!", "immagina", "best practice",
+    "nota bene", "vediamo insieme", "scopriamo insieme", "è importante notare", "da notare", "non solo",
+    " ovvero ", "ecc.", "etc.", "e molto altro", "—",
+]
 
-def slug_ancora(titolo: str) -> str:
-    s = titolo.lower()
-    s = re.sub(r"[`*_]", "", s)
-    s = re.sub(r"[^\w\s-]", "", s)
-    s = re.sub(r"\s+", "-", s.strip())
-    return s
 
-
-def indice_da_celle(celle: list[Cella], aula: str) -> str:
-    righe = []
-    for c in celle:
-        if c.tipo != "md" or (c.aula is not None and c.aula != aula) or c.solo_soluzioni:
+def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list[str]]:
+    errori: list[str] = []
+    avvisi: list[str] = []
+    obiettivi = nb._per_aula(nb.obiettivi, aula)
+    if len(obiettivi) != 3:
+        errori.append(f"servono esattamente 3 obiettivi, trovati {len(obiettivi)}")
+    md = [c for c in cells if c["cell_type"] == "markdown"]
+    code = [c for c in cells if c["cell_type"] == "code"]
+    testo = "\n".join(c["source"] for c in md[1:])  # banner escluso
+    basso = testo.lower()
+    for f in FRASI_VIETATE:
+        if f in basso:
+            errori.append(f"frase vietata nel testo: {f!r}")
+    for p in PAROLE_SOSPETTE:
+        n = basso.count(p)
+        if n:
+            avvisi.append(f"parola da controllare {p.strip()!r} ({n})")
+    tutto = testo + "\n" + "\n".join(c["source"] for c in code)
+    for m in re.finditer(r"""["'(]\s*(?:\./)?Dati/""", tutto):
+        errori.append(f"percorso dati non relativo alla cartella del notebook: usa '../Dati/' ({m.group(0)!r})")
+    # celle di spiegazione troppo lunghe (escluse le celle con box, esercizi, banner, indice)
+    for c in md:
+        tags = c.get("metadata", {}).get("tags", [])
+        if tags or c["source"].lstrip().startswith("<div") or c["source"].lstrip().startswith("<a id"):
             continue
-        for line in c.src.splitlines():
-            m = re.match(r"^(##|###)\s+(.*)$", line)
-            if m:
-                livello, titolo = m.group(1), m.group(2).strip()
-                indent = "" if livello == "##" else "    "
-                righe.append(f"{indent}- [{titolo}](#{slug_ancora(titolo)})")
-    return "**Indice**\n\n" + "\n".join(righe)
+        parole = len(c["source"].split())
+        if parole > 110:
+            avvisi.append(f"cella markdown lunga ({parole} parole): {c['source'][:50]!r}")
+    for c in code:
+        tags = c.get("metadata", {}).get("tags", [])
+        righe = [r for r in c["source"].splitlines() if r.strip()]
+        if not tags and len(righe) > 14:
+            avvisi.append(f"cella di codice lunga ({len(righe)} righe): {righe[0][:50]!r}")
+        if "!pip" in c["source"] or "%pip" in c["source"]:
+            errori.append("niente !pip/%pip: le librerie si aggiungono con uv")
+        if "inplace=True" in c["source"]:
+            errori.append("niente inplace=True")
+    # esclamativi fuori dalle verifiche
+    for c in md[1:]:
+        senza_codice = re.sub(r"`[^`]*`", "", c["source"])
+        senza_codice = re.sub(r"```.*?```", "", senza_codice, flags=re.S)
+        if "!" in senza_codice and "✅" not in c["source"] and "❌" not in c["source"]:
+            avvisi.append(f"punto esclamativo nel testo: {c['source'][:50]!r}")
+    # la sezione Esercizi deve essere l'ultima
+    sezioni = [c["source"].splitlines()[1] for c in md if "sezione" in c.get("metadata", {}).get("tags", [])]
+    if sezioni and not sezioni[-1].endswith("Esercizi") and nb.num != COMPITO[0]:
+        avvisi.append(f"l'ultima sezione non è 'Esercizi' ma {sezioni[-1]!r}")
+    return errori, avvisi
