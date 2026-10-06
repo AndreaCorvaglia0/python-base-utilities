@@ -421,8 +421,8 @@ def costruisci() -> Notebook:
             Con l'ID di un sensore recuperiamo le sue misure dall'altra risorsa. Scegliamo il sensore 2001, il
             termometro di Milano via Brera.
         """)
+        nb.code('idsensore = "2001"')
         nb.code("""
-            idsensore = "2001"
             measurements_url = "https://www.dati.lombardia.it/resource/647i-nhxk.json"
             params_misure = {
                 "idsensore": idsensore,
