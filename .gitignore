@@ -1,0 +1,13 @@
+# ambiente virtuale creato da uv
+.venv/
+
+# file di sistema e cache
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.ruff_cache/
+
+# file prodotti eseguendo i notebook
+*.html
+Output/

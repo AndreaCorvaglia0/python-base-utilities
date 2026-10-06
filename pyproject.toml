@@ -1,0 +1,30 @@
+[project]
+name = "python-base-utilities"
+version = "2026.1"
+description = "Corso base di Python per chi lavora con i dati nelle utility: pandas, serie temporali, API e grafici interattivi."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=2.2",
+    "numpy>=2.0",
+    "plotly>=6.0",
+    "openpyxl>=3.1",
+    "requests>=2.32",
+    "ipykernel>=6.29",
+    "nbformat>=5.10",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8",
+    "jupyter>=1.1",
+    "nbconvert>=7.16",
+    "nbclient>=0.10",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
