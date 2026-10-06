@@ -5,6 +5,11 @@ import textwrap
 from nbkit import Notebook
 
 
+def unisci(*pezzi: str) -> str:
+    """Unisce più blocchi di codice in una cella, con una riga vuota tra l'uno e l'altro."""
+    return "\n\n".join(textwrap.dedent(p).strip() for p in pezzi)
+
+
 def costruisci() -> Notebook:
     nb = Notebook(
         num="04",
@@ -310,7 +315,7 @@ def costruisci() -> Notebook:
             invertita. Esempio: input `'Python'`, output `'nohtyP'`.
         """,
         suggerimento="puoi pensare alla stringa come a una **lista** di caratteri.",
-        starter=con_test("""
+        starter="""
             def reverse_string(stringa):
                 return ...
         """,
@@ -322,6 +327,21 @@ def costruisci() -> Notebook:
             assert reverse_string("Python") == "nohtyP", "❌ Stringa invertita errata"
         """,
     )
+
+    g10 = """
+        g10 = {
+            'Canada': 'Ottawa',
+            'Francia': 'Parigi',
+            'Germania': 'Berlino',
+            'Italia': 'Roma',
+            'Giappone': 'Tokyo',
+            'Regno Unito': 'Londra',
+            'Stati Uniti': 'Washington',
+            'Spagna': 'Madrid',
+            'Paesi Bassi': 'Amsterdam',
+            'Corea del Sud': 'Seoul'
+        }
+    """
     nb.esercizio(
         titolo="Paesi con capitale di lunghezza pari",
         scenario="",
@@ -330,48 +350,22 @@ def costruisci() -> Notebook:
             restituisca la lista dei paesi la cui capitale ha un numero pari di lettere. Il dizionario
             `g10` è nella cella qui sotto.
         """,
-        starter="""
+        starter=unisci("""
             def paesi_capitale_pari(dizionario):
                 result = ...  # inizializza una lista vuota
                 for paese, capitale in ...:  # ciclo su chiave e valore (usa .items())
                     if ...:  # condizione: lunghezza pari del nome della capitale
                         ...  # aggiungi a result il paese, visto che la condizione è rispettata
                 return result
-
-            g10 = {
-                'Canada': 'Ottawa',
-                'Francia': 'Parigi',
-                'Germania': 'Berlino',
-                'Italia': 'Roma',
-                'Giappone': 'Tokyo',
-                'Regno Unito': 'Londra',
-                'Stati Uniti': 'Washington',
-                'Spagna': 'Madrid',
-                'Paesi Bassi': 'Amsterdam',
-                'Corea del Sud': 'Seoul'
-            }
-        """,
-        soluzione="""
+        """, g10),
+        soluzione=unisci("""
             def paesi_capitale_pari(dizionario):
                 result = []
                 for paese, capitale in dizionario.items():
                     if len(capitale) % 2 == 0:
                         result.append(paese)
                 return result
-
-            g10 = {
-                'Canada': 'Ottawa',
-                'Francia': 'Parigi',
-                'Germania': 'Berlino',
-                'Italia': 'Roma',
-                'Giappone': 'Tokyo',
-                'Regno Unito': 'Londra',
-                'Stati Uniti': 'Washington',
-                'Spagna': 'Madrid',
-                'Paesi Bassi': 'Amsterdam',
-                'Corea del Sud': 'Seoul'
-            }
-        """,
+        """, g10),
         verifica="""
             atteso = ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna']
             assert paesi_capitale_pari(g10) == atteso, "❌ Lista dei paesi errata"
@@ -388,10 +382,6 @@ def costruisci() -> Notebook:
         lista_parole = ['ciao', 'anna', 'radar', 'gatto', 'osso', 'madam']
         print(trova_palindrome(lista_parole))
     """
-
-    def con_test(codice):
-        return textwrap.dedent(codice).strip() + "\n\n" + textwrap.dedent(test_palindrome).strip()
-
     verifica_palindrome = """
         assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ Lista delle parole palindrome errata"
     """
@@ -401,24 +391,22 @@ def costruisci() -> Notebook:
         scenario="",
         richiesta=richiesta_palindrome,
         suggerimento="una parola è palindroma se è uguale alla parola invertita, come nell'esercizio sulla stringa invertita.",
-        starter="""
+        starter=unisci("""
             def trova_palindrome(lista_parole):
                 palindrome = []
                 for parola in lista_parole:
                     if ...:  # completa la condizione parola == parola invertita
                         ...
                 return palindrome
-
-        """),
-        soluzione=con_test("""
+        """, test_palindrome),
+        soluzione=unisci("""
             def trova_palindrome(lista_parole):
                 palindrome = []
                 for parola in lista_parole:
                     if parola == parola[::-1]:
                         palindrome.append(parola)
                 return palindrome
-
-        """),
+        """, test_palindrome),
         verifica=verifica_palindrome,
     )
     nb.esercizio(
@@ -426,16 +414,14 @@ def costruisci() -> Notebook:
         titolo="Parole palindrome",
         scenario="",
         richiesta=richiesta_palindrome,
-        starter=con_test("""
+        starter=unisci("""
             def trova_palindrome(lista_parole):
                 return [... for ... if ...]  # completa la condizione parola == parola invertita
-
-        """),
-        soluzione=con_test("""
+        """, test_palindrome),
+        soluzione=unisci("""
             def trova_palindrome(lista_parole):
                 return [parola for parola in lista_parole if parola == parola[::-1]]
-
-        """),
+        """, test_palindrome),
         verifica=verifica_palindrome,
     )
     return nb
