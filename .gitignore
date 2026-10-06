@@ -11,3 +11,11 @@ __pycache__/
 # file prodotti eseguendo i notebook
 *.html
 Output/
+
+# file prodotti dagli esercizi nelle cartelle dei notebook (i dati veri stanno in Dati/)
+Aula_*/*.csv
+Aula_*/*.xlsx
+Soluzioni_*/*.csv
+Soluzioni_*/*.xlsx
+Aula_*/*.py
+Soluzioni_*/*.py
