@@ -230,7 +230,7 @@ def costruisci() -> Notebook:
     """, errore=True)
     nb.sottosezione("NameError", intro="""
         Il nome non esiste: è scritto diverso, oppure è definito in una cella non ancora eseguita.
-        Spesso Python suggerisce il nome giusto con `Did you mean`.
+        L'ultima riga riporta il nome cercato, qui `cita` con una `t` sola.
     """)
     nb.code("""
         citta = ["Roma", "Milano", "Torino"]
@@ -350,7 +350,7 @@ def costruisci() -> Notebook:
             obbligatorio, in `"default_reverse"` il default di `reverse`. Poi usa `reverse` per ordinare
             `voti` dal più alto al più basso in `dal_piu_alto`. Output atteso: `[30, 28, 25, 18]`.
         """,
-        suggerimento="Il parametro obbligatorio è quello senza `=`; `reverse` sta dopo `*`, quindi si passa per nome.",
+        suggerimento="Il parametro obbligatorio è quello senza `=`.",
         starter="""
             voti = [28, 18, 30, 25]
 
