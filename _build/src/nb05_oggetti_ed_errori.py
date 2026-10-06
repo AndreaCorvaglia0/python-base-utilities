@@ -60,7 +60,7 @@ def costruisci() -> Notebook:
         print(citta.index("Milano"))   # Output: 1
     """)
     nb.md("""
-        Un DataFrame di pandas è un oggetto come gli altri. Usiamo quello del notebook su pandas:
+        Un DataFrame di pandas è un oggetto come gli altri. Usiamo un piccolo DataFrame di pandas:
         tre persone con nome, età e città.
     """)
     nb.code("""
@@ -97,8 +97,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Chi è chi in una riga di codice", intro="""
-        Con questi pezzi possiamo leggere una riga intera. Prendiamo la lettura di un file, del tipo
-        che useremo nel prossimo notebook.
+        Con questi pezzi possiamo leggere una riga intera. Prendiamo la lettura di un file.
 
         ```python
         turbina = pd.read_csv("../Dati/TexasTurbine.csv", nrows=24)
@@ -114,18 +113,13 @@ def costruisci() -> Notebook:
         type(turbina)
     """)
     nb.md("""
-        `pandas.DataFrame` si legge: la classe `DataFrame` della libreria `pandas`. La classe è lo
-        stampo, `turbina` è un oggetto fatto con quello stampo. Anche `str` e `list` sono classi:
+        `pandas.DataFrame` si legge: la classe `DataFrame` della libreria `pandas`. La classe
+        definisce com'è fatto un oggetto; `turbina` è un oggetto di quella classe. Anche `str` e `list` sono classi:
         `citta` è un oggetto della classe `list`.
     """)
     nb.md("""
         Un import si legge allo stesso modo: `import plotly.express as px` prende il sottomodulo
         `express` della libreria `plotly` e lo chiama `px`.
-    """)
-    nb.code("""
-        import plotly.express as px
-
-        type(px)
     """)
     nb.md("""
         Le forme sono poche e si riconoscono dalla punteggiatura.
@@ -141,30 +135,28 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            Per ogni riga scrivi nel commento cos'è, con le parole della tabella. Le cinque risposte
-            sono tutte diverse.
+            Per ogni riga scrivi nel commento cos'è, con le parole della tabella.
         """,
         starter="""
             # turbina.head(3)        -> ...
             # turbina.shape          -> ...
             # pd.Series([1, 2, 3])   -> ...
             # round(27.6)            -> ...
-            # px.line(turbina)       -> ...
+            # len(turbina)           -> ...
         """,
         soluzione="""
             # turbina.head(3)        -> metodo
             # turbina.shape          -> attributo
             # pd.Series([1, 2, 3])   -> classe
             # round(27.6)            -> funzione di Python
-            # px.line(turbina)       -> funzione di una libreria
+            # len(turbina)           -> funzione di Python
         """,
     )
     with nb.solo("avanzata"):
         nb.box("approfondimento", """
             Una classe si scrive con `class`. Il metodo `__init__` parte quando chiamiamo
             `Prodotto(...)` e salva i dati dentro l'oggetto; `self` è l'oggetto stesso, quello che starà
-            a sinistra del punto. Per analizzare dati quasi mai serve scriverne una: serve riconoscerle
-            nelle librerie e nel codice scritto da un agente.
+            a sinistra del punto. Le classi si incontrano nelle librerie e nel codice scritto da un agente.
         """, titolo="Una classe minima")
         nb.code("""
             class Prodotto:
@@ -182,8 +174,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Leggere la documentazione e i type hint", intro="""
-        I parametri di una funzione non si ricordano a memoria: si leggono con `help(funzione)`, oppure
-        con il nome seguito da `?`.
+        I parametri di una funzione si leggono con `help(funzione)`, oppure con il nome seguito da `?`.
     """)
     nb.code("help(round)")
     nb.md("""
@@ -277,7 +268,7 @@ def costruisci() -> Notebook:
     nb.code('df.sort("Età")', errore=True)
 
     # ------------------------------------------------------------------ 5
-    nb.sezione("Cosa fare quando non capisco l'errore")
+    nb.sezione("Cosa fare davanti a un errore")
     nb.md("""
         1. Leggi l'ultima riga del traceback, poi cerca la freccia nella tua cella.
         2. Esegui le celle sopra, dall'inizio: dopo un **Restart** le variabili non esistono più.
@@ -296,7 +287,7 @@ def costruisci() -> Notebook:
             cambiare cosa calcola la cella. Alla fine devono esistere `totale`, `anni_alla_pensione`,
             `capitale` e `citta` con quattro città.
         """,
-        suggerimento="Ogni cella ha un errore solo. Esegui, leggi, correggi, riesegui.",
+        suggerimento="ogni cella ha un errore solo. Esegui, leggi, correggi, riesegui.",
         starter="""
             prezzi = [2.5, 1.2, 3.8]
             totale = sum(prezzo)
@@ -350,7 +341,7 @@ def costruisci() -> Notebook:
             obbligatorio, in `"default_reverse"` il default di `reverse`. Poi usa `reverse` per ordinare
             `voti` dal più alto al più basso in `dal_piu_alto`. Output atteso: `[30, 28, 25, 18]`.
         """,
-        suggerimento="Il parametro obbligatorio è quello senza `=`.",
+        suggerimento="il parametro obbligatorio è quello senza `=`.",
         starter="""
             voti = [28, 18, 30, 25]
 

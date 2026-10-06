@@ -197,20 +197,6 @@ def costruisci() -> Notebook:
         iteratore ogni volta che si usa un ciclo `for`. Con `next()` l'iteratore restituisce l'elemento
         successivo; se non ci sono più elementi, solleva l'eccezione `StopIteration`.
     """)
-    with nb.solo("avanzata"):
-        nb.md("""
-            Un **generatore** è una funzione che usa `yield` al posto di `return` (le funzioni le vediamo tra
-            poco): produce i valori uno alla volta, solo quando servono, senza costruire tutta la lista. È un
-            iteratore, quindi si percorre con `for` o con `next()`.
-        """)
-        nb.code("""
-            def quadrati(n):
-                for i in range(1, n + 1):
-                    yield i ** 2
-
-            gen = quadrati(3)
-            print(next(gen), next(gen), next(gen))  # Output: 1 4 9
-        """)
 
     nb.sottosezione("Il ciclo while", intro="Il ciclo `while` esegue il blocco di codice finché una condizione è vera:")
     nb.code("""
@@ -304,6 +290,19 @@ def costruisci() -> Notebook:
             print(even_numbers)
         """)
         nb.md("Questi strumenti permettono di scrivere codice più conciso.")
+        nb.sottosezione("Generatori", intro="""
+            Un **generatore** è una funzione che usa `yield` al posto di `return`: produce i valori uno alla
+            volta, solo quando servono, senza costruire tutta la lista. È un iteratore, quindi si percorre
+            con `for` o con `next()`.
+        """)
+        nb.code("""
+            def quadrati(n):
+                for i in range(1, n + 1):
+                    yield i ** 2
+
+            gen = quadrati(3)
+            print(next(gen), next(gen), next(gen))  # Output: 1 4 9
+        """)
 
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")

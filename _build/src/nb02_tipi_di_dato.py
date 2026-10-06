@@ -296,6 +296,8 @@ def costruisci() -> Notebook:
             3. Ipotizziamo che entrino nel G7 Spagna, Paesi Bassi e Corea del Sud: in `g10`, una copia di `g7`,
                aggiungi `'Madrid'`, `'Amsterdam'` e `'Seoul'`.
             4. Supponiamo che l'Italia cambi capitale: ora è Bobbio. Aggiorna `g10`.
+
+            (`copy()` fa una copia del dizionario, `pop(chiave)` toglie una chiave.)
         """,
         starter="""
             g8 = {

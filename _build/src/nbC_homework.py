@@ -29,7 +29,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 1
     nb.sezione("Prima di cominciare", intro="""
         I file dell'homework sono in `../Dati/homework/`. La cella qui sotto li elenca: se la lista è vuota,
-        il notebook non è stato aperto dalla cartella del corso.
+        il notebook non è nella cartella Aula_Base o Aula_Avanzata.
     """)
     nb.code("""
         from pathlib import Path
@@ -59,7 +59,7 @@ def costruisci() -> Notebook:
         """,
         richiesta="""
             Prendi dal dizionario `panificio` il nome del cliente in `cliente` e il consumo di febbraio in `kwh`,
-            poi calcola `costo`, consumo per `prezzo`.
+            poi calcola `costo`, il consumo moltiplicato per `prezzo`.
             Output atteso: `Panificio Rè 1654.2 kWh a febbraio, costo 347.38 euro`.
         """,
         starter="""
@@ -100,7 +100,7 @@ def costruisci() -> Notebook:
             3. Calcola `quota_forno`, il peso del forno sul totale in percentuale, arrotondato a un decimale.
             4. Metti in `picco` la lettura più alta della giornata.
         """,
-        suggerimento="La posizione nella lista è l'ora: `letture[4]` è la lettura delle 4. La fine dello slicing è esclusa.",
+        suggerimento="la posizione nella lista è l'ora: `letture[4]` è la lettura delle 4. La fine dello slicing è esclusa.",
         starter="""
             letture = [0.8, 0.7, 0.9, 1.1, 9.5, 11.2, 10.8, 9.9, 8.4, 4.2, 3.9, 3.5,
                        3.1, 2.4, 2.0, 1.8, 2.2, 2.6, 2.9, 1.5, 1.2, 1.0, 0.9, 0.8]
@@ -173,7 +173,7 @@ def costruisci() -> Notebook:
             Con un ciclo `for` su `consumi_febbraio.items()` e un `if`, costruisci la lista `sopra_soglia`
             con i POD che superano `soglia`. Calcola poi `totale_kwh`, la somma di tutti i consumi.
         """,
-        suggerimento="Dentro il ciclo: `if kwh > soglia:` e poi `.append(pod)`. Per il totale, `sum()` sui `.values()`.",
+        suggerimento="dentro il ciclo: `if kwh > soglia:` e poi `.append(pod)`. Per il totale, `sum()` sui `.values()`.",
         starter=starter_3_base,
         soluzione=starter_3_base.replace("""
         for pod, kwh in ...:
@@ -299,6 +299,8 @@ def costruisci() -> Notebook:
             1. Leggi `../Dati/homework/letture_marzo.csv` in `letture` con i parametri giusti per un CSV italiano e guarda `info()`, `head()` e `describe()`: la colonna `kwh` deve essere numerica.
             2. Crea `mask`, la condizione `kwh` sopra 500 su tutta la colonna, e `anomale = letture[mask]`: le righe in cui la condizione è vera.
             3. Salva `anomale` nel file `letture_anomale.csv`, nella cartella del notebook, senza l'indice.
+
+            Un filtro si scrive così: `letture[letture["kwh"] > 500]` tiene solo le righe con kwh sopra 500.
         """,
         suggerimento="`sep=\";\"` e `decimal=\",\"`. Se `kwh` esce come testo, manca il `decimal`.",
         starter="""
@@ -306,8 +308,8 @@ def costruisci() -> Notebook:
 
             letture = pd.read_csv("../Dati/homework/letture_marzo.csv", ...)
             letture.info()
-            display(letture.head())
-            display(letture.describe())
+            print(letture.head())
+            print(letture.describe())
 
             mask = ...
             anomale = letture[mask]
@@ -319,8 +321,8 @@ def costruisci() -> Notebook:
 
             letture = pd.read_csv("../Dati/homework/letture_marzo.csv", sep=";", decimal=",")
             letture.info()
-            display(letture.head())
-            display(letture.describe())
+            print(letture.head())
+            print(letture.describe())
 
             mask = letture["kwh"] > 500
             anomale = letture[mask]
@@ -349,7 +351,7 @@ def costruisci() -> Notebook:
             1. Leggi i due fogli di `{EXCEL}` in `anagrafica` e `listino`, uno per `read_excel`, scegliendo il foglio con `sheet_name`.
             2. Apri `{DB}` con `sqlite3.connect`, leggi in `potenze` tutta la tabella `pod` con `pd.read_sql` e in `officina` la sola riga dell'officina, con un `WHERE` sulla colonna `cliente`. Poi chiudi la connessione.
         """,
-        suggerimento="In SQL il testo va tra apici singoli: `WHERE cliente = 'Officina Meccanica Fumagalli'`.",
+        suggerimento="in SQL il testo va tra apici singoli: `WHERE cliente = 'Officina Meccanica Fumagalli'`.",
         starter=f"""
             import sqlite3
 
@@ -361,8 +363,8 @@ def costruisci() -> Notebook:
             officina = pd.read_sql("...", con)
             con.close()
 
-            display(anagrafica)
-            display(listino)
+            print(anagrafica)
+            print(listino)
             officina
         """,
         soluzione=f"""
@@ -376,8 +378,8 @@ def costruisci() -> Notebook:
             officina = pd.read_sql("SELECT * FROM pod WHERE cliente = 'Officina Meccanica Fumagalli'", con)
             con.close()
 
-            display(anagrafica)
-            display(listino)
+            print(anagrafica)
+            print(listino)
             officina
         """,
         verifica="""
@@ -397,7 +399,7 @@ def costruisci() -> Notebook:
             2. Scrivi `leggi_tabella(nome)`: apre `{DB}` con `sqlite3.connect`, legge tutta la tabella `nome` con `pd.read_sql`, chiude la connessione e restituisce il DataFrame. Usala per mettere in `potenze` la tabella `pod`.
             3. In `officina` metti la sola riga dell'Officina Meccanica Fumagalli, filtrando `potenze` con una condizione sulla colonna `cliente`, come venerdì.
         """,
-        suggerimento="La query con il nome ricevuto si compone con una f-string: `f\"SELECT * FROM {nome}\"`.",
+        suggerimento="la query con il nome ricevuto si compone con una f-string: `f\"SELECT * FROM {nome}\"`.",
         starter=f"""
             import sqlite3
 
@@ -411,8 +413,8 @@ def costruisci() -> Notebook:
             potenze = leggi_tabella("pod")
             officina = ...
 
-            display(anagrafica)
-            display(listino)
+            print(anagrafica)
+            print(listino)
             officina
         """,
         soluzione=f'''
@@ -432,8 +434,8 @@ def costruisci() -> Notebook:
             potenze = leggi_tabella("pod")
             officina = potenze[potenze["cliente"] == "Officina Meccanica Fumagalli"]
 
-            display(anagrafica)
-            display(listino)
+            print(anagrafica)
+            print(listino)
             officina
         ''',
         verifica="""

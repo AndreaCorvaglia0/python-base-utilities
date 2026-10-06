@@ -21,11 +21,11 @@ def costruisci() -> Notebook:
         obiettivi={
             "base": [
                 "creare Series e DataFrame e accedere ai loro elementi",
-                "leggere file CSV ed Excel con i parametri giusti, anche più file o più fogli insieme",
+                "leggere file CSV ed Excel con i parametri di lettura, anche più file o più fogli insieme",
                 "caricare una tabella da un database SQL con una query",
             ],
             "avanzata": [
-                "creare Series e DataFrame e leggere file CSV ed Excel con i parametri giusti",
+                "creare Series e DataFrame e leggere file CSV ed Excel con i parametri di lettura",
                 "caricare una tabella da un database SQL con una query",
                 "chiedere dati a un'API con `requests` e trasformare la risposta JSON in un DataFrame",
             ],
@@ -409,6 +409,7 @@ def costruisci() -> Notebook:
         nb.md("Quali tipi di sensori ci sono, e in quali province?")
         nb.code('sensori_df["tipologia"].unique()')
         nb.code('sensori_df["provincia"].unique()')
+        nb.md("Il filtro con due condizioni lo vediamo nel notebook sulle operazioni: qui basta leggerlo.")
         nb.md("""
             Teniamo i sensori di temperatura della provincia di Milano: tra parentesi quadre mettiamo le due
             condizioni, unite da `&`.
@@ -442,6 +443,7 @@ def costruisci() -> Notebook:
                 misure_df = pd.DataFrame(json.load(f))
             misure_df
         """)
+        nb.md("Le conversioni e il grafico qui sotto anticipano i notebook sulle date e su Plotly.")
         nb.md("""
             Il portale manda tutto come testo: convertiamo la data in datetime e il valore in numero, poi
             ordiniamo per data. Il valore `-9999` indica una misura mancante: togliamo quelle righe.
@@ -472,7 +474,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 8
     nb.sezione("Esercizi")
     nb.esercizio(
-        titolo="Un CSV con i parametri giusti",
+        titolo="Lettura di un CSV italiano",
         scenario="Delle letture dei POD ci servono solo tre colonne e il consumo complessivo.",
         richiesta="""
             1. Leggi `../Dati/letture_pod_2025.csv` nel DataFrame `letture_kwh`, tenendo solo le colonne
@@ -546,7 +548,7 @@ def costruisci() -> Notebook:
     )
     nb.esercizio(
         titolo="Le letture di un POD dal database",
-        scenario="Dal database `utility.db` ci servono le letture di marzo di un solo POD.",
+        scenario="Un POD è il codice che identifica un punto di prelievo. Dal database `utility.db` ci servono le letture di marzo di un solo POD.",
         richiesta="""
             1. Apri la connessione a `../Dati/utility.db`.
             2. Con una query, leggi dalla tabella `letture` solo le righe del POD `IT001E10000000` nel

@@ -165,7 +165,7 @@ print(durata)  # Output: 16""".strip("\n"), solo_soluzioni=True, ruolo="soluzion
             È un CSV in formato italiano: separatore `;`, virgola decimale, encoding `latin-1`.
         """,
         richiesta="""
-            1. Leggi il file in `letture` con i parametri giusti e guarda `head()`, `info()` e `describe()`.
+            1. Leggi il file in `letture` con `sep`, `decimal` ed `encoding` e guarda `head()`, `info()` e `describe()`.
             2. Salva in `righe` il numero di righe del DataFrame.
             3. Salva in `kwh_max` il valore più alto della colonna `kwh`.
             4. Confronta il massimo con la media e con la riga `75%`: in un commento, scrivi se ti sembra un valore plausibile.
