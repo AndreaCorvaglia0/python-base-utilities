@@ -1,6 +1,6 @@
 """E3 · Esercitazione 3: domande ed esercizi del blocco 3 (pandas, date, Plotly) su dati veri."""
 
-from nbkit import Cella, Notebook
+from nbkit import Cella, Notebook, box_html
 
 
 def costruisci() -> Notebook:
@@ -29,14 +29,14 @@ def costruisci() -> Notebook:
         4. A cosa serve `dayfirst=True` in `pd.to_datetime`? Fai l'esempio di `"01/02/2025"`.
         5. Quando serve `how="left"` in `pd.merge`, invece del valore predefinito?
     """)
-    nb.celle.append(Cella("md", """**Risposte**
-
-1. `loc` usa le etichette e include l'ultima: 3 righe. `iloc` usa le posizioni e la esclude, come le liste: 2 righe.
-2. Una Series: indice le categorie, valori le somme. `groupby` da solo dà un oggetto GroupBy, che aspetta una funzione.
-3. Raggruppa per giorno e fa la media: 96 valori quartorari diventano uno. Serve un indice di date (`set_index`).
-4. Nelle date ambigue il primo numero è il giorno: `"01/02/2025"` diventa il 1° febbraio invece del 2 gennaio.
-5. Quando vogliamo tenere tutte le righe di sinistra, anche senza corrispondenza: le colonne mancanti diventano `NaN`.
-   Con il predefinito `how="inner"` quelle righe spariscono.""", solo_soluzioni=True))
+    nb.celle.append(Cella("md", box_html("soluzione", """
+        1. `loc` usa le etichette e include l'ultima: 3 righe. `iloc` usa le posizioni e la esclude, come le liste: 2 righe.
+        2. Una Series: indice le categorie, valori le somme. `groupby` da solo dà un oggetto GroupBy, che aspetta una funzione.
+        3. Raggruppa per giorno e fa la media: 96 valori quartorari diventano uno. Serve un indice di date (`set_index`).
+        4. Nelle date ambigue il primo numero è il giorno: `"01/02/2025"` diventa il 1° febbraio invece del 2 gennaio.
+        5. Quando vogliamo tenere tutte le righe di sinistra, anche senza corrispondenza: le colonne mancanti diventano
+           `NaN`. Con il predefinito `how="inner"` quelle righe spariscono.
+    """, titolo="Risposte"), solo_soluzioni=True))
 
     # ------------------------------------------------------------------ esercizi
     nb.sezione("Esercizi", intro="""

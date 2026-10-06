@@ -22,7 +22,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Domande", intro="""
-        Rispondi a mente, poi controlla copiando il codice in una cella.
+        Rispondi a mente, poi controlla copiando il codice in una cella (per la domanda 5 serve `import pandas as pd`).
     """)
     nb.md("""
         **1.** Cosa stampa questo ciclo?
@@ -168,7 +168,7 @@ print(durata)  # Output: 16""".strip("\n"), solo_soluzioni=True, ruolo="soluzion
             1. Leggi il file in `letture` con i parametri giusti e guarda `head()`, `info()` e `describe()`.
             2. Salva in `righe` il numero di righe del DataFrame.
             3. Salva in `kwh_max` il valore più alto della colonna `kwh`.
-            4. Confronta il massimo con la media e con il 75%: in un commento, scrivi se ti sembra un valore plausibile.
+            4. Confronta il massimo con la media e con la riga `75%`: in un commento, scrivi se ti sembra un valore plausibile.
         """,
         suggerimento="il numero di righe è nella seconda riga di `info()`, il massimo nella riga `max` di `describe()`.",
         starter="""
@@ -187,7 +187,7 @@ print(durata)  # Output: 16""".strip("\n"), solo_soluzioni=True, ruolo="soluzion
 
             righe = len(letture)
             kwh_max = letture["kwh"].max()
-            # 5785.2 è quasi dieci volte la media (623) e quattro volte la seconda lettura più alta: è sospetto
+            # 5785.2 è quasi dieci volte la media (623) e più di sette volte il 75% (755): è sospetto
             letture.describe()
         """,
         verifica="""
