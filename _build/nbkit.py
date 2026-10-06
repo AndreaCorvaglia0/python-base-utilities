@@ -61,7 +61,7 @@ PROGRAMMA = [
     ("11", "11_Agenti_per_il_coding", "Agenti per il coding"),
     ("12", "12_Capstone", "Capstone: il carico del Nord e la temperatura"),
 ]
-COMPITO = ("C", "Compito_a_casa", "Compito a casa")
+COMPITO = ("C", "Homework", "Homework")
 
 NOMI_BLOCCO = {
     1: "Blocco 1 · Setup, Python e sintassi di base",
@@ -241,7 +241,7 @@ class Notebook:
         n, f, t = PROGRAMMA[i + 1]
         testo = f"Prossimo: [{n} · {t}]({f}.ipynb)"
         if self.num == "07":
-            testo += f" · e, prima della seconda giornata, il [{COMPITO[2]}]({COMPITO[1]}.ipynb)"
+            testo += f" · e, prima della seconda giornata, l'[{COMPITO[2]}]({COMPITO[1]}.ipynb)"
         return testo
 
     def banner(self, aula: str, soluzioni: bool) -> str:
@@ -368,7 +368,7 @@ class Notebook:
                 cells.append(new_markdown_cell(src, metadata=meta))
             else:
                 cells.append(new_code_cell(src, metadata=meta))
-        chiusura = f"---\n\n**Fine del notebook {self.num}.**" if self.num != COMPITO[0] else "---\n\n**Fine del compito.**"
+        chiusura = f"---\n\n**Fine del notebook {self.num}.**" if self.num != COMPITO[0] else "---\n\n**Fine dell'homework.**"
         link = self._link_prossimo()
         if link:
             chiusura += " " + link
@@ -407,12 +407,14 @@ class Notebook:
 FRASI_VIETATE = [
     "come richiesto", "in questa versione", "per l'aula", "aula base", "aula avanzata",
     "questa sezione è pensata", "questo notebook è pensato", "versione del corso", "istruzioni del corso",
+    "compito a casa", "compiti a casa",
 ]
 PAROLE_SOSPETTE = [
     "esploreremo", "fondamentale", "cruciale", "potente", "robusto", "sfruttare", "in sintesi",
     "ricapitolando", "vale la pena", "buon lavoro", "ottimo lavoro", "perfetto!", "immagina", "best practice",
     "nota bene", "vediamo insieme", "scopriamo insieme", "è importante notare", "da notare", "non solo",
     " ovvero ", "ecc.", "etc.", "e molto altro", "—",
+    "formattatore", "formattatori", "apici invers", "codifica", "directory",
 ]
 
 

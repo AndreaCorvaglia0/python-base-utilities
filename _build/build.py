@@ -2,7 +2,7 @@
 Costruisce i notebook del corso a partire dagli script in `_build/src/`.
 
     uv run python _build/build.py            # tutti
-    uv run python _build/build.py 05 07      # solo quei numeri (C = compito a casa)
+    uv run python _build/build.py 05 07      # solo quei numeri (C = homework)
 
 Output: Aula_Base/, Aula_Avanzata/ (versione studente) e Soluzioni_Base/, Soluzioni_Avanzata/.
 """

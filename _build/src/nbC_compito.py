@@ -1,16 +1,16 @@
-"""C · Compito a casa: una settimana nell'ufficio Analisi Consumi."""
+"""C · Homework: una settimana nell'ufficio Analisi Consumi."""
 
 from nbkit import Notebook
 
-EXCEL = "../Dati/compito/clienti.xlsx"
-DB = "../Dati/compito/anagrafica.db"
+EXCEL = "../Dati/homework/clienti.xlsx"
+DB = "../Dati/homework/anagrafica.db"
 
 
 def costruisci() -> Notebook:
     nb = Notebook(
         num="C",
-        file="Compito_a_casa",
-        titolo="Compito a casa: una settimana nell'ufficio Analisi Consumi",
+        file="Homework",
+        titolo="Homework: una settimana nell'ufficio Analisi Consumi",
         blocco=0,
         giornata=0,
         intento="Sei piccoli compiti, uno al giorno, come arrivano davvero in ufficio: niente di nuovo rispetto alla prima giornata, tutto da fare con le proprie mani.",
@@ -20,7 +20,7 @@ def costruisci() -> Notebook:
             "correggersi da soli con le celle di verifica, prima del confronto in aula",
         ],
         tempo={"base": 40, "avanzata": 45},
-        dati=["compito/letture_marzo.csv", "compito/clienti.xlsx", "compito/anagrafica.db", "compito/letture_aprile.csv"],
+        dati=["homework/letture_marzo.csv", "homework/clienti.xlsx", "homework/anagrafica.db", "homework/letture_aprile.csv"],
         etichetta_esercizio="Passo",
         prefisso_esercizi="",
         prossimo="Le soluzioni le correggiamo insieme all'inizio della seconda giornata.",
@@ -29,7 +29,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 1
     nb.sezione("Prima di cominciare", intro="""
         Servono la cartella del corso aperta in VS Code con il kernel di `.venv`, come in aula, i quattro
-        file in `../Dati/compito/` e tra i 30 e i 45 minuti di fila. I passi si parlano tra loro: meglio
+        file in `../Dati/homework/` e tra i 30 e i 45 minuti di fila. I passi si parlano tra loro: meglio
         farli in ordine e in una sola seduta.
     """)
     nb.md("""
@@ -39,7 +39,7 @@ def costruisci() -> Notebook:
     nb.code("""
         from pathlib import Path
 
-        list(Path("../Dati/compito").glob("*"))
+        list(Path("../Dati/homework").glob("*"))
     """)
     nb.md("""
         Ogni passo ha una cella da completare, con `...` al posto del codice da scrivere, e subito sotto
@@ -312,7 +312,7 @@ def costruisci() -> Notebook:
             dice che la bolletta di marzo è il triplo del solito».
         """,
         richiesta="""
-            1. Leggi `../Dati/compito/letture_marzo.csv` in `letture` con i parametri giusti per un CSV italiano, e guarda `info()`, `head()` e `describe()`: la colonna `kwh` deve essere numerica, e il massimo dice già qualcosa.
+            1. Leggi `../Dati/homework/letture_marzo.csv` in `letture` con i parametri giusti per un CSV italiano, e guarda `info()`, `head()` e `describe()`: la colonna `kwh` deve essere numerica, e il massimo dice già qualcosa.
             2. Crea `mask`, la condizione «`kwh` sopra 500» su tutta la colonna, e `anomale = letture[mask]`: le righe in cui la condizione è vera.
             3. Salva `anomale` nel file `letture_anomale.csv`, nella cartella del notebook, senza l'indice.
         """,
@@ -320,7 +320,7 @@ def costruisci() -> Notebook:
         starter="""
             import pandas as pd
 
-            letture = pd.read_csv("../Dati/compito/letture_marzo.csv", ...)
+            letture = pd.read_csv("../Dati/homework/letture_marzo.csv", ...)
             letture.info()
             display(letture.head())
             display(letture.describe())
@@ -333,7 +333,7 @@ def costruisci() -> Notebook:
         soluzione="""
             import pandas as pd
 
-            letture = pd.read_csv("../Dati/compito/letture_marzo.csv", sep=";", decimal=",")
+            letture = pd.read_csv("../Dati/homework/letture_marzo.csv", sep=";", decimal=",")
             letture.info()
             display(letture.head())
             display(letture.describe())
@@ -514,7 +514,7 @@ def costruisci() -> Notebook:
         passo_in_piu=dict(
             testo="""
                 Nella cartella c'è anche `letture_aprile.csv`, stesso formato. Con
-                `Path("../Dati/compito").glob("letture_*.csv")` prendi tutti i file delle letture, leggili uno
+                `Path("../Dati/homework").glob("letture_*.csv")` prendi tutti i file delle letture, leggili uno
                 per uno in una lista di DataFrame e uniscili in `tutte` con `pd.concat(..., ignore_index=True)`.
                 A fine anno, con dodici file, sarà lo stesso codice.
             """,
@@ -522,7 +522,7 @@ def costruisci() -> Notebook:
                 from pathlib import Path
 
                 tabelle = []
-                for file in sorted(Path("../Dati/compito").glob("letture_*.csv")):
+                for file in sorted(Path("../Dati/homework").glob("letture_*.csv")):
                     ...
                 tutte = ...
                 print(len(tutte))
@@ -531,7 +531,7 @@ def costruisci() -> Notebook:
                 from pathlib import Path
 
                 tabelle = []
-                for file in sorted(Path("../Dati/compito").glob("letture_*.csv")):
+                for file in sorted(Path("../Dati/homework").glob("letture_*.csv")):
                     tabelle.append(pd.read_csv(file, sep=";", decimal=","))
                 tutte = pd.concat(tabelle, ignore_index=True)
                 print(len(tutte))

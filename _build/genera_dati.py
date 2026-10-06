@@ -166,8 +166,8 @@ POD_ANOMALO, GIORNO_ANOMALO = "IT001E31047092", "12/03/2025"
 
 
 def compito() -> None:
-    """Cartella Dati/compito/: letture giornaliere di marzo (e aprile) di 8 POD, un Excel a due fogli, un SQLite."""
-    cartella = DATI / "compito"
+    """Cartella Dati/homework/: letture giornaliere di marzo (e aprile) di 8 POD, un Excel a due fogli, un SQLite."""
+    cartella = DATI / "homework"
     cartella.mkdir(exist_ok=True)
     media = {pod: potenza * rng.uniform(2.5, 5.0) for pod, _, _, potenza in POD_COMPITO}  # kWh al giorno
 

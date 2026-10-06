@@ -40,6 +40,29 @@ risultato = consumo_per_pod("../Dati/letture_pod_2025.csv")
 print(risultato)
 ```
 
+## Ruff in VS Code
+
+Ruff è linter e formatter insieme: `check` segnala quello che non va, `format` rimette in forma spazi, virgole e righe vuote senza cambiare cosa fa il codice. In VS Code si installa l'estensione **Ruff** (di Astral) e si attiva la formattazione al salvataggio, in `settings.json`:
+
+```json
+{
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true
+    }
+}
+```
+
+Dal terminale, nella cartella del progetto:
+
+| Comando | Cosa fa |
+|---|---|
+| `uvx ruff check script.py` | elenca gli avvisi: file, riga, colonna, codice, messaggio |
+| `uvx ruff format script.py` | riscrive il file nella forma giusta |
+| `uvx ruff check --fix script.py` | corregge quello che sa correggere (gli import inutilizzati, per esempio) |
+
+I tre codici che si vedono più spesso: `F401` import mai usato, `F841` variabile assegnata e mai letta, `E501` riga oltre il limite scritto in `pyproject.toml` (`line-length = 100`). La `F` sono errori veri, la `E` è stile.
+
 ## I comandi uv
 
 | Comando | Cosa fa | Quando |
