@@ -181,7 +181,7 @@ def costruisci() -> Notebook:
             Schede/             una pagina per argomento, da tenere a portata di mano
             pyproject.toml      l'elenco delle librerie del progetto
             uv.lock             le versioni esatte di ogni libreria
-            .venv/              l'ambiente virtuale, il virtual environment: Python e le librerie installate (non si tocca a mano)
+            .venv/              l'ambiente virtuale (il virtual environment): Python e le librerie, non si tocca
         ```
     """)
     nb.md("""

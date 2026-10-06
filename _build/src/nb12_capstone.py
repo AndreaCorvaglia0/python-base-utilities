@@ -4,19 +4,22 @@ from nbkit import Notebook
 
 DA_SOLI = "*Senza Copilot: qui conta capire il meccanismo.*"
 DETTAGLIO = "*Copilot solo per il dettaglio, titoli, etichette e colori: la logica la scriviamo noi.*"
+DETTAGLIO_BREVE = "*Copilot: solo titoli ed etichette.*"
 CHAT = "*Copilot in chat, per capire: davanti a un errore \"spiegami\", mai \"risolvilo\".*"
 
 
-def step(nb: Notebook, titolo: str, scenario: str, soluzione: str, verifica: str,
+def step(nb: Notebook, titolo: str, scenario: str, soluzione: str | dict, verifica: str,
          base: dict, avanzata: dict, perche: str | None = None, rete: bool = False) -> None:
-    """Lo stesso step per le due aule: stessa soluzione e verifica, richiesta e scheletro diversi."""
+    """Lo stesso step per le due aule: stessa verifica, richiesta e scheletro diversi (soluzione anche, se è un dict)."""
+    soluzione_base = soluzione["base"] if isinstance(soluzione, dict) else soluzione
+    soluzione_avanzata = soluzione["avanzata"] if isinstance(soluzione, dict) else soluzione
     nb.esercizio(
         titolo=titolo, scenario=scenario, richiesta=base["richiesta"], suggerimento=base.get("suggerimento"),
-        starter=base["starter"], soluzione=soluzione, verifica=verifica, perche=perche, aula="base", rete=rete,
+        starter=base["starter"], soluzione=soluzione_base, verifica=verifica, perche=perche, aula="base", rete=rete,
     )
     nb.esercizio(
         titolo=titolo, scenario=scenario, richiesta=avanzata["richiesta"], starter=avanzata["starter"],
-        soluzione=soluzione, verifica=verifica, perche=perche, aula="avanzata", rete=rete,
+        soluzione=soluzione_avanzata, verifica=verifica, perche=perche, aula="avanzata", rete=rete,
     )
     if avanzata.get("bloccato"):
         nb.box("nota", avanzata["bloccato"], titolo="Se sei bloccato", aula="avanzata")
@@ -48,9 +51,9 @@ def costruisci() -> Notebook:
         anni di carico della zona Nord e un'API meteo. Niente previsioni: prima bisogna capire i dati.
     """)
     nb.md("""
-        Otto step, uno per sezione. Ogni sezione si apre con una riga su Copilot: senza, dove conta capire
-        il meccanismo; per il dettaglio, dove può sistemare titoli ed etichette; in chat, quando qualcosa
-        non torna. Le verifiche controllano forma e intervalli: il resto lo controlli tu, guardando l'output.
+        Otto step, uno per sezione. Ogni sezione si apre con una riga su come usare Copilot: spento dove
+        conta capire il meccanismo, per titoli ed etichette dove la logica è già nostra, in chat quando
+        qualcosa non torna. Le verifiche controllano forma e intervalli: il resto lo controlli tu, guardando l'output.
     """)
 
     # ------------------------------------------------------------------ 1
@@ -85,6 +88,7 @@ def costruisci() -> Notebook:
         nb, titolo="Caricare e mettere in ordine",
         scenario="I file sono nella cartella `../Dati/`. Guarda le prime righe di uno dei due prima di partire: c'è una sorpresa sull'ordine.",
         soluzione=soluzione_1, verifica=verifica_1,
+        perche="`reset_index(drop=True)` dopo `sort_values`: senza `drop`, il vecchio indice diventa una colonna.",
         base=dict(
             richiesta="""
                 1. Leggi i due file in `carico_2024` e `carico_2025` con `pd.read_excel`.

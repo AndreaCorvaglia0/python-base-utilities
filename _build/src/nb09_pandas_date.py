@@ -524,7 +524,7 @@ def costruisci() -> Notebook:
                 picco_giorno.head()
             """,
             verifica="""
-                assert len(picco_giorno) == 366, "❌ picco_giorno: un valore per giorno, 366 nel 2024; il passo è \\"D\\""
+                assert len(picco_giorno) == 366, "❌ picco_giorno: un valore per giorno, 366 nel 2024; il passo è resample('D')"
                 assert round(picco_giorno.max()) == 32424, "❌ picco_giorno: dopo resample serve max(), non mean() o sum()"
                 assert str(picco_giorno.idxmax())[:10] == "2024-07-17", "❌ picco_giorno: il picco dell'anno cade il 17 luglio; controlla di aver usato mw"
             """,
@@ -547,8 +547,9 @@ def costruisci() -> Notebook:
         """)
         nb.md("""
             Il 17 luglio contro il 1° gennaio: l'aria condizionata contro il giorno in cui il paese
-            dorme. Il 31 marzo ha 92 quarti d'ora e il 27 ottobre ne avrebbe 100: la somma di quei due
-            giorni è sbagliata di un'ora. Su un report annuale è rumore, su un bilancio orario no.
+            dorme. Il 31 marzo è durato 23 ore e la sua somma è giusta; il 27 ottobre ne è durato 25, ma
+            dopo `drop_duplicates` ne contiamo 24: a quel giorno manca un'ora di energia. Su un report
+            annuale è rumore, su un bilancio orario no.
         """)
     nb.box("nota", """
         I passi si scrivono con sigle: `"15min"`, `"h"`, `"D"`, `"W"` (settimane che chiudono la
