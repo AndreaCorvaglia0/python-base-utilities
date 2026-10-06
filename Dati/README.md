@@ -14,6 +14,9 @@
 | `homework/letture_aprile.csv` | Stesse colonne, aprile 2025, senza anomalie: serve per unire più file | dati di esempio, inventati (homework) |
 | `homework/clienti.xlsx` | Due fogli: `Anagrafica` (pod, cliente, comune) e `Listino` (fascia, eur_kwh) | dati di esempio, inventati (homework) |
 | `homework/anagrafica.db` | Database SQLite con la tabella `pod` (pod, cliente, potenza_kw) | dati di esempio, inventati (homework) |
-| `fallback/` | Risposte salvate delle API usate nel corso, da usare se la rete non collabora | creata da `_build/scarica_fallback.py` |
+| `fallback/meteo_milano_2024_2025.json` | Risposta di Open-Meteo (archivio): temperatura oraria a Milano, 2024-2025, 17544 ore | dati di esempio, generati da `_build/genera_dati.py` con lo stesso schema dell'API; `uv run python _build/scarica_fallback.py` li sostituisce con i dati veri |
+| `fallback/meteo_milano_previsione.json` | Risposta di Open-Meteo (previsione): temperatura, umidità e vento orari a Milano per 7 giorni dalla data di generazione | dati di esempio, generati da `_build/genera_dati.py` con lo stesso schema dell'API; `uv run python _build/scarica_fallback.py` li sostituisce con i dati veri |
+| `fallback/lombardia_sensori.json` | Anagrafica dei sensori meteo di Regione Lombardia (dataset `nf78-nj6b`), 30 sensori, tutti i campi come testo | dati di esempio, generati da `_build/genera_dati.py` con lo stesso schema dell'API; `uv run python _build/scarica_fallback.py` li sostituisce con i dati veri |
+| `fallback/lombardia_misure_2001.json` | Misure del sensore di temperatura 2001 (dataset `647i-nhxk`), giugno 2025 ogni 10 minuti, con qualche `-9999` | dati di esempio, generati da `_build/genera_dati.py` con lo stesso schema dell'API; `uv run python _build/scarica_fallback.py` li sostituisce con i dati veri |
 
 I file di esempio si rigenerano con `uv run python _build/genera_dati.py`.

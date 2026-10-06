@@ -3,13 +3,19 @@ Genera i dataset di esempio usati negli esercizi del corso (cartella Dati/).
 
 Sono dati inventati ma plausibili: pochi POD, pochi mesi, numeri in kWh.
 Il generatore è deterministico (seed fisso), così i file sono sempre gli stessi.
+Dati/fallback/ contiene dati di esempio con lo stesso schema delle API reali (Open-Meteo e
+Regione Lombardia): servono quando la rete non c'è; `scarica_fallback.py` li sostituisce con i veri.
 
-    uv run python _build/genera_dati.py
+    uv run python _build/genera_dati.py             # tutti i dati di esempio
+    uv run python _build/genera_dati.py fallback    # solo Dati/fallback/
 """
 
 from __future__ import annotations
 
+import json
 import sqlite3
+import sys
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -201,12 +207,133 @@ def compito() -> None:
     con.close()
 
 
+SENSORI = [
+    # (idsensore, tipologia, stazione, provincia, quota m, lat, lng): sensori meteo ARPA della Lombardia
+    ("2001", "Temperatura", "Milano via Brera", "MI", 122, 45.4719, 9.1881),
+    ("2002", "Temperatura", "Legnano", "MI", 199, 45.5977, 8.9152),
+    ("2003", "Temperatura", "Rho", "MI", 158, 45.5317, 9.0405),
+    ("2004", "Temperatura", "Bergamo via Goisis", "BG", 249, 45.6983, 9.6773),
+    ("2005", "Temperatura", "Treviglio", "BG", 126, 45.5222, 9.5927),
+    ("2006", "Temperatura", "Brescia Broletto", "BS", 149, 45.5416, 10.2118),
+    ("2007", "Temperatura", "Como Muggiò", "CO", 201, 45.8081, 9.0852),
+    ("2008", "Temperatura", "Cremona", "CR", 45, 45.1333, 10.0227),
+    ("2009", "Temperatura", "Lecco", "LC", 214, 45.8566, 9.3977),
+    ("2010", "Temperatura", "Varese Vidoletti", "VA", 382, 45.8206, 8.8251),
+    ("2011", "Temperatura", "Pavia Folperti", "PV", 77, 45.1847, 9.1582),
+    ("2012", "Temperatura", "Sondrio", "SO", 307, 46.1699, 9.8713),
+    ("2101", "Precipitazione", "Milano via Brera", "MI", 122, 45.4719, 9.1881),
+    ("2102", "Precipitazione", "Bergamo via Goisis", "BG", 249, 45.6983, 9.6773),
+    ("2103", "Precipitazione", "Lodi", "LO", 80, 45.3139, 9.5034),
+    ("2104", "Precipitazione", "Mantova Lunetta", "MN", 19, 45.1564, 10.7914),
+    ("2105", "Precipitazione", "Monza", "MB", 162, 45.5845, 9.2744),
+    ("2106", "Precipitazione", "Sondrio", "SO", 307, 46.1699, 9.8713),
+    ("2201", "Umidità Relativa", "Milano via Brera", "MI", 122, 45.4719, 9.1881),
+    ("2202", "Umidità Relativa", "Brescia Broletto", "BS", 149, 45.5416, 10.2118),
+    ("2203", "Umidità Relativa", "Cremona", "CR", 45, 45.1333, 10.0227),
+    ("2204", "Umidità Relativa", "Varese Vidoletti", "VA", 382, 45.8206, 8.8251),
+    ("2301", "Velocità Vento", "Milano Linate", "MI", 103, 45.4451, 9.2767),
+    ("2302", "Velocità Vento", "Brescia Broletto", "BS", 149, 45.5416, 10.2118),
+    ("2303", "Velocità Vento", "Mantova Lunetta", "MN", 19, 45.1564, 10.7914),
+    ("2304", "Velocità Vento", "Lecco", "LC", 214, 45.8566, 9.3977),
+    ("2401", "Radiazione Globale", "Milano via Brera", "MI", 122, 45.4719, 9.1881),
+    ("2402", "Radiazione Globale", "Pavia Folperti", "PV", 77, 45.1847, 9.1582),
+    ("2403", "Radiazione Globale", "Lodi", "LO", 80, 45.3139, 9.5034),
+    ("2404", "Radiazione Globale", "Bergamo via Goisis", "BG", 249, 45.6983, 9.6773),
+]
+UNITA = {"Temperatura": "°C", "Precipitazione": "mm", "Umidità Relativa": "%",
+         "Velocità Vento": "m/s", "Radiazione Globale": "W/m²"}
+
+
+def temperatura_milano(tempi: pd.DatetimeIndex, r: np.random.Generator) -> np.ndarray:
+    """Temperatura plausibile per Milano: stagione, ciclo del giorno, meteo del giorno, rumore."""
+    giorno_anno = tempi.dayofyear.to_numpy() + tempi.hour.to_numpy() / 24
+    stagione = -np.cos(2 * np.pi * (giorno_anno - 15) / 365.25)  # -1 a metà gennaio, +1 a metà luglio
+    base = 14.5 + 11.5 * stagione  # circa 3 °C a gennaio, 26 °C a luglio
+    # ciclo del giorno: minimo alle 6, massimo alle 15 (la salita dura 9 ore, la discesa 15)
+    ora = (tempi.hour.to_numpy() + tempi.minute.to_numpy() / 60 - 6) % 24
+    ciclo = np.where(ora <= 9, -np.cos(np.pi * ora / 9), np.cos(np.pi * (ora - 9) / 15))
+    ampiezza = 5 + 1 * stagione  # escursione maggiore d'estate (4-6 °C)
+    # il meteo del giorno (sereno, nuvoloso, fronte) sposta tutta la giornata
+    giorni = tempi.normalize()
+    anomalia = pd.Series(np.clip(r.normal(0, 1.8, giorni.nunique()), -3, 3), index=giorni.unique()).reindex(giorni).to_numpy()
+    return base + ampiezza * ciclo + anomalia + r.normal(0, 0.3, len(tempi))
+
+
+def meteo_open_meteo(r, tempi: pd.DatetimeIndex, variabili: dict, quale: str) -> dict:
+    """Risposta nello stesso formato di Open-Meteo: metadati e `hourly` come dizionario di liste."""
+    temp = temperatura_milano(tempi, r)
+    hourly = {"time": [t.strftime("%Y-%m-%dT%H:%M") for t in tempi], "temperature_2m": [round(float(x), 1) for x in temp]}
+    if quale == "previsione":
+        umidita = np.clip(95 - 2.2 * (temp - temp.min()) + r.normal(0, 4, len(temp)), 25, 100)
+        vento = np.clip(8 + 5 * np.sin(2 * np.pi * np.arange(len(temp)) / 61) + r.normal(0, 2, len(temp)), 0.5, None)
+        hourly["relative_humidity_2m"] = [int(round(x)) for x in umidita]
+        hourly["wind_speed_10m"] = [round(float(x), 1) for x in vento]
+    return {
+        "latitude": 45.47, "longitude": 9.19,
+        "generationtime_ms": 0.5 if quale == "previsione" else 31.2,
+        "utc_offset_seconds": 3600, "timezone": "Europe/Rome", "timezone_abbreviation": "GMT+1",
+        "elevation": 122.0,
+        "hourly_units": variabili,
+        "hourly": hourly,
+    }
+
+
+def fallback() -> None:
+    """Dati/fallback/: le risposte delle API del corso, inventate ma con lo stesso schema di quelle vere."""
+    r = np.random.default_rng(7)
+    cartella = DATI / "fallback"
+    cartella.mkdir(parents=True, exist_ok=True)
+
+    def salva(nome: str, dati) -> None:
+        (cartella / nome).write_text(json.dumps(dati, ensure_ascii=False), encoding="utf-8")
+
+    # Open-Meteo archivio: temperatura oraria a Milano, 2024-2025 (17544 ore, ora locale)
+    ore = pd.date_range("2024-01-01 00:00", "2025-12-31 23:00", freq="h")
+    salva("meteo_milano_2024_2025.json",
+          meteo_open_meteo(r, ore, {"time": "iso8601", "temperature_2m": "°C"}, "archivio"))
+
+    # Open-Meteo previsione: 7 giorni a partire da oggi alle 00:00 (168 ore)
+    inizio = pd.Timestamp(date.today())
+    ore = pd.date_range(inizio, periods=7 * 24, freq="h")
+    unita = {"time": "iso8601", "temperature_2m": "°C", "relative_humidity_2m": "%", "wind_speed_10m": "km/h"}
+    salva("meteo_milano_previsione.json", meteo_open_meteo(r, ore, unita, "previsione"))
+
+    # Regione Lombardia: Socrata restituisce ogni campo come testo, anche numeri e date
+    sensori = []
+    for i, (idsensore, tipologia, stazione, provincia, quota, lat, lng) in enumerate(SENSORI):
+        sensori.append({
+            "idsensore": idsensore, "tipologia": tipologia, "unit_dimisura": UNITA[tipologia],
+            "idstazione": str(500 + i), "nomestazione": stazione, "quota": str(quota), "provincia": provincia,
+            "storico": "N", "datastart": f"{1995 + i % 20}-0{1 + i % 9}-1{i % 10}T00:00:00.000",
+            "cgb_nord": str(round(lat * 111_000)), "cgb_est": str(round(lng * 78_000)),
+            "lng": str(lng), "lat": str(lat),
+            "location": {"type": "Point", "coordinates": [lng, lat]},
+        })
+    salva("lombardia_sensori.json", sensori)
+
+    # Misure del sensore 2001 (Milano, temperatura): giugno 2025, una ogni 10 minuti, già in ordine di `data`
+    tempi = pd.date_range("2025-06-01 00:00", "2025-06-30 23:50", freq="10min")
+    valori = np.round(temperatura_milano(tempi, r) - 1.5, 1)  # giugno è più fresco di luglio
+    mancanti = {"2025-06-03T14:20:00", "2025-06-03T14:30:00", "2025-06-05T09:10:00"}  # -9999: misura mancante
+    misure = []
+    for t, v in zip(tempi, valori):
+        data = t.strftime("%Y-%m-%dT%H:%M:%S.000")
+        buona = data[:19] not in mancanti
+        misure.append({"idsensore": "2001", "data": data, "valore": str(float(v)) if buona else "-9999",
+                       "stato": "VA" if buona else "NA", "idoperatore": "1"})
+    salva("lombardia_misure_2001.json", misure)
+
+
 if __name__ == "__main__":
     DATI.mkdir(exist_ok=True)
+    if sys.argv[1:] == ["fallback"]:
+        fallback()
+        sys.exit()
     letture_pod()
     impianti_fv()
     bolletta_excel()
     database()
     prezzi_zonali()
     compito()
+    fallback()
     print("Dati di esempio generati in", DATI)
