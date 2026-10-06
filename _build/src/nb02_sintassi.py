@@ -28,7 +28,7 @@ def costruisci() -> Notebook:
     nb.code("""
         potenza_kw = 6            # un numero intero
         consumo_kwh = 1234.5      # un numero con la virgola (che in Python si scrive con il punto)
-        pod = "IT001E12345678"    # un testo, tra virgolette
+        pod = "IT001E12345678"    # un testo, tra virgolette: il codice del contatore (il POD)
         attivo = True             # vero o falso
     """)
     nb.md("""
@@ -63,8 +63,8 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            Crea una variabile `cliente` con un nome a scelta e una variabile `numero_pod` con quanti POD
-            ha quel cliente (un numero intero). Poi mostra il tipo di entrambe.
+            Crea una variabile `cliente` con un nome a scelta e una variabile `numero_pod` con quanti
+            contatori ha quel cliente (un numero intero). Poi mostra il tipo di entrambe.
         """,
         starter="""
             cliente = ...

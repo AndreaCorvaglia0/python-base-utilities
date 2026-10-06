@@ -23,8 +23,8 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 1
     nb.sezione("Cosa fa Copilot in VS Code", intro="""
         GitHub Copilot vive dentro VS Code in due forme. Il completamento propone codice in grigio mentre
-        scrivi: **Tab** lo accetta, **Esc** lo rifiuta. La chat risponde a domande e scrive codice su
-        richiesta: si apre con **Ctrl+Alt+I** (su Mac **Cmd+Alt+I**), oppure dentro una cella con
+        scriviamo: **Tab** lo accetta, **Esc** lo rifiuta. La chat risponde a domande e scrive codice su
+        richiesta: si apre con **Ctrl+Alt+I** (su Mac **Ctrl+Cmd+I**), oppure dentro una cella con
         **Ctrl+I**.
     """)
     nb.md("""
@@ -32,9 +32,9 @@ def costruisci() -> Notebook:
 
         | Modalità | Cosa fa | Quando usarla |
         |---|---|---|
-        | Ask | risponde, il codice lo copi tu | domande, spiegazioni, una funzione alla volta |
-        | Edit | modifica il file aperto e ti mostra le differenze da accettare | rinominare, aggiungere una docstring, sistemare un blocco |
-        | Agent | legge i file, esegue comandi, crea celle, finché non pensa di aver finito | compiti lunghi che sai controllare pezzo per pezzo |
+        | Ask | risponde; il codice lo copiamo noi | domande, spiegazioni, una funzione alla volta |
+        | Edit | modifica il file aperto e mostra le differenze, da accettare una per una | rinominare, aggiungere una docstring, sistemare un blocco |
+        | Agent | legge i file, esegue comandi, crea celle, finché non pensa di aver finito | compiti lunghi che sappiamo controllare pezzo per pezzo |
     """)
     nb.md("""
         Claude Code e Codex fanno la stessa cosa con un vestito diverso: Claude Code nel terminale o come
