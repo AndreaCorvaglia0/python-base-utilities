@@ -41,14 +41,15 @@ Serve una libreria in più? Nel terminale `uv add nome`, poi **Restart** del ker
 | 2 | `11_Capstone` · il carico del Nord e la temperatura | 110 min | 110 min |
 
 Ogni notebook finisce con due o tre esercizi, a volte un quarto facoltativo; quelli segnati **(facoltativo)** si fanno se c'è tempo o a casa. Le tre
-Esercitazioni chiudono i blocchi con qualche domanda e un po' di esercizi in più. Le soluzioni stanno in
-`Soluzioni_Base/` e `Soluzioni_Avanzata/`.
+Esercitazioni chiudono i blocchi con qualche domanda e un po' di esercizi in più. Sotto ogni esercizio c'è una cella
+`verifica("7.1")` che controlla il risultato: stampa ✅ se è giusto, altrimenti una riga che dice cosa non torna. Le
+soluzioni stanno in `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 
 ## Cosa c'è nelle cartelle
 
 | Cartella | Contenuto |
 |---|---|
-| `Aula_Base/`, `Aula_Avanzata/` | i notebook del corso, le tre Esercitazioni e l'Homework |
+| `Aula_Base/`, `Aula_Avanzata/` | i notebook del corso, le tre Esercitazioni e l'Homework; `corso.py` è il modulo con i controlli degli esercizi |
 | `Soluzioni_Base/`, `Soluzioni_Avanzata/` | gli stessi notebook con gli esercizi risolti |
 | `Extra/` | le parti che il docente mostra dal vivo: VS Code, ambiente e script, Ruff, Data Wrangler, wrapper delle API |
 | `Dati/` | i dati usati nel corso: carico Terna, turbina eolica, prezzi, più i file di esempio (vedi `Dati/README.md`) |

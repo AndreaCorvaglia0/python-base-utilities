@@ -19,3 +19,5 @@ Soluzioni_*/*.csv
 Soluzioni_*/*.xlsx
 Aula_*/*.py
 Soluzioni_*/*.py
+!Aula_*/corso.py
+!Soluzioni_*/corso.py

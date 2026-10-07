@@ -26,6 +26,9 @@ Uso tipico:
         nb.esercizio(titolo="...", scenario="...", richiesta="...", suggerimento="...",
                      starter="...", soluzione="...", verifica="assert ...", perche="...")
         return nb
+
+La `verifica` di un esercizio non finisce nel notebook: build.py la raccoglie in `corso.py`, un modulo
+scritto in ogni cartella di notebook, e nel notebook resta `from corso import verifica` + `verifica("5.1")`.
 """
 
 from __future__ import annotations
@@ -285,6 +288,7 @@ class Notebook:
         out: list[tuple[str, str, dict]] = []   # (tipo, src, metadata)
         ultimo_es = ""      # numero base dell'ultimo esercizio (per il "bis")
         corrente = ""       # numero dell'esercizio in corso (base o bis)
+        verifiche: dict[str, tuple[str, str]] = {}   # codice -> (etichetta, controllo) per corso.py
         for c in visibili:
             if c.tipo == "sezione":
                 n_sez += 1
@@ -349,15 +353,26 @@ class Notebook:
             elif c.tipo == "code":
                 src = c.src
                 tags = []
-                if c.ruolo == "verifica":
+                if c.ruolo == "verifica" and c.extra.get("prova"):
                     tags.append("verifica")
                     if not src.startswith("# Verifica"):
                         src = "# Verifica: esegui senza modificare\n" + src
                     if "✅" not in src:
-                        cosa = "Prova tu" if c.extra.get("prova") else f"{self.etichetta_esercizio} {corrente}"
-                        if c.extra.get("passo"):
-                            cosa += " · un passo in più"
-                        src += f'\nprint("✅ {cosa} completato")' if cosa != "Prova tu" else '\nprint("✅ Tutto corretto")'
+                        src += '\nprint("✅ Tutto corretto")'
+                elif c.ruolo == "verifica":
+                    # il controllo sta in corso.py (generato da build.py); nel notebook resta la chiamata
+                    tags.append("verifica")
+                    codice = corrente if self.etichetta_esercizio == "Esercizio" else f"{self.etichetta_esercizio} {corrente}"
+                    etichetta = f"{self.etichetta_esercizio} {corrente}"
+                    if c.extra.get("passo"):
+                        codice += " · passo"
+                        etichetta += " · un passo in più"
+                    while codice in verifiche:
+                        codice += "+"
+                    corpo = re.sub(r"^# Verifica[^\n]*\n", "", src)
+                    corpo = re.sub(r'\nprint\("✅[^\n]*\)\s*$', "", corpo).strip("\n")
+                    verifiche[codice] = (etichetta, corpo)
+                    src = f'from corso import verifica\nverifica("{codice}")'
                 elif c.ruolo:
                     tags.append(c.ruolo)
                 if c.rete:
@@ -368,6 +383,8 @@ class Notebook:
                     tags = [t for t in tags if t != "soluzione"] + ["soluzione"]
                 out.append(("code", src, {"tags": tags} if tags else {}))
 
+        self.verifiche = verifiche
+        self.prefisso_verifiche = f"{prefisso}." if self.etichetta_esercizio == "Esercizio" else f"{self.etichetta_esercizio} "
         cells = [new_markdown_cell(self.banner(aula, soluzioni), metadata={"tags": ["banner"]})]
         if indice:
             cells.append(new_markdown_cell('<a id="indice"></a>\n**Indice**\n\n' + "\n".join(indice), metadata={"tags": ["indice"]}))
@@ -414,6 +431,80 @@ class Notebook:
         nbformat.validate(nb)
         nbformat.write(nb, out_path)
         return out_path
+
+
+# ---------------------------------------------------------------------------
+# corso.py: il modulo con i controlli degli esercizi, uno per cartella di notebook
+# ---------------------------------------------------------------------------
+MODULO_CORSO = '''"""Controllo degli esercizi del corso. Generato da _build/build.py: non modificare a mano.
+
+In ogni notebook, sotto un esercizio:
+
+    from corso import verifica
+    verifica("7.1")
+
+Se il risultato è giusto stampa ✅, altrimenti una riga che dice cosa non torna.
+I controlli sono in fondo a questo file, uno per esercizio.
+"""
+
+import inspect
+
+
+class VerificaFallita(Exception):
+    """Il risultato dell'esercizio non è quello atteso: nel notebook compare una riga sola, senza traceback."""
+
+    def _render_traceback_(self):
+        return [f"\\x1b[31m❌ {self}\\x1b[0m"]
+
+
+def verifica(codice: str) -> None:
+    """Controlla le variabili del notebook per l'esercizio `codice`."""
+    if codice not in VERIFICHE:
+        raise VerificaFallita(f"Non c'è un controllo per {codice!r}")
+    etichetta, controllo = VERIFICHE[codice]
+    spazio = dict(inspect.currentframe().f_back.f_globals)
+    try:
+        exec(compile(controllo, f"<verifica {codice}>", "exec"), spazio)
+    except AssertionError as e:
+        msg = str(e).removeprefix("❌").strip() or "Il risultato non è quello atteso"
+        raise VerificaFallita(msg) from None
+    except NameError as e:
+        nome = getattr(e, "name", None)
+        msg = f"Non trovo la variabile `{nome}`: hai eseguito la cella dell'esercizio?" if nome else str(e)
+        raise VerificaFallita(msg) from None
+    except Exception as e:
+        raise VerificaFallita(f"{type(e).__name__}: {e}") from None
+    print(f"✅ {etichetta} completato")
+
+
+VERIFICHE = {
+'''
+
+
+def _letterale(testo: str) -> str:
+    if "'''" not in testo and not testo.endswith("\\"):
+        return "r'''\n" + testo + "\n'''"
+    return repr(testo)
+
+
+def leggi_modulo_corso(cartella: Path) -> dict[str, tuple[str, str]]:
+    """Le verifiche già scritte in `cartella/corso.py` (vuoto se il file non c'è)."""
+    path = Path(cartella) / "corso.py"
+    if not path.exists():
+        return {}
+    spazio: dict = {}
+    exec(path.read_text(encoding="utf-8"), spazio)
+    return dict(spazio.get("VERIFICHE", {}))
+
+
+def scrivi_modulo_corso(cartella: Path, verifiche: dict[str, tuple[str, str]]) -> Path:
+    righe = [MODULO_CORSO]
+    for codice, (etichetta, controllo) in verifiche.items():
+        righe.append(f"    {codice!r}: ({etichetta!r}, {_letterale(controllo)}),")
+    righe.append("}\n")
+    path = Path(cartella) / "corso.py"
+    path.write_text("\n".join(righe), encoding="utf-8")
+    return path
 
 
 # ---------------------------------------------------------------------------

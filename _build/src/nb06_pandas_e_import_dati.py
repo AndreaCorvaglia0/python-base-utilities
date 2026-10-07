@@ -622,6 +622,10 @@ def costruisci() -> Notebook:
                 I nomi delle colonne e i valori della provincia vanno controllati con `certificati.columns` e
                 `unique()`: se il portale li cambia, si adattano la maschera e il `groupby`.
             """,
+            verifica="""
+                assert 0 < len(milano) < len(certificati), "❌ milano deve avere solo le righe della provincia di Milano"
+                assert len(co2_per_classe) > 1 and co2_per_classe.index.is_unique, "❌ co2_per_classe: una riga per classe energetica, con la media"
+            """,
             rete=True,
             facoltativo=True,
         )

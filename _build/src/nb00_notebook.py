@@ -156,7 +156,10 @@ def costruisci() -> Notebook:
     """)
 
     # ------------------------------------------------------------------ Esercizi
-    nb.sezione("Esercizi")
+    nb.sezione("Esercizi", """
+        Sotto gli esercizi trovi una cella con `verifica(...)`: eseguila dopo il tuo codice. Se stampa ✅ il
+        risultato è giusto, altrimenti dice cosa non torna.
+    """)
     nb.esercizio(
         titolo="Una cella Markdown e una cella di codice",
         scenario="",
@@ -203,6 +206,10 @@ def costruisci() -> Notebook:
             temperatura = 18
 
             print("Oggi a", citta, "ci sono", temperatura, "gradi")
+        """,
+        verifica="""
+            assert isinstance(citta, str) and citta.strip(), "❌ citta deve essere un testo tra virgolette"
+            assert isinstance(temperatura, (int, float)), "❌ temperatura deve essere un numero, senza virgolette"
         """,
     )
     return nb

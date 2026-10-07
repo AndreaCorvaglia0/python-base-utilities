@@ -12,6 +12,8 @@ stanno nei notebook: il materiale per prepararle è nella cartella `Extra/`, e q
   `uv run python _build/scarica_fallback.py` le sostituisce con i dati veri (temperatura di Milano, sensori lombardi).
 - I notebook si rigenerano dagli script in `_build/src/` con `uv run python _build/build.py`; le soluzioni si
   eseguono da capo a fondo con `uv run python _build/validate.py Soluzioni_Base/*.ipynb Soluzioni_Avanzata/*.ipynb`.
+- I controlli degli esercizi (`verifica("7.1")`) stanno in `corso.py`, un file per cartella generato dal build a
+  partire dagli assert scritti nei sorgenti: nel notebook il corsista vede solo la chiamata e una riga ✅ o ❌.
 
 ## Le dimostrazioni dal vivo
 
