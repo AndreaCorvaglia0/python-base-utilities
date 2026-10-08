@@ -20,10 +20,11 @@ stanno nei notebook: il materiale per prepararle è nella cartella `Extra/`, e q
 | Quando | Cosa mostrare | Materiale | Base | Avanzata |
 |---|---|---|---|---|
 | Giornata 1, apertura | VS Code: aprire la cartella, le estensioni, **Select Kernel** → `.venv`, eseguire una cella, Run All e Restart, le scorciatoie | `Extra/VS_Code_e_notebook.ipynb` | 15 min | 15 min |
-| Giornata 1, dopo l'Esercitazione 2 | L'ambiente del progetto: `.venv`, `pyproject.toml`, `uv add`, `uv sync`; uno script `.py` lanciato con `uv run` | `Extra/Ambiente_uv_e_script.ipynb` | 5 min (solo l'idea) | 15 min |
-| Giornata 1, dopo il 03 | Ruff: `uv run ruff check` e `format`, l'estensione, i tre codici che si vedono più spesso | `Extra/Ruff.ipynb` | — | 10 min |
+| Giornata 1, dopo l'Esercitazione 2 | L'ambiente del progetto: `.venv`, `pyproject.toml`, `uv add`, `uv sync`; uno script `.py` lanciato con `uv run` | `Extra/Ambiente_uv_e_script.ipynb` | 5 min (solo l'idea) | 10 min |
 | Giornata 1, nel 06 (A) | Il wrapper: chiudere la chiamata all'API in una funzione riutilizzabile | `Extra/API_wrapper.ipynb` | — | 10 min |
 | Giornata 2, dopo il 07 | Data Wrangler: aprire un DataFrame, Editing mode, un filtro e una colonna tolta, il codice pandas che genera | `Extra/Data_Wrangler.ipynb` | 15 min | 15 min |
+
+`Extra/Ruff.ipynb` resta a disposizione: si mostra solo se una classe Avanzata è avanti.
 
 ## I tempi (minuti netti)
 
@@ -34,17 +35,16 @@ Giornata 1 (Blocchi 1 e 2)
 | Demo VS Code | 15 | 15 |
 | 00 Jupyter e i notebook | 20 | 20 |
 | 01 Introduzione a Python e sintassi base | 45 | 35 |
-| 02 Tipi di dato e manipolazione | 50 | 40 |
+| 02 Tipi di dato e manipolazione | 40 | 35 |
 | 03 Codice leggibile | 20 | 20 |
-| Demo Ruff | — | 10 |
-| Esercitazione 1 | 30 | 25 |
-| 04 Funzioni e controllo del flusso | 70 | 80 |
+| Esercitazione 1 | 20 | 20 |
+| 04 Funzioni e controllo del flusso | 55 | 60 |
 | 05 Oggetti ed errori | 40 | 35 |
-| 06 Pandas: Series, DataFrame e import dei dati (+ demo wrapper in Avanzata) | 70 | 90 + 10 |
-| Esercitazione 2 | 30 | 30 |
-| Demo ambiente e script | 5 | 15 |
+| 06 Pandas: Series, DataFrame e import dei dati (+ demo wrapper in Avanzata) | 55 | 75 + 10 |
+| Esercitazione 2 | 20 | 20 |
+| Demo ambiente e script | 5 | 10 |
 | Presentazione dell'Homework | 5 | 5 |
-| **Totale** | **400** | **430** |
+| **Totale** | **340** | **360** |
 
 Giornata 2 (Blocchi 3 e 4)
 
@@ -53,23 +53,39 @@ Giornata 2 (Blocchi 3 e 4)
 | Correzione dell'Homework | 15 | 15 |
 | 07 Pandas: operazioni sui DataFrame | 70 | 75 |
 | Demo Data Wrangler | 15 | 15 |
-| 08 Pandas: le date | 70 | 80 |
-| 09 Plotly per serie storiche | 40 | 35 |
-| Esercitazione 3 | 30 | 30 |
-| 10 Agenti per il coding | 45 | 55 |
+| 08 Pandas: le date | 55 | 55 |
+| 09 Plotly per serie storiche | 30 | 25 |
+| Esercitazione 3 | 20 | 20 |
+| 10 Agenti per il coding | 45 | 45 |
 | 11 Capstone | 110 | 110 |
-| **Totale** | **395** | **415** |
+| **Totale** | **360** | **360** |
 
-Sette ore nette per giornata sono 420 minuti: la prima giornata è piena (l'Avanzata va oltre di dieci minuti), la seconda ha venti minuti di margine in Base, da tenere per la demo di Data Wrangler e il capstone. Si taglia a fine sezione, mai a metà.
+Sette ore nette per giornata sono 420 minuti: restano 60-80 minuti per i problemi di installazione, le domande e le
+pause che si allungano. Si taglia a fine sezione, mai a metà.
+
+## Se la classe è avanti
+
+`Aula_*/Approfondimenti_1.ipynb` e `Approfondimenti_2.ipynb` raccolgono quello che è uscito dal percorso principale,
+con i loro esercizi e le soluzioni in `Soluzioni_*/`: le operazioni con i set, il ciclo `while`, più file CSV e i
+tipi di dato (giornata 1); le differenze tra date, il fuso orario, il range slider e l'export HTML (giornata 2); in
+Avanzata anche `map`, `filter` e i generatori, `shift` e `rolling`, type hint, dataclass, decoratori e `**kwargs`.
+Si aprono a fine giornata o quando un blocco finisce in anticipo; una sezione alla volta. Si possono anche lasciare
+ai corsisti come lettura a casa.
+
+## Il percorso minimo
+
+Se la giornata va male (installazioni, rete, una classe lenta), questo è quello che non si salta:
+
+- Giornata 1: 00, 01, 02 (liste e dizionari), 04 (`if`, `for`, funzioni), 06 (CSV ed Excel). Esercitazioni a voce.
+- Giornata 2: 07 (selezione, valori mancanti, groupby), 08 (indice temporale e resample), 09 (un grafico a linee),
+  11 (step 1-4). Il 10 si riduce alla prova guidata con un prompt solo.
 
 ## Dove tagliare se si è in ritardo
 
 - Gli esercizi segnati **(facoltativo)**: si lasciano ai corsisti, da fare a casa.
-- Esercitazione 1 e 2: le domande si fanno a voce, gli esercizi si riducono a due.
-- 04: in Base la sezione su `while` si fa come dimostrazione; in Avanzata `map` e `filter` si citano e basta.
+- Esercitazioni: le domande si fanno a voce, gli esercizi si riducono a due.
 - 06 Avanzata: l'esercizio facoltativo sulle API si salta; la demo del wrapper si accorcia a 5 minuti.
 - 07 Avanzata: `query`, l'assegnazione condizionale con `.loc`, l'indice a due colonne e `agg` sono le parti in più rispetto a Base: si possono citare e basta.
-- 08: differenze tra date e fuso orario si fanno come dimostrazione, lasciando i duplicati dell'ora legale, che servono al capstone.
 - 10: la prova guidata si fa con un prompt solo.
 - Capstone: gli step 1-4 sono il minimo; 5 e 6 si possono fare insieme sullo schermo del docente.
 

@@ -25,23 +25,26 @@ Serve una libreria in più? Nel terminale `uv add nome`, poi **Restart** del ker
 |---|---|---|---|
 | 1 | `00_Notebook` · Jupyter e i notebook | 20 min | 20 min |
 | 1 | `01_Python_e_sintassi_base` · variabili, numeri, stringhe, import | 45 min | 35 min |
-| 1 | `02_Tipi_di_dato` · liste, tuple, dizionari, set | 50 min | 40 min |
+| 1 | `02_Tipi_di_dato` · liste, tuple, dizionari, set | 40 min | 35 min |
 | 1 | `03_Codice_leggibile` · commenti, Markdown, docstring, PEP 8 | 20 min | 20 min |
-| 1 | `Esercitazione_1` | 30 min | 25 min |
-| 1 | `04_Funzioni_e_controllo` · if, for, while, funzioni (Avanzata: lambda, comprehension, generatori) | 70 min | 80 min |
+| 1 | `Esercitazione_1` | 20 min | 20 min |
+| 1 | `04_Funzioni_e_controllo` · if, for, funzioni (Avanzata: lambda, list comprehension) | 55 min | 60 min |
 | 1 | `05_Oggetti_ed_errori` · oggetti, metodi, documentazione, traceback | 40 min | 35 min |
-| 1 | `06_Pandas_e_import_dati` · Series, DataFrame, CSV, Excel, SQL (Avanzata: API) | 70 min | 90 min |
-| 1 | `Esercitazione_2` | 30 min | 30 min |
+| 1 | `06_Pandas_e_import_dati` · Series, DataFrame, CSV, Excel, SQL (Avanzata: API) | 55 min | 75 min |
+| 1 | `Esercitazione_2` | 20 min | 20 min |
 | tra le due | `Homework` · una settimana nell'ufficio Analisi Consumi | 40 min | 45 min |
 | 2 | `07_Pandas_operazioni` · selezione, valori mancanti, groupby, merge | 70 min | 75 min |
-| 2 | `08_Pandas_date` · date, indice temporale, resample, ora legale (Avanzata: shift, rolling) | 70 min | 80 min |
-| 2 | `09_Plotly` · linee, confronto tra serie, slider, istogrammi, export HTML | 40 min | 35 min |
-| 2 | `Esercitazione_3` | 30 min | 30 min |
-| 2 | `10_Agenti_per_il_coding` · Copilot in VS Code, leggere il codice scritto da un agente | 45 min | 55 min |
+| 2 | `08_Pandas_date` · date, indice temporale, resample, ora legale | 55 min | 55 min |
+| 2 | `09_Plotly` · linee, confronto tra serie, istogrammi | 30 min | 25 min |
+| 2 | `Esercitazione_3` | 20 min | 20 min |
+| 2 | `10_Agenti_per_il_coding` · Copilot in VS Code, leggere il codice scritto da un agente | 45 min | 45 min |
 | 2 | `11_Capstone` · il carico del Nord e la temperatura | 110 min | 110 min |
+| se c'è tempo | `Approfondimenti_1` · set, while, più file CSV (Avanzata: map, filter, generatori) | 40 min | 55 min |
+| se c'è tempo | `Approfondimenti_2` · differenze tra date, fuso orario, slider, export HTML (Avanzata: shift, rolling, type hint, dataclass, decoratori) | 40 min | 60 min |
 
 Ogni notebook finisce con due o tre esercizi, a volte un quarto facoltativo; quelli segnati **(facoltativo)** si fanno se c'è tempo o a casa. Le tre
-Esercitazioni chiudono i blocchi con qualche domanda e un po' di esercizi in più. Sotto ogni esercizio c'è una cella
+Esercitazioni chiudono i blocchi con qualche domanda e un po' di esercizi in più. I due `Approfondimenti` restano fuori dal
+percorso: si aprono se la classe è avanti, o si leggono a casa. Sotto ogni esercizio c'è una cella
 `verifica("7.1")` che controlla il risultato: stampa ✅ se è giusto, altrimenti una riga che dice cosa non torna. Le
 soluzioni stanno in `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 
@@ -49,7 +52,7 @@ soluzioni stanno in `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 
 | Cartella | Contenuto |
 |---|---|
-| `Aula_Base/`, `Aula_Avanzata/` | i notebook del corso, le tre Esercitazioni e l'Homework; `corso.py` è il modulo con i controlli degli esercizi |
+| `Aula_Base/`, `Aula_Avanzata/` | i notebook del corso, le tre Esercitazioni, l'Homework e i due Approfondimenti; `corso.py` è il modulo con i controlli degli esercizi |
 | `Soluzioni_Base/`, `Soluzioni_Avanzata/` | gli stessi notebook con gli esercizi risolti |
 | `Extra/` | le parti che il docente mostra dal vivo: VS Code, ambiente e script, Ruff, Data Wrangler, wrapper delle API |
 | `Dati/` | i dati usati nel corso: carico Terna, turbina eolica, prezzi, più i file di esempio (vedi `Dati/README.md`) |

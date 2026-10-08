@@ -171,6 +171,7 @@ class Notebook:
     prefisso_esercizi: str | None = None     # default: num
     prossimo: str | None = None              # testo markdown della chiusura, se diverso dal programma
     extra: bool = False                      # notebook della cartella Extra: versione unica, senza aula
+    fuori_programma: bool = False   # Approfondimenti: fuori dalla catena precedente/prossimo, per le classi che vanno avanti
     celle: list[Cella] = field(default_factory=list)
     _aula_corrente: str | None = None
 
@@ -407,7 +408,7 @@ class Notebook:
                 cells.append(new_markdown_cell(src, metadata=meta))
             else:
                 cells.append(new_code_cell(src, metadata=meta))
-        if self.extra:
+        if self.extra or self.fuori_programma:
             chiusura = "---\n\n**Fine.**"
         elif self.num == COMPITO[0]:
             chiusura = "---\n\n**Fine dell'homework.**"
@@ -419,7 +420,7 @@ class Notebook:
         if link:
             chiusura += " " + " &nbsp;·&nbsp; ".join(link)
         if not self.extra:
-            meta = [NOMI_BLOCCO[self.blocco]]
+            meta = ["Approfondimenti: se la classe è avanti" if self.fuori_programma else NOMI_BLOCCO[self.blocco]]
             if self.giornata:
                 meta.append(f"Giornata {self.giornata}")
             meta.append(NOMI_AULA[aula])
