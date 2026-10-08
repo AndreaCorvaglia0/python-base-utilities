@@ -12,7 +12,7 @@ def costruisci() -> Notebook:
         titolo="Pandas: le date",
         blocco=3,
         giornata=2,
-        intento="Le misure nel tempo arrivano spesso con timestamp di testo: li convertiamo in date per ordinarle, trovare i buchi, aggregarle per ore o giorni e togliere i duplicati dell'ora legale.",
+        intento="Le misure raccolte nel tempo arrivano spesso con timestamp scritti come testo, che vanno convertiti in date prima di poterli ordinare, cercarvi i buchi, aggregarli per ore o per giorni e togliere i duplicati dovuti all'ora legale.",
         obiettivi=[
             "convertire testo in date con `pd.to_datetime` ed estrarne ora, giorno e mese",
             "usare il tempo come indice per selezionare periodi, trovare i buchi e cambiare granularità con `resample`",
@@ -23,10 +23,12 @@ def costruisci() -> Notebook:
     )
 
     # ------------------------------------------------------------------ 1
-    nb.sezione("Dataset toy", intro="""
-        Costruiamo un dataset piccolo ma realistico: misure quartorarie di potenza (`power_kw`) e temperatura (`temp_c`).
-        Il timestamp è intenzionalmente una **stringa** in formato italiano (`DD/MM/YYYY HH:MM`).
-        Poi inseriamo qualche buco per simulare acquisizioni mancanti.
+    nb.sezione("Un dataset di prova", intro="""
+        Per cominciare costruiamo un dataset piccolo ma realistico, con tre giorni di misure quartorarie di potenza
+        (`power_kw`) e di temperatura (`temp_c`). Il timestamp è volutamente una **stringa** in formato italiano
+        (`DD/MM/YYYY HH:MM`), come capita spesso con i file esportati da un gestionale o da un foglio di calcolo.
+        Togliamo poi qualche riga scelta a caso per simulare le acquisizioni mancanti, che ritroveremo più avanti
+        come buchi nella serie.
     """)
     nb.code("""
         import numpy as np
@@ -57,7 +59,9 @@ def costruisci() -> Notebook:
         df.head()
     """)
     nb.md("""
-        `df.dtypes` conferma che `timestamp_str` è testo (`str`).
+        L'attributo `dtypes` mostra il tipo di ogni colonna e conferma che `timestamp_str` è testo (`str`), mentre
+        le due misure sono numeri decimali. Finché la colonna resta testo, pandas non sa che rappresenta degli
+        istanti nel tempo e non può ordinarla né selezionarne un periodo.
     """)
     nb.code("""
         df.dtypes
@@ -65,10 +69,11 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 2
     nb.sezione("`datetime` in pandas", intro=f"""
-        Una colonna di testo che "sembra una data" resta testo. `pd.to_datetime` la trasforma in un tipo
-        temporale (`datetime64`) che si può ordinare, filtrare per periodo e usare per calcolare intervalli.
-
-        Documentazione: [`pd.to_datetime`]({DOC}/reference/api/pandas.to_datetime.html)
+        Una colonna di testo resta testo anche quando il suo contenuto ha l'aspetto di una data. La funzione
+        `pd.to_datetime` la converte in un tipo temporale (`datetime64`), che si può ordinare, filtrare per periodo
+        e usare per calcolare intervalli. Con `dayfirst=True` indichiamo che nella stringa il giorno viene prima del
+        mese, e la seconda cella mostra con `dtypes` che la nuova colonna `timestamp` ha il tipo temporale. La
+        documentazione di riferimento è [`pd.to_datetime`]({DOC}/reference/api/pandas.to_datetime.html).
     """)
     nb.code("""
         df["timestamp"] = pd.to_datetime(df["timestamp_str"], dayfirst=True)
@@ -79,12 +84,14 @@ def costruisci() -> Notebook:
     """)
     nb.box("nota", """
         In Italia il caso più comune è `giorno/mese/anno`, quindi `dayfirst=True` è spesso la scelta corretta.
-        Quando il formato è noto e stabile, `format=...` rende la conversione più affidabile.
+        Quando il formato è noto e non cambia da una riga all'altra, conviene però indicarlo per esteso con
+        `format=...`, perché pandas non deve più dedurlo e la conversione diventa più affidabile.
     """)
     nb.prova_tu(
         richiesta="""
             Crea una nuova colonna `timestamp_2` convertendo di nuovo `timestamp_str`, ma questa volta con
-            `format="%d/%m/%Y %H:%M"`. Confronta le prime 5 righe con `timestamp`: devono coincidere.
+            `format="%d/%m/%Y %H:%M"`. Poi confronta le prime cinque righe con la colonna `timestamp`: le due
+            colonne devono coincidere, perché `dayfirst=True` e `format` descrivono in due modi lo stesso formato.
         """,
         starter="""
             df["timestamp_2"] = pd.to_datetime(df["timestamp_str"], format=...)
@@ -98,8 +105,11 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Formati", intro="""
-        Il formato serve soprattutto quando la stringa è **ambigua** o non standard.
-        Esempio classico: `01/02/2025` può essere 1 febbraio oppure 2 gennaio (dipende dal contesto).
+        Indicare il formato serve soprattutto quando la stringa è **ambigua** o non standard. Il caso classico è
+        `01/02/2025`, che in Italia si legge 1 febbraio e negli Stati Uniti 2 gennaio, e soltanto il contesto dice
+        quale delle due letture sia quella giusta. Nella cella qui sotto convertiamo due stringhe in entrambi i modi.
+        Con `dayfirst=False` la seconda, `13/02/2025`, non è una data valida perché non esiste un tredicesimo mese,
+        e `errors="coerce"` la trasforma in `NaT`, il valore mancante delle date.
     """)
     nb.code("""
         # esempio di ambiguità giorno/mese + gestione errori
@@ -115,8 +125,10 @@ def costruisci() -> Notebook:
         })
     """)
     nb.md("""
-        Senza `errors="coerce"` vale il default, `errors="raise"`: la conversione si ferma con un errore
-        sul primo valore che non torna. Questa cella dà errore apposta.
+        Senza `errors="coerce"` vale il comportamento predefinito, `errors="raise"`, e la conversione si interrompe
+        con un errore al primo valore che non riesce a interpretare. La cella qui sotto dà errore di proposito, per
+        mostrare il messaggio che si ottiene. Con un file reale questo comportamento è spesso preferibile, perché
+        segnala subito le righe sbagliate invece di confonderle con i valori mancanti.
     """)
     nb.code("""
         pd.to_datetime(ambigue, dayfirst=False, errors="raise")
@@ -124,11 +136,11 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Il tempo come indice", intro=f"""
-        Quando il timestamp è l'indice, pandas abilita selezioni "per periodo" senza calcoli manuali.
-        `set_index("timestamp")` mette la colonna al posto dell'indice numerico. Poi si ordina l'indice:
-        con dati reali capita spesso di avere righe fuori ordine.
-
-        Documentazione: [serie temporali, user guide]({DOC}/user_guide/timeseries.html)
+        Quando il timestamp diventa l'indice del DataFrame, pandas permette di selezionare le righe per periodo,
+        indicando un giorno o un intervallo di date senza fare calcoli. Il metodo `set_index("timestamp")` mette la
+        colonna al posto dell'indice numerico, e `sort_index()` ordina le righe nel tempo. Conviene ordinare sempre,
+        perché nei dati reali capita spesso di avere righe fuori ordine. La documentazione di riferimento è la
+        [user guide sulle serie temporali]({DOC}/user_guide/timeseries.html).
     """)
     nb.code("""
         df_serie = (
@@ -139,14 +151,20 @@ def costruisci() -> Notebook:
 
         df_serie.head()
     """)
+    nb.md("""
+        Con un indice temporale, `loc` accetta anche una data scritta solo in parte. La stringa `"2025-03-02"`
+        seleziona tutte le righe di quel giorno, dalla mezzanotte alle 23:45, e allo stesso modo `"2025-03"`
+        selezionerebbe l'intero mese.
+    """)
     nb.code("""
         # slicing per periodo (anno/mese/giorno)
         df_serie.loc["2025-03-02"].head()
     """)
     nb.prova_tu(
         richiesta="""
-            Seleziona in `periodo` le righe dal `2025-03-01 12:00` al `2025-03-01 18:00` usando `.loc[...]`.
-            Sono 22 righe: in quelle sei ore ci sono tre buchi.
+            Seleziona in `periodo` le righe dal `2025-03-01 12:00` al `2025-03-01 18:00` usando `.loc[...]` con
+            un intervallo tra due stringhe. Il risultato ha 22 righe, perché nelle sei ore considerate, che con gli
+            estremi inclusi corrispondono a 25 quarti d'ora, mancano tre misure.
         """,
         starter="""
             periodo = df_serie.loc[...]
@@ -160,10 +178,12 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Attributi temporali", intro=f"""
-        Una volta che il tempo è `datetime`, estrarre componenti temporali diventa semplice (mese, ora, giorno della settimana).
-        Se il tempo è indice, si lavora via `df.index`; se è una colonna, si usa `.dt`.
-
-        Documentazione: [accessor `.dt`]({DOC}/reference/api/pandas.Series.dt.html)
+        Una volta convertito in `datetime`, il tempo si scompone facilmente nelle sue parti, come l'ora, il giorno
+        della settimana o il mese, che servono per esempio a confrontare le ore del giorno o i giorni feriali con il
+        weekend. Se il tempo è l'indice, queste parti si leggono direttamente da `df.index`; se invece è una colonna,
+        si passa dall'accessor `.dt`, come in `df["timestamp"].dt.hour`. Nella cella qui sotto aggiungiamo tre
+        colonne ricavate dall'indice. La documentazione di riferimento è quella
+        dell'[accessor `.dt`]({DOC}/reference/api/pandas.Series.dt.html).
     """)
     nb.code("""
         df_caratteristiche = df_serie.copy()
@@ -175,10 +195,11 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            Aggiungi a `df_caratteristiche_es` le colonne `date` (solo data) e `is_weekend` (`True` per sabato e domenica).
-            Il 1° marzo 2025 è un sabato: le righe del weekend sono 182.
-
-            Suggerimento: `df_caratteristiche_es.index.date` e `dayofweek` (sabato=5, domenica=6).
+            Aggiungi a `df_caratteristiche_es` la colonna `date`, con la sola data senza l'ora, e la colonna
+            `is_weekend`, che vale `True` il sabato e la domenica. La data si ricava da `df_caratteristiche_es.index.date`,
+            mentre per il weekend basta confrontare la colonna `dayofweek` con 5, il valore del sabato (la domenica
+            vale 6). Poiché il 1° marzo 2025 è un sabato, i primi due giorni del dataset cadono nel weekend e le
+            righe con `is_weekend` uguale a `True` sono 182.
         """,
         starter="""
             df_caratteristiche_es = df_caratteristiche.copy()
@@ -198,34 +219,42 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 6
     nb.sezione("Frequenza", intro=f"""
-        "Frequenza" significa intervallo atteso tra due timestamp consecutivi (15 minuti, 1 ora, 1 giorno).
-        Con dati puliti e regolari, pandas può inferirla; con buchi o irregolarità spesso no.
-        Frequenze comuni: `15min` (quartorario), `h` (orario), `D` (giornaliero), `MS` (inizio mese).
-
-        Documentazione: [alias delle frequenze]({DOC}/user_guide/timeseries.html#dateoffset-objects)
+        La frequenza di una serie temporale è l'intervallo atteso tra due timestamp consecutivi, per esempio
+        15 minuti, un'ora o un giorno. Quando i dati sono regolari pandas la deduce da solo, e la riporta in
+        `inferred_freq`, mentre in presenza di buchi o irregolarità di solito non ci riesce. Le frequenze si
+        indicano con brevi codici, detti alias, e i più comuni sono `15min` per i quarti d'ora, `h` per le ore,
+        `D` per i giorni e `MS` per l'inizio del mese. La documentazione di riferimento è l'elenco degli
+        [alias delle frequenze]({DOC}/user_guide/timeseries.html#dateoffset-objects).
     """)
     nb.code("""
         df_serie.index.inferred_freq
     """)
     nb.md("""
-        Non restituisce niente: con i buchi pandas non riesce a inferire una frequenza.
-        La differenza tra timestamp consecutivi mostra cosa succede.
+        La cella precedente non restituisce nulla, perché i buchi impediscono a pandas di riconoscere una frequenza.
+        Per capire che cosa succede calcoliamo con `diff()` la distanza tra ogni timestamp e il precedente, e contiamo
+        quante volte compare ciascun intervallo. La maggior parte degli intervalli vale 15 minuti, ma ne compaiono
+        anche alcuni da 30 e da 45 minuti, in corrispondenza delle misure mancanti.
     """)
     nb.code("""
         df_serie.index.to_series().diff().value_counts().head()
     """)
 
     # ------------------------------------------------------------------ 7
-    nb.sezione("Missing che emergono con l'allineamento", intro=f"""
-        Quando "forzi" una frequenza regolare, i timestamp mancanti diventano righe con `NaN`.
-        Questo è utile: rende visibili buchi che altrimenti restano nascosti.
-        Qui usiamo `asfreq` per allineare a frequenza quartoraria (`15min`).
-
-        Documentazione: [`DataFrame.asfreq`]({DOC}/reference/api/pandas.DataFrame.asfreq.html)
+    nb.sezione("I valori mancanti dopo l'allineamento", intro=f"""
+        Il metodo `asfreq` impone alla serie una frequenza regolare, in questo caso un valore ogni quarto d'ora
+        (`15min`). Per ogni istante previsto dalla griglia che non compare nei dati viene aggiunta una riga con `NaN`.
+        In questo modo i buchi di acquisizione, che in una serie irregolare passano inosservati, diventano righe
+        visibili che si possono contare e trattare. La documentazione di riferimento è
+        [`DataFrame.asfreq`]({DOC}/reference/api/pandas.DataFrame.asfreq.html).
     """)
     nb.code("""
         df_15min = df_serie.asfreq("15min")
         df_15min
+    """)
+    nb.md("""
+        Il metodo `isna()`, seguito da `sum()`, conta i valori mancanti di ogni colonna, che sono 18 come le righe
+        tolte all'inizio. Usando la stessa condizione come maschera sull'indice otteniamo invece gli istanti esatti
+        in cui manca la misura di `power_kw`, che ci serviranno tra poco per guardare da vicino il primo buco.
     """)
     nb.code("""
         conteggio_mancanti = df_15min.isna().sum()
@@ -237,7 +266,9 @@ def costruisci() -> Notebook:
         timestamp_mancanti[:10]
     """)
     nb.md("""
-        I grafici qui sotto anticipano il notebook su Plotly: per ora si leggono e basta.
+        I due grafici qui sotto mettono a confronto la serie prima e dopo `asfreq`. Nel primo la linea unisce i punti
+        rimasti e scavalca i buchi senza che si notino, mentre nel secondo ogni `NaN` interrompe la linea e i buchi
+        diventano visibili. Il codice anticipa il notebook su Plotly, quindi per ora basta guardare il risultato.
     """)
     nb.code("""
         # i dati prima e dopo asfreq: nel secondo grafico i buchi interrompono la linea
@@ -249,18 +280,12 @@ def costruisci() -> Notebook:
         fig.show()
     """)
     nb.md("""
-        Ora che abbiamo individuato i valori mancanti, dobbiamo decidere come gestirli. Due approcci semplici e comuni.
-
-        **Interpolazione lineare**: pandas collega il valore prima e dopo il buco con una retta. Se alle 10:00
-        abbiamo 200 kW, alle 11:00 220 kW e manca il valore delle 10:30, stima 210 kW. Utile quando il fenomeno
-        cambia gradualmente (una temperatura). Comando: `df.interpolate(method="linear")`.
-    """)
-    nb.md("""
-        **Forward fill** (riempimento in avanti): copia l'ultimo valore valido nei buchi successivi. Utile
-        quando il valore resta stabile per un po' (lo stato di un dispositivo). Comando: `df.ffill()`.
-    """)
-    nb.md("""
-        **Backward fill**: `df.bfill()` fa il contrario, copia all'indietro il prossimo valore valido.
+        Individuati i valori mancanti, bisogna decidere come trattarli. L'interpolazione lineare, con
+        `df.interpolate(method="linear")`, collega con una retta il valore prima e quello dopo il buco: se alle
+        10:00 abbiamo 200 kW, alle 11:00 220 kW e manca il valore delle 10:30, la stima è 210 kW. È adatta ai
+        fenomeni che cambiano gradualmente, come una temperatura. Il forward fill, con `df.ffill()`, copia invece
+        l'ultimo valore valido nei buchi successivi e si usa per grandezze che restano stabili per un certo tempo,
+        come lo stato di un dispositivo, mentre `df.bfill()` copia all'indietro il primo valore valido che segue.
     """)
     nb.code("""
         # lavoriamo SOLO su power_kw
@@ -282,8 +307,11 @@ def costruisci() -> Notebook:
         confronto
     """)
     nb.md("""
-        I metodi `time` e `linear` stimano il valore mancante interpolando tra i due punti vicini.
-        Con frequenza regolare, i due metodi danno lo stesso risultato (qui 271.25).
+        Nella tabella, costruita su una finestra di 45 minuti prima e dopo il primo buco, le colonne `time` e `linear`
+        stimano il valore mancante interpolando tra i due punti vicini. Il metodo `time` tiene conto della distanza
+        effettiva tra i timestamp, mentre `linear` tratta le righe come equidistanti. Dopo `asfreq` le righe sono
+        tutte a distanza costante, quindi i due metodi danno lo stesso risultato, in questo caso 271.25.
+        Il grafico qui sotto mette a confronto le quattro imputazioni.
     """)
     nb.code("""
         # visualizzazione con Plotly delle imputazioni
@@ -300,16 +328,20 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 8
     nb.sezione("Resampling", intro=f"""
-        Il resampling cambia granularità temporale: da quartorario a orario, giornaliero, mensile.
-        È un'operazione di aggregazione guidata dal tempo (non dalla posizione delle righe).
-
-        Documentazione: [`resample`]({DOC}/reference/api/pandas.DataFrame.resample.html)
-    """)
-    nb.md("""
-        Prima riempiamo i buchi con l'interpolazione lineare.
+        Il resampling cambia la granularità temporale di una serie, per esempio da quartoraria a oraria, giornaliera
+        o mensile. È un'aggregazione guidata dal tempo e non dalla posizione delle righe, perché `resample("h")`
+        raccoglie in un gruppo tutte le misure della stessa ora, e il metodo che segue, come `mean()` o `sum()`,
+        stabilisce come combinarle. Prima di aggregare riempiamo i buchi con l'interpolazione lineare, così ogni ora
+        contiene i suoi quattro quarti d'ora. La documentazione di riferimento è
+        [`resample`]({DOC}/reference/api/pandas.DataFrame.resample.html).
     """)
     nb.code("""
         df_15min = df_15min.interpolate(method="linear")
+    """)
+    nb.md("""
+        Con la serie completa calcoliamo la media oraria con `resample("h").mean()` e quella giornaliera con
+        `resample("D").mean()`. Il risultato orario ha 72 righe, una per ogni ora dei tre giorni, mentre quello
+        giornaliero ne ha soltanto tre, e la cella successiva lo mostra per intero.
     """)
     nb.code("""
         orario = df_15min.resample("h").mean()
@@ -322,8 +354,9 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            Crea un resampling **orario** di `power_kw` con la somma (`sum`) invece della media, e confronta
-            le prime righe con `orario`. La somma è 4 volte la media: in ogni ora ci sono 4 quarti d'ora.
+            Calcola in `somma_oraria` il resampling **orario** di `power_kw` usando la somma (`sum`) al posto della
+            media, e confronta le prime righe con quelle di `orario`. Ogni valore della somma è quattro volte la media
+            corrispondente, perché in ogni ora ci sono quattro quarti d'ora.
         """,
         starter="""
             somma_oraria = df_15min...
@@ -337,50 +370,60 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 9
     nb.sezione("I duplicati dell'ora legale nei dati Terna", intro="""
-        Le date in ora locale, senza fuso orario, seguono il cambio dell'ora legale: a fine marzo un'ora non
-        esiste, a fine ottobre un'ora si ripete.
-    """)
-    nb.md("""
-        Nei dati veri il cambio d'ora si vede. Il carico della zona Nord 2024 di Terna è in ora locale, un valore
-        ogni 15 minuti (il nome del file dice `hourly`), con le righe dall'ultima alla prima. Le rimettiamo in
-        ordine con `sort_values` e contiamo i timestamp duplicati.
+        Le date espresse in ora locale, senza indicazione del fuso orario, seguono il cambio dell'ora legale.
+        L'ultima domenica di marzo gli orologi passano dalle 2:00 alle 3:00 e un'ora non esiste, mentre l'ultima
+        domenica di ottobre tornano dalle 3:00 alle 2:00 e un'ora si ripete. I dati di Terna sul carico della zona
+        Nord nel 2024 sono in ora locale, con un valore ogni 15 minuti nonostante il nome del file contenga `hourly`,
+        e hanno le righe in ordine inverso, dalla più recente alla più vecchia. Per questo li rimettiamo in ordine
+        con `sort_values` e poi contiamo i timestamp duplicati.
     """)
     nb.code("""
         carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
         carico = carico.sort_values("Date")
         carico["Date"].duplicated().sum()
     """)
+    nb.md("""
+        Con `keep=False` il metodo `duplicated` segna tutte le occorrenze di un timestamp ripetuto, e non soltanto
+        quelle successive alla prima, in modo da poter vedere le righe doppie una accanto all'altra.
+    """)
     nb.code("""
         doppioni = carico["Date"].duplicated(keep=False)
         carico[doppioni]
     """)
     nb.md("""
-        Le 2:00, 2:15, 2:30 e 2:45 del 27 ottobre, l'ultima domenica del mese, compaiono due volte con carichi
-        diversi: una è l'ultima ora legale, l'altra la prima ora solare, e il file non dice quale sia quale.
-        `drop_duplicates(subset="Date")` tiene la prima occorrenza di ogni timestamp.
+        I timestamp delle 2:00, 2:15, 2:30 e 2:45 del 27 ottobre, l'ultima domenica del mese, compaiono due volte
+        con carichi diversi. Una delle due ore è l'ultima dell'ora legale e l'altra la prima dell'ora solare, ma il
+        file non permette di distinguerle. La soluzione più semplice è tenere una sola riga per timestamp con
+        `drop_duplicates(subset="Date")`, che conserva la prima occorrenza e scarta le successive.
     """)
     nb.code("""
         carico = carico.drop_duplicates(subset="Date")
         len(carico)
     """)
     nb.md("""
-        Restano 35.132 righe invece di 35.136 (8784 ore per 4): i quattro quarti d'ora mancanti sono quelli
-        dell'ora che a marzo non esiste.
+        Dopo la pulizia restano 35.132 righe. Il 2024 è bisestile e ha 8784 ore, cioè 35.136 quarti d'ora, e i
+        quattro valori che mancano sono quelli dell'ora che il 31 marzo non esiste.
     """)
 
     # ------------------------------------------------------------------ 10
     nb.sezione("Esercizi", intro="""
-        Gli esercizi usano `carico`, il file Terna già ordinato e senza duplicati. La colonna
-        `Total Load [MW]` è una potenza media su ogni quarto d'ora: un quarto d'ora a 100 MW sono 25 MWh,
-        quindi l'energia si ottiene sommando i valori e dividendo per 4.
+        Gli esercizi usano `carico`, il DataFrame di Terna già ordinato e senza duplicati. La colonna
+        `Total Load [MW]` contiene la potenza media di ogni quarto d'ora, e per passare all'energia bisogna tenere
+        conto della durata dell'intervallo. Un quarto d'ora a 100 MW corrisponde a 25 MWh, quindi l'energia di un
+        periodo si ottiene sommando i valori e dividendo il risultato per 4.
     """)
     nb.esercizio(
         titolo="Il carico giornaliero",
-        scenario="Dal carico quartorario vogliamo l'energia consumata ogni giorno del 2024 nella zona Nord.",
+        scenario="""
+            A partire dal carico quartorario vogliamo calcolare l'energia consumata nella zona Nord in ciascun giorno
+            del 2024 e trovare il giorno in cui il consumo è stato più alto.
+        """,
         richiesta="""
-            1. Metti in `serie` la colonna `Total Load [MW]` di `carico`, con `Date` come indice (`set_index`).
-            2. Calcola in `giornaliero` l'energia di ogni giorno in MWh: `resample("D")`, `sum()`, poi diviso 4.
-            3. Metti in `giorno_max` il giorno con l'energia più alta (`idxmax()`).
+            1. Metti in `serie` la colonna `Total Load [MW]` di `carico`, dopo aver impostato `Date` come indice con `set_index`.
+            2. Calcola in `giornaliero` l'energia di ogni giorno in MWh, raggruppando per giorno con `resample("D")`, sommando con `sum()` e dividendo il risultato per 4.
+            3. Metti in `giorno_max` il giorno con l'energia più alta, che si ottiene con `idxmax()`.
+
+            Il risultato `giornaliero` è una Series con 366 valori, uno per ogni giorno dell'anno bisestile.
         """,
         starter="""
             serie = ...
@@ -403,15 +446,15 @@ def costruisci() -> Notebook:
             assert round(giornaliero.max()) == 644863, "❌ giornaliero: somma dei quarti d'ora del giorno, divisa per 4"
             assert giorno_max == pd.Timestamp("2024-07-17"), "❌ giorno_max: usa giornaliero.idxmax()"
         """,
-        suggerimento="si seleziona la colonna prima di `resample`, così la colonna di testo `Bidding Zone` resta fuori.",
+        suggerimento="conviene selezionare la colonna prima di chiamare `resample`, in modo che la colonna di testo `Bidding Zone` resti fuori dalla somma.",
     )
     nb.esercizio(
         titolo="Ora e giorno della settimana",
-        scenario="Vogliamo sapere a che ora del giorno e in quale giorno della settimana il carico medio è più alto e più basso.",
+        scenario="Vogliamo sapere in quale ora del giorno il carico medio della zona Nord è più alto e in quale giorno della settimana è più basso.",
         richiesta="""
-            1. Aggiungi a `carico` le colonne `ora` (`.dt.hour`) e `giorno_settimana` (`.dt.dayofweek`, 0=lunedì) a partire da `Date`.
-            2. Calcola in `per_ora` il carico medio per ora con `groupby`, e in `ora_di_punta` l'ora con la media più alta.
-            3. Calcola in `per_giorno` il carico medio per giorno della settimana, e in `giorno_minimo` il giorno con la media più bassa.
+            1. Aggiungi a `carico` le colonne `ora` e `giorno_settimana`, ricavate da `Date` con `.dt.hour` e `.dt.dayofweek`, in cui il lunedì vale 0.
+            2. Calcola in `per_ora` il carico medio per ora con `groupby`, e metti in `ora_di_punta` l'ora con la media più alta.
+            3. Calcola in `per_giorno` il carico medio per giorno della settimana, e metti in `giorno_minimo` il giorno con la media più bassa.
         """,
         starter="""
             carico["ora"] = ...

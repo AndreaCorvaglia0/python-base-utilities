@@ -10,7 +10,7 @@ def costruisci() -> Notebook:
         titolo="Plotly per serie storiche",
         blocco=3,
         giornata=2,
-        intento="Plotly produce grafici interattivi: per una serie storica permette zoom, selezione di intervalli e confronto tra serie.",
+        intento="Plotly produce grafici interattivi, che per una serie storica permettono di ingrandire un periodo, selezionare un intervallo e confrontare più serie nello stesso grafico.",
         obiettivi=[
             "fare grafici a linee, istogrammi e scatter con Plotly Express",
             "confrontare più serie nello stesso grafico, partendo da dati wide-form",
@@ -22,10 +22,13 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Setup minimo", intro="""
-        Restiamo sul minimo che serve nella pratica: `plotly.express`. Documentazione ufficiale:
-        [Plotly Express](https://plotly.com/python/plotly-express/),
-        [Line charts](https://plotly.com/python/line-charts/),
-        [Time series](https://plotly.com/python/time-series/).
+        In questo notebook usiamo `plotly.express`, il modulo di alto livello di Plotly, che costruisce un grafico
+        completo a partire da un DataFrame con una sola chiamata. A differenza di un'immagine statica, una figura
+        Plotly si può ingrandire, scorrere e interrogare passando il mouse sui punti, e per una serie storica questo
+        permette di muoversi nel tempo senza riscrivere il codice. La documentazione di riferimento è quella di
+        [Plotly Express](https://plotly.com/python/plotly-express/), con le pagine dedicate ai
+        [grafici a linee](https://plotly.com/python/line-charts/) e alle
+        [serie temporali](https://plotly.com/python/time-series/).
     """)
     nb.code("""
         import pandas as pd
@@ -34,21 +37,21 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 2
     nb.sezione("I quattro elementi chiave", intro="""
-        Plotly diventa molto più leggibile se separi sempre quattro pezzi.
-
-        1. **Dati**: un DataFrame con una colonna tempo (`datetime`) ordinata.
-        2. **Mapping**: quali colonne finiscono su `x`, `y` (e, quando serve, `color`).
-        3. **Tracce**: una `Figure` è fatta di una o più tracce (`fig.data`). In una serie storica la traccia
-           tipica è uno `Scatter` con `mode="lines"`.
-        4. **Layout e controlli**: titolo, assi, hover… si modificano con `fig.update_layout(...)`
-           e `fig.update_xaxes(...)`.
+        Il codice di un grafico Plotly diventa molto più facile da leggere se si tengono distinti quattro elementi.
+        Il primo sono i dati, cioè un DataFrame con una colonna tempo di tipo `datetime`, ordinata. Il secondo è il
+        mapping, che stabilisce quali colonne finiscono sull'asse `x`, sull'asse `y` e, quando serve, nel colore
+        (`color`). Il terzo sono le tracce: una `Figure` è composta da una o più tracce, elencate in `fig.data`, e in
+        una serie storica la traccia tipica è uno `Scatter` con `mode="lines"`. Il quarto è il layout, cioè titolo,
+        assi e testo al passaggio del mouse, che si modifica con `fig.update_layout(...)` e `fig.update_xaxes(...)`.
     """)
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Il dataset stocks", intro="""
-        `px.data.stocks()`, già incluso in Plotly, è un dataset
-        [wide-form](https://plotly.com/python/wide-form/): una colonna tempo (`date`) e una colonna per
-        ciascuna serie. I valori sono **indicizzati** (partono da 1): è comodo per confrontare andamenti relativi.
+        Come primo esempio usiamo `px.data.stocks()`, un dataset già incluso in Plotly con le quotazioni settimanali
+        di sei società tecnologiche nel 2018 e nel 2019. È in formato [wide-form](https://plotly.com/python/wide-form/),
+        cioè ha una colonna tempo (`date`) e una colonna per ciascuna serie. I valori sono **indicizzati**, nel senso
+        che ogni serie vale 1 alla prima data, e questo rende immediato il confronto tra andamenti relativi. Nella
+        cella qui sotto convertiamo `date` in `datetime`, perché nel dataset è una stringa.
     """)
     nb.code("""
         df = px.data.stocks().copy()
@@ -56,13 +59,17 @@ def costruisci() -> Notebook:
         df.head()
     """)
     nb.box("nota", """
-        Se `date` non è `datetime` o non è ordinata, la linea può produrre risultati confusi (salti avanti
-        e indietro).
+        Se la colonna `date` non è di tipo `datetime` o non è ordinata, la linea collega i punti nell'ordine delle
+        righe e il grafico diventa confuso, con salti avanti e indietro nel tempo.
     """)
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Primo grafico con Plotly Express", intro="""
-        Il primo obiettivo è avere una linea leggibile con un mapping esplicito (`x` e `y`).
+        Il primo grafico è una linea sola, costruita con `px.line` e con un mapping esplicito, che mette la colonna
+        `date` sull'asse `x` e la colonna della società scelta sull'asse `y`. Il nome della società sta in una
+        variabile, così per cambiare serie basta modificare una riga, e il titolo si compone con una f-string. Il
+        grafico è interattivo: trascinando il mouse su un tratto si ingrandisce quel periodo, e un doppio clic
+        riporta alla vista completa.
     """)
     nb.code("""
         azienda = "GOOG"
@@ -77,9 +84,10 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            Cambia `azienda` con un'altra colonna del dataset (`AAPL`, `AMZN`, `MSFT`…). Poi limita il grafico
-            agli ultimi 12 mesi filtrando `df` prima di passarlo a `px.line`: il dataset finisce a fine 2019,
-            quindi bastano le date dal `2019-01-01`. Il grafico atteso parte da gennaio 2019.
+            Assegna ad `azienda` un'altra colonna del dataset, per esempio `AAPL`, `AMZN` o `MSFT`. Poi limita il
+            grafico agli ultimi 12 mesi, filtrando `df` con una maschera sulla colonna `date` prima di passarlo a
+            `px.line`. Poiché il dataset finisce alla fine del 2019, basta tenere le date a partire dal `2019-01-01`,
+            e il grafico che ottieni comincia a gennaio 2019.
         """,
         starter="""
             azienda = ...
@@ -96,8 +104,11 @@ def costruisci() -> Notebook:
     )
     with nb.solo("avanzata"):
         nb.md("""
-            La media mobile si calcola con `rolling` come nuova colonna e si disegna accanto alla serie
-            originale, passando le due colonne a `y`. Il dataset ha un valore a settimana.
+            La media mobile attenua le oscillazioni di breve periodo e rende più visibile la tendenza della serie. La
+            calcoliamo con `rolling` in una nuova colonna e la disegniamo accanto alla serie originale, passando a `y`
+            la lista delle due colonne. Poiché il dataset ha un valore a settimana, una finestra di 4 osservazioni
+            copre circa un mese; le prime tre righe non hanno abbastanza valori precedenti e restano `NaN`, quindi
+            le togliamo con `dropna`.
         """)
         nb.code("""
             azienda = "GOOG"
@@ -119,8 +130,10 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Confronto tra serie (wide-form)", intro="""
-        Con i dati wide-form puoi passare direttamente una lista di colonne a `y`. È il caso che torna più
-        spesso: una tabella con molte serie già allineate nel tempo.
+        Con i dati wide-form si può passare direttamente a `y` una lista di colonne, e `px.line` disegna una linea per
+        ciascuna, con un colore diverso e una voce nella legenda. È il caso che si incontra più spesso nella pratica,
+        quando si lavora con una tabella che contiene molte serie già allineate sulla stessa colonna tempo. Un clic
+        su una voce della legenda nasconde la linea corrispondente, mentre un doppio clic lascia visibile solo quella.
     """)
     nb.code("""
         aziende = ["AAPL", "AMZN", "MSFT"]
@@ -135,9 +148,10 @@ def costruisci() -> Notebook:
     """)
     nb.prova_tu(
         richiesta="""
-            Aggiungi o rimuovi una società dalla lista `aziende`. Poi crea `df_indicizzato`, una copia di `df`
-            con le serie riportate a base 100 alla prima data (`valore / valore.iloc[0] * 100`), e ripeti il
-            grafico. Tutte le linee devono partire da 100.
+            Aggiungi o togli una società dalla lista `aziende`. Poi crea `df_indicizzato`, una copia di `df` in cui le
+            serie sono riportate a base 100 alla prima data, dividendo ogni colonna per il suo primo valore e
+            moltiplicando per 100 (`valore / valore.iloc[0] * 100`), e ripeti il grafico. Se il calcolo è corretto,
+            tutte le linee partono da 100.
         """,
         starter="""
             aziende = ["AAPL", "AMZN", "MSFT", ...]
@@ -157,8 +171,10 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 6
     nb.sezione("Istogramma e scatter", intro="""
-        Plotly Express ha una funzione per ogni tipo di grafico, con gli stessi argomenti di `px.line`. Le
-        proviamo sui dati orari della turbina eolica texana, con due colonne rinominate per comodità.
+        Plotly Express ha una funzione per ogni tipo di grafico, e tutte accettano gli stessi argomenti di `px.line`,
+        a partire dal DataFrame e dal mapping delle colonne. Le proviamo sui dati orari di una turbina eolica in Texas,
+        che contengono tra l'altro la velocità del vento e la potenza prodotta. Il timestamp del file non riporta
+        l'anno, quindi lo aggiungiamo prima della conversione, e diamo alle due colonne che ci interessano nomi più brevi.
     """)
     nb.code("""
         turbina = pd.read_csv("../Dati/TexasTurbine.csv")
@@ -168,16 +184,19 @@ def costruisci() -> Notebook:
         turbina.head(3)
     """)
     nb.md("""
-        L'istogramma conta quante ore cadono in ogni intervallo di velocità del vento: basta la `x`, e
-        `nbins` è il numero di barre.
+        L'istogramma divide la velocità del vento in intervalli e conta quante ore cadono in ciascuno. Per questo
+        basta indicare la colonna da mettere sull'asse `x`, perché l'altezza delle barre è il conteggio, mentre il
+        parametro `nbins` stabilisce il numero di barre.
     """)
     nb.code("""
         fig = px.histogram(turbina, x="vento_ms", nbins=30, title="Distribuzione del vento")
         fig.show()
     """)
     nb.md("""
-        Lo scatter disegna un punto per riga e mostra la relazione tra due colonne: vento sulla x, potenza
-        sulla y. Ne esce la curva di potenza della turbina; `opacity` fa vedere dove i punti si accumulano.
+        Lo scatter disegna un punto per ogni riga e mostra la relazione tra due colonne, in questo caso il vento
+        sull'asse x e la potenza sull'asse y. L'insieme dei punti descrive la curva di potenza della turbina, che sale
+        rapidamente con il vento e poi si appiattisce quando la turbina raggiunge la sua potenza massima. Con
+        `opacity` i punti diventano semitrasparenti, e le zone in cui si accumulano risultano più scure.
     """)
     nb.code("""
         fig = px.scatter(turbina, x="vento_ms", y="potenza_kw", opacity=0.3, title="Vento e potenza")
@@ -189,14 +208,15 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Un mese di carico",
         scenario="""
-            Il file di Terna ha il carico del Nord del 2024, un valore ogni quarto d'ora. Vogliamo guardare
-            gennaio da vicino.
+            Il file di Terna contiene il carico della zona Nord nel 2024, con un valore ogni quarto d'ora. Su un anno
+            intero le oscillazioni dei singoli giorni si confondono, quindi vogliamo guardare da vicino il solo mese
+            di gennaio.
         """,
         richiesta="""
-            1. Da `carico` tieni il solo gennaio 2024 in `gennaio`.
-            2. Costruisci `fig_carico` con `px.line`: `Total Load [MW]` sulla `Date`, titolo `Carico Nord, gennaio 2024`.
+            1. Tieni in `gennaio` le sole righe di `carico` relative a gennaio 2024, usando una maschera sul mese della colonna `Date`.
+            2. Costruisci `fig_carico` con `px.line`, mettendo `Date` sull'asse x e `Total Load [MW]` sull'asse y, con il titolo `Carico Nord, gennaio 2024`.
 
-            Output atteso: una linea sola.
+            Il grafico che ottieni contiene una sola linea, in cui si riconoscono i cicli giornalieri e il calo dei fine settimana.
         """,
         starter="""
             carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
@@ -226,11 +246,13 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="La distribuzione della potenza",
         scenario="""
-            Quante ore la turbina texana produce poco, e quante lavora vicino ai 3000 kW?
+            Vogliamo sapere per quante ore la turbina texana produce poco e per quante lavora vicino alla sua potenza
+            massima, attorno ai 3000 kW.
         """,
         richiesta="""
-            Costruisci in `fig_potenza` l'istogramma della colonna `potenza_kw` di `turbina`, con 30 barre e
-            titolo `Distribuzione della potenza`. Output atteso: la barra più alta è quella vicino a 0 kW.
+            Costruisci in `fig_potenza` l'istogramma della colonna `potenza_kw` di `turbina`, con 30 barre e il
+            titolo `Distribuzione della potenza`. Nel grafico la barra più alta è quella vicino a 0 kW, segno che per
+            molte ore la turbina produce poco o nulla.
         """,
         starter="""
             fig_potenza = px.histogram(...)
