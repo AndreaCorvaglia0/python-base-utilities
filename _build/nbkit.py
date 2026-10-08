@@ -502,6 +502,7 @@ VERIFICHE = {
 
 
 def _letterale(testo: str) -> str:
+    testo = testo.strip("\n")
     if "'''" not in testo and not testo.endswith("\\"):
         return "r'''\n" + testo + "\n'''"
     return repr(testo)

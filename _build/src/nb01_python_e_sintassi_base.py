@@ -207,6 +207,8 @@ def costruisci() -> Notebook:
         print(saluto)  # Output: Ciao, mi chiamo Mario e ho 30 anni
     """)
 
+    nb.md("Riassunto in una pagina: [Leggere il codice: cosa è cosa](../Schede/Scheda_leggere_codice.md).")
+
     # ------------------------------------------------------------------ 6
     nb.sezione("Esercizi")
     nb.esercizio(

@@ -22,75 +22,29 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("L'obiettivo del corso", intro="""
-        Oggi molto codice lo scrive un agente per il coding, come Copilot in VS Code o Claude Code: gli
-        si descrive a parole cosa serve e l'agente scrive il codice.
-    """)
-    nb.md("""
-        Quel codice va letto e controllato da noi: capire quali librerie usa, cosa fa ogni riga, cosa
-        dice un messaggio di errore. Per imparare a leggerlo cominciamo a scriverlo a mano, da questo
-        notebook.
+        Oggi molto codice lo scrive un agente per il coding, come Copilot in VS Code. Quel codice va
+        letto e controllato da noi: per imparare a leggerlo, cominciamo a scriverlo a mano.
     """)
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Cos'è Jupyter Notebook", intro="""
-        *Jupyter Notebook* è un ambiente di sviluppo interattivo (*Integrated Development Environment*,
-        IDE) che permette di creare e condividere documenti che contengono codice eseguibile, testo
-        formattato, immagini e grafici. È molto usato nell'analisi dei dati, nel *machine learning*,
-        nella ricerca scientifica e nella didattica.
-    """)
-    nb.md("""
-        Il nome **Jupyter** richiama tre dei principali linguaggi supportati: **Julia**, **Python** e **R**.
+        *Jupyter Notebook* è un ambiente interattivo per creare documenti con codice eseguibile, testo
+        formattato, immagini e grafici. Il nome richiama tre linguaggi supportati: **Julia**, **Python**
+        e **R**. Nel corso i notebook si aprono in VS Code.
     """)
 
     # ------------------------------------------------------------------ 3
-    nb.sezione("Come funziona un notebook", intro="""
-        Jupyter Notebook si basa su documenti chiamati **notebook**, che possono essere eseguiti su un
-        server locale o remoto. Un notebook è composto da una serie di **celle** (*cells*), che possono
-        contenere codice, testo formattato con la sintassi *Markdown* e immagini.
+    nb.sezione("Le celle di codice", intro="""
+        Un notebook è una serie di **celle**, di codice o di testo. Per eseguire una cella di codice,
+        clicca sulla cella e premi **Shift + Invio**, oppure il triangolo a sinistra.
     """)
-    nb.md("""
-        Le celle di codice si eseguono in modo interattivo: il risultato delle operazioni compare subito,
-        all'interno del notebook, sotto la cella, anche sotto forma di grafici e tabelle.
-    """)
-
-    # ------------------------------------------------------------------ 4
-    nb.sezione("Come si usa un notebook", intro="""
-        I notebook del corso si aprono in VS Code, con un doppio clic sul file `.ipynb`.
-    """)
-    nb.md("""
-        Per eseguire una cella di codice, clicca sulla cella e premi il pulsante **Run** (il triangolo a
-        sinistra della cella) oppure **Shift + Invio** sulla tastiera.
-    """)
-    nb.md("""
-        Per aggiungere testo formattato con la sintassi *Markdown*, aggiungi una cella con il pulsante
-        **+ Markdown** in cima al notebook. Con i comandi *Markdown* si creano titoli, elenchi, link e
-        immagini.
-    """)
-    nb.box("nota", "Per salvare il notebook, usa la combinazione di tasti **Ctrl + S** (su Mac **Cmd + S**).")
-
-    # ------------------------------------------------------------------ 5
-    nb.sezione("Il kernel", intro="""
-        Il **kernel** è il processo che esegue il codice Python all'interno del notebook. Se il kernel
-        sembra bloccato o non risponde, puoi riavviarlo con il pulsante **Restart** in cima al notebook.
-    """)
-    nb.md("""
-        Restart svuota la memoria: le variabili spariscono, il codice resta. **Run All**, accanto, esegue
-        tutte le celle dall'alto in basso. Quando un risultato non torna: Restart, poi Run All.
-    """)
-    nb.md("Questa cella mostra quale Python sta usando il kernel:")
     nb.code("""
-        import sys
-
-        sys.executable
+        # esegui questa cella con Shift + Invio
+        print("Ciao dal notebook")
     """)
-    nb.md("""
-        Il percorso deve contenere `.venv`, la cartella con il Python e le librerie del corso. Se non la
-        contiene, il kernel va cambiato con **Select Kernel**, in alto a destra.
-    """)
-
-    # ------------------------------------------------------------------ 6
-    nb.sezione("Esempio di cella di codice", intro="""
-        Ecco un semplice esempio di codice Python che calcola la somma di due numeri:
+    nb.code("""
+        # senza print il notebook mostra il valore dell'ultima riga
+        1 + 1
     """)
     nb.code("""
         # esempio di codice Python che calcola la somma di due numeri
@@ -100,59 +54,72 @@ def costruisci() -> Notebook:
         print(c)  # Output: 30
     """)
 
-    # ------------------------------------------------------------------ 7
-    nb.sezione("Esempio di cella Markdown", intro="""
-        Qui sotto c'è una cella *Markdown* con vari elementi di formattazione. Fai doppio clic sulla
-        cella per vedere il testo che la genera, poi **Shift + Invio** per tornare alla vista formattata.
+    # ------------------------------------------------------------------ 4
+    nb.sezione("Il kernel", intro="""
+        Il **kernel** è il processo che esegue il codice Python del notebook e tiene in memoria le
+        variabili, condivise da tutte le celle.
+    """)
+    nb.code("""
+        # il Python usato dal kernel: il percorso deve contenere .venv
+        # (se non c'è, cambia kernel con Select Kernel, in alto a destra)
+        import sys
+
+        sys.executable
+    """)
+    nb.code("""
+        x = 5
+    """)
+    nb.code("""
+        x
+    """)
+    nb.code("""
+        # esegui questa cella più volte: x cresce, e cresce il numero a sinistra della cella
+        x = x + 1
+        x
+    """)
+    nb.md("""
+        **Restart**, in cima al notebook, riavvia il kernel: le variabili spariscono, il codice resta.
+        Premi Restart ed esegui la cella qui sotto: dà `NameError`. Poi premi **Run All**, che esegue
+        tutte le celle dall'alto in basso.
+    """)
+    nb.code("""
+        x
+    """)
+
+    # ------------------------------------------------------------------ 5
+    nb.sezione("Le celle Markdown", intro="""
+        Il testo si scrive in celle *Markdown*. Fai doppio clic sulla cella qui sotto, cambia una parola
+        e premi **Shift + Invio** per tornare alla vista formattata.
     """)
     nb.md("""
         # Titolo di primo livello
-
         ## Titolo di secondo livello
 
-        ### Titolo di terzo livello
+        Un testo in **grassetto** e uno in *corsivo*.
 
-        Questo è un testo in **grassetto** e questo è un testo in *corsivo*.
-
-        Ecco una lista non ordinata:
         - Elemento 1
         - Elemento 2
-        - Elemento 3
 
-        Ecco una lista ordinata:
         1. Primo elemento
         2. Secondo elemento
-        3. Terzo elemento
 
-        Ecco un blocco di codice:
-
-        ```python
-        a = 10
-        b = 20
-        c = a + b
-        print(c)
-        ```
-
-        Per altre opzioni di formattazione c'è la [guida al Markdown](https://www.markdownguide.org/basic-syntax/).
+        [Guida al Markdown](https://www.markdownguide.org/basic-syntax/)
     """)
 
-    # ------------------------------------------------------------------ 8
+    # ------------------------------------------------------------------ 6
     nb.sezione("Le scorciatoie da tastiera", intro="""
-        Alcune scorciatoie rendono più rapido l'uso dei notebook:
+        - `Shift + Invio`: esegui la cella e passa alla successiva
+        - `Esc` poi `A` o `B`: nuova cella sopra o sotto
+        - `Esc` poi `M` o `Y`: cella Markdown o di codice
+        - `Esc` poi `D` `D`: elimina la cella
+        - `Ctrl + S` (su Mac `Cmd + S`): salva il notebook
     """)
-    nb.md("""
-        - **Modalità comando** (premi `Esc` per attivarla):
-            - `A`: inserisci una nuova cella **sopra** la cella selezionata.
-            - `B`: inserisci una nuova cella **sotto** la cella selezionata.
-            - `M`: cambia il tipo di cella in **Markdown**.
-            - `Y`: cambia il tipo di cella in **Code**.
-            - `D` `D` (premi due volte): elimina la cella selezionata.
-        - **Modalità modifica** (premi `Invio` per attivarla):
-            - `Ctrl + S`: salva il notebook.
-            - `Shift + Invio`: esegui la cella corrente e seleziona quella successiva.
-            - `Ctrl + Shift + -`: dividi la cella corrente in due nel punto del cursore.
-
-        Su Mac, `Cmd` al posto di `Ctrl`.
+    nb.code("""
+        # esegui, poi premi Esc e B: sotto compare una cella nuova; scrivici prezzo * 2 ed eseguila
+        prezzo = 4.5
+    """)
+    nb.code("""
+        # Premi Esc, poi M e Shift + Invio: questa riga diventa un titolo
     """)
 
     # ------------------------------------------------------------------ Esercizi

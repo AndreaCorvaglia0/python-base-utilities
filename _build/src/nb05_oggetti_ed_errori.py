@@ -277,6 +277,8 @@ def costruisci() -> Notebook:
         5. Incolla il traceback intero nella chat dell'agente e chiedi di spiegarlo; poi verifica eseguendo.
     """)
 
+    nb.md("Riassunto in una pagina: [Gli errori più comuni](../Schede/Scheda_errori.md).")
+
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")
     nb.esercizio(
