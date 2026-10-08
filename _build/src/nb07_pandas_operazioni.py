@@ -10,7 +10,10 @@ def costruisci() -> Notebook:
         titolo="Pandas: operazioni sui DataFrame",
         blocco=3,
         giornata=2,
-        intento="Selezione, pulizia, trasformazione, ordinamento, raggruppamento e unione di tabelle.",
+        intento=(
+            "Il notebook mostra come selezionare, pulire, trasformare, ordinare e raggruppare i dati di un "
+            "DataFrame, e come unire tabelle diverse."
+        ),
         obiettivi={
             "base": [
                 "selezionare righe e colonne con `loc`, `iloc` e le condizioni",
@@ -28,8 +31,9 @@ def costruisci() -> Notebook:
     )
 
     nb.md("""
-        Importiamo le librerie e ricreiamo il DataFrame del notebook precedente: tre persone con nome,
-        età e città, e un indice con etichette.
+        Come di consueto importiamo all'inizio le librerie che ci servono, pandas e NumPy; da NumPy useremo
+        soltanto `np.nan`, il valore che rappresenta un dato mancante. Ricreiamo poi il DataFrame del
+        notebook precedente, con il nome, l'età e la città di tre persone e un indice fatto di etichette.
     """)
     nb.code("""
         import numpy as np
@@ -48,11 +52,14 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Selezione dei dati", intro="""
-        In pandas possiamo selezionare i dati per nome di colonna, per etichetta dell'indice o per
-        posizione.
+        In pandas possiamo selezionare i dati di un DataFrame per nome di colonna, per etichetta dell'indice
+        o per posizione. La selezione per etichetta è ciò che distingue un DataFrame da una lista di liste,
+        perché permette di indicare righe e colonne con il loro nome invece che con un numero.
     """)
     nb.sottosezione("Selezione di righe e colonne", intro="""
         Possiamo selezionare una o più colonne di un DataFrame usando il nome della colonna come chiave.
+        Con una lista di nomi tra doppie parentesi quadre il risultato è ancora un DataFrame, anche quando
+        la colonna è una sola; con un solo nome, come in `df["Età"]`, otterremmo invece una Series.
     """)
     nb.code("""
         # selezionare una singola colonna
@@ -63,7 +70,10 @@ def costruisci() -> Notebook:
         df[["Nome", "Città"]]
     """)
     nb.md("""
-        Con `loc` e `iloc` selezioniamo righe specifiche in base all'indice o alla posizione.
+        Con `loc` e `iloc` selezioniamo righe specifiche in base all'indice o alla posizione. Entrambi
+        ricevono tra parentesi quadre due argomenti separati da una virgola, prima le righe e poi le
+        colonne. Nell'esempio `loc` usa le etichette `id_1` e `id_2`, mentre `iloc` usa le posizioni 0 e 1
+        e la colonna in posizione 1, che è `Età`.
     """)
     nb.code("""
         # loc: in base all'indice
@@ -75,41 +85,53 @@ def costruisci() -> Notebook:
     """)
 
     nb.md("""
-        Con `loc` lo slicing include anche l'ultima etichetta, con `iloc` l'ultima posizione è esclusa.
+        Le due celle restituiscono le stesse righe, ma lo slicing si comporta in modo diverso nei due casi.
+        Con `loc` l'intervallo `"id_1":"id_2"` include anche l'ultima etichetta, mentre con `iloc`
+        l'intervallo `0:2` esclude l'ultima posizione, come accade con le liste Python.
     """)
 
     nb.sottosezione("Selezione condizionale", intro="""
-        Possiamo filtrare i dati con condizioni booleane. La condizione da sola restituisce una Series
-        di `True` e `False`, una per riga.
+        Possiamo filtrare le righe di un DataFrame con condizioni booleane. Una condizione su una colonna,
+        come `df["Età"] > 23`, viene valutata riga per riga e restituisce una Series di `True` e `False`
+        con lo stesso indice del DataFrame. Una Series di questo tipo si chiama maschera booleana.
     """)
     nb.code("""
         df["Età"] > 23
     """)
     nb.md("""
-        Messa tra parentesi quadre, la condizione tiene solo le righe con `True`.
+        Se passiamo la maschera al DataFrame tra parentesi quadre, pandas tiene soltanto le righe in cui la
+        maschera vale `True`. Nel nostro caso restano Alice e Bob, che hanno più di 23 anni.
     """)
     nb.code("""
         df[df["Età"] > 23]
     """)
     nb.md("""
-        Più condizioni si combinano con `&` (e), `|` (o) e `~` (non), ognuna tra parentesi tonde.
+        Più condizioni si combinano con gli operatori `&` (e), `|` (o) e `~` (non), e ciascuna va scritta
+        tra parentesi tonde, perché questi operatori hanno la precedenza sui confronti. Quando la condizione
+        è lunga o serve più volte, conviene salvare la maschera in una variabile, come `condiz_eta`.
     """)
     nb.code("""
         condiz_eta = (df["Età"] > 23) & (df["Età"] < 26)
         condiz_eta
     """)
+    nb.md("""
+        La maschera si può passare anche a `loc` come primo argomento, al posto delle etichette delle righe,
+        mentre il secondo argomento sceglie le colonne. In questo modo filtro e selezione delle colonne
+        stanno in un'unica espressione; con l'età compresa tra 23 e 26 anni, estremi esclusi, resta soltanto
+        Alice.
+    """)
     nb.code("""
         # righe con età tra 23 e 26 (esclusi), solo la colonna Nome
         df.loc[(df["Età"] > 23) & (df["Età"] < 26), ["Nome"]]
     """)
-    nb.md("""
-        Queste Series di `True` e `False` si chiamano maschere booleane.
-    """)
 
     with nb.solo("avanzata"):
         nb.sottosezione("Il metodo query", intro="""
-            Il metodo `.query()` filtra le righe con una condizione scritta come testo, ed è comodo da
-            leggere quando le condizioni sono più di una. La sintassi di base è `df.query("condizione")`.
+            Il metodo `.query()` filtra le righe con una condizione scritta come testo, nella forma
+            `df.query("condizione")`. Dentro la stringa i nomi delle colonne si scrivono senza virgolette e
+            le condizioni si uniscono con `and` e `or`, per cui il filtro risulta più leggibile quando le
+            condizioni sono più di una. L'esempio ripete il filtro precedente e poi seleziona due colonne con
+            `loc`.
         """)
         nb.code("""
             colonne = ["Età", "Nome"]
@@ -118,11 +140,16 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Manipolazione dei dati", intro="""
-        La manipolazione dei dati in pandas comprende la gestione dei valori mancanti, la pulizia dei
-        dati e la trasformazione.
+        La manipolazione dei dati in pandas comprende la gestione dei valori mancanti, la pulizia dei dati
+        e la trasformazione. Sono operazioni che di solito si eseguono subito dopo la lettura di un file e
+        prima di qualsiasi analisi, perché i dati reali arrivano spesso con valori assenti, righe ripetute
+        o colonne da ricavare.
     """)
     nb.sottosezione("Valori mancanti", intro="""
-        I valori mancanti possono causare problemi nelle analisi e vanno gestiti.
+        I valori mancanti possono causare problemi nelle analisi e vanno gestiti adeguatamente. In pandas un
+        valore numerico mancante si rappresenta con `NaN` (*Not a Number*), e anche il `None` di Python,
+        inserito in una colonna numerica, viene convertito in `NaN`. Il DataFrame qui sotto ha tre valori
+        mancanti, uno in ciascuna colonna.
     """)
     nb.code("""
         # creare un DataFrame con valori mancanti
@@ -135,19 +162,20 @@ def costruisci() -> Notebook:
         df_mancanti
     """)
     nb.md("""
-        `isnull()` (e il suo opposto `notnull()`) dice per ogni cella se il valore manca. Con `.sum()`
-        contiamo i mancanti per colonna.
+        Il metodo `isnull()` restituisce un DataFrame di `True` e `False` che indica, cella per cella, se il
+        valore manca, mentre `notnull()` fa il contrario. Poiché nella somma `True` vale 1 e `False` vale 0,
+        aggiungendo `.sum()` otteniamo il numero di valori mancanti in ogni colonna.
     """)
     nb.code("""
         # identificare i valori mancanti
         df_mancanti.isnull().sum()
     """)
     nb.md("""
-        Per risolvere i valori mancanti abbiamo tre strade:
-
-        - **Riempimento**: `fillna()` sostituisce i valori mancanti con un valore specificato.
-        - **Rimozione**: `dropna()` elimina le righe o le colonne con valori mancanti.
-        - **Interpolazione**: stima i valori mancanti basandosi sui dati esistenti.
+        Una volta individuati, i valori mancanti si possono trattare in tre modi. Il riempimento, con
+        `fillna()`, sostituisce ogni valore mancante con un valore scelto da noi; la rimozione, con
+        `dropna()`, elimina le righe o le colonne che contengono valori mancanti; l'interpolazione, infine,
+        stima i valori mancanti a partire da quelli esistenti ed è utile soprattutto con le serie temporali.
+        Nella cella qui sotto riempiamo tutti i valori mancanti con zero.
     """)
     nb.code("""
         # riempire i valori mancanti con zero
@@ -155,19 +183,26 @@ def costruisci() -> Notebook:
         df_riempito
     """)
     nb.md("""
-        `fillna` restituisce una copia: per modificare la colonna la riassegniamo.
+        Il metodo `fillna()` non modifica il DataFrame di partenza ma ne restituisce una copia, per cui
+        `df_mancanti` contiene ancora i suoi valori mancanti. Per cambiare una colonna dobbiamo riassegnarla,
+        come nella cella qui sotto, dove riempiamo la colonna `A` con la sua mediana. Applicando poi
+        `dropna()` resta soltanto la prima riga, l'unica senza valori mancanti nelle colonne `B` e `C`.
     """)
     nb.code("""
         df_mancanti["A"] = df_mancanti["A"].fillna(df_mancanti["A"].median())
         df_mancanti.dropna()
     """)
     nb.md("""
-        - **Quando rimuovere**: se i dati mancanti sono pochi e la rimozione non influisce sull'analisi.
-        - **Quando riempire**: se i dati mancanti sono molti e c'è un valore appropriato per sostituirli.
+        La scelta tra rimuovere e riempire dipende dai dati. Conviene rimuovere le righe quando i valori
+        mancanti sono pochi e la loro eliminazione non cambia il risultato dell'analisi; conviene riempirli
+        quando sono molti, purché esista un valore appropriato con cui sostituirli, come lo zero per una
+        quantità non registrata o la mediana per una misura.
     """)
 
     nb.sottosezione("Duplicati", intro="""
-        I duplicati possono distorcere i risultati delle analisi e vanno identificati e gestiti.
+        Le righe duplicate possono distorcere i risultati delle analisi, per esempio facendo contare due
+        volte la stessa vendita, e vanno quindi identificate e gestite. Nel DataFrame di esempio la terza
+        riga ripete esattamente la prima.
     """)
     nb.code("""
         # creare un DataFrame con duplicati
@@ -178,6 +213,11 @@ def costruisci() -> Notebook:
         }
         df_doppi = pd.DataFrame(dati_doppi)
         df_doppi
+    """)
+    nb.md("""
+        Il metodo `duplicated()` restituisce una maschera booleana che vale `True` per ogni riga identica a
+        una riga precedente, mentre la prima occorrenza resta `False`. Il metodo `drop_duplicates()`, nella
+        cella successiva, elimina le righe segnalate e conserva la prima occorrenza di ciascuna.
     """)
     nb.code("""
         # identificare i duplicati
@@ -191,7 +231,9 @@ def costruisci() -> Notebook:
 
     nb.sottosezione("Trasformazione", intro="""
         Possiamo aggiungere, modificare o eliminare colonne in un DataFrame per adattarlo alle nostre
-        esigenze. Una colonna nuova si crea assegnando un'espressione a un nome che non esiste ancora.
+        esigenze. Una colonna nuova si crea assegnando un'espressione a un nome che non esiste ancora, e
+        l'espressione viene calcolata per tutte le righe insieme. Nell'esempio `70 - df["Età"]` produce gli
+        anni mancanti alla pensione di ciascuna persona, senza bisogno di un ciclo.
     """)
     nb.code("""
         df["Anni alla pensione"] = 70 - df["Età"]
@@ -199,11 +241,18 @@ def costruisci() -> Notebook:
     """)
     with nb.solo("avanzata"):
         nb.md("""
-            Con `.loc` e una condizione modifichiamo solo le righe che la rispettano: qui chi ha meno di 25
-            anni ha il 30% di anni in più alla pensione, gli altri restano uguali.
+            Con `.loc` e una maschera possiamo modificare soltanto le righe che rispettano una condizione.
+            Nell'esempio applichiamo una riforma ipotetica, per cui chi ha meno di 25 anni ha il 30% di anni
+            in più alla pensione, mentre per gli altri il valore resta lo stesso. La prima cella salva la
+            condizione nella variabile `cond_riforma`.
         """)
         nb.code("""
             cond_riforma = df["Età"] < 25
+        """)
+        nb.md("""
+            La seconda cella scrive la nuova colonna in due passi. Per le righe in cui `cond_riforma` vale
+            `True` moltiplica gli anni per 1,3, mentre per le altre, selezionate con `~cond_riforma`, copia il
+            valore originale; poiché la colonna non esiste ancora, pandas la crea alla prima assegnazione.
         """)
         nb.code("""
             df.loc[cond_riforma, "Anni alla pensione riforma"] = df.loc[cond_riforma, "Anni alla pensione"] * 1.3
@@ -211,17 +260,25 @@ def costruisci() -> Notebook:
             df
         """)
         nb.box("attenzione", """
-            `df[cond]["col"] = valore` non modifica `df`: scrive su una copia, e pandas 3 avvisa con
-            `ChainedAssignmentError`. Per cambiare le righe filtrate si usa sempre `df.loc[cond, "col"] = valore`.
+            Un'assegnazione scritta come `df[cond]["col"] = valore` non modifica `df`, perché il primo filtro
+            produce una copia e il valore viene scritto su quella; pandas 3 lo segnala con l'avviso
+            `ChainedAssignmentError`. Per cambiare le righe filtrate si usa sempre la forma
+            `df.loc[cond, "col"] = valore`, che seleziona righe e colonna in un'unica operazione.
         """)
     nb.md("""
-        Quando la colonna nuova non viene da un conto, `.map` traduce ogni valore con un dizionario e
-        `.apply` applica una funzione a ogni valore.
+        Quando la colonna nuova non si ottiene con un calcolo aritmetico, sono utili due metodi. Il primo è
+        `.map()`, che traduce ogni valore di una colonna attraverso un dizionario; nella cella qui sotto lo
+        usiamo per ricavare la regione dalla città.
     """)
     nb.code("""
         regioni = {"Roma": "Lazio", "Milano": "Lombardia", "Torino": "Piemonte"}
         df["Regione"] = df["Città"].map(regioni)
         df
+    """)
+    nb.md("""
+        Il secondo è `.apply()`, che applica a ogni valore una funzione scritta da noi ed è la scelta
+        naturale quando la regola richiede un `if`. La funzione `fascia_eta` riceve un'età e restituisce
+        l'etichetta della fascia corrispondente.
     """)
     nb.code('''
         def fascia_eta(eta):
@@ -236,13 +293,16 @@ def costruisci() -> Notebook:
     ''')
 
     nb.sottosezione("Gestione degli indici", aula="base", intro="""
-        Dopo un ordinamento con `sort_values` (lo vediamo tra poco) le righe tengono l'indice di prima,
-        in disordine. `reset_index(drop=True)` lo fa ripartire da 0 e scarta il vecchio.
+        Quando ordiniamo un DataFrame con `sort_values`, che vedremo tra poco, ogni riga conserva l'etichetta
+        di indice che aveva prima, e l'indice risulta quindi in disordine. Il metodo `reset_index(drop=True)`
+        crea un nuovo indice che parte da 0 e scarta il vecchio, invece di trasformarlo in una colonna.
     """)
     with nb.solo("avanzata"):
         nb.sottosezione("Gestione degli indici", intro="""
             Gli indici permettono di accedere ai dati per etichetta e di allineare e unire tabelle diverse.
-            `set_index()` trasforma una o più colonne in indice, `reset_index()` fa il contrario.
+            `set_index()` trasforma una o più colonne in indice, `reset_index()` fa il contrario. Con un
+            indice formato da due colonne, una riga si seleziona con una tupla di etichette, come
+            `("Alice", "Roma")`.
         """)
         nb.code("""
             # impostare due colonne come indice
@@ -255,16 +315,20 @@ def costruisci() -> Notebook:
             df_reset
         """)
         nb.md("""
-            Dopo un ordinamento con `sort_values` (lo vediamo tra poco) le righe tengono l'indice di prima,
-            in disordine. `reset_index(drop=True)` lo fa ripartire da 0 e scarta il vecchio invece di
-            trasformarlo in una colonna.
+            Quando ordiniamo un DataFrame con `sort_values`, che vedremo tra poco, ogni riga conserva
+            l'etichetta di indice che aveva prima, e l'indice risulta quindi in disordine. Con
+            `reset_index(drop=True)` l'indice riparte da 0 e quello vecchio viene scartato, invece di essere
+            trasformato in una colonna come nella cella precedente.
         """)
     nb.code("""
         df.sort_values("Età").reset_index(drop=True)
     """)
 
     nb.sottosezione("Rinomina delle colonne", intro="""
-        Possiamo rinominare le colonne con `rename` e un dizionario da nome vecchio a nome nuovo.
+        Per rinominare le colonne si usa il metodo `rename`, a cui si passa con l'argomento `columns` un
+        dizionario che associa a ogni nome vecchio il nome nuovo. Le colonne che non compaiono nel
+        dizionario restano come sono, e il metodo restituisce un nuovo DataFrame senza modificare quello di
+        partenza.
     """)
     nb.code("""
         df_rinominato = df.rename(columns={"Città": "Residenza", "Età": "age"})
@@ -273,11 +337,14 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Ordinamento dei dati", intro="""
-        L'ordinamento serve sia nell'analisi sia nella presentazione dei risultati.
+        L'ordinamento serve sia durante l'analisi, per esempio per trovare i valori più alti, sia nella
+        presentazione dei risultati. Pandas offre due metodi, che ordinano le righe in base ai valori delle
+        colonne oppure in base all'indice.
     """)
     nb.sottosezione("sort_values e sort_index", intro="""
-        `sort_values()` ordina i dati in base ai valori di una o più colonne; `ascending=False` ordina
-        dal più grande.
+        Il metodo `sort_values()` ordina le righe in base ai valori di una colonna, indicata con `by`.
+        L'ordine predefinito è crescente, e con `ascending=False` si ordina dal valore più grande al più
+        piccolo, come nell'esempio, che mette in cima la persona più anziana.
     """)
     nb.code("""
         # ordinare per età
@@ -285,11 +352,15 @@ def costruisci() -> Notebook:
         df_ordinato
     """)
     nb.md("""
-        `sort_index()` ordina in base all'indice: è utile quando l'indice ha un significato.
+        Il metodo `sort_index()` ordina invece le righe in base all'indice, ed è utile quando l'indice ha un
+        significato proprio, come un codice o una data. Applicato a `df_ordinato`, per esempio, riporterebbe
+        le righe nell'ordine `id_1`, `id_2`, `id_3`.
     """)
     nb.sottosezione("Ordinamento su più colonne", intro="""
-        Possiamo ordinare usando più colonne come chiavi: a pari valore della prima decide la seconda.
-        `ascending` accetta una lista, un valore per colonna.
+        Possiamo ordinare usando più colonne come chiavi, passando a `by` una lista di nomi. Le righe vengono
+        ordinate secondo la prima colonna, e la seconda decide l'ordine solo tra le righe che hanno lo stesso
+        valore nella prima. Anche `ascending` accetta una lista, con un valore per ciascuna colonna, per cui
+        nell'esempio l'età è in ordine decrescente e il nome in ordine crescente.
     """)
     nb.code("""
         # ordinare per età e poi per nome
@@ -299,14 +370,12 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Groupby", intro="""
-        Il metodo `groupby()` **suddivide** un DataFrame in gruppi in base a una o più colonne, per poi
-        applicare un'**aggregazione** ai dati di ciascun gruppo. È la logica **Split-Apply-Combine**:
-
-        1. **Split**: dividere i dati in gruppi in base a una o più colonne.
-        2. **Apply**: applicare una funzione (somma, media, conteggio) a ogni gruppo.
-        3. **Combine**: unire i risultati in un nuovo oggetto pandas (Series o DataFrame).
-
-        La forma è `df.groupby("colonna_di_raggruppamento")["colonna"].funzione()`.
+        Il metodo `groupby()` suddivide un DataFrame in gruppi in base ai valori di una o più colonne, per
+        poi applicare un'aggregazione ai dati di ciascun gruppo. Questa logica prende il nome di
+        **Split-Apply-Combine**: i dati vengono prima divisi in gruppi (*split*), poi a ogni gruppo si applica
+        una funzione come la somma, la media o il conteggio (*apply*), e infine i risultati vengono riuniti
+        in un nuovo oggetto pandas, una Series o un DataFrame (*combine*). La forma tipica è
+        `df.groupby("colonna_di_raggruppamento")["colonna"].funzione()`.
     """)
     nb.code("""
         vendite = pd.DataFrame({
@@ -318,12 +387,17 @@ def costruisci() -> Notebook:
         vendite.groupby("Categoria")["Vendite"].sum()
     """)
     nb.md("""
-        `groupby()` da solo restituisce un oggetto GroupBy, che aspetta una funzione per elaborare i
-        gruppi. Con `sum()` otteniamo una riga per gruppo, con la categoria nell'indice.
+        Il metodo `groupby()` da solo restituisce un oggetto GroupBy, che contiene i gruppi ma non calcola
+        ancora nulla e aspetta una funzione per elaborarli. Con `sum()` otteniamo una Series con una riga per
+        gruppo, in cui la categoria fa da indice; nel nostro esempio la somma vale 370 per la categoria A,
+        450 per la B e 300 per la C.
     """)
     with nb.solo("avanzata"):
         nb.sottosezione("Aggregazione multipla", intro="""
-            Con `.agg()` calcoliamo più statistiche in una volta sola.
+            Con il metodo `.agg()` calcoliamo più statistiche in una volta sola, passando un dizionario che
+            associa a ogni colonna la lista delle funzioni da applicare. Il risultato ha una colonna per ogni
+            statistica, e la selezione finale `["Vendite"]` toglie il livello superiore dei nomi di colonna,
+            che altrimenti ripeterebbe `Vendite` sopra ciascuna.
         """)
         nb.code("""
             vendite.groupby("Categoria").agg({"Vendite": ["sum", "mean", "count"]})["Vendite"]
@@ -331,15 +405,17 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Unione e concatenazione di DataFrame", intro="""
-        Pandas offre diversi modi per combinare più DataFrame.
+        Pandas offre diversi modi per combinare più DataFrame. I due più usati sono `merge()`, che affianca
+        le colonne di due tabelle facendo corrispondere le righe attraverso una chiave, e `concat()`, che
+        mette le tabelle una sotto l'altra.
     """)
     nb.sottosezione("Merge", intro="""
-        `merge()` combina DataFrame in base a chiavi comuni, come un join in SQL. Tipi di join:
-
-        - **Inner join**: le righe con chiavi presenti in entrambi i DataFrame.
-        - **Left join**: tutte le righe del DataFrame di sinistra e quelle corrispondenti di destra.
-        - **Right join**: tutte le righe del DataFrame di destra e quelle corrispondenti di sinistra.
-        - **Outer join**: tutte le righe, che abbiano una corrispondenza o no.
+        Il metodo `merge()` combina due DataFrame in base a una o più colonne chiave comuni, come un join in
+        SQL, e il parametro `how` stabilisce quali righe tenere. Con l'inner join restano solo le righe la
+        cui chiave è presente in entrambi i DataFrame. Il left join tiene tutte le righe del DataFrame di
+        sinistra, completate con i dati di destra dove c'è una corrispondenza, e il right join fa lo stesso
+        partendo da destra. L'outer join, infine, tiene tutte le righe di entrambi, che abbiano una
+        corrispondenza o no.
     """)
     nb.code("""
         # DataFrame di esempio
@@ -350,13 +426,19 @@ def costruisci() -> Notebook:
         df_inner = pd.merge(df_sinistra, df_destra, on="ID", how="inner")
         df_inner
     """)
+    nb.md("""
+        L'inner join restituisce una sola riga, perché l'ID 3 è l'unico presente in entrambi i DataFrame.
+        Con l'outer join, nella cella successiva, compaiono invece tutti e cinque gli ID, e i valori che una
+        delle due tabelle non fornisce restano `NaN`.
+    """)
     nb.code("""
         # outer join
         df_outer = pd.merge(df_sinistra, df_destra, on="ID", how="outer")
         df_outer
     """)
     nb.md("""
-        Con il left join teniamo tutte le righe del DataFrame di sinistra: dove manca la corrispondenza
+        Con il left join teniamo tutte le righe del DataFrame di sinistra, cioè i tre nomi. Solo Charlie,
+        che ha ID 3, trova un'età corrispondente in `df_destra`, mentre per Alice e Bob la colonna `Età`
         resta `NaN`.
     """)
     nb.code("""
@@ -364,7 +446,9 @@ def costruisci() -> Notebook:
         pd.merge(df_sinistra, df_destra, on="ID", how="left")
     """)
     nb.sottosezione("Concatenazione", intro="""
-        `concat()` unisce DataFrame verticalmente, aggiungendo righe.
+        La funzione `concat()` unisce DataFrame verticalmente, aggiungendo le righe del secondo sotto quelle
+        del primo. Con `ignore_index=True` l'indice del risultato riparte da 0, e con `sort=False` le colonne
+        restano nell'ordine in cui compaiono, senza essere riordinate alfabeticamente.
     """)
     nb.code("""
         # concatenazione verticale
@@ -372,15 +456,20 @@ def costruisci() -> Notebook:
         df_concatenato
     """)
     nb.md("""
-        `merge` unisce su una chiave comune, `concat` mette una tabella sotto l'altra.
+        Poiché `df_sinistra` e `df_destra` hanno colonne diverse, nel risultato ogni riga ha `NaN` nelle
+        colonne che appartengono all'altra tabella. Per questo `concat()` si usa di solito con DataFrame che
+        hanno le stesse colonne, come i fogli Excel del notebook precedente, mentre `merge()` serve quando le
+        tabelle condividono una chiave e vogliamo affiancarne le informazioni.
     """)
 
     nb.md("Riassunto in una pagina: [Da Excel a pandas](../Schede/Scheda_Excel_pandas.md).")
 
     # ------------------------------------------------------------------ 6
     nb.sezione("Esercizi", intro="""
-        Lavori come data analyst per un'azienda che gestisce una piattaforma di streaming musicale.
-        Il dataset con gli ascolti degli utenti è questo: eseguilo prima dei primi tre esercizi.
+        Negli esercizi che seguono lavori come data analyst per un'azienda che gestisce una piattaforma di
+        streaming musicale. I primi tre usano il DataFrame `ascolti`, definito nella cella qui sotto, che
+        registra per ogni utente la canzone, l'artista e il numero di ascolti; la cella va eseguita prima di
+        cominciare.
     """)
     nb.code("""
         # DataFrame degli ascolti
@@ -398,12 +487,12 @@ def costruisci() -> Notebook:
         titolo="Gli ascolti di un utente",
         scenario="",
         richiesta="""
-            Trova tutte le canzoni ascoltate dall'utente con `UserID` 103: filtra `ascolti` per tenere
-            solo le righe dove `UserID` è 103 e salva il risultato in `ascolti_utente_103`.
+            Trova tutte le canzoni ascoltate dall'utente con `UserID` 103. Per farlo, filtra `ascolti` in modo
+            da tenere solo le righe in cui `UserID` vale 103 e salva il risultato in `ascolti_utente_103`.
 
-            Output atteso: una riga, `Song A` di `Artist X` con 4 ascolti.
+            Il risultato è una sola riga, con `Song A` di `Artist X` e 4 ascolti.
         """,
-        suggerimento="usa il filtraggio condizionale con una maschera booleana.",
+        suggerimento="costruisci una maschera booleana con il confronto `==` e usala per filtrare il DataFrame.",
         starter="""
             cond = ...
             ascolti_utente_103 = ...
@@ -425,12 +514,13 @@ def costruisci() -> Notebook:
         titolo="Totale di ascolti per canzone",
         scenario="",
         richiesta="""
-            Calcola il totale di ascolti per ogni canzone: raggruppa per `Song` e somma i valori di
-            `Plays`. Salva il risultato in `ascolti_per_canzone`.
+            Calcola il totale degli ascolti di ogni canzone, raggruppando le righe per `Song` e sommando i
+            valori di `Plays`, e salva il risultato in `ascolti_per_canzone`.
 
-            Output atteso: Song A 19, Song B 7, Song C 1, Song D 2.
+            Il risultato è una Series con quattro valori: 19 per Song A, 7 per Song B, 1 per Song C e 2 per
+            Song D.
         """,
-        suggerimento="usa `groupby()` seguito da `sum()`.",
+        suggerimento="serve `groupby()` seguito da `sum()`.",
         starter="""
             ascolti_per_canzone = ascolti.groupby("...")["..."].sum()
             ascolti_per_canzone
@@ -449,11 +539,13 @@ def costruisci() -> Notebook:
         titolo="L'artista più ascoltato",
         scenario="",
         richiesta="""
-            Identifica l'artista più popolare: raggruppa per `Artist`, somma `Plays` e ordina in modo
-            decrescente (`ascolti_per_artista`). Poi salva in `artista_top` il nome dell'artista con il
-            totale di ascolti più alto.
+            Identifica l'artista più ascoltato. Raggruppa le righe per `Artist`, somma `Plays` e ordina i
+            totali in modo decrescente, salvando il risultato in `ascolti_per_artista`; poi salva in
+            `artista_top` il nome dell'artista con il totale più alto.
+
+            Il risultato è una Series con un totale per artista, e il primo valore, il più alto, è 19.
         """,
-        suggerimento="combina `groupby()`, `sum()` e `sort_values()`; `idxmax()` restituisce l'etichetta del valore massimo.",
+        suggerimento="combina `groupby()`, `sum()` e `sort_values()`, mentre `idxmax()` restituisce l'etichetta del valore massimo.",
         starter="""
             ascolti_per_artista = ascolti.groupby(...)[...].sum().sort_values(ascending=False)
             artista_top = ascolti_per_artista.idxmax()
@@ -475,18 +567,19 @@ def costruisci() -> Notebook:
         facoltativo=True,
         scenario="""
             Il file `U.S. Electricity Prices.csv` contiene il prezzo medio mensile dell'elettricità negli
-            Stati Uniti (in centesimi di dollaro per kWh), per stato e per settore, dal 2001 al 2024.
+            Stati Uniti, in centesimi di dollaro per kWh, per stato e per settore, dal 2001 al 2024.
         """,
         richiesta="""
-            1. Leggi il file in `prezzi` e tieni solo le righe con `sectorName` uguale a `"all sectors"`.
-            2. Calcola il prezzo medio (`price`) per stato (`stateDescription`) in `prezzo_medio`,
-               con `reset_index()` per riavere lo stato come colonna.
-            3. Unisci `stati` (già definito nella cella) e `prezzo_medio` con un inner join sulla
-               colonna `stateDescription`, nel DataFrame `prezzi_stati`.
+            1. Partendo da `prezzi`, che la cella legge dal file, tieni in `tutti_settori` solo le righe in
+               cui `sectorName` vale `"all sectors"`.
+            2. Calcola il prezzo medio (`price`) di ogni stato (`stateDescription`) e salvalo in
+               `prezzo_medio`, usando `reset_index()` per riavere lo stato come colonna.
+            3. Unisci `stati`, già definito nella cella, e `prezzo_medio` con un inner join sulla colonna
+               `stateDescription`, e salva il risultato nel DataFrame `prezzi_stati`.
 
-            Output atteso: quattro righe; il Texas ha un prezzo medio di circa 8,86.
+            Il risultato ha quattro righe, e il prezzo medio del Texas è di circa 8,86 centesimi per kWh.
         """,
-        suggerimento="guarda prima le colonne con `prezzi.head()`.",
+        suggerimento="conviene guardare prima le colonne e i loro valori con `prezzi.head()`.",
         starter="""
             prezzi = pd.read_csv("../Dati/U.S. Electricity Prices.csv")
             stati = pd.DataFrame({
@@ -518,8 +611,10 @@ def costruisci() -> Notebook:
             assert round(prezzo_tx, 2) == 8.86, "❌ Filtra su all sectors prima della media"
         """,
         perche="""
-            Il file contiene anche regioni e il totale nazionale (`New England`, `U.S. Total`): l'inner
-            join con `stati` tiene solo gli stati che ci interessano, con la loro sigla.
+            Oltre ai singoli stati, il file contiene righe per le regioni e per il totale nazionale, come
+            `New England` e `U.S. Total`. L'inner join con `stati` tiene soltanto i quattro stati che ci
+            interessano e aggiunge a ciascuno la sua sigla. Il filtro su `all sectors` va applicato prima
+            della media, altrimenti la media mescolerebbe i prezzi dei singoli settori con quello complessivo.
         """,
     )
 
