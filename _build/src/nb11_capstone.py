@@ -292,9 +292,9 @@ def costruisci() -> Notebook:
             **Serie giornaliera (somma)**
 
             1. Parti dal DataFrame quartorario `df`.
-            2. Imposta la colonna `Date` come indice temporale in `df_temp`.
+            2. Imposta la colonna `Date` come indice temporale in `df_indicizzato`.
             3. Aggrega per giorno usando `resample("D")` e calcola la **somma** del carico.
-            4. Riporta `Date` come colonna e salva il risultato in `df_daily`. Aggiungi la colonna
+            4. Riporta `Date` come colonna e salva il risultato in `df_giornaliero`. Aggiungi la colonna
                `Energia [MWh]`: la somma divisa per 4, perché un quarto d'ora a P MW vale P/4 MWh.
             5. Visualizza la serie giornaliera con Plotly.
 
@@ -318,11 +318,11 @@ def costruisci() -> Notebook:
         suggerimento="`dt.hour` e `dt.dayofweek` estraggono ora e giorno della settimana; `reset_index()` dopo `groupby` riporta la chiave come colonna.",
         starter_base="""
             # serie giornaliera (punti 1-5)
-            df_temp = df.set_index("Date")
-            df_daily = df_temp["Total Load [MW]"].resample(...).sum()
-            df_daily = df_daily.reset_index()
-            df_daily["Energia [MWh]"] = ...
-            fig = px.line(df_daily, x="Date", y=..., title="Energia giornaliera, zona Nord")
+            df_indicizzato = df.set_index("Date")
+            df_giornaliero = df_indicizzato["Total Load [MW]"].resample(...).sum()
+            df_giornaliero = df_giornaliero.reset_index()
+            df_giornaliero["Energia [MWh]"] = ...
+            fig = px.line(df_giornaliero, x="Date", y=..., title="Energia giornaliera, zona Nord")
             fig.show()
 
             # profilo medio giornaliero (punti 6-8)
@@ -342,7 +342,7 @@ def costruisci() -> Notebook:
         """,
         starter_avanzata="""
             # serie giornaliera
-            df_daily = ...
+            df_giornaliero = ...
 
             # profilo medio giornaliero
             profilo_orario = ...
@@ -351,11 +351,11 @@ def costruisci() -> Notebook:
             profilo_settimanale = ...
         """,
         soluzione="""
-            df_temp = df.set_index("Date")
-            df_daily = df_temp["Total Load [MW]"].resample("D").sum()
-            df_daily = df_daily.reset_index()
-            df_daily["Energia [MWh]"] = df_daily["Total Load [MW]"] / 4
-            fig = px.line(df_daily, x="Date", y="Energia [MWh]", title="Energia giornaliera, zona Nord")
+            df_indicizzato = df.set_index("Date")
+            df_giornaliero = df_indicizzato["Total Load [MW]"].resample("D").sum()
+            df_giornaliero = df_giornaliero.reset_index()
+            df_giornaliero["Energia [MWh]"] = df_giornaliero["Total Load [MW]"] / 4
+            fig = px.line(df_giornaliero, x="Date", y="Energia [MWh]", title="Energia giornaliera, zona Nord")
             fig.show()
 
             df["hour"] = df["Date"].dt.hour
@@ -375,7 +375,7 @@ def costruisci() -> Notebook:
             fig.show()
         """,
         verifica="""
-            assert len(df_daily) == 731 and df_daily["Energia [MWh]"].between(250_000, 700_000).all(), "❌ df_daily: 731 giorni, con l'energia tra 250.000 e 700.000 MWh (somma dei quartorari divisa per 4)"
+            assert len(df_giornaliero) == 731 and df_giornaliero["Energia [MWh]"].between(250_000, 700_000).all(), "❌ df_giornaliero: 731 giorni, con l'energia tra 250.000 e 700.000 MWh (somma dei quartorari divisa per 4)"
             assert profilo_orario.shape == (24, 2), "❌ profilo_orario: 24 righe (le ore) e 2 colonne, hour e Total Load [MW]"
             assert len(profilo_settimanale) == 7 and profilo_settimanale["Total Load [MW]"].idxmin() == 6, "❌ profilo_settimanale: 7 righe, con la domenica (6) come giorno più leggero"
         """,
@@ -405,10 +405,10 @@ def costruisci() -> Notebook:
             def scarica_temperatura(start, end):
                 \"\"\"Temperatura oraria a Milano tra due date (Open-Meteo): dizionario con le liste time e temperature_2m.\"\"\"
                 url = "https://archive-api.open-meteo.com/v1/archive"
-                params = {"latitude": 45.4642, "longitude": 9.19, "start_date": start, "end_date": end,
+                parametri = {"latitude": 45.4642, "longitude": 9.19, "start_date": start, "end_date": end,
                           "hourly": "temperature_2m", "timezone": "Europe/Rome"}
                 try:
-                    response = requests.get(url, params=params, timeout=30)
+                    response = requests.get(url, params=parametri, timeout=30)
                     response.raise_for_status()
                     return response.json()["hourly"]
                 except requests.RequestException:
@@ -431,7 +431,7 @@ def costruisci() -> Notebook:
         4. Fai il resample a quartorario per poter integrare con il carico (`resample("15min")` +
            `interpolate(method="linear")`), riporta `Date` come colonna e salva il risultato in `meteo_15`.
         5. Fai il merge con il DataFrame del carico `df`, tenendo tutte le sue righe, e salva il risultato in
-           `df_full`.
+           `df_completo`.
         6. Mancano i dati dell'ultima ora del 2025: riempi la temperatura con `ffill()`.
         7. Visualizza la temperatura con `px.line()`.
     """
@@ -444,38 +444,38 @@ def costruisci() -> Notebook:
         meteo_15 = meteo.resample("15min").interpolate(method="linear")
         meteo_15 = meteo_15.reset_index()
 
-        df_full = pd.merge(df, meteo_15, on="Date", how="left")
-        print(df_full["Temperature_C"].isna().sum(), "temperature mancanti dopo il merge")
-        df_full["Temperature_C"] = df_full["Temperature_C"].ffill()
+        df_completo = pd.merge(df, meteo_15, on="Date", how="left")
+        print(df_completo["Temperature_C"].isna().sum(), "temperature mancanti dopo il merge")
+        df_completo["Temperature_C"] = df_completo["Temperature_C"].ffill()
 
-        fig = px.line(df_full, x="Date", y="Temperature_C", title="Temperatura a Milano",
+        fig = px.line(df_completo, x="Date", y="Temperature_C", title="Temperatura a Milano",
                       labels={"Temperature_C": "temperatura [°C]"})
         fig.show()
     """
     verifica_5 = """
         assert list(meteo_15.columns) == ["Date", "Temperature_C"], "❌ meteo_15: due colonne, Date e Temperature_C (dopo resample serve reset_index)"
-        assert len(df_full) == len(df), "❌ df_full: il merge con how=\\"left\\" tiene tutte le righe di df"
-        assert df_full["Temperature_C"].notna().all(), "❌ df_full: restano temperature mancanti, usa ffill()"
+        assert len(df_completo) == len(df), "❌ df_completo: il merge con how=\\"left\\" tiene tutte le righe di df"
+        assert df_completo["Temperature_C"].notna().all(), "❌ df_completo: restano temperature mancanti, usa ffill()"
     """
     perche_5 = "L'interpolazione lineare stima i tre valori tra un'ora e la successiva: non è una misura. `how=\"left\"` tiene tutte le righe del carico; le ultime tre del 2025, dopo le 23:00, restano senza temperatura e le riempie `ffill`."
     nb.esercizio(
         titolo="Recupero e integrazione della temperatura", aula="base",
         scenario=scenario_5,
         richiesta=nb_d("""
-            1. Ricava `start_date` e `end_date` dal carico: primo e ultimo giorno, come testo `AAAA-MM-GG`
+            1. Ricava `data_inizio` e `data_fine` dal carico: primo e ultimo giorno, come testo `AAAA-MM-GG`
                (`.min()`, `.max()` e `.strftime("%Y-%m-%d")`).
-            2. Chiama `scarica_temperatura(start_date, end_date)` e trasforma il risultato in `meteo` con
+            2. Chiama `scarica_temperatura(data_inizio, data_fine)` e trasforma il risultato in `meteo` con
                `pd.DataFrame`.
         """, passi_comuni),
         suggerimento="`how=\"left\"` tiene tutte le righe del DataFrame di sinistra, la temperatura dove c'è. `resample(\"15min\")` crea una riga ogni quarto d'ora e `interpolate(method=\"linear\")` riempie quelle nuove.",
         starter="""
             # 1. l'intervallo da chiedere, come testo AAAA-MM-GG
-            start_date = df["Date"].min().strftime("%Y-%m-%d")
-            end_date = ...
-            print("Intervallo:", start_date, "->", end_date)
+            data_inizio = df["Date"].min().strftime("%Y-%m-%d")
+            data_fine = ...
+            print("Intervallo:", data_inizio, "->", data_fine)
 
             # 2. la risposta dell'API: un dizionario con le liste time e temperature_2m
-            orario = scarica_temperatura(start_date, end_date)
+            orario = scarica_temperatura(data_inizio, data_fine)
             meteo = pd.DataFrame(...)
 
             # 3. date vere, nomi delle colonne, Date come indice
@@ -488,21 +488,21 @@ def costruisci() -> Notebook:
             meteo_15 = meteo_15.reset_index()
 
             # 5. merge con il carico, tenendo tutte le righe di df
-            df_full = pd.merge(df, meteo_15, on=..., how=...)
+            df_completo = pd.merge(df, meteo_15, on=..., how=...)
 
             # 6. l'ultima ora del 2025 senza temperatura
-            df_full["Temperature_C"] = ...
+            df_completo["Temperature_C"] = ...
 
             # 7. la temperatura nel tempo
-            fig = px.line(df_full, x="Date", y="Temperature_C", title="Temperatura a Milano")
+            fig = px.line(df_completo, x="Date", y="Temperature_C", title="Temperatura a Milano")
             fig.show()
         """,
         soluzione=nb_d("""
-            start_date = df["Date"].min().strftime("%Y-%m-%d")
-            end_date = df["Date"].max().strftime("%Y-%m-%d")
-            print("Intervallo:", start_date, "->", end_date)
+            data_inizio = df["Date"].min().strftime("%Y-%m-%d")
+            data_fine = df["Date"].max().strftime("%Y-%m-%d")
+            print("Intervallo:", data_inizio, "->", data_fine)
 
-            orario = scarica_temperatura(start_date, end_date)
+            orario = scarica_temperatura(data_inizio, data_fine)
 
         """, soluzione_5_comune),
         verifica=verifica_5,
@@ -523,22 +523,22 @@ def costruisci() -> Notebook:
         starter="""
             import requests
 
-            start_date = ...
-            end_date = ...
+            data_inizio = ...
+            data_fine = ...
             url = "https://archive-api.open-meteo.com/v1/archive"
-            params = ...
+            parametri = ...
 
             orario = ...
         """,
         soluzione="""
             import requests
 
-            start_date = df["Date"].min().strftime("%Y-%m-%d")
-            end_date = df["Date"].max().strftime("%Y-%m-%d")
+            data_inizio = df["Date"].min().strftime("%Y-%m-%d")
+            data_fine = df["Date"].max().strftime("%Y-%m-%d")
             url = "https://archive-api.open-meteo.com/v1/archive"
-            params = {"latitude": 45.4642, "longitude": 9.19, "start_date": start_date, "end_date": end_date,
+            parametri = {"latitude": 45.4642, "longitude": 9.19, "start_date": data_inizio, "end_date": data_fine,
                       "hourly": "temperature_2m", "timezone": "Europe/Rome"}
-            response = requests.get(url, params=params, timeout=30)
+            response = requests.get(url, params=parametri, timeout=30)
             response.raise_for_status()
             orario = response.json()["hourly"]
         """,
@@ -557,12 +557,12 @@ def costruisci() -> Notebook:
             len(orario["time"])
         """)
         nb.celle.append(Cella("code", nb_d("""
-            # punti 2-7: da orario a df_full
+            # punti 2-7: da orario a df_completo
             meteo = ...
 
             meteo_15 = ...
 
-            df_full = ...
+            df_completo = ...
         """), aula="avanzata", solo_studente=True, ruolo="starter"))
         nb.celle.append(Cella("code", nb_d(soluzione_5_comune), aula="avanzata", solo_soluzioni=True, ruolo="soluzione"))
         nb.celle.append(Cella("code", nb_d(verifica_5), aula="avanzata", ruolo="verifica"))
@@ -573,7 +573,7 @@ def costruisci() -> Notebook:
         nb, titolo="Carico e temperatura",
         scenario="Un punto per giorno: temperatura media sulle x, carico medio sulle y, un colore per mese. Dalla forma della nuvola di punti si legge come il carico dipende dalla temperatura.",
         richiesta="""
-            1. Porta `df_full` a medie giornaliere in `giornaliero`: `Date` come indice, le colonne
+            1. Porta `df_completo` a medie giornaliere in `giornaliero`: `Date` come indice, le colonne
                `Total Load [MW]` e `Temperature_C`, `resample("D").mean()`, poi `reset_index()`.
             2. Aggiungi la colonna `mese` con il nome del mese (`dt.month_name()`): così lo scatter ha un colore
                per mese invece di una scala continua.
@@ -584,8 +584,8 @@ def costruisci() -> Notebook:
         suggerimento="con `dt.month`, che è un numero, Plotly colora con una scala continua; `dt.month_name()` dà un colore per mese.",
         starter_base="""
             # 1. medie giornaliere di carico e temperatura
-            df_temp = df_full.set_index("Date")
-            giornaliero = df_temp[["Total Load [MW]", "Temperature_C"]].resample(...).mean()
+            df_indicizzato = df_completo.set_index("Date")
+            giornaliero = df_indicizzato[["Total Load [MW]", "Temperature_C"]].resample(...).mean()
             giornaliero = giornaliero.reset_index()
 
             # 2. il nome del mese, per colorare i punti
@@ -603,8 +603,8 @@ def costruisci() -> Notebook:
             fig.show()
         """,
         soluzione="""
-            df_temp = df_full.set_index("Date")
-            giornaliero = df_temp[["Total Load [MW]", "Temperature_C"]].resample("D").mean()
+            df_indicizzato = df_completo.set_index("Date")
+            giornaliero = df_indicizzato[["Total Load [MW]", "Temperature_C"]].resample("D").mean()
             giornaliero = giornaliero.reset_index()
             giornaliero["mese"] = giornaliero["Date"].dt.month_name()
 

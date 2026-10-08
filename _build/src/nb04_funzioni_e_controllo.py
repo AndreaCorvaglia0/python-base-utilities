@@ -155,25 +155,25 @@ def costruisci() -> Notebook:
         Con `start=1` il conteggio parte da 1 invece che da 0.
     """)
     nb.code("""
-        days = ['lunedì', 'martedì', 'mercoledì']
+        giorni = ['lunedì', 'martedì', 'mercoledì']
 
-        for idx, day in enumerate(days, start=1):
-            print(idx, day)
+        for idx, giorno in enumerate(giorni, start=1):
+            print(idx, giorno)
     """)
     nb.md("""
         La funzione `zip()` permette di iterare su due liste in parallelo, combinando i loro elementi in coppie.
         In questo esempio controlliamo il meteo per trovare i giorni di sole.
     """)
     nb.code("""
-        days = ['lunedì', 'martedì', 'mercoledì']
-        weather_list = ['sole', 'pioggia', 'sole']
-        sunny_days = []
+        giorni = ['lunedì', 'martedì', 'mercoledì']
+        lista_meteo = ['sole', 'pioggia', 'sole']
+        giorni_di_sole = []
 
-        for day, weather in zip(days, weather_list):
-            if weather == 'sole':
-                sunny_days.append(day)
+        for giorno, meteo in zip(giorni, lista_meteo):
+            if meteo == 'sole':
+                giorni_di_sole.append(giorno)
 
-        print(f'I giorni di sole sono stati: {sunny_days}')
+        print(f'I giorni di sole sono stati: {giorni_di_sole}')
     """)
 
     nb.sottosezione("Ripetere un'azione con range()", intro="""
@@ -247,22 +247,22 @@ def costruisci() -> Notebook:
         ogni giorno di sole.
     """)
     nb.code('''
-        def sunny_fun(days, weather_list, annuncio=False):
+        def conta_giorni_di_sole(giorni, lista_meteo, annuncio=False):
             """Restituisce i giorni di sole."""
-            sunny_days = []
-            for day, weather in zip(days, weather_list):
-                if weather == 'sole':
+            giorni_di_sole = []
+            for giorno, meteo in zip(giorni, lista_meteo):
+                if meteo == 'sole':
                     if annuncio:
-                        print(f'Oggi è {day} ed è soleggiato!')
-                    sunny_days.append(day)
+                        print(f'Oggi è {giorno} ed è soleggiato!')
+                    giorni_di_sole.append(giorno)
 
-            return sunny_days
+            return giorni_di_sole
     ''')
     nb.code("""
-        days = ['lunedì', 'martedì', 'mercoledì']
-        weather_list = ['sole', 'pioggia', 'sole']
+        giorni = ['lunedì', 'martedì', 'mercoledì']
+        lista_meteo = ['sole', 'pioggia', 'sole']
 
-        sunny_fun(days, weather_list=weather_list, annuncio=True)
+        conta_giorni_di_sole(giorni, lista_meteo=lista_meteo, annuncio=True)
     """)
 
     # ------------------------------------------------------------------ 5 (A)
@@ -275,19 +275,19 @@ def costruisci() -> Notebook:
         """)
         nb.sottosezione("List comprehension", intro="Sintassi compatta per creare liste:")
         nb.code("""
-            squares = [x ** 2 for x in range(1, 11)]
-            print(squares)
+            lista_quadrati = [x ** 2 for x in range(1, 11)]
+            print(lista_quadrati)
         """)
         nb.sottosezione("La funzione map", intro="Applica una funzione a tutti gli elementi di una lista:")
         nb.code("""
-            numbers = [1, 2, 3, 4, 5]
-            squared_numbers = list(map(lambda x: x ** 2, numbers))
-            print(squared_numbers)
+            numeri = [1, 2, 3, 4, 5]
+            numeri_al_quadrato = list(map(lambda x: x ** 2, numeri))
+            print(numeri_al_quadrato)
         """)
         nb.sottosezione("La funzione filter", intro="Filtra gli elementi in base a una condizione:")
         nb.code("""
-            even_numbers = list(filter(lambda x: x % 2 == 0, numbers))
-            print(even_numbers)
+            numeri_pari = list(filter(lambda x: x % 2 == 0, numeri))
+            print(numeri_pari)
         """)
         nb.md("Questi strumenti permettono di scrivere codice più conciso.")
         nb.sottosezione("Generatori", intro="""
@@ -300,8 +300,8 @@ def costruisci() -> Notebook:
                 for i in range(1, n + 1):
                     yield i ** 2
 
-            gen = quadrati(3)
-            print(next(gen), next(gen), next(gen))  # Output: 1 4 9
+            generatore = quadrati(3)
+            print(next(generatore), next(generatore), next(generatore))  # Output: 1 4 9
         """)
 
     # ------------------------------------------------------------------ Esercizi
@@ -310,20 +310,20 @@ def costruisci() -> Notebook:
         titolo="Stringa invertita",
         scenario="",
         richiesta="""
-            Scrivi una funzione `reverse_string` che prenda in input una stringa e restituisca la stringa
+            Scrivi una funzione `inverti_stringa` che prenda in input una stringa e restituisca la stringa
             invertita. Esempio: input `'Python'`, output `'nohtyP'`.
         """,
         suggerimento="puoi pensare alla stringa come a una **lista** di caratteri.",
         starter="""
-            def reverse_string(stringa):
+            def inverti_stringa(stringa):
                 return ...
         """,
         soluzione="""
-            def reverse_string(stringa):
+            def inverti_stringa(stringa):
                 return stringa[::-1]
         """,
         verifica="""
-            assert reverse_string("Python") == "nohtyP", "❌ Stringa invertita errata"
+            assert inverti_stringa("Python") == "nohtyP", "❌ Stringa invertita errata"
         """,
     )
 
@@ -351,19 +351,19 @@ def costruisci() -> Notebook:
         """,
         starter=unisci("""
             def paesi_capitale_pari(dizionario):
-                result = ...  # inizializza una lista vuota
+                risultato = ...  # inizializza una lista vuota
                 for paese, capitale in ...:  # ciclo su chiave e valore (usa .items())
                     if ...:  # condizione: lunghezza pari del nome della capitale
-                        ...  # aggiungi a result il paese, visto che la condizione è rispettata
-                return result
+                        ...  # aggiungi a risultato il paese, visto che la condizione è rispettata
+                return risultato
         """, g10),
         soluzione=unisci("""
             def paesi_capitale_pari(dizionario):
-                result = []
+                risultato = []
                 for paese, capitale in dizionario.items():
                     if len(capitale) % 2 == 0:
-                        result.append(paese)
-                return result
+                        risultato.append(paese)
+                return risultato
         """, g10),
         verifica="""
             atteso = ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna']

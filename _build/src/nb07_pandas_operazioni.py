@@ -11,12 +11,19 @@ def costruisci() -> Notebook:
         blocco=3,
         giornata=2,
         intento="Selezione, pulizia, trasformazione, ordinamento, raggruppamento e unione di tabelle.",
-        obiettivi=[
-            "selezionare righe e colonne con `loc`, `iloc`, le condizioni e `.query()`",
-            "gestire valori mancanti e duplicati, creare colonne nuove e ordinare",
-            "raggruppare con `groupby` e unire DataFrame con `merge` e `concat`",
-        ],
-        tempo={"base": 90, "avanzata": 80},
+        obiettivi={
+            "base": [
+                "selezionare righe e colonne con `loc`, `iloc` e le condizioni",
+                "gestire valori mancanti e duplicati, creare colonne nuove e ordinare",
+                "raggruppare con `groupby` e unire DataFrame con `merge` e `concat`",
+            ],
+            "avanzata": [
+                "selezionare righe e colonne con `loc`, `iloc`, le condizioni e `.query()`",
+                "gestire valori mancanti e duplicati, creare colonne nuove e ordinare",
+                "raggruppare con `groupby` e unire DataFrame con `merge` e `concat`",
+            ],
+        },
+        tempo={"base": 70, "avanzata": 75},
         dati=["U.S. Electricity Prices.csv"],
     )
 
@@ -30,12 +37,12 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # creare un DataFrame da un dizionario
-        data = {
+        dati = {
             "Nome": ["Alice", "Bob", "Charlie"],
             "Età": [24, 27, 22],
             "Città": ["Roma", "Milano", "Torino"],
         }
-        df = pd.DataFrame(data, index=["id_1", "id_2", "id_3"])
+        df = pd.DataFrame(dati, index=["id_1", "id_2", "id_3"])
         df
     """)
 
@@ -67,24 +74,8 @@ def costruisci() -> Notebook:
         df.iloc[0:2, [1]]
     """)
 
-    nb.sottosezione("Differenze tra loc e iloc", intro="""
-        - `loc`: seleziona i dati in base alle etichette (indice).
-        - `iloc`: seleziona i dati in base alla posizione intera (indice numerico).
-
-        Esempio con `loc`:
-    """)
-    nb.code("""
-        df.loc["id_2":, ["Nome", "Età"]]
-    """)
     nb.md("""
-        Esempio con `iloc`:
-    """)
-    nb.code("""
-        df.iloc[1:3, :2]
-    """)
-    nb.md("""
-        `loc` permette una selezione più intuitiva quando si conoscono le etichette; con `loc` lo
-        slicing include anche l'ultima etichetta, con `iloc` l'ultima posizione resta esclusa.
+        Con `loc` lo slicing include anche l'ultima etichetta, con `iloc` l'ultima posizione è esclusa.
     """)
 
     nb.sottosezione("Selezione condizionale", intro="""
@@ -115,14 +106,15 @@ def costruisci() -> Notebook:
         Queste Series di `True` e `False` si chiamano maschere booleane.
     """)
 
-    nb.sottosezione("Il metodo query", intro="""
-        Il metodo `.query()` filtra le righe con una condizione scritta come testo, ed è comodo da
-        leggere quando le condizioni sono più di una. La sintassi di base è `df.query("condizione")`.
-    """)
-    nb.code("""
-        cols = ["Età", "Nome"]
-        df.query("Età > 23 and Età < 26").loc[:, cols]
-    """)
+    with nb.solo("avanzata"):
+        nb.sottosezione("Il metodo query", intro="""
+            Il metodo `.query()` filtra le righe con una condizione scritta come testo, ed è comodo da
+            leggere quando le condizioni sono più di una. La sintassi di base è `df.query("condizione")`.
+        """)
+        nb.code("""
+            colonne = ["Età", "Nome"]
+            df.query("Età > 23 and Età < 26").loc[:, colonne]
+        """)
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Manipolazione dei dati", intro="""
@@ -130,21 +122,17 @@ def costruisci() -> Notebook:
         dati e la trasformazione.
     """)
     nb.sottosezione("Valori mancanti", intro="""
-        I valori mancanti possono causare problemi nelle analisi e vanno gestiti. Ne esistono di tre tipi:
-
-        - `NaN` (Not a Number): usato per i valori mancanti numerici (`np.nan` di NumPy).
-        - `None`: l'oggetto Python che rappresenta l'assenza di valore.
-        - `pd.NA`: rappresenta i valori mancanti in pandas per i tipi estesi.
+        I valori mancanti possono causare problemi nelle analisi e vanno gestiti.
     """)
     nb.code("""
         # creare un DataFrame con valori mancanti
-        data_nan = {
+        dati_mancanti = {
             "A": [1, 2, np.nan],
             "B": [4, None, 6],
             "C": [7, 8, np.nan],
         }
-        df_nan = pd.DataFrame(data_nan)
-        df_nan
+        df_mancanti = pd.DataFrame(dati_mancanti)
+        df_mancanti
     """)
     nb.md("""
         `isnull()` (e il suo opposto `notnull()`) dice per ogni cella se il valore manca. Con `.sum()`
@@ -152,17 +140,7 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # identificare i valori mancanti
-        df_nan.isnull().sum()
-    """)
-    nb.md("""
-        Una colonna di interi con un `NaN` diventa di tipo `float64`. Anche `info()` mostra quanti
-        valori non mancanti ha ogni colonna.
-    """)
-    nb.code("""
-        df_nan["A"].dtype
-    """)
-    nb.code("""
-        df_nan.info()
+        df_mancanti.isnull().sum()
     """)
     nb.md("""
         Per risolvere i valori mancanti abbiamo tre strade:
@@ -172,19 +150,16 @@ def costruisci() -> Notebook:
         - **Interpolazione**: stima i valori mancanti basandosi sui dati esistenti.
     """)
     nb.code("""
-        df_nan["A"].fillna(df_nan["A"].median())
-    """)
-    nb.code("""
         # riempire i valori mancanti con zero
-        df_nan_filled = df_nan.fillna(0)
-        df_nan_filled
+        df_riempito = df_mancanti.fillna(0)
+        df_riempito
     """)
     nb.md("""
         `fillna` restituisce una copia: per modificare la colonna la riassegniamo.
     """)
     nb.code("""
-        df_nan["A"] = df_nan["A"].fillna(df_nan["A"].median())
-        df_nan.dropna()
+        df_mancanti["A"] = df_mancanti["A"].fillna(df_mancanti["A"].median())
+        df_mancanti.dropna()
     """)
     nb.md("""
         - **Quando rimuovere**: se i dati mancanti sono pochi e la rimozione non influisce sull'analisi.
@@ -196,22 +171,22 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # creare un DataFrame con duplicati
-        data_dup = {
+        dati_doppi = {
             "Nome": ["Alice", "Bob", "Alice"],
             "Età": [24, 27, 24],
             "Città": ["Roma", "Milano", "Roma"],
         }
-        df_dup = pd.DataFrame(data_dup)
-        df_dup
+        df_doppi = pd.DataFrame(dati_doppi)
+        df_doppi
     """)
     nb.code("""
         # identificare i duplicati
-        df_dup.duplicated()
+        df_doppi.duplicated()
     """)
     nb.code("""
         # rimuovere i duplicati
-        df_dup_clean = df_dup.drop_duplicates()
-        df_dup_clean
+        df_senza_doppi = df_doppi.drop_duplicates()
+        df_senza_doppi
     """)
 
     nb.sottosezione("Trasformazione", intro="""
@@ -222,22 +197,23 @@ def costruisci() -> Notebook:
         df["Anni alla pensione"] = 70 - df["Età"]
         df
     """)
-    nb.md("""
-        Con `.loc` e una condizione modifichiamo solo le righe che la rispettano: qui chi ha meno di 25
-        anni ha il 30% di anni in più alla pensione, gli altri restano uguali.
-    """)
-    nb.code("""
-        cond_riforma = df["Età"] < 25
-    """)
-    nb.code("""
-        df.loc[cond_riforma, "Anni alla pensione riforma"] = df.loc[cond_riforma, "Anni alla pensione"] * 1.3
-        df.loc[~cond_riforma, "Anni alla pensione riforma"] = df.loc[~cond_riforma, "Anni alla pensione"]
-        df
-    """)
-    nb.box("attenzione", """
-        `df[cond]["col"] = valore` non modifica `df`: scrive su una copia, e pandas 3 avvisa con
-        `ChainedAssignmentError`. Per cambiare le righe filtrate si usa sempre `df.loc[cond, "col"] = valore`.
-    """)
+    with nb.solo("avanzata"):
+        nb.md("""
+            Con `.loc` e una condizione modifichiamo solo le righe che la rispettano: qui chi ha meno di 25
+            anni ha il 30% di anni in più alla pensione, gli altri restano uguali.
+        """)
+        nb.code("""
+            cond_riforma = df["Età"] < 25
+        """)
+        nb.code("""
+            df.loc[cond_riforma, "Anni alla pensione riforma"] = df.loc[cond_riforma, "Anni alla pensione"] * 1.3
+            df.loc[~cond_riforma, "Anni alla pensione riforma"] = df.loc[~cond_riforma, "Anni alla pensione"]
+            df
+        """)
+        nb.box("attenzione", """
+            `df[cond]["col"] = valore` non modifica `df`: scrive su una copia, e pandas 3 avvisa con
+            `ChainedAssignmentError`. Per cambiare le righe filtrate si usa sempre `df.loc[cond, "col"] = valore`.
+        """)
     nb.md("""
         Quando la colonna nuova non viene da un conto, `.map` traduce ogni valore con un dizionario e
         `.apply` applica una funzione a ogni valore.
@@ -259,25 +235,30 @@ def costruisci() -> Notebook:
         df
     ''')
 
-    nb.sottosezione("Gestione degli indici", intro="""
-        Gli indici permettono di accedere ai dati per etichetta e di allineare e unire tabelle diverse.
-        `set_index()` trasforma una o più colonne in indice, `reset_index()` fa il contrario.
-    """)
-    nb.code("""
-        # impostare due colonne come indice
-        df_indexed = df.set_index(["Nome", "Città"])
-        df_indexed.loc[("Alice", "Roma")]
-    """)
-    nb.code("""
-        # resettare l'indice
-        df_reset = df_indexed.reset_index()
-        df_reset
-    """)
-    nb.md("""
+    nb.sottosezione("Gestione degli indici", aula="base", intro="""
         Dopo un ordinamento con `sort_values` (lo vediamo tra poco) le righe tengono l'indice di prima,
-        in disordine. `reset_index(drop=True)` lo fa ripartire da 0 e scarta il vecchio invece di
-        trasformarlo in una colonna.
+        in disordine. `reset_index(drop=True)` lo fa ripartire da 0 e scarta il vecchio.
     """)
+    with nb.solo("avanzata"):
+        nb.sottosezione("Gestione degli indici", intro="""
+            Gli indici permettono di accedere ai dati per etichetta e di allineare e unire tabelle diverse.
+            `set_index()` trasforma una o più colonne in indice, `reset_index()` fa il contrario.
+        """)
+        nb.code("""
+            # impostare due colonne come indice
+            df_indicizzato = df.set_index(["Nome", "Città"])
+            df_indicizzato.loc[("Alice", "Roma")]
+        """)
+        nb.code("""
+            # resettare l'indice
+            df_reset = df_indicizzato.reset_index()
+            df_reset
+        """)
+        nb.md("""
+            Dopo un ordinamento con `sort_values` (lo vediamo tra poco) le righe tengono l'indice di prima,
+            in disordine. `reset_index(drop=True)` lo fa ripartire da 0 e scarta il vecchio invece di
+            trasformarlo in una colonna.
+        """)
     nb.code("""
         df.sort_values("Età").reset_index(drop=True)
     """)
@@ -286,8 +267,8 @@ def costruisci() -> Notebook:
         Possiamo rinominare le colonne con `rename` e un dizionario da nome vecchio a nome nuovo.
     """)
     nb.code("""
-        df_renamed = df.rename(columns={"Città": "Residenza", "Età": "age"})
-        df_renamed
+        df_rinominato = df.rename(columns={"Città": "Residenza", "Età": "age"})
+        df_rinominato
     """)
 
     # ------------------------------------------------------------------ 3
@@ -300,16 +281,11 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # ordinare per età
-        df_sorted = df.sort_values(by="Età", ascending=False)
-        df_sorted
+        df_ordinato = df.sort_values(by="Età", ascending=False)
+        df_ordinato
     """)
     nb.md("""
-        `sort_index()` ordina in base all'indice: è utile quando l'indice ha un significato. Qui
-        prendiamo metà delle righe in ordine casuale con `sample` e le rimettiamo in ordine.
-    """)
-    nb.code("""
-        df_shuffled = df.sample(frac=0.5)
-        df_shuffled.sort_index()
+        `sort_index()` ordina in base all'indice: è utile quando l'indice ha un significato.
     """)
     nb.sottosezione("Ordinamento su più colonne", intro="""
         Possiamo ordinare usando più colonne come chiavi: a pari valore della prima decide la seconda.
@@ -317,8 +293,8 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # ordinare per età e poi per nome
-        df_multi_sorted = df.sort_values(by=["Età", "Nome"], ascending=[False, True])
-        df_multi_sorted
+        df_ordinato_2 = df.sort_values(by=["Età", "Nome"], ascending=[False, True])
+        df_ordinato_2
     """)
 
     # ------------------------------------------------------------------ 4
@@ -345,12 +321,13 @@ def costruisci() -> Notebook:
         `groupby()` da solo restituisce un oggetto GroupBy, che aspetta una funzione per elaborare i
         gruppi. Con `sum()` otteniamo una riga per gruppo, con la categoria nell'indice.
     """)
-    nb.sottosezione("Aggregazione multipla", intro="""
-        Con `.agg()` calcoliamo più statistiche in una volta sola.
-    """)
-    nb.code("""
-        vendite.groupby("Categoria").agg({"Vendite": ["sum", "mean", "count"]})["Vendite"]
-    """)
+    with nb.solo("avanzata"):
+        nb.sottosezione("Aggregazione multipla", intro="""
+            Con `.agg()` calcoliamo più statistiche in una volta sola.
+        """)
+        nb.code("""
+            vendite.groupby("Categoria").agg({"Vendite": ["sum", "mean", "count"]})["Vendite"]
+        """)
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Unione e concatenazione di DataFrame", intro="""
@@ -366,16 +343,16 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # DataFrame di esempio
-        df_left = pd.DataFrame({"ID": [1, 2, 3], "Nome": ["Alice", "Bob", "Charlie"]})
-        df_right = pd.DataFrame({"ID": [3, 4, 5], "Età": [35, 40, 45]})
+        df_sinistra = pd.DataFrame({"ID": [1, 2, 3], "Nome": ["Alice", "Bob", "Charlie"]})
+        df_destra = pd.DataFrame({"ID": [3, 4, 5], "Età": [35, 40, 45]})
 
         # inner join
-        df_inner = pd.merge(df_left, df_right, on="ID", how="inner")
+        df_inner = pd.merge(df_sinistra, df_destra, on="ID", how="inner")
         df_inner
     """)
     nb.code("""
         # outer join
-        df_outer = pd.merge(df_left, df_right, on="ID", how="outer")
+        df_outer = pd.merge(df_sinistra, df_destra, on="ID", how="outer")
         df_outer
     """)
     nb.md("""
@@ -384,25 +361,21 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # left join
-        pd.merge(df_left, df_right, on="ID", how="left")
+        pd.merge(df_sinistra, df_destra, on="ID", how="left")
     """)
     nb.sottosezione("Concatenazione", intro="""
-        `concat()` unisce DataFrame verticalmente (aggiunge righe) o orizzontalmente (aggiunge colonne).
+        `concat()` unisce DataFrame verticalmente, aggiungendo righe.
     """)
     nb.code("""
         # concatenazione verticale
-        df_concat_vertical = pd.concat([df_left, df_right], ignore_index=True, sort=False)
-        df_concat_vertical
+        df_concatenato = pd.concat([df_sinistra, df_destra], ignore_index=True, sort=False)
+        df_concatenato
     """)
-    nb.code("""
-        # concatenazione orizzontale
-        df_concat_horizontal = pd.concat([df_left, df_right], axis=1)
-        df_concat_horizontal
+    nb.md("""
+        `merge` unisce su una chiave comune, `concat` mette una tabella sotto l'altra.
     """)
-    nb.sottosezione("Differenze tra merge e concat", intro="""
-        - **Merge**: quando vogliamo combinare DataFrame su una o più chiavi comuni.
-        - **Concat**: quando vogliamo unire DataFrame che hanno le stesse colonne o lo stesso indice.
-    """)
+
+    nb.md("Riassunto in una pagina: [Da Excel a pandas](../Schede/Scheda_Excel_pandas.md).")
 
     # ------------------------------------------------------------------ 6
     nb.sezione("Esercizi", intro="""
@@ -411,40 +384,40 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # DataFrame degli ascolti
-        listens_data = {
+        dati_ascolti = {
             "UserID": [101, 102, 103, 104, 105, 106],
             "Song": ["Song A", "Song B", "Song A", "Song C", "Song B", "Song D"],
             "Artist": ["Artist X", "Artist Y", "Artist X", "Artist Z", "Artist Y", "Artist W"],
             "Plays": [15, 2, 4, 1, 5, 2],
         }
-        listens = pd.DataFrame(listens_data)
-        listens
+        ascolti = pd.DataFrame(dati_ascolti)
+        ascolti
     """)
 
     nb.esercizio(
         titolo="Gli ascolti di un utente",
         scenario="",
         richiesta="""
-            Trova tutte le canzoni ascoltate dall'utente con `UserID` 103: filtra `listens` per tenere
-            solo le righe dove `UserID` è 103 e salva il risultato in `user_103_listens`.
+            Trova tutte le canzoni ascoltate dall'utente con `UserID` 103: filtra `ascolti` per tenere
+            solo le righe dove `UserID` è 103 e salva il risultato in `ascolti_utente_103`.
 
             Output atteso: una riga, `Song A` di `Artist X` con 4 ascolti.
         """,
         suggerimento="usa il filtraggio condizionale con una maschera booleana.",
         starter="""
             cond = ...
-            user_103_listens = ...
-            user_103_listens
+            ascolti_utente_103 = ...
+            ascolti_utente_103
         """,
         soluzione="""
-            cond = listens["UserID"] == 103
-            user_103_listens = listens[cond]
-            user_103_listens
+            cond = ascolti["UserID"] == 103
+            ascolti_utente_103 = ascolti[cond]
+            ascolti_utente_103
         """,
         verifica="""
-            assert len(user_103_listens) == 1, "❌ Deve restare una sola riga"
-            assert user_103_listens["Song"].tolist() == ["Song A"], "❌ La canzone dell'utente 103 è Song A"
-            assert user_103_listens["Plays"].tolist() == [4], "❌ Gli ascolti dell'utente 103 sono 4"
+            assert len(ascolti_utente_103) == 1, "❌ Deve restare una sola riga"
+            assert ascolti_utente_103["Song"].tolist() == ["Song A"], "❌ La canzone dell'utente 103 è Song A"
+            assert ascolti_utente_103["Plays"].tolist() == [4], "❌ Gli ascolti dell'utente 103 sono 4"
         """,
     )
 
@@ -453,22 +426,22 @@ def costruisci() -> Notebook:
         scenario="",
         richiesta="""
             Calcola il totale di ascolti per ogni canzone: raggruppa per `Song` e somma i valori di
-            `Plays`. Salva il risultato in `total_plays_per_song`.
+            `Plays`. Salva il risultato in `ascolti_per_canzone`.
 
             Output atteso: Song A 19, Song B 7, Song C 1, Song D 2.
         """,
         suggerimento="usa `groupby()` seguito da `sum()`.",
         starter="""
-            total_plays_per_song = listens.groupby("...")["..."].sum()
-            total_plays_per_song
+            ascolti_per_canzone = ascolti.groupby("...")["..."].sum()
+            ascolti_per_canzone
         """,
         soluzione="""
-            total_plays_per_song = listens.groupby("Song")["Plays"].sum()
-            total_plays_per_song
+            ascolti_per_canzone = ascolti.groupby("Song")["Plays"].sum()
+            ascolti_per_canzone
         """,
         verifica="""
-            expected = {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}
-            assert total_plays_per_song.to_dict() == expected, "❌ Raggruppa per Song e somma Plays"
+            atteso = {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}
+            assert ascolti_per_canzone.to_dict() == atteso, "❌ Raggruppa per Song e somma Plays"
         """,
     )
 
@@ -477,23 +450,23 @@ def costruisci() -> Notebook:
         scenario="",
         richiesta="""
             Identifica l'artista più popolare: raggruppa per `Artist`, somma `Plays` e ordina in modo
-            decrescente (`artist_popularity`). Poi salva in `top_artist` il nome dell'artista con il
+            decrescente (`ascolti_per_artista`). Poi salva in `artista_top` il nome dell'artista con il
             totale di ascolti più alto.
         """,
         suggerimento="combina `groupby()`, `sum()` e `sort_values()`; `idxmax()` restituisce l'etichetta del valore massimo.",
         starter="""
-            artist_popularity = listens.groupby(...)[...].sum().sort_values(ascending=False)
-            top_artist = artist_popularity.idxmax()
-            top_artist
+            ascolti_per_artista = ascolti.groupby(...)[...].sum().sort_values(ascending=False)
+            artista_top = ascolti_per_artista.idxmax()
+            artista_top
         """,
         soluzione="""
-            artist_popularity = listens.groupby("Artist")["Plays"].sum().sort_values(ascending=False)
-            top_artist = artist_popularity.idxmax()
-            top_artist
+            ascolti_per_artista = ascolti.groupby("Artist")["Plays"].sum().sort_values(ascending=False)
+            artista_top = ascolti_per_artista.idxmax()
+            artista_top
         """,
         verifica="""
-            assert artist_popularity.iloc[0] == 19, "❌ Il primo totale, in ordine decrescente, è 19"
-            assert top_artist == "Artist X", "❌ L'artista più ascoltato è un altro"
+            assert ascolti_per_artista.iloc[0] == 19, "❌ Il primo totale, in ordine decrescente, è 19"
+            assert artista_top == "Artist X", "❌ L'artista più ascoltato è un altro"
         """,
     )
 

@@ -60,13 +60,13 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # creare una Series da una lista
-        data = [10, 20, 30, 40]
-        s = pd.Series(data, name="valori")
+        dati = [10, 20, 30, 40]
+        s = pd.Series(dati, name="valori")
         s
     """)
     nb.md("Possiamo specificare un indice personalizzato:")
     nb.code("""
-        s_custom = pd.Series(data, index=["a", "b", "c", "d"])
+        s_custom = pd.Series(dati, index=["a", "b", "c", "d"])
         s_custom
     """)
     nb.md("""
@@ -91,12 +91,12 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # creare un DataFrame da un dizionario
-        data = {
+        dati = {
             "Nome": ["Alice", "Bob", "Charlie"],
             "Età": [24, 27, 22],
             "Città": ["Roma", "Milano", "Torino"],
         }
-        df = pd.DataFrame(data, index=["id_1", "id_2", "id_3"])
+        df = pd.DataFrame(dati, index=["id_1", "id_2", "id_3"])
         df
     """)
 
@@ -109,9 +109,9 @@ def costruisci() -> Notebook:
         import os
 
         # elencare i file nella cartella di lavoro
-        files = os.listdir()
+        elenco_file = os.listdir()
         print("Contenuto della cartella:")
-        for file in files:
+        for file in elenco_file:
             print(file)
     """)
     nb.md("""
@@ -142,15 +142,15 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # leggere un file CSV
-        df_turbine = pd.read_csv("../Dati/TexasTurbine.csv")
-        df_turbine.head()
+        df_turbina = pd.read_csv("../Dati/TexasTurbine.csv")
+        df_turbina.head()
     """)
     nb.md("""
         `head()` mostra le prime righe. `info()` riassume righe, colonne, tipi e quanti valori non mancano;
         `describe()` calcola le statistiche principali delle colonne numeriche.
     """)
-    nb.code("df_turbine.info()")
-    nb.code("df_turbine.describe()")
+    nb.code("df_turbina.info()")
+    nb.code("df_turbina.describe()")
     nb.sottosezione("Trovare e leggere più file CSV", intro="""
         Il modulo `glob` trova i file il cui nome segue uno schema, per esempio tutti quelli che finiscono
         con `.csv`. Prima creiamo due file CSV di esempio.
@@ -177,9 +177,9 @@ def costruisci() -> Notebook:
         from glob import glob
 
         # cerchiamo i file CSV che iniziano con "dati"
-        csv_files = sorted(glob("dati*.csv"))
+        file_csv = sorted(glob("dati*.csv"))
         print("File CSV trovati:")
-        for file in csv_files:
+        for file in file_csv:
             print(file)
     """)
     nb.code("""
@@ -193,9 +193,9 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # leggere il CSV specificando i tipi di dato
-        dtype_spec = {"ID": int, "Nome": str, "Età": int}
-        df_csv1_typed = pd.read_csv("dati1.csv", dtype=dtype_spec)
-        df_csv1_typed.dtypes
+        tipi_colonne = {"ID": int, "Nome": str, "Età": int}
+        df_csv1_tipizzato = pd.read_csv("dati1.csv", dtype=tipi_colonne)
+        df_csv1_tipizzato.dtypes
     """)
     nb.md("""
         Altri parametri utili di `read_csv()`:
@@ -211,14 +211,14 @@ def costruisci() -> Notebook:
     nb.code("""
         # leggere tutti i file CSV e aggiungerli a una lista
         dfs = []
-        for filename in csv_files:
-            df = pd.read_csv(filename, dtype=dtype_spec)
+        for nome_file in file_csv:
+            df = pd.read_csv(nome_file, dtype=tipi_colonne)
             dfs.append(df)
     """)
     nb.code("""
         # concatenare i DataFrame
-        df_concatenated = pd.concat(dfs, ignore_index=True)
-        df_concatenated
+        df_unito = pd.concat(dfs, ignore_index=True)
+        df_unito
     """)
     nb.sottosezione("Un CSV salvato da Excel in italiano", intro="""
         `letture_pod_2025.csv` contiene i consumi mensili per fascia di sei POD, esportati da un Excel
@@ -263,7 +263,7 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # leggere un foglio specifico
-        df_foglio1 = pd.read_excel("dati.xlsx", sheet_name="Foglio1", dtype=dtype_spec)
+        df_foglio1 = pd.read_excel("dati.xlsx", sheet_name="Foglio1", dtype=tipi_colonne)
         df_foglio1.dtypes
     """)
     nb.md("""
@@ -272,13 +272,13 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # leggere tutti i fogli dal file Excel
-        fogli = pd.read_excel("dati.xlsx", sheet_name=None, dtype=dtype_spec)
+        fogli = pd.read_excel("dati.xlsx", sheet_name=None, dtype=tipi_colonne)
         fogli.keys()
     """)
     nb.code("""
         # concatenare i DataFrame
-        df_excel_concatenated = pd.concat(fogli.values(), ignore_index=True)
-        df_excel_concatenated
+        df_excel_unito = pd.concat(fogli.values(), ignore_index=True)
+        df_excel_unito
     """)
 
     # ------------------------------------------------------------------ 6
@@ -353,10 +353,10 @@ def costruisci() -> Notebook:
             - **500**: errore del server.
         """)
         nb.code("""
-            json_response = response.json()
-            len(json_response)
+            risposta_json = response.json()
+            len(risposta_json)
         """, rete=True)
-        nb.code("json_response[0]", rete=True)
+        nb.code("risposta_json[0]", rete=True)
         nb.sottosezione("Parametri di query", intro="""
             Spesso non vogliamo tutti i dati, ma solo una parte. I **parametri di query** si aggiungono alla
             fine dell'URL: iniziano dopo il simbolo `?`, sono coppie `chiave=valore` e si separano con `&`.
@@ -365,22 +365,22 @@ def costruisci() -> Notebook:
             # URL con i parametri di query per la provincia di Milano
             url = "https://www.dati.lombardia.it/resource/nf78-nj6b.json?provincia=MI&tipologia=Precipitazione"
             response = requests.get(url, timeout=30)
-            data = response.json()
-            data[:4]
+            dati = response.json()
+            dati[:4]
         """, rete=True)
         nb.md("""
             Con `requests` i parametri si passano in un dizionario con l'argomento `params`: il codice è più
             leggibile e `requests` costruisce l'URL per noi.
         """)
         nb.code("""
-            params = {
+            parametri = {
                 "provincia": "MI",
                 "tipologia": "Precipitazione",
             }
             url = "https://www.dati.lombardia.it/resource/nf78-nj6b.json"
-            response = requests.get(url, params=params, timeout=30)
-            data = response.json()
-            data[:4]
+            response = requests.get(url, params=parametri, timeout=30)
+            dati = response.json()
+            dati[:4]
         """, rete=True)
         nb.sottosezione("L'anagrafica dei sensori", intro="""
             Recuperiamo le informazioni su tutti i sensori. I parametri speciali iniziano con `$`: `$limit`
@@ -388,9 +388,9 @@ def costruisci() -> Notebook:
             cella se il codice di stato è un errore.
         """)
         nb.code("""
-            sensors_url = "https://www.dati.lombardia.it/resource/nf78-nj6b.json"
-            params = {"$limit": 5000}
-            response = requests.get(sensors_url, params=params, timeout=30)
+            url_sensori = "https://www.dati.lombardia.it/resource/nf78-nj6b.json"
+            parametri = {"$limit": 5000}
+            response = requests.get(url_sensori, params=parametri, timeout=30)
             response.raise_for_status()
 
             sensori_df = pd.DataFrame(response.json())
@@ -424,12 +424,12 @@ def costruisci() -> Notebook:
         """)
         nb.code('idsensore = "2001"')
         nb.code("""
-            measurements_url = "https://www.dati.lombardia.it/resource/647i-nhxk.json"
-            params_misure = {
+            url_misure = "https://www.dati.lombardia.it/resource/647i-nhxk.json"
+            parametri_misure = {
                 "idsensore": idsensore,
                 "$limit": 100000,
             }
-            response = requests.get(measurements_url, params=params_misure, timeout=30)
+            response = requests.get(url_misure, params=parametri_misure, timeout=30)
             response.raise_for_status()
 
             misure_df = pd.DataFrame(response.json())
@@ -458,10 +458,10 @@ def costruisci() -> Notebook:
         nb.code("""
             import plotly.express as px
 
-            df_plot = misure_df.iloc[-100:]
+            df_grafico = misure_df.iloc[-100:]
 
             fig = px.line(
-                df_plot,
+                df_grafico,
                 x="data",
                 y="valore",
                 markers=True,
@@ -470,6 +470,8 @@ def costruisci() -> Notebook:
             )
             fig.show()
         """)
+
+    nb.md("Riassunto in una pagina: [Da Excel a pandas](../Schede/Scheda_Excel_pandas.md).")
 
     # ------------------------------------------------------------------ 8
     nb.sezione("Esercizi")

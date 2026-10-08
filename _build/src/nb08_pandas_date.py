@@ -44,22 +44,22 @@ def costruisci() -> Notebook:
         pd.set_option("display.max_columns", 20)
     """)
     nb.code("""
-        rng = pd.date_range("2025-03-01 00:00", periods=3 * 24 * 4, freq="15min")
+        intervallo = pd.date_range("2025-03-01 00:00", periods=3 * 24 * 4, freq="15min")
 
         # pattern giornaliero semplice + rumore: giusto per avere una serie "viva"
-        hours = rng.hour + rng.minute / 60
-        power_kw = 220 + 60 * np.sin(2 * np.pi * (hours / 24)) + np.random.normal(0, 8, size=len(rng))
-        temp_c = 12 + 5 * np.sin(2 * np.pi * ((hours - 6) / 24)) + np.random.normal(0, 0.7, size=len(rng))
+        ore = intervallo.hour + intervallo.minute / 60
+        power_kw = 220 + 60 * np.sin(2 * np.pi * (ore / 24)) + np.random.normal(0, 8, size=len(intervallo))
+        temp_c = 12 + 5 * np.sin(2 * np.pi * ((ore - 6) / 24)) + np.random.normal(0, 0.7, size=len(intervallo))
 
         df = pd.DataFrame({
-            "timestamp_str": rng.strftime("%d/%m/%Y %H:%M"),  # formato tipico in Italia
+            "timestamp_str": intervallo.strftime("%d/%m/%Y %H:%M"),  # formato tipico in Italia
             "power_kw": power_kw.round(1),
             "temp_c": temp_c.round(1),
         })
 
         # rimuoviamo alcune righe per simulare missing (buchi nella serie)
-        drop_idx = np.random.choice(df.index, size=18, replace=False)  # ~2.5% su 288 punti
-        df = df.drop(drop_idx).reset_index(drop=True)
+        indici_da_togliere = np.random.choice(df.index, size=18, replace=False)  # ~2.5% su 288 punti
+        df = df.drop(indici_da_togliere).reset_index(drop=True)
 
         df.head()
     """)
@@ -112,13 +112,13 @@ def costruisci() -> Notebook:
         # esempio di ambiguità giorno/mese + gestione errori
         ambigue = pd.Series(["01/02/2025 08:00", "13/02/2025 08:00"])
 
-        parsed_dayfirst = pd.to_datetime(ambigue, dayfirst=True)
-        parsed_monthfirst = pd.to_datetime(ambigue, dayfirst=False, errors="coerce")  # qui un valore diventa NaT
+        date_giorno_prima = pd.to_datetime(ambigue, dayfirst=True)
+        date_mese_prima = pd.to_datetime(ambigue, dayfirst=False, errors="coerce")  # qui un valore diventa NaT
 
         pd.DataFrame({
             "stringa": ambigue,
-            "dayfirst=True": parsed_dayfirst,
-            "dayfirst=False (coerce)": parsed_monthfirst,
+            "dayfirst=True": date_giorno_prima,
+            "dayfirst=False (coerce)": date_mese_prima,
         })
     """)
     nb.md("""
@@ -132,22 +132,23 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 4
     nb.sezione("Il tempo come indice", intro=f"""
         Quando il timestamp è l'indice, pandas abilita selezioni "per periodo" senza calcoli manuali.
-        Prima di tutto: ordinare l'indice. Con dati reali capita spesso di avere righe fuori ordine.
+        `set_index("timestamp")` mette la colonna al posto dell'indice numerico. Poi si ordina l'indice:
+        con dati reali capita spesso di avere righe fuori ordine.
 
         Documentazione: [serie temporali, user guide]({DOC}/user_guide/timeseries.html)
     """)
     nb.code("""
-        df_ts = (
+        df_serie = (
             df[["timestamp", "power_kw", "temp_c"]]
             .set_index("timestamp")
             .sort_index()
         )
 
-        df_ts.head()
+        df_serie.head()
     """)
     nb.code("""
         # slicing per periodo (anno/mese/giorno)
-        df_ts.loc["2025-03-02"].head()
+        df_serie.loc["2025-03-02"].head()
     """)
     nb.prova_tu(
         richiesta="""
@@ -155,11 +156,11 @@ def costruisci() -> Notebook:
             Sono 22 righe: in quelle sei ore ci sono tre buchi.
         """,
         starter="""
-            periodo = df_ts.loc[...]
+            periodo = df_serie.loc[...]
             len(periodo)  # Output: 22
         """,
         soluzione="""
-            periodo = df_ts.loc["2025-03-01 12:00":"2025-03-01 18:00"]
+            periodo = df_serie.loc["2025-03-01 12:00":"2025-03-01 18:00"]
             len(periodo)  # Output: 22
         """,
     )
@@ -172,33 +173,33 @@ def costruisci() -> Notebook:
         Documentazione: [accessor `.dt`]({DOC}/reference/api/pandas.Series.dt.html)
     """)
     nb.code("""
-        df_feat = df_ts.copy()
-        df_feat["hour"] = df_feat.index.hour
-        df_feat["dayofweek"] = df_feat.index.dayofweek  # 0=lunedì
-        df_feat["month"] = df_feat.index.month
+        df_caratteristiche = df_serie.copy()
+        df_caratteristiche["hour"] = df_caratteristiche.index.hour
+        df_caratteristiche["dayofweek"] = df_caratteristiche.index.dayofweek  # 0=lunedì
+        df_caratteristiche["month"] = df_caratteristiche.index.month
 
-        df_feat.head()
+        df_caratteristiche.head()
     """)
     nb.prova_tu(
         richiesta="""
-            Aggiungi a `df_feat_ex` le colonne `date` (solo data) e `is_weekend` (`True` per sabato e domenica).
+            Aggiungi a `df_caratteristiche_es` le colonne `date` (solo data) e `is_weekend` (`True` per sabato e domenica).
             Il 1° marzo 2025 è un sabato: le righe del weekend sono 182.
 
-            Suggerimento: `df_feat_ex.index.date` e `dayofweek` (sabato=5, domenica=6).
+            Suggerimento: `df_caratteristiche_es.index.date` e `dayofweek` (sabato=5, domenica=6).
         """,
         starter="""
-            df_feat_ex = df_feat.copy()
-            df_feat_ex["date"] = ...
-            df_feat_ex["is_weekend"] = ...
+            df_caratteristiche_es = df_caratteristiche.copy()
+            df_caratteristiche_es["date"] = ...
+            df_caratteristiche_es["is_weekend"] = ...
 
-            df_feat_ex["is_weekend"].sum()  # Output: 182
+            df_caratteristiche_es["is_weekend"].sum()  # Output: 182
         """,
         soluzione="""
-            df_feat_ex = df_feat.copy()
-            df_feat_ex["date"] = df_feat_ex.index.date
-            df_feat_ex["is_weekend"] = df_feat_ex["dayofweek"] >= 5
+            df_caratteristiche_es = df_caratteristiche.copy()
+            df_caratteristiche_es["date"] = df_caratteristiche_es.index.date
+            df_caratteristiche_es["is_weekend"] = df_caratteristiche_es["dayofweek"] >= 5
 
-            df_feat_ex["is_weekend"].sum()  # Output: 182
+            df_caratteristiche_es["is_weekend"].sum()  # Output: 182
         """,
     )
 
@@ -211,14 +212,14 @@ def costruisci() -> Notebook:
         Documentazione: [alias delle frequenze]({DOC}/user_guide/timeseries.html#dateoffset-objects)
     """)
     nb.code("""
-        df_ts.index.inferred_freq
+        df_serie.index.inferred_freq
     """)
     nb.md("""
         Non restituisce niente: con i buchi pandas non riesce a inferire una frequenza.
         La differenza tra timestamp consecutivi mostra cosa succede.
     """)
     nb.code("""
-        df_ts.index.to_series().diff().value_counts().head()
+        df_serie.index.to_series().diff().value_counts().head()
     """)
 
     # ------------------------------------------------------------------ 7
@@ -230,17 +231,17 @@ def costruisci() -> Notebook:
         Documentazione: [`DataFrame.asfreq`]({DOC}/reference/api/pandas.DataFrame.asfreq.html)
     """)
     nb.code("""
-        df_qh = df_ts.asfreq("15min")
-        df_qh
+        df_15min = df_serie.asfreq("15min")
+        df_15min
     """)
     nb.code("""
-        missing_counts = df_qh.isna().sum()
-        missing_counts
+        conteggio_mancanti = df_15min.isna().sum()
+        conteggio_mancanti
     """)
     nb.code("""
         # dove mancano i valori di power_kw?
-        missing_timestamps = df_qh.index[df_qh["power_kw"].isna()]
-        missing_timestamps[:10]
+        timestamp_mancanti = df_15min.index[df_15min["power_kw"].isna()]
+        timestamp_mancanti[:10]
     """)
     nb.md("""
         I grafici qui sotto anticipano il notebook su Plotly: per ora si leggono e basta.
@@ -249,9 +250,9 @@ def costruisci() -> Notebook:
         # i dati prima e dopo asfreq: nel secondo grafico i buchi interrompono la linea
         import plotly.express as px
 
-        fig = px.line(df_ts, x=df_ts.index, y="power_kw", title="Dati originali (con buchi)")
+        fig = px.line(df_serie, x=df_serie.index, y="power_kw", title="Dati originali (con buchi)")
         fig.show()
-        fig = px.line(df_qh, x=df_qh.index, y="power_kw", title="Dati con asfreq (buchi evidenziati)")
+        fig = px.line(df_15min, x=df_15min.index, y="power_kw", title="Dati con asfreq (buchi evidenziati)")
         fig.show()
     """)
     nb.md("""
@@ -270,14 +271,14 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # lavoriamo SOLO su power_kw
-        s = df_qh["power_kw"]
+        s = df_15min["power_kw"]
 
-        t0 = missing_timestamps[0]
+        t0 = timestamp_mancanti[0]
         # finestra: da t0-45min a t0+45min
         idx = slice(t0 - pd.Timedelta(minutes=45), t0 + pd.Timedelta(minutes=45))
 
         # imputazioni (una colonna ciascuna)
-        out = pd.DataFrame({
+        confronto = pd.DataFrame({
             "original": s.loc[idx],
             "time": s.interpolate(method="time").loc[idx],
             "linear": s.interpolate(method="linear").loc[idx],
@@ -285,7 +286,7 @@ def costruisci() -> Notebook:
             "bfill": s.bfill().loc[idx],
         })
 
-        out
+        confronto
     """)
     nb.md("""
         I metodi `time` e `linear` stimano il valore mancante interpolando tra i due punti vicini.
@@ -296,10 +297,10 @@ def costruisci() -> Notebook:
         import plotly.graph_objects as go
 
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=out.index, y=out["time"], mode="markers+lines", name="interpolate time"))
-        fig.add_trace(go.Scatter(x=out.index, y=out["linear"], mode="markers+lines", name="interpolate linear"))
-        fig.add_trace(go.Scatter(x=out.index, y=out["ffill"], mode="markers+lines", name="ffill"))
-        fig.add_trace(go.Scatter(x=out.index, y=out["bfill"], mode="markers+lines", name="bfill"))
+        fig.add_trace(go.Scatter(x=confronto.index, y=confronto["time"], mode="markers+lines", name="interpolate time"))
+        fig.add_trace(go.Scatter(x=confronto.index, y=confronto["linear"], mode="markers+lines", name="interpolate linear"))
+        fig.add_trace(go.Scatter(x=confronto.index, y=confronto["ffill"], mode="markers+lines", name="ffill"))
+        fig.add_trace(go.Scatter(x=confronto.index, y=confronto["bfill"], mode="markers+lines", name="bfill"))
         fig.update_layout(title="Imputazioni per missing value", height=400, width=700)
         fig.show()
     """)
@@ -315,29 +316,29 @@ def costruisci() -> Notebook:
         Prima riempiamo i buchi con l'interpolazione lineare.
     """)
     nb.code("""
-        df_qh = df_qh.interpolate(method="linear")
+        df_15min = df_15min.interpolate(method="linear")
     """)
     nb.code("""
-        hourly = df_qh.resample("h").mean()
-        daily = df_qh.resample("D").mean()
+        orario = df_15min.resample("h").mean()
+        giornaliero = df_15min.resample("D").mean()
 
-        hourly.head()
+        orario.head()
     """)
     nb.code("""
-        daily
+        giornaliero
     """)
     nb.prova_tu(
         richiesta="""
             Crea un resampling **orario** di `power_kw` con la somma (`sum`) invece della media, e confronta
-            le prime righe con `hourly`. La somma è 4 volte la media: in ogni ora ci sono 4 quarti d'ora.
+            le prime righe con `orario`. La somma è 4 volte la media: in ogni ora ci sono 4 quarti d'ora.
         """,
         starter="""
-            hourly_sum = df_qh...
-            pd.DataFrame({"mean": hourly["power_kw"], "sum": hourly_sum}).head()
+            somma_oraria = df_15min...
+            pd.DataFrame({"mean": orario["power_kw"], "sum": somma_oraria}).head()
         """,
         soluzione="""
-            hourly_sum = df_qh["power_kw"].resample("h").sum()
-            pd.DataFrame({"mean": hourly["power_kw"], "sum": hourly_sum}).head()
+            somma_oraria = df_15min["power_kw"].resample("h").sum()
+            pd.DataFrame({"mean": orario["power_kw"], "sum": somma_oraria}).head()
         """,
     )
 
@@ -353,24 +354,24 @@ def costruisci() -> Notebook:
             Documentazione: [`rolling`]({DOC}/reference/api/pandas.DataFrame.rolling.html)
         """)
         nb.code("""
-            df_sr = df_qh.copy()
+            df_scorrimento = df_15min.copy()
 
             # lag di 1 ora: con frequenza 15min corrisponde a 4 step
-            df_sr["power_lag_4"] = df_sr["power_kw"].shift(4)
+            df_scorrimento["power_lag_4"] = df_scorrimento["power_kw"].shift(4)
 
             # media mobile su 2 ore: 8 step
-            df_sr["power_ma_8"] = df_sr["power_kw"].rolling(8).mean()
+            df_scorrimento["power_ma_8"] = df_scorrimento["power_kw"].rolling(8).mean()
 
-            df_sr[["power_kw", "power_lag_4", "power_ma_8"]].head(12)
+            df_scorrimento[["power_kw", "power_lag_4", "power_ma_8"]].head(12)
         """)
         nb.code("""
             # shift di 1 ora (4 step) contro power_kw
-            fig = px.line(df_sr, x=df_sr.index, y=["power_kw", "power_lag_4"], title="Shift di 1 ora (4 step)")
+            fig = px.line(df_scorrimento, x=df_scorrimento.index, y=["power_kw", "power_lag_4"], title="Shift di 1 ora (4 step)")
             fig.show()
         """)
         nb.code("""
             # media mobile su una finestra di 2 ore (8 step) contro power_kw
-            fig = px.line(df_sr, x=df_sr.index, y=["power_kw", "power_ma_8"], title="Media mobile su finestra di 2 ore (8 step)")
+            fig = px.line(df_scorrimento, x=df_scorrimento.index, y=["power_kw", "power_ma_8"], title="Media mobile su finestra di 2 ore (8 step)")
             fig.show()
         """)
 
@@ -381,13 +382,13 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # differenze tra timestamp consecutivi
-        delta_consecutivi = df_qh.index.to_series().diff()
+        delta_consecutivi = df_15min.index.to_series().diff()
 
         delta_consecutivi.head(10)
     """)
     nb.code("""
         # intervallo totale coperto
-        delta_totale = df_qh.index.max() - df_qh.index.min()
+        delta_totale = df_15min.index.max() - df_15min.index.min()
         delta_totale
     """)
     nb.code("""
@@ -409,18 +410,18 @@ def costruisci() -> Notebook:
         Se i dati arrivano già in UTC, spesso è meglio mantenerli in UTC e convertire solo in visualizzazione.
     """)
     nb.code("""
-        df_tz = df_qh.copy()
+        df_fuso = df_15min.copy()
 
         # interpretiamo i timestamp come orari locali italiani
-        df_tz.index = df_tz.index.tz_localize("Europe/Rome")
+        df_fuso.index = df_fuso.index.tz_localize("Europe/Rome")
 
         # conversione a UTC (utile per sistemi e confronti)
-        df_utc = df_tz.tz_convert("UTC")
+        df_utc = df_fuso.tz_convert("UTC")
 
-        df_tz.index[:3], df_utc.index[:3]
+        df_fuso.index[:3], df_utc.index[:3]
     """)
     nb.code("""
-        df_tz.loc["2025-03-01 06:00":"2025-03-01 12:00"].head()
+        df_fuso.loc["2025-03-01 06:00":"2025-03-01 12:00"].head()
     """)
     nb.sottosezione("I duplicati dell'ora legale nei dati Terna", intro="""
         Nei dati veri il cambio d'ora si vede. Il carico della zona Nord 2024 di Terna è in ora locale, un valore

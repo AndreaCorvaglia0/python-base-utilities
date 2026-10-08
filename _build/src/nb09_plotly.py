@@ -67,32 +67,32 @@ def costruisci() -> Notebook:
         Il primo obiettivo è avere una linea leggibile con un mapping esplicito (`x` e `y`).
     """)
     nb.code("""
-        company = "GOOG"
+        azienda = "GOOG"
 
         fig = px.line(
             df,
             x="date",
-            y=company,
-            title=f"{company} (indicizzato)"
+            y=azienda,
+            title=f"{azienda} (indicizzato)"
         )
         fig.show()
     """)
     nb.prova_tu(
         richiesta="""
-            Cambia `company` con un'altra colonna del dataset (`AAPL`, `AMZN`, `MSFT`…). Poi limita il grafico
+            Cambia `azienda` con un'altra colonna del dataset (`AAPL`, `AMZN`, `MSFT`…). Poi limita il grafico
             agli ultimi 12 mesi filtrando `df` prima di passarlo a `px.line`: il dataset finisce a fine 2019,
             quindi bastano le date dal `2019-01-01`. Il grafico atteso parte da gennaio 2019.
         """,
         starter="""
-            company = ...
+            azienda = ...
             mask_12_mesi = ...
             fig_12_mesi = px.line(...)
             fig_12_mesi.show()
         """,
         soluzione="""
-            company = "AAPL"
+            azienda = "AAPL"
             mask_12_mesi = df["date"] >= "2019-01-01"
-            fig_12_mesi = px.line(df[mask_12_mesi], x="date", y=company, title=f"{company} (indicizzato), ultimi 12 mesi")
+            fig_12_mesi = px.line(df[mask_12_mesi], x="date", y=azienda, title=f"{azienda} (indicizzato), ultimi 12 mesi")
             fig_12_mesi.show()
         """,
     )
@@ -102,19 +102,19 @@ def costruisci() -> Notebook:
             originale, passando le due colonne a `y`. Il dataset ha un valore a settimana.
         """)
         nb.code("""
-            company = "GOOG"
-            rolling_window = 4
+            azienda = "GOOG"
+            finestra_mobile = 4
 
             # media mobile come nuova colonna di un nuovo DataFrame
-            df_rolling = df[["date", company]].copy()
-            df_rolling[f"{company}_rolling"] = df_rolling[company].rolling(rolling_window).mean()
+            df_mobile = df[["date", azienda]].copy()
+            df_mobile[f"{azienda}_rolling"] = df_mobile[azienda].rolling(finestra_mobile).mean()
             # attenzione ai valori mancanti all'inizio della serie: qui li togliamo
-            df_rolling = df_rolling.dropna().reset_index(drop=True)
+            df_mobile = df_mobile.dropna().reset_index(drop=True)
             fig = px.line(
-                df_rolling,
+                df_mobile,
                 x="date",
-                y=[company, f"{company}_rolling"],
-                title=f"{company} con media mobile a {rolling_window} settimane"
+                y=[azienda, f"{azienda}_rolling"],
+                title=f"{azienda} con media mobile a {finestra_mobile} settimane"
             )
             fig.show()
         """)
@@ -125,34 +125,34 @@ def costruisci() -> Notebook:
         spesso: una tabella con molte serie già allineate nel tempo.
     """)
     nb.code("""
-        companies = ["AAPL", "AMZN", "MSFT"]
+        aziende = ["AAPL", "AMZN", "MSFT"]
 
         fig = px.line(
             df,
             x="date",
-            y=companies,
+            y=aziende,
             title="Confronto tra serie (wide-form)"
         )
         fig.show()
     """)
     nb.prova_tu(
         richiesta="""
-            Aggiungi o rimuovi una società dalla lista `companies`. Poi crea `df_indexed`, una copia di `df`
+            Aggiungi o rimuovi una società dalla lista `aziende`. Poi crea `df_indicizzato`, una copia di `df`
             con le serie riportate a base 100 alla prima data (`valore / valore.iloc[0] * 100`), e ripeti il
             grafico. Tutte le linee devono partire da 100.
         """,
         starter="""
-            companies = ["AAPL", "AMZN", "MSFT", ...]
-            df_indexed = df.copy()
-            df_indexed[companies] = ...
+            aziende = ["AAPL", "AMZN", "MSFT", ...]
+            df_indicizzato = df.copy()
+            df_indicizzato[aziende] = ...
             fig_100 = px.line(...)
             fig_100.show()
         """,
         soluzione="""
-            companies = ["AAPL", "AMZN", "MSFT", "NFLX"]
-            df_indexed = df.copy()
-            df_indexed[companies] = df[companies] / df[companies].iloc[0] * 100
-            fig_100 = px.line(df_indexed, x="date", y=companies, title="Confronto tra serie (base 100)")
+            aziende = ["AAPL", "AMZN", "MSFT", "NFLX"]
+            df_indicizzato = df.copy()
+            df_indicizzato[aziende] = df[aziende] / df[aziende].iloc[0] * 100
+            fig_100 = px.line(df_indicizzato, x="date", y=aziende, title="Confronto tra serie (base 100)")
             fig_100.show()
         """,
     )
@@ -194,10 +194,10 @@ def costruisci() -> Notebook:
         aggiunge il controllo nel `layout`.
     """)
     nb.code("""
-        companies = ["AAPL", "AMZN", "MSFT"]
+        aziende = ["AAPL", "AMZN", "MSFT"]
 
         fig = go.Figure()
-        for c in companies:
+        for c in aziende:
             fig.add_trace(go.Scatter(x=list(df["date"]), y=list(df[c]), name=c))
     """)
     nb.md("""

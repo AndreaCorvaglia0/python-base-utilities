@@ -79,7 +79,7 @@ assert buono == 5, "❌ buono: i 5 euro in una variabile"
 assert round(totale, 2) == round(t, 2), "❌ totale deve dare lo stesso risultato di t"
 '''),
     '4.1': ('Esercizio 4.1', r'''
-assert reverse_string("Python") == "nohtyP", "❌ Stringa invertita errata"
+assert inverti_stringa("Python") == "nohtyP", "❌ Stringa invertita errata"
 '''),
     '4.2': ('Esercizio 4.2', r'''
 atteso = ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna']
@@ -112,17 +112,17 @@ assert len(letture_pod) == 31, "❌ letture_pod: servono le 31 righe del solo PO
 assert round(totale_marzo, 1) == 7785.6, "❌ totale_marzo: somma la colonna kwh"
 '''),
     '7.1': ('Esercizio 7.1', r'''
-assert len(user_103_listens) == 1, "❌ Deve restare una sola riga"
-assert user_103_listens["Song"].tolist() == ["Song A"], "❌ La canzone dell'utente 103 è Song A"
-assert user_103_listens["Plays"].tolist() == [4], "❌ Gli ascolti dell'utente 103 sono 4"
+assert len(ascolti_utente_103) == 1, "❌ Deve restare una sola riga"
+assert ascolti_utente_103["Song"].tolist() == ["Song A"], "❌ La canzone dell'utente 103 è Song A"
+assert ascolti_utente_103["Plays"].tolist() == [4], "❌ Gli ascolti dell'utente 103 sono 4"
 '''),
     '7.2': ('Esercizio 7.2', r'''
-expected = {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}
-assert total_plays_per_song.to_dict() == expected, "❌ Raggruppa per Song e somma Plays"
+atteso = {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}
+assert ascolti_per_canzone.to_dict() == atteso, "❌ Raggruppa per Song e somma Plays"
 '''),
     '7.3': ('Esercizio 7.3', r'''
-assert artist_popularity.iloc[0] == 19, "❌ Il primo totale, in ordine decrescente, è 19"
-assert top_artist == "Artist X", "❌ L'artista più ascoltato è un altro"
+assert ascolti_per_artista.iloc[0] == 19, "❌ Il primo totale, in ordine decrescente, è 19"
+assert artista_top == "Artist X", "❌ L'artista più ascoltato è un altro"
 '''),
     '7.4': ('Esercizio 7.4', r'''
 assert len(prezzi_stati) == 4, "❌ Con l'inner join restano le quattro righe di stati"
@@ -261,14 +261,14 @@ assert len(df) == 70168 and df["Date"].is_unique, "❌ df: 70.168 righe, una per
 assert len(buchi) == 2, "❌ buchi: 2 righe, le 3:00 delle due ultime domeniche di marzo"
 '''),
     'Step 4': ('Step 4', r'''
-assert len(df_daily) == 731 and df_daily["Energia [MWh]"].between(250_000, 700_000).all(), "❌ df_daily: 731 giorni, con l'energia tra 250.000 e 700.000 MWh (somma dei quartorari divisa per 4)"
+assert len(df_giornaliero) == 731 and df_giornaliero["Energia [MWh]"].between(250_000, 700_000).all(), "❌ df_giornaliero: 731 giorni, con l'energia tra 250.000 e 700.000 MWh (somma dei quartorari divisa per 4)"
 assert profilo_orario.shape == (24, 2), "❌ profilo_orario: 24 righe (le ore) e 2 colonne, hour e Total Load [MW]"
 assert len(profilo_settimanale) == 7 and profilo_settimanale["Total Load [MW]"].idxmin() == 6, "❌ profilo_settimanale: 7 righe, con la domenica (6) come giorno più leggero"
 '''),
     'Step 5': ('Step 5', r'''
 assert list(meteo_15.columns) == ["Date", "Temperature_C"], "❌ meteo_15: due colonne, Date e Temperature_C (dopo resample serve reset_index)"
-assert len(df_full) == len(df), "❌ df_full: il merge con how=\"left\" tiene tutte le righe di df"
-assert df_full["Temperature_C"].notna().all(), "❌ df_full: restano temperature mancanti, usa ffill()"
+assert len(df_completo) == len(df), "❌ df_completo: il merge con how=\"left\" tiene tutte le righe di df"
+assert df_completo["Temperature_C"].notna().all(), "❌ df_completo: restano temperature mancanti, usa ffill()"
 '''),
     'Step 6': ('Step 6', r'''
 assert len(giornaliero) == 731, "❌ giornaliero: una riga per giorno, 731"

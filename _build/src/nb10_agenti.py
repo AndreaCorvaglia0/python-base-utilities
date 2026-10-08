@@ -29,89 +29,96 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Copilot in VS Code", intro="""
-        GitHub Copilot lavora dentro VS Code in due forme. Il completamento propone codice in grigio mentre
-        scriviamo: **Tab** lo accetta, **Esc** lo rifiuta. La chat risponde a domande e scrive codice su
-        richiesta: si apre con **Ctrl+Alt+I** (su Mac **Ctrl+Cmd+I**), oppure dentro una cella con **Ctrl+I**.
+        Copilot lavora in VS Code in due forme. Il completamento propone codice in grigio mentre scriviamo:
+        **Tab** lo accetta, **Esc** lo rifiuta. La chat scrive codice su richiesta: si apre con **Ctrl+Alt+I**
+        (su Mac **Ctrl+Cmd+I**), oppure inline in una cella con **Ctrl+I**.
     """)
     nb.md("""
-        La chat ha tre modalità, che si scelgono dal menu in basso nel riquadro della chat.
+        La chat ha tre modalità, dal menu in basso.
 
-        | Modalità | Cosa fa | Quando usarla |
-        |---|---|---|
-        | Ask | risponde; il codice lo copiamo noi | domande, spiegazioni, una funzione |
-        | Plan | scrive i passi senza toccare i file; il piano si legge e si corregge | compiti di più passi, prima di lasciar fare |
-        | Agent | legge i file, li modifica mostrando le differenze, lancia comandi chiedendo conferma | compiti che sappiamo controllare pezzo per pezzo |
-    """)
-    nb.md("""
-        Claude Code e Codex girano nel terminale o come estensione di VS Code, Codex anche dentro ChatGPT.
-        Cambiano il modello e alcuni comandi.
-    """)
-    nb.md('''
-        Per il completamento basta scrivere la firma di una funzione e una docstring che dice cosa deve fare:
+        | Modalità | Cosa fa |
+        |---|---|
+        | Ask | risponde; il codice lo copiamo noi |
+        | Plan | scrive i passi senza toccare i file |
+        | Agent | modifica i file mostrando le differenze, lancia comandi chiedendo conferma |
 
-        ```python
+        Claude Code e Codex funzionano allo stesso modo, nel terminale o in VS Code.
+    """)
+    nb.code('''
+        # Completamento: scriviamo firma e docstring, Invio, e Copilot propone il corpo in grigio
         def prezzo_scontato(prezzo, sconto_percento):
             """Prezzo dopo lo sconto, arrotondato ai centesimi."""
-        ```
+            return round(prezzo * (1 - sconto_percento / 100), 2)
 
-        Dopo la docstring premiamo **Invio** e Copilot propone il corpo. Lo accettiamo solo se fa quello che
-        dice la docstring, e lo proviamo con un caso che conosciamo: `prezzo_scontato(80, 25)` deve dare `60.0`.
+
+        prezzo_scontato(80, 25)  # Output: 60.0
     ''')
+    nb.md("""
+        Il corpo si accetta se fa quello che dice la docstring. Il caso noto torna; resta da provare
+        l'arrotondamento ai centesimi.
+    """)
+    nb.code("""
+        prezzo_scontato(19.99, 10)  # Output: 17.99, non 17.991
+    """)
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Glossario", intro="""
-        Cinque termini che si incontrano lavorando con un agente.
+        | Parola | Cos'è |
+        |---|---|
+        | token | il pezzo di testo che il modello legge e scrive, circa tre quarti di parola; l'uso si misura in token |
+        | finestra di contesto | quanti token il modello tiene presenti; quando è piena la chat dimentica l'inizio: si apre una chat nuova |
+        | cache | l'inizio della conversazione tenuto da parte per qualche minuto: rileggerlo costa meno |
     """)
     nb.md("""
-        | Parola | Cos'è | A cosa serve |
-        |---|---|---|
-        | token | il pezzo di testo che il modello legge e scrive, circa tre quarti di parola | l'uso si misura in token: un traceback costa poco, un file enorme molto |
-        | finestra di contesto | quanti token il modello tiene presenti in una conversazione | se la chat dimentica una colonna nominata dieci messaggi prima, la finestra è piena: si apre una chat nuova |
-        | cache | la parte iniziale della conversazione (istruzioni, file già letti) che il servizio tiene da parte per qualche minuto | rileggerla costa meno e la risposta arriva prima |
-    """)
-    nb.md("""
-        | Parola | Cos'è | A cosa serve |
-        |---|---|---|
-        | modelli | il completamento usa un modello piccolo e veloce; nella chat si sceglie dal menu in basso | scrive il seguito più probabile senza verificarlo; per un traceback strano si prova un modello più grande |
-        | prompt e contesto | il prompt è la domanda; il contesto è quello che il modello vede: file aperti, celle selezionate, testo incollato | il modello risponde in base a quello che vede, oltre che alla domanda |
-    """)
-    nb.md("""
-        Le istruzioni che valgono sempre si scrivono una volta in un file del progetto, che l'agente legge a
-        ogni richiesta: `.github/copilot-instructions.md` per Copilot, `CLAUDE.md` per Claude Code, `AGENTS.md`
-        per Codex. Per esempio: "i nomi delle colonne e delle variabili sono in italiano".
+        | Parola | Cos'è |
+        |---|---|
+        | modello | scrive il seguito più probabile, senza verificarlo; nella chat si sceglie dal menu in basso |
+        | file di istruzioni | regole che l'agente legge a ogni richiesta: `.github/copilot-instructions.md` per Copilot, `CLAUDE.md` per Claude Code, `AGENTS.md` per Codex |
     """)
 
     # ------------------------------------------------------------------ 3
-    nb.sezione("Prova guidata", intro="""
-        Due prompt, in ordine. Per ognuno: copia il testo nella chat in modalità Ask, leggi la risposta,
-        incolla il codice nella cella sotto, esegui e controlla.
-    """)
-    nb.md("""
-        Carichiamo il DataFrame su cui lavoriamo. L'output di `df.info()` è il contesto da dare al modello:
-        nomi esatti delle colonne e tipi.
+    nb.sezione("Prompt e contesto", intro="""
+        Il prompt è la richiesta; il contesto è quello che il modello vede: file aperti, celle selezionate,
+        testo incollato. Nelle celle qui sotto il commento in testa è il prompt dato alla chat in modalità Ask,
+        il codice è la risposta.
     """)
     nb.code("""
         import pandas as pd
 
         df = pd.read_csv("../Dati/impianti_fv.csv")
-        df.info()
+        df.info()  # nomi esatti e tipi delle colonne: il contesto da incollare nel prompt
     """)
-    nb.sottosezione("Una funzione", intro="""
-        ```text
-        Ho un DataFrame pandas `df` con queste colonne:
-        id_impianto (str), comune (str), provincia (str), kwp (float), anno_allaccio (int), lat e lon (float).
-        Scrivi una funzione `potenza_per_provincia(df)` che restituisce un DataFrame con due colonne,
-        provincia e kwp, con la somma dei kwp per provincia, ordinato dal più alto al più basso.
-        Docstring di una riga, niente commenti.
-        ```
-
-        Cosa controllare: `groupby` sulla provincia, `sum` sui kwp, `sort_values` con `ascending=False`,
-        `reset_index` perché provincia torni colonna.
+    nb.code("""
+        # Prompt: "Conta gli impianti per anno"
+        df["anno"].value_counts()
+    """, errore=True)
+    nb.code("""
+        # Prompt: "Ho un DataFrame df con le colonne id_impianto, comune, provincia, kwp,
+        #          anno_allaccio, lat, lon. Conta gli impianti per anno_allaccio, in ordine di anno."
+        per_anno = df["anno_allaccio"].value_counts().sort_index()
+        per_anno
+    """)
+    nb.md("""
+        Il primo prompt non nomina le colonne e la risposta ne usa una che non esiste, `anno`. Per il
+        secondo controlliamo due cose: gli anni sono in ordine, e i conteggi sommano a 40, le righe di `df`.
+    """)
+    nb.code("""
+        print(per_anno.sum(), len(df))  # Output: 40 40
     """)
     nb.prova_tu(
         richiesta="""
-            Incolla la funzione proposta da Copilot al posto dei puntini ed esegui la cella. Output atteso: due
-            colonne, `MI` in testa con 323,5 kWp, e la somma della colonna kwp uguale a 737, come in `df`.
+            Dai alla chat, in modalità Ask, questo prompt:
+
+            ```text
+            Ho un DataFrame pandas `df` con queste colonne:
+            id_impianto (str), comune (str), provincia (str), kwp (float), anno_allaccio (int), lat e lon (float).
+            Scrivi una funzione `potenza_per_provincia(df)` che restituisce un DataFrame con due colonne,
+            provincia e kwp, con la somma dei kwp per provincia, ordinato dal più alto al più basso.
+            Docstring di una riga, niente commenti.
+            ```
+
+            Incolla la funzione al posto dei puntini ed esegui. Output atteso: due colonne, `MI` in testa con
+            323,5 kWp, e la somma della colonna kwp uguale a 737, come in `df`.
         """,
         starter="""
             ...
@@ -131,51 +138,46 @@ def costruisci() -> Notebook:
             per_provincia
         """,
     )
-    nb.sottosezione("La spiegazione di un errore", intro="""
-        Questa cella dà errore apposta: eseguila e copia il traceback intero, dalla prima riga all'ultima.
+    nb.code("""
+        # Questa cella dà errore apposta: il traceback si copia intero nella chat
+        df["kWp"].sum()
+    """, errore=True)
+    nb.code("""
+        # Prompt: "Spiegami questo errore senza correggerlo: cosa significa, perché succede,
+        #          dove devo guardare. <traceback intero>"
+        # Risposta: KeyError, la colonna 'kWp' non esiste. pandas distingue maiuscole e
+        # minuscole: guarda i nomi esatti delle colonne.
+        df.columns.tolist()
     """)
-    nb.code('df["kWp"].sum()', errore=True)
     nb.md("""
-        ```text
-        Spiegami questo errore senza correggerlo: cosa significa, perché succede, dove devo guardare.
-
-        <incolla qui il traceback intero>
-        ```
-
-        Cosa controllare: la risposta deve nominare `KeyError`, dire che la colonna `kWp` non esiste e che
-        pandas distingue maiuscole e minuscole. La riga corretta:
+        La spiegazione nomina `KeyError` e la colonna sbagliata, e nella lista c'è il nome giusto, `kwp`.
+        Solo dopo chiediamo la correzione.
     """)
-    nb.code('df["kwp"].sum()')
+    nb.code("""
+        # Prompt: "Ora correggi la riga"
+        df["kwp"].sum()
+    """)
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Le tre regole", intro="""
-        Tre regole da applicare al codice generato.
-    """)
-    nb.md("""
-        **Verifica.** Esegui subito e confronta l'output con un numero che conosci già: la somma dei kwp, il
-        numero di righe. Un parametro mai visto si controlla con `help()` prima di usarlo.
-    """)
-    nb.md("""
-        **Chiedi spiegazioni.** Prima "spiegami", poi "correggi", sempre con il traceback intero. Se la
-        spiegazione non è chiara, il codice corretto non si accetta.
-    """)
-    nb.md("""
-        **Piccoli passi.** Si chiede una cosa per volta e la si controlla prima di andare avanti. In Agent le
-        modifiche arrivano come differenze, rosso quello che toglie e verde quello che aggiunge: si tengono o
-        si annullano blocco per blocco (**Keep** o **Undo**).
+        1. **Verifica.** Esegui subito e confronta con un numero noto: la somma dei kwp, il numero di righe.
+        2. **Chiedi spiegazioni.** Prima "spiegami", poi "correggi", sempre con il traceback intero.
+        3. **Piccoli passi.** Una richiesta per volta. In Agent le modifiche arrivano come differenze, da
+           tenere o annullare blocco per blocco (**Keep** o **Undo**).
     """)
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Leggere il codice scritto da un agente", intro="""
-        In modalità Agent chiediamo: "Scrivi uno script che legge le letture, somma i kWh per POD e salva un
-        CSV". Torna un file di una quarantina di righe. Prima di lanciarlo lo leggiamo dall'alto, un blocco
-        alla volta.
+        Uno script scritto da un agente si legge prima di lanciarlo, un blocco alla volta, con quattro domande:
+
+        1. La struttura è quella solita: import, costanti, `def`, `main` in fondo?
+        2. Quali righe fanno il lavoro e quali sono la cornice?
+        3. Il percorso dei dati esiste, dalla cartella da cui lo lanciamo?
+        4. Il numero torna?
     """)
     nb.sottosezione("Lo script", aula="avanzata")
-    nb.md('''
-        In testa la descrizione, gli import e le costanti:
-
-        ```python
+    nb.code('''
+        # Prompt (modalità Agent): "Scrivi uno script che legge le letture, somma i kWh per POD e salva un CSV"
         """Totale dei consumi per POD dal file delle letture mensili."""
 
         import logging
@@ -186,40 +188,30 @@ def costruisci() -> Notebook:
 
         logger = logging.getLogger(__name__)
 
-        DATA_DIR = Path("Dati")
+        DATA_DIR = Path("../Dati")
         OUTPUT = Path("totale_per_pod.csv")
-        ```
     ''')
-    nb.md('''
-        | Riga | Cos'è | Cosa fa |
-        |---|---|---|
-        | `"""Totale..."""` | docstring di modulo | dice cosa fa lo script |
-        | `import`, `from ... import` | import | caricano le librerie; `logging`, `dataclasses` e `pathlib` sono della libreria standard |
-        | `logger = logging.getLogger(__name__)` | log | prepara i messaggi: `logger.info(...)` è un `print` con il livello davanti |
-        | `DATA_DIR = Path("Dati")` | costante (tutto maiuscolo) | dove stanno i dati, rispetto alla cartella da cui si lancia lo script |
-    ''')
-    nb.md('''
-        Poi la configurazione:
-
-        ```python
+    nb.md("""
+        In testa la docstring di modulo, gli import e le costanti, in maiuscolo. `logging`, `dataclasses` e
+        `pathlib` sono della libreria standard; `logger.info(...)` è un `print` con il livello davanti.
+    """)
+    nb.code("""
         @dataclass
         class Config:
             path: Path
             sep: str = ";"
             decimal: str = ","
             encoding: str = "latin-1"
-        ```
-    ''')
-    nb.md('''
-        | Riga | Cos'è | Cosa fa |
-        |---|---|---|
-        | `@dataclass` | decoratore | trasforma la classe in un contenitore di campi e scrive da solo il costruttore `Config(path=...)` |
-        | `sep: str = ";"` | campo con type hint e default | se non lo passiamo, vale `";"` |
-    ''')
-    nb.md('''
-        Poi le funzioni che fanno il lavoro:
 
-        ```python
+
+        config = Config(path=DATA_DIR / "letture_pod_2025.csv")  # la riga che sta in main()
+        config
+    """)
+    nb.md("""
+        `@dataclass` è un decoratore: scrive da solo il costruttore `Config(path=...)` e la stampa.
+        `sep: str = ";"` è un campo con type hint e default: se non lo passiamo, vale `";"`.
+    """)
+    nb.code('''
         def leggi_letture(config: Config) -> pd.DataFrame:
             """Legge il CSV delle letture con le opzioni della configurazione."""
             if not config.path.exists():
@@ -234,19 +226,20 @@ def costruisci() -> Notebook:
             if fasce is not None:
                 letture = letture[letture["fascia"].isin(fasce)]
             return letture.groupby("pod")["kwh"].sum().reset_index()
-        ```
     ''')
-    nb.md('''
-        | Riga | Cos'è | Cosa fa |
-        |---|---|---|
-        | `-> pd.DataFrame` | type hint di ritorno | dice cosa restituisce la funzione |
-        | `fasce: list[str] \\| None = None` | parametro facoltativo | lista di stringhe oppure `None`; se non lo passiamo, tiene tutte le fasce |
-        | `raise FileNotFoundError(...)` | errore sollevato apposta | ferma lo script con un messaggio chiaro, prima di arrivare a pandas |
-    ''')
-    nb.md('''
-        In fondo, chi le usa:
-
-        ```python
+    nb.md("""
+        Il lavoro lo fanno `read_csv` e il `groupby`; il resto è cornice. `-> pd.DataFrame` è il type hint
+        di ritorno; `fasce: list[str] | None = None` è un parametro facoltativo.
+    """)
+    nb.code("""
+        totale_per_pod(leggi_letture(config), fasce=["F1"])  # solo la fascia F1
+    """)
+    nb.code("""
+        print(config.path.exists())  # domanda 3. Output: True
+        totali = totale_per_pod(leggi_letture(config))
+        print(round(totali["kwh"].sum(), 1), len(totali))  # domanda 4. Output: 134507.7 6
+    """)
+    nb.code("""
         def main() -> None:
             logging.basicConfig(level=logging.INFO)
             config = Config(path=DATA_DIR / "letture_pod_2025.csv")
@@ -255,29 +248,18 @@ def costruisci() -> Notebook:
             logger.info(f"Salvati {len(totali)} POD in {OUTPUT}")
 
 
-        if __name__ == "__main__":
-            main()
-        ```
-    ''')
-    nb.md('''
-        | Riga | Cos'è | Cosa fa |
-        |---|---|---|
-        | `def main() -> None:` | funzione principale | mette in fila i passi; `-> None` vuol dire che non restituisce niente |
-        | `logging.basicConfig(level=logging.INFO)` | log | accende il log: senza, `logger.info` non stampa |
-        | `if __name__ == "__main__":` | blocco main | fa partire `main()` quando il file viene lanciato, non quando viene importato |
-    ''')
+        # Le ultime due righe dello script:
+        # if __name__ == "__main__":
+        #     main()
+    """)
     nb.md("""
-        Prima di accettare uno script, quattro domande, nell'ordine:
-
-        1. La struttura è quella solita: import, costanti, `def`, `main` in fondo?
-        2. Quali righe fanno il lavoro e quali sono la cornice? Qui il lavoro è `read_csv` più il `groupby`.
-        3. Il percorso dei dati esiste, dalla cartella da cui lo lanciamo?
-        4. Il numero torna? Qui 134507,7 kWh in tutto, su sei POD.
+        `logging.basicConfig` accende il log: senza, `logger.info` non stampa. Il blocco
+        `if __name__ == "__main__":` fa partire `main()` quando il file viene lanciato, non quando viene importato.
     """)
     nb.prova_tu(
         richiesta="""
             Per ogni riga dello script scrivi cos'è, scegliendo tra `"decoratore"`, `"type hint"`,
-            `"blocco main"` e `"costante"`. Le risposte sono nelle tabelle qui sopra.
+            `"blocco main"` e `"costante"`. Le risposte sono nelle celle qui sopra.
         """,
         starter="""
             cosa_e = {
@@ -298,15 +280,12 @@ def costruisci() -> Notebook:
             cosa_e
         """,
     )
-    nb.md("""
-        Le forme che si incontrano più spesso, una per riga, stanno nella
-        [scheda per leggere il codice](../Schede/Scheda_leggere_codice.md).
-    """)
+    nb.md("Riassunto in una pagina: [Leggere il codice: cosa è cosa](../Schede/Scheda_leggere_codice.md).")
 
     with nb.solo("avanzata"):
         nb.sottosezione("Type hint", intro="""
-            Le forme più frequenti: `list[str]`, `dict[str, float]`, `tuple[int, int]`, `X | None` (X oppure
-            niente), `-> None`. Python non li controlla quando esegue: servono a chi legge e all'editor.
+            Le forme più frequenti sono `list[str]`, `dict[str, float]`, `X | None` e `-> None`; Python non le
+            controlla quando esegue.
         """)
         nb.code('''
             def prezzo_medio(prezzi: dict[str, float], escludi: list[str] | None = None) -> float:
@@ -315,83 +294,74 @@ def costruisci() -> Notebook:
                 validi = [p for nome, p in prezzi.items() if nome not in escludi]
                 return sum(validi) / len(validi)
 
-            prezzo_medio({"pane": 2.5, "latte": 1.3, "caffè": 4.2}, escludi=["caffè"])
+
+            print(prezzo_medio({"pane": 2.5, "latte": 1.3, "caffè": 4.2}, escludi=["caffè"]))  # Output: 1.9
+            print(prezzo_medio({"pane": 2, "latte": 1}))  # int al posto di float, nessun errore. Output: 1.5
         ''')
-        nb.md("""
-            Con interi al posto dei `float` non succede niente di diverso: il type hint è un'indicazione, non un controllo.
-        """)
-        nb.code("""
-            prezzo_medio({"pane": 2, "latte": 1})
-        """)
 
         nb.sottosezione("`@dataclass`", intro="""
-            `@dataclass` sopra una classe la trasforma in un contenitore di campi, ognuno con tipo e, se c'è,
-            default. Il costruttore, la stampa e il confronto con `==` li scrive da solo.
+            Su una classe fatta di campi, `@dataclass` scrive da solo il costruttore, la stampa e il confronto con `==`.
         """)
         nb.code("""
             from dataclasses import dataclass
+
 
             @dataclass
             class Libro:
                 titolo: str
                 autore: str
                 pagine: int = 0
-        """)
-        nb.code("""
+
+
             libro = Libro("Il nome della rosa", "Umberto Eco", pagine=503)
-            libro
+            print(libro)
+            print(libro == Libro("Il nome della rosa", "Umberto Eco", 503))  # Output: True
         """)
 
         nb.sottosezione("Decoratori", intro="""
-            Una riga `@nome` sopra un `def` avvolge la funzione in un'altra che ne cambia il comportamento.
-            Qui `@cache` ricorda i risultati già calcolati: senza, `fibonacci(80)` richiederebbe miliardi di chiamate.
+            Una riga `@nome` sopra un `def` avvolge la funzione in un'altra: `@cache` ricorda i risultati già calcolati.
         """)
         nb.code("""
             from functools import cache
 
-            @cache
+
+            @cache  # senza, fibonacci(80) richiederebbe miliardi di chiamate
             def fibonacci(n: int) -> int:
                 return n if n < 2 else fibonacci(n - 1) + fibonacci(n - 2)
 
-            fibonacci(80)
-        """)
-        nb.md("""
-            Altri decoratori che si incontrano: `@property` e `@staticmethod` nelle classi,
-            `@pytest.fixture` nei test.
+
+            fibonacci(80)  # altri decoratori frequenti: @property, @staticmethod, @pytest.fixture
         """)
 
         nb.sottosezione("Generatori", intro="""
-            Una funzione con `yield` al posto di `return` è un generatore: consegna un valore alla volta, quando
-            un `for` o `list()` lo chiede. Si incontra in script che leggono dati lunghi a pezzi.
+            Una funzione con `yield` al posto di `return` consegna un valore alla volta, quando un `for` o `list()` lo chiede.
         """)
         nb.code("""
             def a_blocchi(elementi: list, n: int):
                 for i in range(0, len(elementi), n):
                     yield elementi[i:i + n]
 
+
             spesa = ["pane", "latte", "uova", "mele", "pasta"]
             list(a_blocchi(spesa, 2))
         """)
 
         nb.sottosezione("`**kwargs`", intro="""
-            `**kwargs` (il nome può cambiare, contano i due asterischi) raccoglie in un dizionario i parametri
-            passati per nome che la funzione non elenca. `*args` raccoglie in una tupla quelli passati per posizione.
+            `**kwargs` raccoglie in un dizionario i parametri passati per nome che la funzione non elenca
+            (`*args` in una tupla quelli per posizione); negli script degli agenti li passa così come sono a
+            un'altra funzione.
         """)
         nb.code("""
             def ordine(piatto: str, **opzioni) -> str:
                 return f"{piatto}: {opzioni}"
 
-            ordine("pizza", impasto="integrale", extra="olive")
-        """)
-        nb.md("""
-            L'uso più comune negli script degli agenti: passare le opzioni così come sono a un'altra funzione,
-            qui `read_csv`.
-        """)
-        nb.code("""
+
             def leggi_csv(path: str, **opzioni) -> pd.DataFrame:
                 return pd.read_csv(path, **opzioni)
 
-            leggi_csv("../Dati/impianti_fv.csv", usecols=["comune", "kwp"], nrows=3).shape
+
+            print(ordine("pizza", impasto="integrale", extra="olive"))
+            leggi_csv("../Dati/impianti_fv.csv", usecols=["comune", "kwp"], nrows=3)
         """)
 
     # ------------------------------------------------------------------ Esercizi
