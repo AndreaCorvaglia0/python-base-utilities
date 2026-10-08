@@ -51,16 +51,16 @@ Giornata 2 (Blocchi 3 e 4)
 | | Base | Avanzata |
 |---|---|---|
 | Correzione dell'Homework | 15 | 15 |
-| 07 Pandas: operazioni sui DataFrame | 90 | 80 |
+| 07 Pandas: operazioni sui DataFrame | 70 | 75 |
 | Demo Data Wrangler | 15 | 15 |
 | 08 Pandas: le date | 70 | 80 |
 | 09 Plotly per serie storiche | 40 | 35 |
 | Esercitazione 3 | 30 | 30 |
 | 10 Agenti per il coding | 45 | 55 |
 | 11 Capstone | 110 | 110 |
-| **Totale** | **415** | **420** |
+| **Totale** | **395** | **415** |
 
-Sette ore nette per giornata sono 420 minuti: le giornate sono piene, e la prima giornata dell'Avanzata va oltre di dieci minuti. Si taglia a fine sezione, mai a metà.
+Sette ore nette per giornata sono 420 minuti: la prima giornata è piena (l'Avanzata va oltre di dieci minuti), la seconda ha venti minuti di margine in Base, da tenere per la demo di Data Wrangler e il capstone. Si taglia a fine sezione, mai a metà.
 
 ## Dove tagliare se si è in ritardo
 
@@ -68,6 +68,7 @@ Sette ore nette per giornata sono 420 minuti: le giornate sono piene, e la prima
 - Esercitazione 1 e 2: le domande si fanno a voce, gli esercizi si riducono a due.
 - 04: in Base la sezione su `while` si fa come dimostrazione; in Avanzata `map` e `filter` si citano e basta.
 - 06 Avanzata: l'esercizio facoltativo sulle API si salta; la demo del wrapper si accorcia a 5 minuti.
+- 07 Avanzata: `query`, l'assegnazione condizionale con `.loc`, l'indice a due colonne e `agg` sono le parti in più rispetto a Base: si possono citare e basta.
 - 08: differenze tra date e fuso orario si fanno come dimostrazione, lasciando i duplicati dell'ora legale, che servono al capstone.
 - 10: la prova guidata si fa con un prompt solo.
 - Capstone: gli step 1-4 sono il minimo; 5 e 6 si possono fare insieme sullo schermo del docente.

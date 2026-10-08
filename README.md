@@ -33,7 +33,7 @@ Serve una libreria in più? Nel terminale `uv add nome`, poi **Restart** del ker
 | 1 | `06_Pandas_e_import_dati` · Series, DataFrame, CSV, Excel, SQL (Avanzata: API) | 70 min | 90 min |
 | 1 | `Esercitazione_2` | 30 min | 30 min |
 | tra le due | `Homework` · una settimana nell'ufficio Analisi Consumi | 40 min | 45 min |
-| 2 | `07_Pandas_operazioni` · selezione, valori mancanti, groupby, merge | 90 min | 80 min |
+| 2 | `07_Pandas_operazioni` · selezione, valori mancanti, groupby, merge | 70 min | 75 min |
 | 2 | `08_Pandas_date` · date, indice temporale, resample, ora legale (Avanzata: shift, rolling) | 70 min | 80 min |
 | 2 | `09_Plotly` · linee, confronto tra serie, slider, istogrammi, export HTML | 40 min | 35 min |
 | 2 | `Esercitazione_3` | 30 min | 30 min |
@@ -53,7 +53,7 @@ soluzioni stanno in `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 | `Soluzioni_Base/`, `Soluzioni_Avanzata/` | gli stessi notebook con gli esercizi risolti |
 | `Extra/` | le parti che il docente mostra dal vivo: VS Code, ambiente e script, Ruff, Data Wrangler, wrapper delle API |
 | `Dati/` | i dati usati nel corso: carico Terna, turbina eolica, prezzi, più i file di esempio (vedi `Dati/README.md`) |
-| `Schede/` | quattro schede di una pagina: leggere il codice, Excel → pandas, uv e script, gli errori più comuni |
+| `Schede/` | quattro schede di una pagina: leggere il codice, Excel → pandas, uv e script, gli errori più comuni; i notebook 01, 05, 06 e 07 rimandano alla loro |
 | `Slides/` | la presentazione del corso |
 | `_build/` | gli script che generano i notebook e i dati di esempio (non servono per seguire il corso) |
 
@@ -61,6 +61,7 @@ soluzioni stanno in `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 
 ## I riquadri nei notebook
 
-Nei notebook incontrerai riquadri colorati: 💡 **Nota** (una precisazione), ⚠️ **Attenzione** (un errore che capita),
-📘 **Approfondimento** (si può saltare), ✏️ **Esercizio** e **Prova tu** (tocca a te), ✅ **Soluzione** (solo nelle
-cartelle delle soluzioni).
+Ogni notebook si apre con il tempo previsto, i dati usati e tre obiettivi, e si chiude con i link al notebook precedente e
+al prossimo. Nel testo: le **Note** e gli **Approfondimenti** sono citazioni rientrate (gli Approfondimenti si possono
+saltare); i riquadri colorati sono tre: ✏️ **Esercizio** e **Prova tu** (verde, tocca a te), ✅ **Soluzione** (azzurro,
+solo nelle cartelle delle soluzioni), ⚠️ **Attenzione** (rosso, un errore che capita).
