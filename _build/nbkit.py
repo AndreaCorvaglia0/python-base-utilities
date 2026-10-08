@@ -89,7 +89,7 @@ BOX = {
     "esercizio":       ("✏️", "Esercizio",       "#5cb85c", "rgba(92,184,92,0.12)"),
     "soluzione":       ("✅", "Soluzione",       "#2e9fd6", "rgba(46,159,214,0.12)"),
 }
-BANNER_BORDO, BANNER_SFONDO = "#607d8b", "rgba(96,125,139,0.08)"
+INDICE_DA = 50      # l'indice compare solo nei notebook con almeno tante celle
 
 
 def _div(sfondo: str, bordo: str, corpo: str, padding: str = "12px 14px") -> str:
@@ -111,6 +111,19 @@ def box_html(tipo: str, corpo: str, titolo: str | None = None) -> str:
     else:
         testa = f"**{icona} {nome}**"
     return _div(sfondo, bordo, f"{testa}\n\n{corpo}")
+
+
+def citazione(tipo: str, corpo: str, titolo: str | None = None) -> str:
+    """Nota e Approfondimento: testo citato (barra grigia), senza colore. Il colore resta a esercizi, soluzioni e Attenzione."""
+    corpo = textwrap.dedent(corpo).strip()
+    if tipo == "approfondimento":
+        if not titolo:
+            raise ValueError("Un Approfondimento ha sempre un titolo")
+        testa = f"**Approfondimento · {titolo}** (si può saltare)."
+    else:
+        testa = f"**{titolo or 'Nota'}.**"
+    testo = testa + ("\n\n" + corpo if "\n" in corpo else " " + corpo)
+    return "\n".join(("> " + r) if r else ">" for r in testo.split("\n"))
 
 
 # ---------------------------------------------------------------------------
@@ -192,7 +205,10 @@ class Notebook:
     def box(self, tipo: str, testo: str, titolo: str | None = None, aula: str | None = None) -> None:
         if tipo not in ("nota", "attenzione", "approfondimento", "ricorda"):
             raise ValueError(f"box: tipo non previsto {tipo!r}")
-        self.celle.append(Cella("md", box_html(tipo, testo, titolo), aula=self._aula(aula)))
+        if tipo in ("nota", "approfondimento"):
+            self.celle.append(Cella("md", citazione(tipo, testo, titolo), aula=self._aula(aula)))
+        else:
+            self.celle.append(Cella("md", box_html(tipo, testo, titolo), aula=self._aula(aula)))
 
     def prova_tu(self, richiesta: str, starter: str, soluzione: str, verifica: str | None = None,
                  aula: str | None = None, rete: bool = False) -> None:
@@ -251,28 +267,26 @@ class Notebook:
         return testo
 
     def banner(self, aula: str, soluzioni: bool) -> str:
+        """Testata piana: titolo, tempo e dati su una riga, i tre obiettivi. Blocco, giornata e aula stanno in chiusura."""
         obiettivi = self._per_aula(self.obiettivi, aula)
         dati = self._per_aula(self.dati, aula)
         tempo = self._per_aula(self.tempo, aula)
         titolo = f"{self.num} · {self.titolo}" if self.num[0].isdigit() else self.titolo
         if soluzioni and not self.extra:
             titolo += " · Soluzioni"
-        kicker = "Extra · materiale per il docente" if self.extra else NOMI_BLOCCO[self.blocco]
-        if self.giornata and not self.extra:
-            kicker += f" · Giornata {self.giornata}"
-        if not self.extra:
-            kicker += f" · {NOMI_AULA[aula]}"
-        kicker += f" &nbsp;·&nbsp; ⏱ ~{tempo} min"
-        righe = [f"**{kicker}**", "", self.intento, "", "**In questo notebook impariamo a**", ""]
+        testa = ["Extra · materiale per il docente"] if self.extra else []
+        testa.append(f"⏱ ~{tempo} min")
+        testa.append("Dati: " + (", ".join(f"`../Dati/{d}`" for d in dati) if dati else "nessuno"))
+        righe = [" &nbsp;·&nbsp; ".join(testa), "", "**In questo notebook impariamo a**", ""]
         righe += [f"- {o}" for o in obiettivi]
-        pre = []
+        return f'<a id="inizio"></a>\n# {titolo}\n\n' + "\n".join(righe)
+
+    def _link_precedente(self) -> str | None:
         nums = [p[0] for p in PROGRAMMA]
-        if not self.extra and self.num in nums and nums.index(self.num) > 0:
-            n, f, t = PROGRAMMA[nums.index(self.num) - 1]
-            pre.append(f"Prima di questo: [{n} · {t}]({f}.ipynb)")
-        pre.append("Dati: " + (", ".join(f"`../Dati/{d}`" for d in dati) if dati else "nessuno"))
-        righe += ["", " &nbsp;·&nbsp; ".join(pre)]
-        return f'<a id="inizio"></a>\n# {titolo}\n\n' + _div(BANNER_SFONDO, BANNER_BORDO, "\n".join(righe), padding="12px 16px")
+        if self.extra or self.num not in nums or nums.index(self.num) == 0:
+            return None
+        n, f, t = PROGRAMMA[nums.index(self.num) - 1]
+        return f"Precedente: [{n} · {t}]({f}.ipynb)"
 
     def build(self, root: Path | str, aula: str, soluzioni: bool = False, lint: bool = True) -> Path:
         assert aula in AULE
@@ -386,7 +400,7 @@ class Notebook:
         self.verifiche = verifiche
         self.prefisso_verifiche = f"{prefisso}." if self.etichetta_esercizio == "Esercizio" else f"{self.etichetta_esercizio} "
         cells = [new_markdown_cell(self.banner(aula, soluzioni), metadata={"tags": ["banner"]})]
-        if indice:
+        if indice and len(out) >= INDICE_DA:
             cells.append(new_markdown_cell('<a id="indice"></a>\n**Indice**\n\n' + "\n".join(indice), metadata={"tags": ["indice"]}))
         for tipo, src, meta in out:
             if tipo == "md":
@@ -401,9 +415,15 @@ class Notebook:
             chiusura = f"---\n\n**Fine dell'{self.titolo.lower()}.**"
         else:
             chiusura = f"---\n\n**Fine del notebook {self.num}.**"
-        link = None if self.extra else self._link_prossimo()
+        link = [l for l in (self._link_precedente(), None if self.extra else self._link_prossimo()) if l]
         if link:
-            chiusura += " " + link
+            chiusura += " " + " &nbsp;·&nbsp; ".join(link)
+        if not self.extra:
+            meta = [NOMI_BLOCCO[self.blocco]]
+            if self.giornata:
+                meta.append(f"Giornata {self.giornata}")
+            meta.append(NOMI_AULA[aula])
+            chiusura += "\n\n<sub>" + " · ".join(meta) + "</sub>"
         cells.append(new_markdown_cell(chiusura, metadata={"tags": ["chiusura"]}))
 
         # id deterministici e output vuoti
@@ -533,7 +553,7 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
         errori.append(f"servono esattamente 3 obiettivi, trovati {len(obiettivi)}")
     md = [c for c in cells if c["cell_type"] == "markdown"]
     code = [c for c in cells if c["cell_type"] == "code"]
-    testo = "\n".join(c["source"] for c in md[1:])  # banner escluso
+    testo = "\n".join(c["source"] for c in md[1:] if "chiusura" not in c["metadata"].get("tags", []))  # banner e chiusura esclusi
     basso = testo.lower()
     for f in FRASI_VIETATE:
         if f in basso:
