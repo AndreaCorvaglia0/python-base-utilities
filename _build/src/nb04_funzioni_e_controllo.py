@@ -21,16 +21,16 @@ def costruisci() -> Notebook:
         obiettivi={
             "base": [
                 "eseguire codice solo a certe condizioni con `if`, `else`, `and` e `or`",
-                "ripetere un'operazione con `for` e `while`, anche con `.items()`, `enumerate`, `zip` e `range`",
+                "ripetere un'operazione con `for`, anche con `.items()`, `enumerate`, `zip` e `range`",
                 "definire funzioni con argomenti keyword e valori predefiniti",
             ],
             "avanzata": [
-                "eseguire codice solo a certe condizioni e ripetere un'operazione con `for` e `while`",
+                "eseguire codice solo a certe condizioni e ripetere un'operazione con `for`",
                 "definire funzioni con argomenti keyword e valori predefiniti",
-                "scrivere in forma compatta con `lambda`, list comprehension, `map`, `filter` e generatori",
+                "scrivere in forma compatta con `lambda` e list comprehension",
             ],
         },
-        tempo={"base": 70, "avanzata": 80},
+        tempo={"base": 55, "avanzata": 60},
         dati=[],
     )
 
@@ -198,14 +198,6 @@ def costruisci() -> Notebook:
         successivo; se non ci sono più elementi, solleva l'eccezione `StopIteration`.
     """)
 
-    nb.sottosezione("Il ciclo while", intro="Il ciclo `while` esegue il blocco di codice finché una condizione è vera:")
-    nb.code("""
-        x = 0
-        while x < 5:
-            print(x)
-            x += 1
-    """)
-
     # ------------------------------------------------------------------ 3
     nb.sezione("Creare funzioni personalizzate", intro="""
         Le funzioni consentono di incapsulare codice riutilizzabile.
@@ -267,7 +259,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 5 (A)
     with nb.solo("avanzata"):
-        nb.sezione("Lambda, list comprehension, map e filter")
+        nb.sezione("Lambda e list comprehension")
         nb.sottosezione("Funzioni lambda", intro="Le funzioni lambda sono funzioni anonime e compatte:")
         nb.code("""
             quadrato = lambda x: x ** 2
@@ -278,31 +270,7 @@ def costruisci() -> Notebook:
             lista_quadrati = [x ** 2 for x in range(1, 11)]
             print(lista_quadrati)
         """)
-        nb.sottosezione("La funzione map", intro="Applica una funzione a tutti gli elementi di una lista:")
-        nb.code("""
-            numeri = [1, 2, 3, 4, 5]
-            numeri_al_quadrato = list(map(lambda x: x ** 2, numeri))
-            print(numeri_al_quadrato)
-        """)
-        nb.sottosezione("La funzione filter", intro="Filtra gli elementi in base a una condizione:")
-        nb.code("""
-            numeri_pari = list(filter(lambda x: x % 2 == 0, numeri))
-            print(numeri_pari)
-        """)
         nb.md("Questi strumenti permettono di scrivere codice più conciso.")
-        nb.sottosezione("Generatori", intro="""
-            Un **generatore** è una funzione che usa `yield` al posto di `return`: produce i valori uno alla
-            volta, solo quando servono, senza costruire tutta la lista. È un iteratore, quindi si percorre
-            con `for` o con `next()`.
-        """)
-        nb.code("""
-            def quadrati(n):
-                for i in range(1, n + 1):
-                    yield i ** 2
-
-            generatore = quadrati(3)
-            print(next(generatore), next(generatore), next(generatore))  # Output: 1 4 9
-        """)
 
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")

@@ -16,7 +16,7 @@ def costruisci() -> Notebook:
             "aggiungere, modificare e togliere elementi da liste e dizionari",
             "riconoscere tuple e set e convertire un tipo nell'altro con i costruttori",
         ],
-        tempo={"base": 50, "avanzata": 40},
+        tempo={"base": 40, "avanzata": 35},
         dati=[],
     )
 
@@ -190,27 +190,6 @@ def costruisci() -> Notebook:
         colori = set(["rosso", "verde", "blu"])
     """)
     nb.box("attenzione", "I set sono **non ordinati**: l'ordine in cui Python stampa gli elementi può essere diverso da quello in cui li abbiamo scritti.")
-
-    nb.sottosezione("Operazioni con i set", intro="Unione:")
-    nb.code("""
-        colori = {"rosso", "verde", "blu"}
-        altri_colori = {"giallo", "rosso", "viola"}
-
-        unione = colori.union(altri_colori)
-        print(unione)
-        # Output: {'blu', 'rosso', 'verde', 'giallo', 'viola'}
-    """)
-    nb.md("Intersezione:")
-    nb.code("""
-        intersezione = colori.intersection(altri_colori)
-        print(intersezione)
-        # Output: {'rosso'}
-    """)
-    nb.box("nota", """
-        - **Elementi unici:** un set non contiene doppioni.
-        - **Operazioni di insieme:** unione, intersezione, differenza.
-        - **Appartenenza:** controllare se un elemento c'è è rapido.
-    """, titolo="Perché usare i set")
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Costruttori e conversioni", intro="""

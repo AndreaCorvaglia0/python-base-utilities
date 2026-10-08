@@ -21,7 +21,7 @@ def costruisci() -> Notebook:
         obiettivi={
             "base": [
                 "creare Series e DataFrame e accedere ai loro elementi",
-                "leggere file CSV ed Excel con i parametri di lettura, anche più file o più fogli insieme",
+                "leggere file CSV ed Excel con i parametri di lettura, anche più fogli insieme",
                 "caricare una tabella da un database SQL con una query",
             ],
             "avanzata": [
@@ -30,7 +30,7 @@ def costruisci() -> Notebook:
                 "chiedere dati a un'API con `requests` e trasformare la risposta JSON in un DataFrame",
             ],
         },
-        tempo={"base": 70, "avanzata": 90},
+        tempo={"base": 55, "avanzata": 75},
         dati={
             "base": DATI_BASE,
             "avanzata": DATI_BASE + ["fallback/lombardia_sensori.json", "fallback/lombardia_misure_2001.json"],
@@ -151,74 +151,12 @@ def costruisci() -> Notebook:
     """)
     nb.code("df_turbina.info()")
     nb.code("df_turbina.describe()")
-    nb.sottosezione("Trovare e leggere più file CSV", intro="""
-        Il modulo `glob` trova i file il cui nome segue uno schema, per esempio tutti quelli che finiscono
-        con `.csv`. Prima creiamo due file CSV di esempio.
-    """)
-    nb.code("""
-        df1 = pd.DataFrame({
-            "ID": [1, 2, 3],
-            "Nome": ["Alice", "Bob", "Charlie"],
-            "Età": ["25", "30", "35"],  # intenzionalmente come stringhe
-        })
-        df2 = pd.DataFrame({
-            "ID": [4, 5, 6],
-            "Nome": ["David", "Eva", "Frank"],
-            "Età": ["40", "45", "50"],  # intenzionalmente come stringhe
-        })
-    """)
-    nb.code("""
-        # salviamo i DataFrame come file CSV
-        df1.to_csv("dati1.csv", index=False)
-        df2.to_csv("dati2.csv", index=False)
-        print("File 'dati1.csv' e 'dati2.csv' creati.")
-    """)
-    nb.code("""
-        from glob import glob
-
-        # cerchiamo i file CSV che iniziano con "dati"
-        file_csv = sorted(glob("dati*.csv"))
-        print("File CSV trovati:")
-        for file in file_csv:
-            print(file)
-    """)
-    nb.code("""
-        # leggere il primo file CSV
-        df_csv1 = pd.read_csv("dati1.csv")
-        df_csv1
-    """)
-    nb.sottosezione("Specificare i tipi di dato", intro="""
-        Durante la lettura pandas prova a riconoscere da solo il tipo di ogni colonna. A volte serve
-        indicarlo noi, con il parametro `dtype`. Supponiamo di volere la colonna `Età` sicuramente come intero.
-    """)
-    nb.code("""
-        # leggere il CSV specificando i tipi di dato
-        tipi_colonne = {"ID": int, "Nome": str, "Età": int}
-        df_csv1_tipizzato = pd.read_csv("dati1.csv", dtype=tipi_colonne)
-        df_csv1_tipizzato.dtypes
-    """)
     nb.md("""
-        Altri parametri utili di `read_csv()`:
+        Parametri utili di `read_csv()`:
 
         - **`usecols`**: quali colonne leggere dal file;
         - **`sep`**: il delimitatore (`,`, `;`, `\\t`);
         - **`decimal`**: il separatore dei decimali (per esempio `,` invece di `.`).
-    """)
-    nb.md("""
-        Per unire i dati di più file leggiamo ogni file in un DataFrame, mettiamo i DataFrame in una lista e
-        li concateniamo con `pd.concat()`.
-    """)
-    nb.code("""
-        # leggere tutti i file CSV e aggiungerli a una lista
-        dfs = []
-        for nome_file in file_csv:
-            df = pd.read_csv(nome_file, dtype=tipi_colonne)
-            dfs.append(df)
-    """)
-    nb.code("""
-        # concatenare i DataFrame
-        df_unito = pd.concat(dfs, ignore_index=True)
-        df_unito
     """)
     nb.sottosezione("Un CSV salvato da Excel in italiano", intro="""
         `letture_pod_2025.csv` contiene i consumi mensili per fascia di sei POD, esportati da un Excel
@@ -254,6 +192,19 @@ def costruisci() -> Notebook:
         `pd.ExcelWriter` scrive più DataFrame nello stesso file, ognuno in un foglio. Con `read_excel()`
         scegliamo il foglio da leggere con `sheet_name`.
     """)
+    nb.md("Prima creiamo due DataFrame di esempio.")
+    nb.code("""
+        df1 = pd.DataFrame({
+            "ID": [1, 2, 3],
+            "Nome": ["Alice", "Bob", "Charlie"],
+            "Età": [25, 30, 35],
+        })
+        df2 = pd.DataFrame({
+            "ID": [4, 5, 6],
+            "Nome": ["David", "Eva", "Frank"],
+            "Età": [40, 45, 50],
+        })
+    """)
     nb.code("""
         # creare un file Excel con più fogli
         with pd.ExcelWriter("dati.xlsx") as writer:
@@ -263,7 +214,7 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # leggere un foglio specifico
-        df_foglio1 = pd.read_excel("dati.xlsx", sheet_name="Foglio1", dtype=tipi_colonne)
+        df_foglio1 = pd.read_excel("dati.xlsx", sheet_name="Foglio1")
         df_foglio1.dtypes
     """)
     nb.md("""
@@ -272,7 +223,7 @@ def costruisci() -> Notebook:
     """)
     nb.code("""
         # leggere tutti i fogli dal file Excel
-        fogli = pd.read_excel("dati.xlsx", sheet_name=None, dtype=tipi_colonne)
+        fogli = pd.read_excel("dati.xlsx", sheet_name=None)
         fogli.keys()
     """)
     nb.code("""

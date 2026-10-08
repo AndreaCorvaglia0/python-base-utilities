@@ -16,13 +16,13 @@ def costruisci() -> Notebook:
             "leggere un traceback e correggere l'errore che segnala",
             "leggere un file o una tabella di dati e descriverli con head, info e describe",
         ],
-        tempo=30,
+        tempo=20,
         dati=["letture_pod_2025.csv", "utility.db"],
     )
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Domande", intro="""
-        Rispondi a mente, poi controlla copiando il codice in una cella (per la domanda 5 serve `import pandas as pd`).
+        Rispondi a mente, poi controlla copiando il codice in una cella (per la domanda 4 serve `import pandas as pd`).
     """)
     nb.md("""
         **1.** Cosa stampa questo ciclo?
@@ -43,20 +43,13 @@ def costruisci() -> Notebook:
 
         saluta()
         ```
-        **4.** Quanto vale `x` alla fine?
-        ```python
-        x = 10
-        while x > 0:
-            x = x - 3
-        ```
-        **5.** Con `df = pd.DataFrame({"Nome": ["Alice", "Bob"], "Età": [24, 27]})`, che tipo è `df["Età"]`?
+        **4.** Con `df = pd.DataFrame({"Nome": ["Alice", "Bob"], "Età": [24, 27]})`, che tipo è `df["Età"]`?
     """)
     nb.celle.append(Cella("md", box_html("soluzione", """
         1. `8`, `5` e `12`, uno per riga: il `print` scatta solo per i numeri maggiori di 4.
         2. `45.0`: `sconto` vale 10 per default e la divisione con `/` dà un `float`.
         3. `TypeError: saluta() missing 1 required positional argument: 'nome'`: il parametro `nome` non ha un default.
-        4. `-2`: `x` passa per 10, 7, 4, 1 e -2, e a quel punto la condizione `x > 0` è falsa.
-        5. Una `Series` (`<class 'pandas.Series'>`): una colonna di un DataFrame.
+        4. Una `Series` (`<class 'pandas.Series'>`): una colonna di un DataFrame.
     """, titolo="Risposte"), solo_soluzioni=True))
 
     # ------------------------------------------------------------------ 2

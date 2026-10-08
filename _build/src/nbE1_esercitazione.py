@@ -16,7 +16,7 @@ def costruisci() -> Notebook:
             "usare variabili, operatori e stringhe su un caso concreto",
             "modificare liste e dizionari e selezionarne una parte",
         ],
-        tempo={"base": 30, "avanzata": 25},
+        tempo={"base": 20, "avanzata": 20},
         dati=[],
     )
 
@@ -160,41 +160,5 @@ def costruisci() -> Notebook:
             assert materie == ["matematica", "italiano", "storia", "inglese"], "❌ materie: usa list(voti.keys())"
             assert media == 7.75, "❌ La media dei quattro voti è 7.75"
         """,
-    )
-    nb.esercizio(
-        titolo="Due liste della spesa",
-        scenario="Anna e Luca hanno scritto ciascuno la sua lista, con qualche ripetizione. Vogliamo una lista unica.",
-        richiesta="""
-            1. Salva in `da_comprare` il set di tutto quello che c'è nelle due liste, senza doppioni.
-            2. Salva in `in_comune` il set delle cose che compaiono in entrambe.
-            3. Salva in `quanti` il numero di cose da comprare.
-        """,
-        suggerimento="`set()` trasforma una lista in set; poi `union()` e `intersection()`.",
-        starter="""
-            lista_anna = ["pane", "latte", "mele", "pane", "caffè"]
-            lista_luca = ["latte", "pasta", "mele", "olio"]
-
-            da_comprare = ...
-            in_comune = ...
-            quanti = ...
-
-            print(in_comune)  # Output: {'latte', 'mele'} (l'ordine può cambiare)
-        """,
-        soluzione="""
-            lista_anna = ["pane", "latte", "mele", "pane", "caffè"]
-            lista_luca = ["latte", "pasta", "mele", "olio"]
-
-            da_comprare = set(lista_anna).union(set(lista_luca))
-            in_comune = set(lista_anna).intersection(set(lista_luca))
-            quanti = len(da_comprare)
-
-            print(in_comune)  # Output: {'latte', 'mele'} (l'ordine può cambiare)
-        """,
-        verifica="""
-            assert da_comprare == {"pane", "latte", "mele", "caffè", "pasta", "olio"}, "❌ da_comprare: unisci i due set"
-            assert in_comune == {"latte", "mele"}, "❌ in_comune: usa intersection()"
-            assert quanti == 6, "❌ Le cose da comprare sono 6"
-        """,
-        facoltativo=True,
     )
     return nb
