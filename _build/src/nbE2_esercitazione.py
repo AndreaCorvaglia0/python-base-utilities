@@ -10,7 +10,7 @@ def costruisci() -> Notebook:
         titolo="Esercitazione 2",
         blocco=2,
         giornata=1,
-        intento="Qualche domanda e qualche esercizio su cicli, funzioni, errori e lettura dei dati con pandas.",
+        intento="Questa esercitazione raccoglie alcune domande e alcuni esercizi su cicli, funzioni, errori e lettura dei dati con pandas.",
         obiettivi=[
             "prevedere cosa fanno un ciclo e una funzione prima di eseguirli",
             "leggere un traceback e correggere l'errore che segnala",
@@ -22,7 +22,9 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Domande", intro="""
-        Rispondi a mente, poi controlla copiando il codice in una cella (per la domanda 4 serve `import pandas as pd`).
+        Le domande che seguono riguardano i notebook 04-06. Prova a rispondere a ciascuna a mente e poi controlla la
+        risposta copiando il codice in una cella. Per la domanda 4 la cella deve cominciare con `import pandas as pd`,
+        perché il nome `pd` esiste solo dopo che la libreria è stata importata.
     """)
     nb.md("""
         **1.** Cosa stampa questo ciclo?
@@ -46,23 +48,31 @@ def costruisci() -> Notebook:
         **4.** Con `df = pd.DataFrame({"Nome": ["Alice", "Bob"], "Età": [24, 27]})`, che tipo è `df["Età"]`?
     """)
     nb.celle.append(Cella("md", box_html("soluzione", """
-        1. `8`, `5` e `12`, uno per riga: il `print` scatta solo per i numeri maggiori di 4.
-        2. `45.0`: `sconto` vale 10 per default e la divisione con `/` dà un `float`.
-        3. `TypeError: saluta() missing 1 required positional argument: 'nome'`: il parametro `nome` non ha un default.
-        4. Una `Series` (`<class 'pandas.Series'>`): una colonna di un DataFrame.
+        1. Stampa `8`, `5` e `12`, uno per riga. Il ciclo scorre tutti e quattro i numeri, ma il `print` viene eseguito
+           solo per quelli maggiori di 4, quindi il 3 non compare.
+        2. Restituisce `45.0`. La chiamata non passa `sconto`, quindi il parametro prende il valore di default 10 e la
+           funzione calcola 50 - 50 * 10 / 100. Il risultato è un `float` perché la divisione con `/` restituisce sempre
+           un `float`.
+        3. Dà `TypeError: saluta() missing 1 required positional argument: 'nome'`. La funzione dichiara il parametro
+           `nome` senza un valore di default, quindi va chiamata passando un argomento.
+        4. È una `Series`, e `type(df["Età"])` stampa `<class 'pandas.Series'>`. Selezionando una sola colonna di un
+           DataFrame con il suo nome tra parentesi quadre si ottiene una Series, che conserva l'indice del DataFrame.
     """, titolo="Risposte"), solo_soluzioni=True))
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Esercizi")
     nb.esercizio(
         titolo="I giorni caldi",
-        scenario="Abbiamo segnato la temperatura massima di ogni giorno della settimana sul balcone di casa.",
+        scenario="""
+            Per una settimana abbiamo annotato la temperatura massima misurata sul balcone di casa, e ora vogliamo
+            contare i giorni caldi con una funzione che accetti la soglia come parametro.
+        """,
         richiesta="""
             1. Scrivi la funzione `giorni_caldi(temperature, soglia=25)` che restituisce quanti giorni hanno
                una temperatura di almeno `soglia` gradi.
             2. Usala sulla lista `settimana`, prima con la soglia di default e poi con `soglia=30`.
         """,
-        suggerimento="parti da un contatore a 0 e aumentalo di 1 dentro un `if`, nel ciclo `for`.",
+        suggerimento="parti da un contatore uguale a 0 e, dentro il ciclo `for`, aumentalo di 1 con un `if` ogni volta che la temperatura raggiunge la soglia.",
         starter="""
             def giorni_caldi(temperature, soglia=25):
                 \"\"\"Restituisce quanti giorni hanno una temperatura di almeno soglia gradi.\"\"\"
@@ -96,10 +106,15 @@ def costruisci() -> Notebook:
 
     nb.esercizio(
         titolo="Due celle da sistemare",
-        scenario="Le due celle qui sotto si fermano con un errore. Ognuna ne contiene uno solo.",
+        scenario="""
+            Le due celle qui sotto si fermano con un errore, e ciascuna ne contiene uno solo. La prima calcola il
+            prezzo dei biglietti per un gruppo di amici, la seconda la durata di una playlist.
+        """,
         richiesta="""
-            1. Esegui la prima cella e leggi l'ultima riga del traceback: dice il tipo di errore e cosa non va.
-            2. Correggi la riga indicata e riesegui; poi fai lo stesso con la seconda cella.
+            1. Esegui la prima cella e leggi l'ultima riga del traceback, che riporta il tipo di errore e una breve
+               descrizione del problema.
+            2. Correggi la riga indicata dal traceback, esegui di nuovo la cella e ripeti lo stesso procedimento con
+               la seconda.
         """,
         suggerimento="nel traceback, la freccia `---->` indica la riga in cui Python si è fermato.",
         starter="""
@@ -119,8 +134,10 @@ def costruisci() -> Notebook:
             assert durata == 16, "❌ La playlist dura 16 minuti"
         """,
         perche="""
-            Nella prima cella il `TypeError` dice che non si può sommare una stringa e un numero: la f-string
-            (oppure `str(...)`) risolve. Nella seconda il `NameError` segnala un nome scritto male: `totle` invece di `totale`.
+            Nella prima cella il `TypeError` segnala che Python non sa sommare una stringa e un numero intero. Il
+            problema si risolve costruendo il messaggio con una f-string, come nella soluzione, oppure convertendo il
+            numero in testo con `str(...)`. Nella seconda cella il `NameError` indica che il nome `totle` non esiste,
+            perché è stato scritto male al posto di `totale`, la variabile definita prima del ciclo.
         """,
     )
     # la seconda cella rotta: va subito dopo la prima, sia nella versione studente sia nelle soluzioni
@@ -154,16 +171,19 @@ print(durata)  # Output: 16""".strip("\n"), solo_soluzioni=True, ruolo="soluzion
     nb.esercizio(
         titolo="Un primo sguardo ai consumi",
         scenario="""
-            Il file `letture_pod_2025.csv` contiene i consumi mensili per fascia di sei POD (punti di prelievo) nel 2025.
-            È un CSV in formato italiano: separatore `;`, virgola decimale, encoding `latin-1`.
+            Il file `letture_pod_2025.csv` contiene i consumi mensili del 2025 di sei POD, cioè sei punti di prelievo,
+            divisi per fascia oraria. È un CSV in formato italiano, con il punto e virgola come separatore, la virgola
+            per i decimali e l'encoding `latin-1`.
         """,
         richiesta="""
-            1. Leggi il file in `letture` con `sep`, `decimal` ed `encoding` e guarda `head()`, `info()` e `describe()`.
+            1. Leggi il file in `letture` indicando `sep`, `decimal` ed `encoding`, poi guarda il risultato di `head()`,
+               `info()` e `describe()`.
             2. Salva in `righe` il numero di righe del DataFrame.
             3. Salva in `kwh_max` il valore più alto della colonna `kwh`.
-            4. Confronta il massimo con la media e con la riga `75%`: in un commento, scrivi se ti sembra un valore plausibile.
+            4. Confronta il massimo con la media e con la riga `75%` di `describe()`, e scrivi in un commento se ti
+               sembra un valore plausibile.
         """,
-        suggerimento="il numero di righe è nella seconda riga di `info()`, il massimo nella riga `max` di `describe()`.",
+        suggerimento="il numero di righe compare nella seconda riga dell'output di `info()`, mentre il massimo è nella riga `max` di `describe()`.",
         starter="""
             import pandas as pd
 
@@ -189,14 +209,16 @@ print(durata)  # Output: 16""".strip("\n"), solo_soluzioni=True, ruolo="soluzion
             assert round(kwh_max, 1) == 5785.2, "❌ Il massimo di kwh è nella riga max di describe()"
         """,
         perche="""
-            È la lettura di luglio (fascia F1) del POD IT001E45678901, registrata dieci volte più alta del dovuto.
-            `describe()` è spesso il modo più rapido per accorgersi di un valore fuori scala.
+            Il massimo, 5785.2 kWh, è la lettura di luglio in fascia F1 del POD IT001E45678901, registrata per errore
+            con un valore dieci volte più alto di quello reale. Lo si capisce confrontandolo con le altre righe di
+            `describe()`, perché vale quasi dieci volte la media (623 kWh) e più di sette volte il valore della
+            riga `75%` (755 kWh). Questo confronto è spesso il modo più rapido per accorgersi di un valore fuori scala.
         """,
     )
 
     nb.esercizio(
         titolo="Le letture nel database",
-        scenario="Il database `utility.db` contiene tre tabelle: `clienti`, `pod` e `letture`.",
+        scenario="Il database SQLite `utility.db` contiene tre tabelle, `clienti`, `pod` e `letture`, e in questo esercizio leggiamo l'ultima in un DataFrame.",
         richiesta="""
             1. Apri la connessione con `sqlite3.connect`, leggi tutta la tabella `letture` in `letture_db`
                con `pd.read_sql` e chiudi la connessione.

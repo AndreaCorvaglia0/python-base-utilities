@@ -10,7 +10,7 @@ def costruisci() -> Notebook:
         titolo="Esercitazione 3",
         blocco=3,
         giornata=2,
-        intento="Domande ed esercizi su filtri, groupby, date e grafici, con i dati veri della cartella Dati.",
+        intento="Questa esercitazione propone domande ed esercizi su filtri, groupby, date e grafici, lavorando sui dati veri della cartella Dati.",
         obiettivi=[
             "filtrare e raggruppare i prezzi dell'elettricità per stato",
             "portare il carico Terna da quartorario a giornaliero con `resample`",
@@ -21,7 +21,10 @@ def costruisci() -> Notebook:
     )
 
     # ------------------------------------------------------------------ domande
-    nb.sezione("Domande", intro="Cinque domande brevi: rispondi in una riga, a parole o provando in una cella di codice.")
+    nb.sezione("Domande", intro="""
+        Le cinque domande che seguono riguardano i notebook 07-09. A ciascuna si risponde in una riga, a parole
+        oppure provando il codice in una cella.
+    """)
     nb.md("""
         1. Su un DataFrame con indice `0, 1, 2, 3, ...`, quante righe restituiscono `df.loc[0:2]` e `df.iloc[0:2]`? Perché?
         2. Cosa restituisce `df.groupby("Categoria")["Vendite"].sum()`? E `df.groupby("Categoria")` da solo?
@@ -30,19 +33,28 @@ def costruisci() -> Notebook:
         5. Quando serve `how="left"` in `pd.merge`, invece del valore predefinito?
     """)
     nb.celle.append(Cella("md", box_html("soluzione", """
-        1. `loc` usa le etichette e include l'ultima: 3 righe. `iloc` usa le posizioni e la esclude, come le liste: 2 righe.
-        2. Una Series: indice le categorie, valori le somme. `groupby` da solo dà un oggetto GroupBy, che aspetta una funzione.
-        3. Raggruppa per giorno e fa la media: 96 valori quartorari diventano uno. Serve un indice di date (`set_index`).
-        4. Nelle date ambigue il primo numero è il giorno: `"01/02/2025"` diventa il 1° febbraio invece del 2 gennaio.
-        5. Quando vogliamo tenere tutte le righe di sinistra, anche senza corrispondenza: le colonne mancanti diventano
-           `NaN`. Con il predefinito `how="inner"` quelle righe spariscono.
+        1. `df.loc[0:2]` restituisce 3 righe, mentre `df.iloc[0:2]` ne restituisce 2. `loc` seleziona per etichetta e
+           include l'etichetta finale dell'intervallo, invece `iloc` seleziona per posizione ed esclude la posizione
+           finale, come lo slicing delle liste.
+        2. La prima espressione restituisce una Series che ha come indice le categorie e come valori la somma delle
+           vendite di ciascuna. `df.groupby("Categoria")` da solo restituisce invece un oggetto GroupBy, che descrive i
+           gruppi ma non calcola nulla finché non gli si applica una funzione di aggregazione come `sum()` o `mean()`.
+        3. Raggruppa i valori per giorno e ne calcola la media, quindi i 96 valori quartorari di ogni giornata diventano
+           un valore solo. Perché funzioni, la serie deve avere un indice di date, che si ottiene per esempio con
+           `set_index` su una colonna già convertita con `pd.to_datetime`.
+        4. Indica a pandas che nelle date ambigue il primo numero è il giorno, come si usa in Italia. Con
+           `dayfirst=True` la stringa `"01/02/2025"` diventa il 1° febbraio 2025, mentre senza il parametro viene letta
+           come 2 gennaio.
+        5. Serve quando vogliamo conservare tutte le righe della tabella di sinistra, comprese quelle che non hanno una
+           corrispondenza nell'altra tabella; per queste righe le colonne che arrivano da destra valgono `NaN`. Con il
+           valore predefinito `how="inner"`, invece, le righe senza corrispondenza vengono scartate.
     """, titolo="Risposte"), solo_soluzioni=True))
 
     # ------------------------------------------------------------------ esercizi
     nb.sezione("Esercizi", intro="""
-        Leggiamo i prezzi mensili dell'elettricità negli Stati Uniti, che serve al primo esercizio.
-        Il prezzo `price` è in centesimi di dollaro per kWh; la colonna `stateDescription` contiene anche
-        regioni e il totale nazionale (`U.S. Total`).
+        La cella qui sotto importa pandas e Plotly Express e legge i prezzi mensili dell'elettricità negli Stati
+        Uniti, che servono al primo esercizio. La colonna `price` è espressa in centesimi di dollaro per kWh, mentre
+        `stateDescription` contiene, oltre ai singoli stati, anche alcune regioni e il totale nazionale `U.S. Total`.
     """)
     nb.code("""
         import pandas as pd
@@ -57,10 +69,12 @@ def costruisci() -> Notebook:
         titolo="Il prezzo residenziale per stato",
         scenario="Vogliamo sapere in quali stati l'elettricità per le famiglie è costata di più nel 2023.",
         richiesta="""
-            1. Metti in `residenziale_2023` le righe di `prezzi` con `sectorName` uguale a `"residential"` e anno 2023.
-            2. Calcola `prezzo_medio`: il prezzo medio per `stateDescription`, ordinato dal più alto al più basso.
+            1. Metti in `residenziale_2023` le righe di `prezzi` che hanno `sectorName` uguale a `"residential"` e una
+               data del 2023.
+            2. Calcola in `prezzo_medio` il prezzo medio per ogni valore di `stateDescription` e ordina il risultato
+               dal prezzo più alto al più basso.
         """,
-        suggerimento="due condizioni tra parentesi unite con `&`; l'anno si legge con `.dt.year`.",
+        suggerimento="le due condizioni vanno scritte ciascuna tra parentesi e unite con `&`, mentre l'anno di una colonna di date si legge con `.dt.year`.",
         starter="""
             residenziale_2023 = ...
             prezzo_medio = ...
@@ -84,15 +98,16 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Il carico giornaliero di ottobre",
         scenario="""
-            Il file Terna ha un valore di carico ogni 15 minuti (MW), dal più recente al più vecchio, con quattro orari
-            ripetuti il 27 ottobre per il ritorno all'ora solare.
+            Il file Terna riporta il carico elettrico del Nord in MW, con un valore ogni 15 minuti e le righe
+            ordinate dalla più recente alla più vecchia. Il 27 ottobre quattro orari compaiono due volte, perché con il ritorno all'ora
+            solare l'ora dalle 2 alle 3 si ripete.
         """,
         richiesta="""
-            1. Ordina `carico` per `Date`, togli i duplicati di `Date` e metti `Date` come indice.
-            2. Calcola `giornaliero`: la media giornaliera di `Total Load [MW]` per ottobre 2024.
+            1. Ordina `carico` per `Date`, elimina le righe con un valore di `Date` ripetuto e imposta `Date` come indice.
+            2. Calcola in `giornaliero` la media giornaliera della colonna `Total Load [MW]` per il mese di ottobre 2024.
             3. Metti in `giorno_max` il giorno con il carico medio più alto.
         """,
-        suggerimento="`drop_duplicates(subset=\"Date\")`; poi `.loc[\"2024-10\", \"Total Load [MW]\"]` e `resample(\"D\")`.",
+        suggerimento="per i duplicati si usa `drop_duplicates(subset=\"Date\")`, mentre per la media si seleziona il mese con `.loc[\"2024-10\", \"Total Load [MW]\"]` e si applica `resample(\"D\")`.",
         starter="""
             carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
             carico = ...
@@ -118,12 +133,16 @@ def costruisci() -> Notebook:
 
     nb.esercizio(
         titolo="L'istogramma della potenza della turbina",
-        scenario="Il file della turbina texana ha un valore di potenza per ogni ora dell'anno.",
+        scenario="""
+            Il file `TexasTurbine.csv` contiene la potenza prodotta da una turbina eolica in Texas, con un valore per
+            ogni ora dell'anno. Un istogramma mostra come si distribuiscono questi valori, comprese le ore in cui la
+            turbina è ferma.
+        """,
         richiesta="""
             1. Disegna in `fig` l'istogramma della colonna `System power generated | (kW)` con `px.histogram`.
             2. Metti in `ore_ferme` il numero di ore in cui la potenza è 0.
         """,
-        suggerimento="una maschera booleana con `== 0` e `.sum()` conta i `True`.",
+        suggerimento="il confronto `== 0` sulla colonna produce una maschera booleana, e `.sum()` applicato alla maschera conta i valori `True`.",
         starter="""
             turbina = pd.read_csv("../Dati/TexasTurbine.csv")
 

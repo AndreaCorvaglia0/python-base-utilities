@@ -10,7 +10,7 @@ def costruisci() -> Notebook:
         titolo="Esercitazione 1",
         blocco=1,
         giornata=1,
-        intento="Qualche domanda e qualche esercizio su variabili, numeri, stringhe, liste, tuple, dizionari e set.",
+        intento="Questa esercitazione raccoglie alcune domande e alcuni esercizi su variabili, numeri, stringhe, liste, tuple, dizionari e set.",
         obiettivi=[
             "prevedere il risultato di una riga di codice prima di eseguirla",
             "usare variabili, operatori e stringhe su un caso concreto",
@@ -22,7 +22,9 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Domande", intro="""
-        Rispondi a mente, poi controlla scrivendo la riga in una cella di codice.
+        Le domande che seguono riguardano i notebook 00-03. Per ciascuna prova a prevedere il risultato a mente,
+        e solo dopo controllalo scrivendo la riga in una cella di codice. Se la risposta di Python è diversa da quella
+        che ti aspettavi, conviene rileggere la parte del notebook che tratta quell'argomento.
     """)
     nb.md("""
         1. Cosa stampa `print(7 // 2)`?
@@ -32,22 +34,30 @@ def costruisci() -> Notebook:
         5. Cosa restituisce `len(set(["pane", "latte", "pane"]))`?
     """)
     nb.celle.append(Cella("md", box_html("soluzione", """
-        1. `3`: la divisione intera tiene solo la parte intera di 3.5.
-        2. `<class 'float'>`: la divisione con `/` dà sempre un `float`, anche quando il risultato è intero (`5.0`).
-        3. `[6, 9]`: lo slicing parte dall'indice 1 e si ferma prima dell'indice 3.
-        4. Un `TypeError`: le tuple sono immutabili.
-        5. `2`: il set tiene un solo `"pane"`.
+        1. Stampa `3`. L'operatore `//` calcola la divisione intera, quindi del quoziente 3.5 tiene soltanto la parte intera.
+        2. Restituisce `<class 'float'>`. La divisione con `/` produce sempre un `float`, anche quando il risultato è un
+           numero intero, perciò `10 / 2` vale `5.0` e non `5`.
+        3. Restituisce `[6, 9]`. Lo slicing parte dall'indice 1, che contiene il 6, e si ferma prima dell'indice 3, quindi
+           il 12 resta escluso.
+        4. Python solleva un `TypeError`, perché le tuple sono immutabili e non permettono di sostituire un elemento dopo
+           la loro creazione.
+        5. Restituisce `2`. Un set non ammette duplicati, quindi dei due `"pane"` ne conserva uno solo e gli elementi
+           rimasti sono `"pane"` e `"latte"`.
     """, titolo="Risposte"), solo_soluzioni=True))
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Esercizi")
     nb.esercizio(
         titolo="Il budget del viaggio",
-        scenario="Due amici vanno a Lisbona per 4 notti. L'albergo costa 85 euro a notte per la camera, il volo 160 euro in tutto.",
+        scenario="""
+            Due amici passano 4 notti a Lisbona. La camera d'albergo costa 85 euro a notte e il volo 160 euro in
+            tutto. Vogliamo sapere quanto costa il viaggio e quanto spende ciascuno dei due.
+        """,
         richiesta="""
-            1. Calcola in `totale` il costo del viaggio: notti per prezzo a notte, più il volo.
-            2. Calcola in `a_persona` quanto spende ciascuno dei due.
-            3. Componi con `+` la stringa `titolo` uguale a `"Viaggio a Lisbona"`, usando la variabile `destinazione`.
+            1. Calcola in `totale` il costo del viaggio, cioè il numero di notti per il prezzo a notte più il costo del volo.
+            2. Calcola in `a_persona` quanto spende ciascuno dei due amici.
+            3. Componi con l'operatore `+` la stringa `titolo`, che deve valere `"Viaggio a Lisbona"`, unendo un testo
+               fisso alla variabile `destinazione`.
         """,
         starter="""
             destinazione = "Lisbona"
@@ -87,14 +97,17 @@ def costruisci() -> Notebook:
     )
     nb.esercizio(
         titolo="La lista della spesa",
-        scenario="Abbiamo la lista della spesa della settimana e la sistemiamo prima di uscire.",
+        scenario="""
+            Prima di uscire per la spesa della settimana sistemiamo la lista, aggiungendo un prodotto che avevamo
+            dimenticato e togliendone uno che non serve più comprare.
+        """,
         richiesta="""
             1. Aggiungi `"olio"` in fondo alla lista.
             2. Togli `"uova"`, che abbiamo già in casa.
-            3. Salva in `primi_tre` i primi tre elementi e in `ultimi_due` gli ultimi due.
+            3. Salva in `primi_tre` i primi tre elementi della lista aggiornata e in `ultimi_due` gli ultimi due.
             4. Salva in `quanti` il numero di elementi della lista.
         """,
-        suggerimento="`append()`, `remove()`, lo slicing `[:3]` e `[-2:]`, `len()`.",
+        suggerimento="servono i metodi `append()` e `remove()`, lo slicing con `[:3]` e `[-2:]` e la funzione `len()`.",
         starter="""
             spesa = ["pane", "latte", "uova", "mele", "pasta", "caffè"]
 
@@ -125,14 +138,17 @@ def costruisci() -> Notebook:
     )
     nb.esercizio(
         titolo="I voti in pagella",
-        scenario="Teniamo i voti di uno studente in un dizionario: la chiave è la materia, il valore è il voto.",
-        richiesta="""
-            1. Aggiungi il voto di inglese: 9.
-            2. Il voto di storia era sbagliato: correggilo in 7.
-            3. Salva in `materie` la lista delle chiavi.
-            4. Calcola in `media` la media dei voti.
+        scenario="""
+            I voti di uno studente sono raccolti in un dizionario, in cui ogni chiave è il nome di una materia e il
+            valore corrispondente è il voto.
         """,
-        suggerimento="`sum(voti.values())` somma i voti, `len(voti)` conta le materie.",
+        richiesta="""
+            1. Aggiungi il voto di inglese, che è 9.
+            2. Correggi il voto di storia, registrato per errore come 6, portandolo a 7.
+            3. Salva in `materie` la lista delle chiavi del dizionario, cioè i nomi delle materie.
+            4. Calcola in `media` la media dei quattro voti.
+        """,
+        suggerimento="`sum(voti.values())` restituisce la somma dei voti e `len(voti)` il numero delle materie, quindi la media è il rapporto tra i due.",
         starter="""
             voti = {"matematica": 7, "italiano": 8, "storia": 6}
 
