@@ -12,20 +12,13 @@ def costruisci() -> Notebook:
         titolo="Pandas: le date",
         blocco=3,
         giornata=2,
-        intento="Le misure nel tempo arrivano spesso con timestamp di testo: li convertiamo in date per ordinarle, trovare i buchi, aggregarle per ore o giorni e gestire il fuso orario.",
-        obiettivi={
-            "base": [
-                "convertire testo in date con `pd.to_datetime` ed estrarne ora, giorno e mese",
-                "usare il tempo come indice per selezionare periodi, trovare i buchi e cambiare granularità con `resample`",
-                "riconoscere fuso orario e ora legale e togliere i duplicati del cambio d'ora",
-            ],
-            "avanzata": [
-                "convertire testo in date con `pd.to_datetime` ed estrarne ora, giorno e mese",
-                "usare il tempo come indice per trovare i buchi e cambiare granularità con `resample`",
-                "costruire lag e medie mobili con `shift` e `rolling` e gestire l'ora legale",
-            ],
-        },
-        tempo={"base": 70, "avanzata": 80},
+        intento="Le misure nel tempo arrivano spesso con timestamp di testo: li convertiamo in date per ordinarle, trovare i buchi, aggregarle per ore o giorni e togliere i duplicati dell'ora legale.",
+        obiettivi=[
+            "convertire testo in date con `pd.to_datetime` ed estrarne ora, giorno e mese",
+            "usare il tempo come indice per selezionare periodi, trovare i buchi e cambiare granularità con `resample`",
+            "riconoscere l'ora legale nei dati e togliere i duplicati del cambio d'ora",
+        ],
+        tempo={"base": 55, "avanzata": 55},
         dati=["load_total_north_hourly_2024.xlsx"],
     )
 
@@ -342,88 +335,12 @@ def costruisci() -> Notebook:
         """,
     )
 
-    # ------------------------------------------------------------------ 9 (A)
-    with nb.solo("avanzata"):
-        nb.sezione("Shift e rolling", intro=f"""
-            Due operazioni semplici e molto usate nella gestione di time series:
-
-            - `shift(k)`: sposta i valori di `k` step nel tempo (crea "lag").
-            - `rolling(w)`: calcola statistiche su una finestra mobile di ampiezza `w`.
-
-            Entrambe possono introdurre `NaN` in testa (perché mancano i valori "precedenti").
-            Documentazione: [`rolling`]({DOC}/reference/api/pandas.DataFrame.rolling.html)
-        """)
-        nb.code("""
-            df_scorrimento = df_15min.copy()
-
-            # lag di 1 ora: con frequenza 15min corrisponde a 4 step
-            df_scorrimento["power_lag_4"] = df_scorrimento["power_kw"].shift(4)
-
-            # media mobile su 2 ore: 8 step
-            df_scorrimento["power_ma_8"] = df_scorrimento["power_kw"].rolling(8).mean()
-
-            df_scorrimento[["power_kw", "power_lag_4", "power_ma_8"]].head(12)
-        """)
-        nb.code("""
-            # shift di 1 ora (4 step) contro power_kw
-            fig = px.line(df_scorrimento, x=df_scorrimento.index, y=["power_kw", "power_lag_4"], title="Shift di 1 ora (4 step)")
-            fig.show()
-        """)
-        nb.code("""
-            # media mobile su una finestra di 2 ore (8 step) contro power_kw
-            fig = px.line(df_scorrimento, x=df_scorrimento.index, y=["power_kw", "power_ma_8"], title="Media mobile su finestra di 2 ore (8 step)")
-            fig.show()
-        """)
-
-    # ------------------------------------------------------------------ 10
-    nb.sezione("Differenze tra date", intro="""
-        Le differenze tra timestamp producono `Timedelta` (durate).
-        Servono sia per capire la regolarità della serie sia per misurare intervalli (es. "quante ore copre il dataset?").
+    # ------------------------------------------------------------------ 9
+    nb.sezione("I duplicati dell'ora legale nei dati Terna", intro="""
+        Le date in ora locale, senza fuso orario, seguono il cambio dell'ora legale: a fine marzo un'ora non
+        esiste, a fine ottobre un'ora si ripete.
     """)
-    nb.code("""
-        # differenze tra timestamp consecutivi
-        delta_consecutivi = df_15min.index.to_series().diff()
-
-        delta_consecutivi.head(10)
-    """)
-    nb.code("""
-        # intervallo totale coperto
-        delta_totale = df_15min.index.max() - df_15min.index.min()
-        delta_totale
-    """)
-    nb.code("""
-        # durata in ore (float)
-        delta_totale.total_seconds() / 3600
-    """)
-
-    # ------------------------------------------------------------------ 11
-    nb.sezione("Fuso orario e ora legale", intro=f"""
-        Un timestamp può essere **naive**, senza fuso orario (solo data e ora), oppure **timezone-aware**,
-        con fuso orario (es. `Europe/Rome`). Spesso si ricevono orari locali naive da interpretare correttamente.
-        L'ora legale è la trappola tipica: alcune ore non esistono (primavera) o si ripetono (autunno).
-
-        Documentazione: [fusi orari]({DOC}/user_guide/timeseries.html#time-zone-handling)
-    """)
-    nb.box("attenzione", """
-        Localizzare un indice che attraversa un cambio ora legale può generare timestamp ambigui o inesistenti:
-        in quei casi servono i parametri `ambiguous=` e `nonexistent=`.
-        Se i dati arrivano già in UTC, spesso è meglio mantenerli in UTC e convertire solo in visualizzazione.
-    """)
-    nb.code("""
-        df_fuso = df_15min.copy()
-
-        # interpretiamo i timestamp come orari locali italiani
-        df_fuso.index = df_fuso.index.tz_localize("Europe/Rome")
-
-        # conversione a UTC (utile per sistemi e confronti)
-        df_utc = df_fuso.tz_convert("UTC")
-
-        df_fuso.index[:3], df_utc.index[:3]
-    """)
-    nb.code("""
-        df_fuso.loc["2025-03-01 06:00":"2025-03-01 12:00"].head()
-    """)
-    nb.sottosezione("I duplicati dell'ora legale nei dati Terna", intro="""
+    nb.md("""
         Nei dati veri il cambio d'ora si vede. Il carico della zona Nord 2024 di Terna è in ora locale, un valore
         ogni 15 minuti (il nome del file dice `hourly`), con le righe dall'ultima alla prima. Le rimettiamo in
         ordine con `sort_values` e contiamo i timestamp duplicati.
@@ -451,7 +368,7 @@ def costruisci() -> Notebook:
         dell'ora che a marzo non esiste.
     """)
 
-    # ------------------------------------------------------------------ 12
+    # ------------------------------------------------------------------ 10
     nb.sezione("Esercizi", intro="""
         Gli esercizi usano `carico`, il file Terna già ordinato e senza duplicati. La colonna
         `Total Load [MW]` è una potenza media su ogni quarto d'ora: un quarto d'ora a 100 MW sono 25 MWh,
@@ -526,34 +443,5 @@ def costruisci() -> Notebook:
             assert giorno_minimo == 6, "❌ giorno_minimo: idxmin() della media per giorno della settimana (6 = domenica)"
         """,
     )
-    with nb.solo("avanzata"):
-        nb.esercizio(
-            titolo="La media mobile su 24 ore",
-            scenario="Il carico quartorario oscilla molto tra giorno e notte: una media mobile su 24 ore mostra l'andamento di fondo.",
-            richiesta="""
-                1. Calcola in `media_24h` la media mobile su 24 ore di `Total Load [MW]`, con `Date` come indice.
-                2. Metti in `picco_24h` il timestamp in cui la media mobile è più alta.
-            """,
-            starter="""
-                serie = carico.set_index("Date")["Total Load [MW]"]
-                media_24h = ...
-                picco_24h = ...
-
-                picco_24h
-            """,
-            soluzione="""
-                serie = carico.set_index("Date")["Total Load [MW]"]
-                media_24h = serie.rolling(96).mean()
-                picco_24h = media_24h.idxmax()
-
-                picco_24h
-            """,
-            verifica="""
-                assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'ora, poi mean()"
-                assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
-            """,
-            suggerimento="24 ore sono 96 quarti d'ora.",
-            facoltativo=True,
-        )
 
     return nb

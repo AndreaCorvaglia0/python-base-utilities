@@ -11,19 +11,12 @@ def costruisci() -> Notebook:
         blocco=4,
         giornata=2,
         intento="Usiamo Copilot in VS Code per scrivere e spiegare codice, poi leggiamo e controlliamo uno script scritto da un agente.",
-        obiettivi={
-            "base": [
-                "usare Copilot in VS Code per completare, chiedere e far spiegare",
-                "dare al modello il contesto giusto e controllare la risposta con un numero noto",
-                "leggere uno script scritto da un agente prima di lanciarlo",
-            ],
-            "avanzata": [
-                "usare Copilot in VS Code per completare, chiedere e far spiegare",
-                "leggere uno script scritto da un agente prima di lanciarlo",
-                "riconoscere type hint, `@dataclass`, decoratori, generatori e `**kwargs`",
-            ],
-        },
-        tempo={"base": 45, "avanzata": 55},
+        obiettivi=[
+            "usare Copilot in VS Code per completare, chiedere e far spiegare",
+            "dare al modello il contesto giusto e controllare la risposta con un numero noto",
+            "leggere uno script scritto da un agente prima di lanciarlo",
+        ],
+        tempo={"base": 45, "avanzata": 45},
         dati=["impianti_fv.csv", "letture_pod_2025.csv"],
     )
 
@@ -281,88 +274,6 @@ def costruisci() -> Notebook:
         """,
     )
     nb.md("Riassunto in una pagina: [Leggere il codice: cosa è cosa](../Schede/Scheda_leggere_codice.md).")
-
-    with nb.solo("avanzata"):
-        nb.sottosezione("Type hint", intro="""
-            Le forme più frequenti sono `list[str]`, `dict[str, float]`, `X | None` e `-> None`; Python non le
-            controlla quando esegue.
-        """)
-        nb.code('''
-            def prezzo_medio(prezzi: dict[str, float], escludi: list[str] | None = None) -> float:
-                """Prezzo medio dei prodotti, senza quelli in escludi."""
-                escludi = escludi or []
-                validi = [p for nome, p in prezzi.items() if nome not in escludi]
-                return sum(validi) / len(validi)
-
-
-            print(prezzo_medio({"pane": 2.5, "latte": 1.3, "caffè": 4.2}, escludi=["caffè"]))  # Output: 1.9
-            print(prezzo_medio({"pane": 2, "latte": 1}))  # int al posto di float, nessun errore. Output: 1.5
-        ''')
-
-        nb.sottosezione("`@dataclass`", intro="""
-            Su una classe fatta di campi, `@dataclass` scrive da solo il costruttore, la stampa e il confronto con `==`.
-        """)
-        nb.code("""
-            from dataclasses import dataclass
-
-
-            @dataclass
-            class Libro:
-                titolo: str
-                autore: str
-                pagine: int = 0
-
-
-            libro = Libro("Il nome della rosa", "Umberto Eco", pagine=503)
-            print(libro)
-            print(libro == Libro("Il nome della rosa", "Umberto Eco", 503))  # Output: True
-        """)
-
-        nb.sottosezione("Decoratori", intro="""
-            Una riga `@nome` sopra un `def` avvolge la funzione in un'altra: `@cache` ricorda i risultati già calcolati.
-        """)
-        nb.code("""
-            from functools import cache
-
-
-            @cache  # senza, fibonacci(80) richiederebbe miliardi di chiamate
-            def fibonacci(n: int) -> int:
-                return n if n < 2 else fibonacci(n - 1) + fibonacci(n - 2)
-
-
-            fibonacci(80)  # altri decoratori frequenti: @property, @staticmethod, @pytest.fixture
-        """)
-
-        nb.sottosezione("Generatori", intro="""
-            Una funzione con `yield` al posto di `return` consegna un valore alla volta, quando un `for` o `list()` lo chiede.
-        """)
-        nb.code("""
-            def a_blocchi(elementi: list, n: int):
-                for i in range(0, len(elementi), n):
-                    yield elementi[i:i + n]
-
-
-            spesa = ["pane", "latte", "uova", "mele", "pasta"]
-            list(a_blocchi(spesa, 2))
-        """)
-
-        nb.sottosezione("`**kwargs`", intro="""
-            `**kwargs` raccoglie in un dizionario i parametri passati per nome che la funzione non elenca
-            (`*args` in una tupla quelli per posizione); negli script degli agenti li passa così come sono a
-            un'altra funzione.
-        """)
-        nb.code("""
-            def ordine(piatto: str, **opzioni) -> str:
-                return f"{piatto}: {opzioni}"
-
-
-            def leggi_csv(path: str, **opzioni) -> pd.DataFrame:
-                return pd.read_csv(path, **opzioni)
-
-
-            print(ordine("pizza", impasto="integrale", extra="olive"))
-            leggi_csv("../Dati/impianti_fv.csv", usecols=["comune", "kwp"], nrows=3)
-        """)
 
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")

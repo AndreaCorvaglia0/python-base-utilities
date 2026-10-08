@@ -144,23 +144,13 @@ assert len(per_ora) == 24 and len(per_giorno) == 7, "❌ per_ora e per_giorno: g
 assert ora_di_punta == 11, "❌ ora_di_punta: idxmax() della media per ora"
 assert giorno_minimo == 6, "❌ giorno_minimo: idxmin() della media per giorno della settimana (6 = domenica)"
 '''),
-    '8.3': ('Esercizio 8.3', r'''
-assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'ora, poi mean()"
-assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
-'''),
     '9.1': ('Esercizio 9.1', r'''
 assert len(fig_carico.data) == 1 and fig_carico.data[0].mode == "lines", "❌ Serve una linea sola: px.line con y='Total Load [MW]'"
 assert fig_carico.layout.title.text == "Carico Nord, gennaio 2024", "❌ Il titolo deve essere 'Carico Nord, gennaio 2024'"
-assert fig_carico.layout.xaxis.rangeslider.visible, "❌ Manca il range slider: update_xaxes(rangeslider_visible=True)"
 '''),
     '9.2': ('Esercizio 9.2', r'''
 assert len(fig_potenza.data) == 1 and fig_potenza.data[0].type == "histogram", "❌ Serve un solo istogramma: px.histogram, senza color"
 assert fig_potenza.layout.title.text == "Distribuzione della potenza", "❌ Il titolo deve essere 'Distribuzione della potenza'"
-'''),
-    '9.3': ('Esercizio 9.3', r'''
-from pathlib import Path
-assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html non c'è: controlla il nome in write_html"
-assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\"cdn\""
 '''),
     '10.1': ('Esercizio 10.1', r'''
 assert letture.shape == (216, 5), "❌ letture: 216 righe e 5 colonne; con il separatore sbagliato esce una colonna sola"
@@ -171,6 +161,24 @@ assert round(letture["kwh"].sum(), 1) == 134507.7, "❌ La somma dei kwh deve es
 assert risposte["lavoro vero"] == "report_kwh", "❌ lavoro vero: il nome della funzione con il groupby, senza parentesi"
 assert risposte["lanciato in una cella"] == "FileNotFoundError", "❌ lanciato in una cella: il blocco main parte anche nel notebook, e da qui il percorso Dati non esiste"
 assert round(totale["kwh"].sum(), 1) == 134507.7, "❌ La somma dei kwh deve essere 134507.7: controlla il tipo di kwh con .dtypes"
+'''),
+    'A1.1': ('Esercizio A1.1', r'''
+assert da_comprare == {"pane", "latte", "mele", "caffè", "pasta", "olio"}, "❌ da_comprare: unisci i due set"
+assert in_comune == {"latte", "mele"}, "❌ in_comune: usa intersection()"
+assert quanti == 6, "❌ Le cose da comprare sono 6"
+'''),
+    'A1.2': ('Esercizio A1.2', r'''
+assert mesi == 7, "❌ mesi: servono 7 mesi, il settimo porta a 1050 euro"
+assert risparmio == 1050, "❌ risparmio: 150 euro per 7 mesi fanno 1050"
+'''),
+    'A2.1': ('Esercizio A2.1', r'''
+from pathlib import Path
+assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html non c'è: controlla il nome in write_html"
+assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\"cdn\""
+'''),
+    'A2.2': ('Esercizio A2.2', r'''
+assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'ora, poi mean()"
+assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
 '''),
     'E1.1': ('Esercizio E1.1', r'''
 assert totale == 500, "❌ Il totale non torna: 4 notti × 85 + 160"
@@ -186,11 +194,6 @@ assert quanti == 6, "❌ La lista finale ha 6 elementi"
 assert voti["storia"] == 7 and voti["inglese"] == 9, "❌ Controlla i voti di storia e inglese"
 assert materie == ["matematica", "italiano", "storia", "inglese"], "❌ materie: usa list(voti.keys())"
 assert media == 7.75, "❌ La media dei quattro voti è 7.75"
-'''),
-    'E1.4': ('Esercizio E1.4', r'''
-assert da_comprare == {"pane", "latte", "mele", "caffè", "pasta", "olio"}, "❌ da_comprare: unisci i due set"
-assert in_comune == {"latte", "mele"}, "❌ in_comune: usa intersection()"
-assert quanti == 6, "❌ Le cose da comprare sono 6"
 '''),
     'E2.1': ('Esercizio E2.1', r'''
 assert giorni_caldi(settimana) == 4, "❌ Con la soglia di default i giorni sono 4: 25.0 conta (almeno 25)"

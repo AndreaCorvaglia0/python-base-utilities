@@ -13,17 +13,16 @@ def costruisci() -> Notebook:
         intento="Plotly produce grafici interattivi: per una serie storica permette zoom, selezione di intervalli e confronto tra serie.",
         obiettivi=[
             "fare grafici a linee, istogrammi e scatter con Plotly Express",
-            "confrontare più serie e navigarle con range slider e range selector",
-            "esportare un grafico interattivo in HTML",
+            "confrontare più serie nello stesso grafico, partendo da dati wide-form",
+            "riconoscere dati, mapping, tracce e layout di una figura",
         ],
-        tempo={"base": 40, "avanzata": 35},
+        tempo={"base": 30, "avanzata": 25},
         dati=["load_total_north_hourly_2024.xlsx", "TexasTurbine.csv"],
     )
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Setup minimo", intro="""
-        Restiamo sul minimo che serve nella pratica: `plotly.express` per partire, poi un salto a
-        `graph_objects` per il range slider e il range selector. Documentazione ufficiale:
+        Restiamo sul minimo che serve nella pratica: `plotly.express`. Documentazione ufficiale:
         [Plotly Express](https://plotly.com/python/plotly-express/),
         [Line charts](https://plotly.com/python/line-charts/),
         [Time series](https://plotly.com/python/time-series/).
@@ -31,7 +30,6 @@ def costruisci() -> Notebook:
     nb.code("""
         import pandas as pd
         import plotly.express as px
-        import plotly.graph_objects as go
     """)
 
     # ------------------------------------------------------------------ 2
@@ -41,8 +39,8 @@ def costruisci() -> Notebook:
         1. **Dati**: un DataFrame con una colonna tempo (`datetime`) ordinata.
         2. **Mapping**: quali colonne finiscono su `x`, `y` (e, quando serve, `color`).
         3. **Tracce**: una `Figure` è fatta di una o più tracce (`fig.data`). In una serie storica la traccia
-           tipica è `go.Scatter` con `mode="lines"`.
-        4. **Layout e controlli**: titolo, assi, hover, range slider… si modificano con `fig.update_layout(...)`
+           tipica è uno `Scatter` con `mode="lines"`.
+        4. **Layout e controlli**: titolo, assi, hover… si modificano con `fig.update_layout(...)`
            e `fig.update_xaxes(...)`.
     """)
 
@@ -186,63 +184,10 @@ def costruisci() -> Notebook:
         fig.show()
     """)
 
-    # ------------------------------------------------------------------ 7
-    nb.sezione("Range slider e range selector", intro="""
-        Qui si passa a `graph_objects` per usare il **range slider** e il **range selector** sull'asse x,
-        utili per navigare serie storiche lunghe. Il codice segue lo schema degli
-        [esempi ufficiali](https://plotly.com/python/range-slider/): si costruiscono le tracce, poi si
-        aggiunge il controllo nel `layout`.
-    """)
-    nb.code("""
-        aziende = ["AAPL", "AMZN", "MSFT"]
-
-        fig = go.Figure()
-        for c in aziende:
-            fig.add_trace(go.Scatter(x=list(df["date"]), y=list(df[c]), name=c))
-    """)
-    nb.md("""
-        Il range selector offre pulsanti predefiniti (1m, 6m, 1y, all) per saltare a intervalli comuni. Lo
-        slider in basso permette di selezionare un intervallo qualsiasi.
-    """)
-    nb.code("""
-        bottoni = [
-            dict(count=1, label="1m", step="month", stepmode="backward"),
-            dict(count=6, label="6m", step="month", stepmode="backward"),
-            dict(count=1, label="1y", step="year", stepmode="backward"),
-            dict(step="all"),
-        ]
-    """)
-    nb.code("""
-        # range slider + range selector (schema ufficiale)
-        fig.update_layout(
-            title_text="Stocks (indicizzato), range slider",
-            height=400,
-            width=700,
-            xaxis=dict(
-                rangeselector=dict(buttons=bottoni, bgcolor="lightgray", font=dict(size=10)),
-                rangeslider=dict(visible=True),
-                type="date",
-            ),
-            margin=dict(t=80, b=80),
-        )
-        fig.show()
-    """)
-
-    # ------------------------------------------------------------------ 8
-    nb.sezione("Esportare in HTML", intro="""
-        Per condividere il grafico interattivo senza Jupyter, l'export in HTML è la strada più semplice
-        ([documentazione](https://plotly.com/python/interactive-html-export/)).
-    """)
-    nb.code("""
-        # salva l'ultima figura (fig) in HTML, nella cartella del notebook: si apre con un browser
-        # con include_plotlyjs="cdn" la libreria Plotly si scarica all'apertura: file leggero, ma serve la rete
-        fig.write_html("plot_time_series.html", include_plotlyjs="cdn")
-    """)
-
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")
     nb.esercizio(
-        titolo="Un mese di carico con il range slider",
+        titolo="Un mese di carico",
         scenario="""
             Il file di Terna ha il carico del Nord del 2024, un valore ogni quarto d'ora. Vogliamo guardare
             gennaio da vicino.
@@ -250,11 +195,9 @@ def costruisci() -> Notebook:
         richiesta="""
             1. Da `carico` tieni il solo gennaio 2024 in `gennaio`.
             2. Costruisci `fig_carico` con `px.line`: `Total Load [MW]` sulla `Date`, titolo `Carico Nord, gennaio 2024`.
-            3. Attiva il range slider sotto l'asse x.
 
-            Output atteso: una linea sola, con lo slider sotto il grafico.
+            Output atteso: una linea sola.
         """,
-        suggerimento="su una figura di `px` lo slider si accende con `fig_carico.update_xaxes(rangeslider_visible=True)`.",
         starter="""
             carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
             carico = carico.sort_values("Date")
@@ -263,7 +206,6 @@ def costruisci() -> Notebook:
             gennaio = carico[mask_gennaio]
 
             fig_carico = px.line(...)
-            fig_carico.update_xaxes(...)
             fig_carico.show()
         """,
         soluzione="""
@@ -274,13 +216,11 @@ def costruisci() -> Notebook:
             gennaio = carico[mask_gennaio]
 
             fig_carico = px.line(gennaio, x="Date", y="Total Load [MW]", title="Carico Nord, gennaio 2024")
-            fig_carico.update_xaxes(rangeslider_visible=True)
             fig_carico.show()
         """,
         verifica="""
             assert len(fig_carico.data) == 1 and fig_carico.data[0].mode == "lines", "❌ Serve una linea sola: px.line con y='Total Load [MW]'"
             assert fig_carico.layout.title.text == "Carico Nord, gennaio 2024", "❌ Il titolo deve essere 'Carico Nord, gennaio 2024'"
-            assert fig_carico.layout.xaxis.rangeslider.visible, "❌ Manca il range slider: update_xaxes(rangeslider_visible=True)"
         """,
     )
     nb.esercizio(
@@ -304,28 +244,5 @@ def costruisci() -> Notebook:
             assert len(fig_potenza.data) == 1 and fig_potenza.data[0].type == "histogram", "❌ Serve un solo istogramma: px.histogram, senza color"
             assert fig_potenza.layout.title.text == "Distribuzione della potenza", "❌ Il titolo deve essere 'Distribuzione della potenza'"
         """,
-    )
-    nb.esercizio(
-        titolo="Il grafico del carico in HTML",
-        facoltativo=True,
-        scenario="""
-            Il grafico del carico di gennaio dell'Esercizio 9.1 va mandato a un collega che non ha Python.
-        """,
-        richiesta="""
-            Salva `fig_carico` in `carico_gennaio.html` con `include_plotlyjs="cdn"`, poi aprilo con un
-            doppio clic dalla cartella del notebook. Output atteso: un file leggero, sotto 1 MB.
-        """,
-        starter="""
-            fig_carico.write_html(...)
-        """,
-        soluzione="""
-            fig_carico.write_html("carico_gennaio.html", include_plotlyjs="cdn")
-        """,
-        verifica="""
-            from pathlib import Path
-            assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html non c'è: controlla il nome in write_html"
-            assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\\"cdn\\""
-        """,
-        perche="Senza `include_plotlyjs=\"cdn\"` il file contiene tutta la libreria Plotly (qualche MB) e si apre anche senza rete.",
     )
     return nb

@@ -16,7 +16,7 @@ def costruisci() -> Notebook:
             "portare il carico Terna da quartorario a giornaliero con `resample`",
             "disegnare un istogramma con Plotly Express",
         ],
-        tempo=30,
+        tempo=20,
         dati=["U.S. Electricity Prices.csv", "load_total_north_hourly_2024.xlsx", "TexasTurbine.csv"],
     )
 
