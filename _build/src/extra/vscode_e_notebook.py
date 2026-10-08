@@ -22,21 +22,24 @@ def costruisci() -> Notebook:
     )
 
     nb.sezione("VS Code e il kernel", intro="""
-        VS Code è l'editor: il programma in cui si aprono i file, si scrive il codice e si eseguono i
-        notebook. Il corso è una cartella: in VS Code si apre con **File → Open Folder**, e da quel
-        momento tutto quello che compare a sinistra, nell'Explorer, è il contenuto di quella cartella.
+        VS Code è l'editor del corso, cioè il programma in cui apriamo i file, scriviamo il codice ed
+        eseguiamo i notebook. Il materiale del corso è una cartella, che in VS Code si apre con
+        **File → Open Folder**. Da quel momento il pannello Explorer, a sinistra, mostra il contenuto di
+        quella cartella, e da lì si apre ogni notebook con un clic.
     """)
     nb.md("""
-        Servono due estensioni, **Python** e **Jupyter**, entrambe di Microsoft: si installano
-        dall'icona dei quattro quadratini nella barra a sinistra, cercando il nome. Se questo notebook
-        si vede con il codice colorato e i pulsanti sopra le celle, ci sono già.
+        Per lavorare con i notebook servono due estensioni di Microsoft, **Python** e **Jupyter**. Si
+        installano dal pannello delle estensioni, che si apre con l'icona dei quattro quadratini nella
+        barra a sinistra, cercandole per nome. Se questo notebook compare con il codice colorato e con i
+        pulsanti sopra le celle, le estensioni sono già installate.
     """)
     nb.md("""
-        Il kernel è il Python che esegue le celle. In alto a destra c'è **Select Kernel**. Se nel menu
-        compare già una voce con `.venv` nel nome, è quella. Se no, **Select Another Kernel... → Python
-        Environments...** e lì trovi la `.venv`. È l'ambiente virtuale, il virtual environment,
-        del corso: dentro ci sono Python e tutte le librerie che servono. Controlliamo subito di aver preso quello giusto: un clic nella
-        cella qui sotto e **Shift+Invio**.
+        Il kernel è il processo Python che esegue le celle, e si sceglie con il pulsante **Select Kernel**
+        in alto a destra. Se nel menu compare già una voce con `.venv` nel nome, è quella giusta;
+        altrimenti si passa da **Select Another Kernel... → Python Environments...**, dove si trova la
+        `.venv`. La `.venv` è l'ambiente virtuale, il virtual environment, del corso, e contiene Python e
+        tutte le librerie che servono. Per controllare di aver scelto quello giusto, facciamo clic nella
+        cella qui sotto e premiamo **Shift+Invio**.
     """)
     nb.code("""
         import sys
@@ -44,8 +47,10 @@ def costruisci() -> Notebook:
         sys.executable
     """)
     nb.md("""
-        Il percorso che compare deve contenere `.venv`. Se non c'è, il notebook sta usando un altro
-        Python, magari quello di sistema, senza le librerie: torna su **Select Kernel** e cambia.
+        Il percorso stampato deve contenere `.venv`. Se non lo contiene, il notebook sta usando un altro
+        Python, per esempio quello di sistema, nel quale le librerie del corso non sono installate; in
+        questo caso si torna su **Select Kernel** e si sceglie l'ambiente del corso. La cella seguente
+        completa il controllo importando pandas e mostrandone la versione.
     """)
     nb.code("""
         import pandas as pd
@@ -53,25 +58,30 @@ def costruisci() -> Notebook:
         pd.__version__
     """)
     nb.md("""
-        Un numero di versione che inizia per 3: pandas c'è. Queste due celle sono il controllo da fare
-        ogni volta che qualcosa sembra sparito.
+        Se compare un numero di versione che inizia per 3, pandas è installato nell'ambiente scelto.
+        Queste due celle sono il controllo da ripetere ogni volta che una libreria sembra sparita, o che
+        un notebook che il giorno prima funzionava dà errori già all'importazione.
     """)
     nb.box("attenzione", """
-        `ModuleNotFoundError` alla prima cella del giorno di solito indica un kernel sbagliato, non una
-        libreria mancante. Prima **Select Kernel**, poi tutto il resto.
+        Un `ModuleNotFoundError` alla prima cella della giornata indica di solito che è selezionato il
+        kernel sbagliato, e solo raramente che manca una libreria. Per questo conviene controllare
+        **Select Kernel** prima di provare qualsiasi altra soluzione.
     """)
 
     nb.sezione("Run All e Restart", intro="""
-        Due pulsanti in cima al notebook fanno il grosso del lavoro. **Run All** esegue tutte le celle
-        dall'alto in basso: è la prova che il notebook funziona per intero. **Restart** riavvia il
-        kernel: la memoria si svuota, le variabili spariscono, il codice resta. Si usa quando "non torna
-        niente": un valore che non ci spieghiamo, una cella che non finisce mai. Restart, poi Run All.
+        In cima al notebook ci sono due pulsanti che si usano spesso. **Run All** esegue tutte le celle
+        dall'alto in basso ed è il modo più semplice per verificare che il notebook funzioni per intero.
+        **Restart** riavvia il kernel. Il codice scritto nelle celle rimane dov'è, ma le variabili create
+        fino a quel momento vengono perse, perché esistevano solo nella memoria del processo appena
+        chiuso. Quando un risultato non si spiega o una cella non finisce mai, conviene premere Restart e
+        poi Run All, così il notebook riparte da uno stato pulito.
     """)
 
     nb.sezione("Le scorciatoie da tastiera", intro="""
-        Una cella ha due stati: in modifica, quando il cursore è dentro e scriviamo, e selezionata,
-        quando è evidenziata e i tasti diventano comandi. **Esc** passa da modifica a selezionata,
-        **Invio** torna dentro. Con la cella selezionata bastano questi.
+        Una cella può trovarsi in due stati. È in modifica quando il cursore è al suo interno e stiamo
+        scrivendo, ed è selezionata quando è evidenziata e i tasti funzionano come comandi. Il tasto
+        **Esc** passa dalla modifica alla selezione e **Invio** torna dentro la cella. La tabella seguente
+        raccoglie i comandi che bastano nel lavoro di tutti i giorni, da usare con la cella selezionata.
     """)
     nb.md("""
         | Tasto | Cosa fa |
@@ -83,9 +93,9 @@ def costruisci() -> Notebook:
         | **Ctrl+S** | salva il notebook (funziona sempre) |
     """)
     nb.md("""
-        Su Mac, **Cmd** al posto di **Ctrl**. Tutto il resto si trova nei menu e nei pulsanti che
-        compaiono passando il mouse sopra una cella: le scorciatoie evitano di staccare le mani dalla
-        tastiera.
+        Su Mac si usa **Cmd** al posto di **Ctrl**. Tutti gli altri comandi si trovano nei menu e nei
+        pulsanti che compaiono passando il mouse sopra una cella; le scorciatoie servono a lavorare senza
+        staccare le mani dalla tastiera.
     """)
 
     return nb
