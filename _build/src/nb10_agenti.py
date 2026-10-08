@@ -10,7 +10,7 @@ def costruisci() -> Notebook:
         titolo="Agenti per il coding",
         blocco=4,
         giornata=2,
-        intento="Usiamo Copilot in VS Code per scrivere e spiegare codice, poi leggiamo e controlliamo uno script scritto da un agente.",
+        intento="Usiamo Copilot in VS Code per scrivere codice e farcelo spiegare, e impariamo a leggere e controllare uno script scritto da un agente prima di eseguirlo.",
         obiettivi=[
             "usare Copilot in VS Code per completare, chiedere e far spiegare",
             "dare al modello il contesto giusto e controllare la risposta con un numero noto",
@@ -22,20 +22,23 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Copilot in VS Code", intro="""
-        Copilot lavora in VS Code in due forme. Il completamento propone codice in grigio mentre scriviamo:
-        **Tab** lo accetta, **Esc** lo rifiuta. La chat scrive codice su richiesta: si apre con **Ctrl+Alt+I**
-        (su Mac **Ctrl+Cmd+I**), oppure inline in una cella con **Ctrl+I**.
+        Copilot si usa in VS Code in due modi. Il completamento propone il codice in grigio mentre scriviamo, e
+        il suggerimento si accetta con **Tab** o si scarta con **Esc**. La chat, invece, scrive codice su
+        richiesta e si apre con **Ctrl+Alt+I** (su Mac **Ctrl+Cmd+I**); per lavorare su una sola cella si può
+        aprire la chat inline con **Ctrl+I**, che mostra la proposta direttamente nella cella.
     """)
     nb.md("""
-        La chat ha tre modalità, dal menu in basso.
+        La chat ha tre modalità, che si scelgono dal menu in basso e si distinguono per quanto l'agente può fare
+        da solo.
 
         | Modalità | Cosa fa |
         |---|---|
-        | Ask | risponde; il codice lo copiamo noi |
-        | Plan | scrive i passi senza toccare i file |
-        | Agent | modifica i file mostrando le differenze, lancia comandi chiedendo conferma |
+        | Ask | risponde nella chat, e il codice lo copiamo noi |
+        | Plan | descrive i passi da seguire senza modificare i file |
+        | Agent | modifica i file mostrando le differenze e lancia comandi dopo averci chiesto conferma |
 
-        Claude Code e Codex funzionano allo stesso modo, nel terminale o in VS Code.
+        Claude Code e Codex funzionano allo stesso modo, dal terminale o dentro VS Code. Nella cella qui sotto
+        abbiamo scritto la firma e la docstring di `prezzo_scontato`, e il completamento ha proposto il corpo.
     """)
     nb.code('''
         # Completamento: scriviamo firma e docstring, Invio, e Copilot propone il corpo in grigio
@@ -47,8 +50,10 @@ def costruisci() -> Notebook:
         prezzo_scontato(80, 25)  # Output: 60.0
     ''')
     nb.md("""
-        Il corpo si accetta se fa quello che dice la docstring. Il caso noto torna; resta da provare
-        l'arrotondamento ai centesimi.
+        Un suggerimento si accetta solo se fa quello che dice la docstring, e per saperlo bisogna provarlo. Il
+        caso semplice, 80 euro scontati del 25%, dà 60 come previsto, ma non dice nulla sull'arrotondamento ai
+        centesimi. Per controllarlo serve un prezzo con i decimali, come quello della cella seguente, dove il
+        risultato corretto è 17.99 e non 17.991.
     """)
     nb.code("""
         prezzo_scontato(19.99, 10)  # Output: 17.99, non 17.991
@@ -56,24 +61,26 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Glossario", intro="""
+        Lavorando con un agente si incontrano spesso alcuni termini, che la tabella raccoglie con una breve
+        spiegazione.
+
         | Parola | Cos'è |
         |---|---|
-        | token | il pezzo di testo che il modello legge e scrive, circa tre quarti di parola; l'uso si misura in token |
-        | finestra di contesto | quanti token il modello tiene presenti; quando è piena la chat dimentica l'inizio: si apre una chat nuova |
-        | cache | l'inizio della conversazione tenuto da parte per qualche minuto: rileggerlo costa meno |
-    """)
-    nb.md("""
-        | Parola | Cos'è |
-        |---|---|
-        | modello | scrive il seguito più probabile, senza verificarlo; nella chat si sceglie dal menu in basso |
-        | file di istruzioni | regole che l'agente legge a ogni richiesta: `.github/copilot-instructions.md` per Copilot, `CLAUDE.md` per Claude Code, `AGENTS.md` per Codex |
+        | modello | È il programma che genera il testo: scrive il seguito più probabile della richiesta, senza verificarlo. Nella chat si sceglie dal menu in basso. |
+        | token | È il pezzo di testo che il modello legge e scrive, in media circa tre quarti di una parola. L'uso di un servizio si misura in token. |
+        | finestra di contesto | È il numero di token che il modello riesce a tenere presenti. Quando la finestra è piena la chat perde l'inizio della conversazione, e conviene aprirne una nuova. |
+        | cache | È la parte iniziale della conversazione che il servizio conserva per qualche minuto, in modo che rileggerla costi meno. |
+        | file di istruzioni | È un file di regole che l'agente legge a ogni richiesta: `.github/copilot-instructions.md` per Copilot, `CLAUDE.md` per Claude Code, `AGENTS.md` per Codex. |
     """)
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Prompt e contesto", intro="""
-        Il prompt è la richiesta; il contesto è quello che il modello vede: file aperti, celle selezionate,
-        testo incollato. Nelle celle qui sotto il commento in testa è il prompt dato alla chat in modalità Ask,
-        il codice è la risposta.
+        Il prompt è la richiesta che scriviamo, mentre il contesto è tutto ciò che il modello vede insieme alla
+        richiesta, cioè i file aperti, le celle selezionate e il testo che incolliamo. Il modello non conosce i
+        nostri dati se non glieli descriviamo, quindi la qualità della risposta dipende in gran parte dal
+        contesto. Nelle celle che seguono il commento in testa riporta il prompt dato alla chat in modalità Ask,
+        e il codice sotto è la risposta. La prima cella carica il file degli impianti e stampa con `df.info()` i
+        nomi esatti e i tipi delle colonne, che sono proprio le informazioni da passare al modello.
     """)
     nb.code("""
         import pandas as pd
@@ -92,15 +99,18 @@ def costruisci() -> Notebook:
         per_anno
     """)
     nb.md("""
-        Il primo prompt non nomina le colonne e la risposta ne usa una che non esiste, `anno`. Per il
-        secondo controlliamo due cose: gli anni sono in ordine, e i conteggi sommano a 40, le righe di `df`.
+        Il primo prompt non nomina le colonne, e il modello ne ha usata una che non esiste, `anno`, con il
+        risultato di un `KeyError`. Il secondo prompt riporta i nomi esatti e la risposta usa la colonna giusta,
+        ma va comunque controllata. Gli anni devono comparire in ordine crescente e la somma dei conteggi deve
+        essere uguale al numero di righe di `df`, cioè 40, perché ogni impianto ha un solo anno di allaccio.
     """)
     nb.code("""
         print(per_anno.sum(), len(df))  # Output: 40 40
     """)
     nb.prova_tu(
         richiesta="""
-            Dai alla chat, in modalità Ask, questo prompt:
+            Dai alla chat, in modalità Ask, il prompt seguente, che descrive le colonne del DataFrame e il
+            risultato che vogliamo:
 
             ```text
             Ho un DataFrame pandas `df` con queste colonne:
@@ -110,8 +120,9 @@ def costruisci() -> Notebook:
             Docstring di una riga, niente commenti.
             ```
 
-            Incolla la funzione al posto dei puntini ed esegui. Output atteso: due colonne, `MI` in testa con
-            323,5 kWp, e la somma della colonna kwp uguale a 737, come in `df`.
+            Incolla poi la funzione proposta al posto dei puntini ed esegui la cella. Il risultato è un DataFrame
+            con due colonne, `provincia` e `kwp`, con `MI` in testa e 323,5 kWp; la somma della colonna `kwp` è
+            737, la stessa che si ottiene da `df`.
         """,
         starter="""
             ...
@@ -131,6 +142,12 @@ def costruisci() -> Notebook:
             per_provincia
         """,
     )
+    nb.md("""
+        La chat serve anche a farsi spiegare un errore. La cella qui sotto dà errore apposta, perché chiede la
+        colonna `kWp` con la maiuscola. In casi come questo conviene copiare nella chat il traceback intero e
+        chiedere per cominciare soltanto una spiegazione, in modo da capire da dove viene il problema prima di modificare
+        il codice.
+    """)
     nb.code("""
         # Questa cella dà errore apposta: il traceback si copia intero nella chat
         df["kWp"].sum()
@@ -143,8 +160,10 @@ def costruisci() -> Notebook:
         df.columns.tolist()
     """)
     nb.md("""
-        La spiegazione nomina `KeyError` e la colonna sbagliata, e nella lista c'è il nome giusto, `kwp`.
-        Solo dopo chiediamo la correzione.
+        Una buona spiegazione nomina l'eccezione, in questo caso `KeyError`, e la colonna che non esiste. La
+        lista delle colonne conferma la diagnosi, perché contiene il nome giusto, `kwp`, scritto in minuscolo.
+        Solo a questo punto chiediamo alla chat di correggere la riga, e la correzione si controlla subito
+        eseguendola.
     """)
     nb.code("""
         # Prompt: "Ora correggi la riga"
@@ -153,20 +172,23 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Le tre regole", intro="""
-        1. **Verifica.** Esegui subito e confronta con un numero noto: la somma dei kwp, il numero di righe.
-        2. **Chiedi spiegazioni.** Prima "spiegami", poi "correggi", sempre con il traceback intero.
-        3. **Piccoli passi.** Una richiesta per volta. In Agent le modifiche arrivano come differenze, da
-           tenere o annullare blocco per blocco (**Keep** o **Undo**).
+        Nel lavoro con un agente conviene tenere tre abitudini. La prima è eseguire subito il codice ricevuto e
+        confrontare il risultato con un numero che conosciamo già, come la somma dei kWp o il numero di righe
+        del file. La seconda è chiedere una spiegazione prima della correzione: quando qualcosa non funziona,
+        incolliamo il traceback intero e chiediamo che cosa significa, e solo dopo chiediamo di sistemarlo. La
+        terza è procedere a piccoli passi, con una richiesta per volta; in modalità Agent le modifiche arrivano
+        come differenze da tenere o annullare blocco per blocco, con i pulsanti **Keep** e **Undo**.
     """)
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Leggere il codice scritto da un agente", intro="""
-        Uno script scritto da un agente si legge prima di lanciarlo, un blocco alla volta, con quattro domande:
-
-        1. La struttura è quella solita: import, costanti, `def`, `main` in fondo?
-        2. Quali righe fanno il lavoro e quali sono la cornice?
-        3. Il percorso dei dati esiste, dalla cartella da cui lo lanciamo?
-        4. Il numero torna?
+        Uno script scritto da un agente si legge prima di lanciarlo, un blocco alla volta, tenendo presenti
+        quattro domande. La prima riguarda la struttura, che dovrebbe essere quella consueta: gli import, le
+        costanti, le funzioni definite con `def` e la funzione `main` in fondo. La seconda chiede quali righe
+        fanno il lavoro e quali fanno solo da cornice, come la configurazione e il log. La terza domanda è se il
+        percorso dei dati esiste rispetto alla cartella da cui lanciamo lo script, e la quarta è se il numero
+        prodotto torna con uno che conosciamo. Le celle che seguono riportano lo script di esempio diviso in
+        blocchi.
     """)
     nb.sottosezione("Lo script", aula="avanzata")
     nb.code('''
@@ -185,8 +207,11 @@ def costruisci() -> Notebook:
         OUTPUT = Path("totale_per_pod.csv")
     ''')
     nb.md("""
-        In testa la docstring di modulo, gli import e le costanti, in maiuscolo. `logging`, `dataclasses` e
-        `pathlib` sono della libreria standard; `logger.info(...)` è un `print` con il livello davanti.
+        Il primo blocco si apre con la docstring di modulo, che dice in una riga che cosa fa lo script, ed è
+        seguito dagli import e dalle costanti, scritte in maiuscolo per convenzione. I moduli `logging`,
+        `dataclasses` e `pathlib` fanno parte della libreria standard e quindi non vanno installati. L'oggetto
+        `logger` serve a scrivere messaggi durante l'esecuzione, e `logger.info(...)` si comporta come un
+        `print` che premette al testo il livello del messaggio.
     """)
     nb.code("""
         @dataclass
@@ -201,8 +226,11 @@ def costruisci() -> Notebook:
         config
     """)
     nb.md("""
-        `@dataclass` è un decoratore: scrive da solo il costruttore `Config(path=...)` e la stampa.
-        `sep: str = ";"` è un campo con type hint e default: se non lo passiamo, vale `";"`.
+        Il secondo blocco raccoglie le opzioni di lettura in una classe. La riga `@dataclass` è un decoratore,
+        cioè un'istruzione che modifica la definizione scritta subito sotto; in questo caso genera da sola il
+        costruttore `Config(path=...)` e la rappresentazione leggibile dell'oggetto che vediamo stampata. Ogni
+        campo ha un type hint e può avere un valore predefinito: per esempio `sep: str = ";"` dichiara che `sep`
+        è una stringa e che, se non lo passiamo, vale `";"`.
     """)
     nb.code('''
         def leggi_letture(config: Config) -> pd.DataFrame:
@@ -221,11 +249,18 @@ def costruisci() -> Notebook:
             return letture.groupby("pod")["kwh"].sum().reset_index()
     ''')
     nb.md("""
-        Il lavoro lo fanno `read_csv` e il `groupby`; il resto è cornice. `-> pd.DataFrame` è il type hint
-        di ritorno; `fasce: list[str] | None = None` è un parametro facoltativo.
+        Nelle due funzioni il lavoro lo fanno `read_csv` e il `groupby`, mentre il controllo sul file, le
+        docstring e i type hint fanno da cornice. L'annotazione `-> pd.DataFrame` indica il tipo del valore
+        restituito. Il parametro `fasce: list[str] | None = None` è facoltativo: se non lo passiamo vale `None` e
+        la funzione somma tutte le fasce, altrimenti tiene solo quelle indicate, come nella cella qui sotto.
     """)
     nb.code("""
         totale_per_pod(leggi_letture(config), fasce=["F1"])  # solo la fascia F1
+    """)
+    nb.md("""
+        La cella seguente risponde alla terza e alla quarta domanda. Controlla che il file indicato nella
+        configurazione esista dalla cartella del notebook, e poi confronta il totale dei kWh e il numero di POD
+        con i valori che conosciamo dal notebook 06, cioè 134507,7 kWh su sei POD.
     """)
     nb.code("""
         print(config.path.exists())  # domanda 3. Output: True
@@ -246,13 +281,17 @@ def costruisci() -> Notebook:
         #     main()
     """)
     nb.md("""
-        `logging.basicConfig` accende il log: senza, `logger.info` non stampa. Il blocco
-        `if __name__ == "__main__":` fa partire `main()` quando il file viene lanciato, non quando viene importato.
+        La funzione `main` mette insieme i pezzi: legge il file, calcola i totali, li salva in un CSV e scrive
+        un messaggio nel log. La chiamata `logging.basicConfig(level=logging.INFO)` attiva il log, e senza di
+        essa `logger.info` non stamperebbe nulla. Il blocco `if __name__ == "__main__":` fa partire `main()`
+        quando il file viene lanciato come script, e non la esegue quando il file viene importato da un altro
+        modulo.
     """)
     nb.prova_tu(
         richiesta="""
-            Per ogni riga dello script scrivi cos'è, scegliendo tra `"decoratore"`, `"type hint"`,
-            `"blocco main"` e `"costante"`. Le risposte sono nelle celle qui sopra.
+            Le chiavi del dizionario `cosa_e` sono quattro righe dello script. Per ciascuna scrivi che cosa è,
+            scegliendo tra `"decoratore"`, `"type hint"`, `"blocco main"` e `"costante"`; le spiegazioni delle
+            celle precedenti contengono tutte le risposte.
         """,
         starter="""
             cosa_e = {
@@ -280,19 +319,23 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Il parametro inventato",
         scenario="""
-            `letture_pod_2025.csv` è un CSV all'italiana: punto e virgola, virgola decimale, encoding latin-1.
-            Il prompt qui sotto suggerisce a Copilot nomi di parametri che `read_csv` non ha.
+            Il file `letture_pod_2025.csv` è un CSV all'italiana, con il punto e virgola come separatore, la
+            virgola come separatore decimale e l'encoding latin-1. Il prompt che userai suggerisce a Copilot nomi
+            di parametri che `read_csv` non ha, e il modello tende a seguire le indicazioni della richiesta anche
+            quando sono sbagliate.
         """,
         richiesta="""
-            1. Dai alla chat questo prompt e incolla la riga che propone al posto di quella commentata:
+            1. Dai alla chat il prompt seguente e incolla la riga che propone al posto di quella commentata
+               nella cella:
 
                ```text
                Leggi il file ../Dati/letture_pod_2025.csv con pandas: separatore punto e virgola,
                virgola come decimale, encoding latin-1. Usa i parametri separator, decimal_separator ed encoding.
                ```
-            2. Eseguila e leggi l'ultima riga del traceback: quale parametro non esiste?
-            3. Con `help(pd.read_csv)` trova i nomi giusti per il separatore e per il decimale.
-            4. Leggi il file in `letture` con i parametri giusti. Output atteso: 216 righe, 5 colonne, `kwh` di tipo `float64`.
+            2. Esegui la riga proposta e leggi la fine del traceback, che indica quale parametro non esiste.
+            3. Cerca con `help(pd.read_csv)` i nomi giusti dei parametri per il separatore e per il decimale.
+            4. Leggi il file in `letture` usando i parametri giusti. Il risultato è un DataFrame di 216 righe e 5
+               colonne, con la colonna `kwh` di tipo `float64`.
         """,
         starter="""
             # 1-2. incolla qui la riga proposta da Copilot ed eseguila
@@ -314,13 +357,14 @@ def costruisci() -> Notebook:
             assert str(letture["kwh"].dtype) == "float64", "❌ kwh deve essere float64: serve decimal=','"
             assert round(letture["kwh"].sum(), 1) == 134507.7, "❌ La somma dei kwh deve essere 134507.7"
         """,
-        perche="I nomi dei parametri non si indovinano: `sep` e `decimal` stanno nella firma di `read_csv`.",
+        perche="I nomi dei parametri vanno controllati nella documentazione, perché il modello può inventarli quando la richiesta lo suggerisce. Quelli giusti, `sep` e `decimal`, compaiono nella firma di `read_csv` che `help` mostra.",
     )
     nb.esercizio(
         titolo="Leggere prima di lanciare",
         scenario='''
             Un collega ha fatto scrivere a un agente lo script del report settimanale. Dice che gira senza
-            errori, ma il totale gli sembra strano.
+            errori, ma il totale gli sembra strano. Lo script è riportato qui sotto, e prima di lanciarlo
+            conviene leggerlo con le quattro domande della sezione precedente.
 
             ```python
             """Report settimanale: kWh totali per POD."""
@@ -359,13 +403,14 @@ def costruisci() -> Notebook:
             ```
         ''',
         richiesta="""
-            1. Compila `risposte`: in `"lavoro vero"` il nome della funzione che fa il calcolo; in
-               `"lanciato in una cella"` cosa succede incollando tutto lo script in una cella del notebook,
-               scegliendo tra `"FileNotFoundError"`, `"NameError"` e `"non parte niente"`.
+            1. Compila il dizionario `risposte`. Alla chiave `"lavoro vero"` scrivi il nome della funzione che fa
+               il calcolo; alla chiave `"lanciato in una cella"` scrivi che cosa succede se si incolla tutto lo
+               script in una cella del notebook, scegliendo tra `"FileNotFoundError"`, `"NameError"` e
+               `"non parte niente"`.
             2. Trova il dettaglio che manca nella lettura del file e completa `leggi_letture`, che qui riceve
-               direttamente il percorso. Output atteso: sei POD, 134507,7 kWh in tutto.
+               direttamente il percorso. Il risultato è una tabella con sei POD e un totale di 134507,7 kWh.
         """,
-        suggerimento="guarda `totale.dtypes`: se `kwh` non è un numero, il problema è in quello che `read_csv` riceve.",
+        suggerimento="controlla il tipo delle colonne con `totale.dtypes`; se `kwh` non è numerica, il problema sta nei parametri passati a `read_csv`.",
         starter="""
             risposte = {
                 "lavoro vero": ...,
@@ -411,6 +456,6 @@ def costruisci() -> Notebook:
             assert risposte["lanciato in una cella"] == "FileNotFoundError", "❌ lanciato in una cella: il blocco main parte anche nel notebook, e da qui il percorso Dati non esiste"
             assert round(totale["kwh"].sum(), 1) == 134507.7, "❌ La somma dei kwh deve essere 134507.7: controlla il tipo di kwh con .dtypes"
         """,
-        perche="Senza `decimal=\",\"` la colonna `kwh` resta testo e `sum()` attacca le stringhe una all'altra: nessun traceback, solo un numero sbagliato.",
+        perche="Senza `decimal=\",\"` pandas non riconosce i numeri scritti con la virgola, e la colonna `kwh` resta di testo. Il `groupby` con `sum()` allora concatena le stringhe invece di sommarle, e lo script termina senza traceback ma con un risultato sbagliato, che si scopre solo controllando il totale.",
     )
     return nb

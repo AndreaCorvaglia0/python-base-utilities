@@ -31,7 +31,7 @@ def costruisci() -> Notebook:
         titolo="Capstone: il carico del Nord e la temperatura",
         blocco=4,
         giornata=2,
-        intento="Due anni di carico elettrico della zona Nord e la temperatura di Milano: come il carico dipende dall'ora, dal giorno della settimana e dalla temperatura.",
+        intento="Analizziamo due anni di carico elettrico della zona Nord insieme alla temperatura di Milano, per descrivere come il carico dipende dall'ora, dal giorno della settimana e dalla temperatura.",
         obiettivi=[
             "caricare, unire e pulire una serie temporale reale, con i salti dell'ora legale",
             "costruire la serie giornaliera e i profili medi per ora e per giorno della settimana",
@@ -45,18 +45,18 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ introduzione
     nb.md("""
-        I dati vengono dal [Download Center di Terna](https://dati.terna.it/en/download-center): il **carico
-        elettrico della zona Nord** negli anni 2024 e 2025. Nei dataset Terna il carico è la potenza richiesta
-        al sistema elettrico in ciascun intervallo temporale, una grandezza centrale per la pianificazione e la
-        gestione della rete di trasmissione.
+        I dati utilizzati provengono dal [Download Center di Terna](https://dati.terna.it/en/download-center); in
+        particolare, useremo i dati di **carico elettrico della zona Nord** relativi agli anni 2024 e 2025. Nei
+        dataset Terna il carico è la potenza richiesta al sistema elettrico in ciascun intervallo temporale, una
+        grandezza centrale per la pianificazione e la gestione della rete di trasmissione.
     """)
     nb.md("""
-        Accanto al carico integriamo la **temperatura** di Milano, presa tramite API da
+        Accanto al carico integriamo la **temperatura** di Milano, ottenuta tramite API da
         [Open-Meteo](https://open-meteo.com). L'obiettivo è descrivere come il carico del Nord dipende dall'ora
-        del giorno, dal giorno della settimana e dalla temperatura.
-    """)
-    nb.md("""
-        Per i titoli e le etichette dei grafici si può usare Copilot; il codice degli step lo scriviamo noi.
+        del giorno, dal giorno della settimana e dalla temperatura. Il lavoro è diviso in sei step, ciascuno con
+        una consegna, una cella da completare e una verifica. Copilot si può usare per i titoli e le etichette
+        dei grafici, mentre il codice degli step lo scriviamo noi, perché lo scopo del capstone è mettere in
+        pratica quello che abbiamo visto nei notebook precedenti.
     """)
 
     # ------------------------------------------------------------------ 1
@@ -69,19 +69,20 @@ def costruisci() -> Notebook:
                `load_total_north_hourly_2024.xlsx` e `load_total_north_hourly_2025.xlsx`.
             2. Unisci i due dataset **per righe** in `df`, mantenendo lo stesso schema di colonne, in modo da
                ottenere una serie unica che copra l'intero periodo 2024-2025.
-            3. Controlla dimensione del dataset, prima e ultima data, quante righe ci sono in media per giorno
-               e i valori mancanti per colonna. Il file si chiama `hourly`: la frequenza è oraria?
+            3. Controlla la dimensione del dataset, la prima e l'ultima data, il numero medio di righe per giorno
+               e i valori mancanti per colonna. Il nome del file contiene `hourly`, quindi verifica con il numero
+               di righe per giorno se la frequenza dei dati è effettivamente oraria.
         """,
         richiesta_avanzata="""
             1. Leggi i due file Excel presenti nella cartella `../Dati/` in `df_2024` e `df_2025`:
                `load_total_north_hourly_2024.xlsx` e `load_total_north_hourly_2025.xlsx`.
             2. Unisci i due dataset **per righe** in `df`, mantenendo lo stesso schema di colonne, in modo da
                ottenere una serie unica che copra l'intero periodo 2024-2025.
-            3. Controlla dimensione del dataset, prima e ultima data, quante righe ci sono in media per giorno
-               (in `righe_giorno`) e i valori mancanti per colonna. Il file si chiama `hourly`: la frequenza è
-               oraria?
+            3. Controlla la dimensione del dataset, la prima e l'ultima data, il numero medio di righe per giorno,
+               da salvare in `righe_giorno`, e i valori mancanti per colonna. Il nome del file contiene `hourly`,
+               quindi verifica con il numero di righe per giorno se la frequenza dei dati è effettivamente oraria.
 
-            Risultato atteso: 70.176 righe e 4 colonne, nessun valore mancante.
+            Il risultato è un DataFrame di 70.176 righe e 4 colonne, senza valori mancanti.
         """,
         suggerimento="`df[\"Date\"].dt.date.nunique()` conta i giorni diversi.",
         starter_base="""
@@ -130,8 +131,9 @@ def costruisci() -> Notebook:
         """,
     )
     nb.md("""
-        96 righe al giorno: i dati sono quartorari, un valore ogni 15 minuti, anche se il nome del file dice
-        `hourly`.
+        Il conto dà 96 righe al giorno, quindi i dati sono quartorari, con un valore ogni 15 minuti, anche se il
+        nome del file dice `hourly`. Ne terremo conto più avanti, quando dalla potenza in MW passeremo
+        all'energia in MWh, perché ogni valore copre un quarto d'ora.
     """)
 
     # ------------------------------------------------------------------ 2
@@ -140,10 +142,10 @@ def costruisci() -> Notebook:
         nb, titolo="Preparazione della colonna temporale e prima visualizzazione",
         scenario="In questo step rendiamo la colonna data utilizzabile come variabile temporale e facciamo una prima ispezione visiva della serie.",
         richiesta="""
-            1. Controlla con `df.dtypes` che `Date` sia già `datetime`; se fosse testo, `pd.to_datetime` la
-               converte.
-            2. Ordina il dataset per data (i file partono dall'ultimo quarto d'ora dell'anno) e reimposta
-               l'indice per avere un ordinamento pulito.
+            1. Controlla con `df.dtypes` che la colonna `Date` sia già di tipo `datetime`; se fosse letta come
+               testo, la si converte con `pd.to_datetime`.
+            2. Ordina il dataset per data, perché ogni file comincia con l'ultimo quarto d'ora dell'anno, e
+               reimposta l'indice per avere un ordinamento pulito.
             3. Importa Plotly e visualizza **entrambe** le serie nel tempo: `Total Load [MW]` e
                `Forecast Total Load [MW]`.
             4. Dopo aver verificato che le due curve siano coerenti, elimina le colonne che non useremo:
@@ -152,7 +154,7 @@ def costruisci() -> Notebook:
             Al termine di questo step deve rimanere una serie storica con una colonna temporale in formato
             `datetime` e una sola colonna di valori, `Total Load [MW]`.
         """,
-        suggerimento="`reset_index(drop=True)` rifà l'indice da 0 senza tenere il vecchio come colonna. `df.drop(columns=[...])` toglie le colonne indicate.",
+        suggerimento="`reset_index(drop=True)` rifà l'indice a partire da 0 senza conservare il vecchio come colonna, mentre `df.drop(columns=[...])` toglie le colonne indicate.",
         starter_base="""
             import plotly.express as px
 
@@ -206,32 +208,39 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Ora legale: duplicati e buchi", intro="""
-        Prima di aggregare controlliamo il passo tra un timestamp e il successivo. Due giorni all'anno qualcosa
-        non torna: l'ultima domenica di ottobre e l'ultima domenica di marzo, quando cambia l'ora.
+        Prima di aggregare conviene controllare il passo tra un timestamp e il successivo, che in una serie
+        quartoraria regolare è sempre di 15 minuti. Il passo cambia soltanto nell'ultima domenica di marzo e
+        nell'ultima domenica di ottobre, i due giorni dell'anno in cui si passa dall'ora solare all'ora legale e
+        viceversa.
     """)
     with nb.solo("avanzata"):
         nb.md("""
-            Proviamo prima a dare alle date il fuso orario italiano e a lasciare a pandas il riconoscimento
-            dell'ora ripetuta. La cella dà errore apposta: leggiamo l'ultima riga.
+            Un primo tentativo consiste nell'assegnare alle date il fuso orario italiano con `tz_localize` e
+            lasciare a pandas il compito di riconoscere l'ora ripetuta, con l'opzione `ambiguous="infer"`. La
+            cella qui sotto dà errore apposta, e conviene leggerne l'ultima riga, che spiega il motivo.
         """)
         nb.code('df["Date"].dt.tz_localize("Europe/Rome", ambiguous="infer")', errore=True)
         nb.md("""
-            `There are 4 dst switches when there should only be 1`: le due copie di ogni quarto d'ora ripetuto
-            sono intrecciate, e pandas vede quattro cambi d'ora invece di uno. Per questa analisi basta l'ora
-            locale senza fuso: togliamo i doppioni con `drop_duplicates`.
+            Il messaggio `There are 4 dst switches when there should only be 1` dice che pandas ha trovato
+            quattro cambi d'ora dove se ne aspettava uno. Succede perché nei file le due copie di ogni quarto
+            d'ora ripetuto sono intrecciate, e dall'ordine delle righe non si capisce quale appartenga all'ora
+            legale e quale all'ora solare. Per questa analisi l'ora locale senza fuso è sufficiente, quindi
+            togliamo i doppioni con `drop_duplicates`.
         """)
     step(
         nb, titolo="Pulizia dei duplicati dell'ora legale",
         scenario="In questo step lasciamo una riga per timestamp e contiamo i quarti d'ora che mancano.",
         richiesta="""
-            1. In `passi` metti la differenza tra ogni timestamp e il precedente (`diff()`) e conta quante volte
-               compare ogni valore con `value_counts()`. Qual è il passo normale? Cosa sono gli altri due valori?
-            2. In `duplicati` metti le righe con un timestamp ripetuto, tutte le copie
-               (`duplicated(keep=False)`). Che giorni sono? Che ore?
+            1. Calcola in `passi` la differenza tra ogni timestamp e il precedente con `diff()`, conta con
+               `value_counts()` quante volte compare ogni valore e chiediti quale sia il passo normale e a che
+               cosa corrispondano gli altri due valori.
+            2. Metti in `duplicati` tutte le copie delle righe con un timestamp ripetuto, usando
+               `duplicated(keep=False)`, e guarda in quali giorni e a quali ore cadono.
             3. Ordina per `Date`, togli i duplicati con `drop_duplicates(subset="Date")` e reimposta l'indice.
-            4. In `buchi` metti le righe che arrivano dopo un salto più lungo di 15 minuti. Che giorni sono?
+            4. Metti in `buchi` le righe che arrivano dopo un salto più lungo di 15 minuti e guarda in quali
+               giorni cadono.
         """,
-        suggerimento="l'ultima domenica di ottobre le 2:00-2:45 esistono due volte; l'ultima domenica di marzo non esistono.",
+        suggerimento="l'ultima domenica di ottobre i quarti d'ora dalle 2:00 alle 2:45 compaiono due volte, mentre l'ultima domenica di marzo non esistono.",
         starter_base="""
             # 1. il passo tra un timestamp e il precedente, e quante volte compare ogni valore
             passi = df["Date"].diff()
@@ -275,7 +284,7 @@ def costruisci() -> Notebook:
             assert len(df) == 70168 and df["Date"].is_unique, "❌ df: 70.168 righe, una per timestamp"
             assert len(buchi) == 2, "❌ buchi: 2 righe, le 3:00 delle due ultime domeniche di marzo"
         """,
-        perche="Teniamo la prima copia: le due differiscono di qualche centinaio di MW su circa 11.000. Il buco di marzo resta: quei quarti d'ora non ci sono stati.",
+        perche="Dei due valori ripetuti teniamo il primo, perché le due copie differiscono di qualche centinaio di MW su circa 11.000 e la scelta incide poco sulle medie. Il buco di marzo invece resta, perché quei quarti d'ora non sono mai esistiti e non c'è nulla da ricostruire.",
     )
 
     # ------------------------------------------------------------------ 4
@@ -294,13 +303,14 @@ def costruisci() -> Notebook:
             1. Parti dal DataFrame quartorario `df`.
             2. Imposta la colonna `Date` come indice temporale in `df_indicizzato`.
             3. Aggrega per giorno usando `resample("D")` e calcola la **somma** del carico.
-            4. Riporta `Date` come colonna e salva il risultato in `df_giornaliero`. Aggiungi la colonna
-               `Energia [MWh]`: la somma divisa per 4, perché un quarto d'ora a P MW vale P/4 MWh.
+            4. Riporta `Date` come colonna e salva il risultato in `df_giornaliero`. Aggiungi poi la colonna
+               `Energia [MWh]`, pari alla somma divisa per 4, perché un quarto d'ora a una potenza di P MW
+               corrisponde a P/4 MWh.
             5. Visualizza la serie giornaliera con Plotly.
 
             **Profilo medio giornaliero (media per ora del giorno)**
 
-            6. Torna alla serie quartoraria `df`: estrai l'**ora del giorno** dalla colonna `Date` e salvala in
+            6. Torna alla serie quartoraria `df`, estrai l'**ora del giorno** dalla colonna `Date` e salvala in
                una nuova colonna `hour`.
             7. Raggruppa per `hour` e calcola la **media** del carico in `profilo_orario`.
             8. Visualizza il profilo medio giornaliero con Plotly.
@@ -312,8 +322,8 @@ def costruisci() -> Notebook:
             10. Raggruppa per `weekday` e calcola la **media** del carico in `profilo_settimanale`.
             11. Visualizza il profilo medio settimanale con Plotly.
 
-            Guarda i tre grafici: in che periodi l'energia giornaliera scende? A che ore il carico è più alto,
-            e di quanto cala nel weekend?
+            Osserva infine i tre grafici e annota in quali periodi l'energia giornaliera scende, a che ore il
+            carico è più alto e di quanto cala nel weekend, perché questi numeri serviranno nello step 6.
         """,
         suggerimento="`dt.hour` e `dt.dayofweek` estraggono ora e giorno della settimana; `reset_index()` dopo `groupby` riporta la chiave come colonna.",
         starter_base="""
@@ -379,21 +389,24 @@ def costruisci() -> Notebook:
             assert profilo_orario.shape == (24, 2), "❌ profilo_orario: 24 righe (le ore) e 2 colonne, hour e Total Load [MW]"
             assert len(profilo_settimanale) == 7 and profilo_settimanale["Total Load [MW]"].idxmin() == 6, "❌ profilo_settimanale: 7 righe, con la domenica (6) come giorno più leggero"
         """,
-        perche="Somma e poi diviso 4, non media per 24: nei due giorni di marzo con un'ora in meno la media conterebbe un'ora che non c'è stata.",
+        perche="L'energia giornaliera si ottiene sommando i valori quartorari e dividendo per 4, e non moltiplicando per 24 la potenza media del giorno. Nei due giorni di marzo con un'ora in meno, infatti, il prodotto per 24 conterebbe anche un'ora che non c'è stata.",
     )
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Recupero e integrazione della temperatura", intro="""
-        Aggiungiamo la **temperatura a 2 metri** ricostruita per Milano. È una semplificazione: usiamo Milano
-        come punto "medio" per il Nord Italia. L'API
-        [Historical Weather](https://open-meteo.com/en/docs/historical-weather-api) di Open-Meteo non chiede
-        alcuna chiave e restituisce i dati orari su un intervallo di date.
+        Al carico aggiungiamo la **temperatura a 2 metri** ricostruita per Milano. Si tratta di una
+        semplificazione, perché usiamo una sola città come riferimento per tutto il Nord Italia. I dati vengono
+        dall'API [Historical Weather](https://open-meteo.com/en/docs/historical-weather-api) di Open-Meteo, che
+        non richiede alcuna chiave e restituisce i valori orari per l'intervallo di date indicato.
     """)
     with nb.solo("base"):
         nb.md("""
-            La funzione qui sotto è già scritta: chiede i dati all'API con `requests.get` e restituisce la parte
-            `hourly` della risposta. Se la rete non risponde, il `try/except` legge
-            `../Dati/fallback/meteo_milano_2024_2025.json`: temperature di esempio, non misurate.
+            La funzione `scarica_temperatura`, già scritta nelle celle qui sotto, chiede i dati all'API con
+            `requests.get` e restituisce la parte `hourly` della risposta, cioè un dizionario con le liste `time`
+            e `temperature_2m`. Se la rete non risponde, il blocco `try/except` legge al suo posto il file
+            `../Dati/fallback/meteo_milano_2024_2025.json`, che contiene temperature di esempio e non misurate.
+            In quel caso la funzione stampa un messaggio, e nelle frasi finali va indicato che la temperatura
+            viene dai dati di esempio.
         """)
         nb.code("""
             import json
@@ -417,23 +430,23 @@ def costruisci() -> Notebook:
                     with open(file_meteo, encoding="utf-8") as f:
                         return json.load(f)["hourly"]
         """)
-        nb.md("""
-            Se la rete non risponde, la funzione usa dati di esempio (non misurati) da `../Dati/fallback/meteo_milano_2024_2025.json`.
-        """)
 
     scenario_5 = """
-        Ora dobbiamo integrare il dato di temperatura con il dato di carico. Per prima cosa va risolta la
-        differente granularità: la temperatura è oraria, il carico quartorario (da 1 ora a 15 minuti).
+        In questo step integriamo il dato di temperatura con il dato di carico. Per prima cosa va risolta la
+        differente granularità, perché la temperatura è oraria mentre il carico è quartorario; la temperatura va
+        quindi portata da un valore ogni ora a un valore ogni 15 minuti.
     """
     passi_comuni = """
         3. Converti `time` in datetime, rinomina le colonne in `Date` e `Temperature_C`, imposta `Date` come
            indice e ordinalo con `sort_index()`.
-        4. Fai il resample a quartorario per poter integrare con il carico (`resample("15min")` +
-           `interpolate(method="linear")`), riporta `Date` come colonna e salva il risultato in `meteo_15`.
+        4. Porta la temperatura a frequenza quartoraria con `resample("15min")` seguito da
+           `interpolate(method="linear")`, così da poterla unire al carico, poi riporta `Date` come colonna e
+           salva il risultato in `meteo_15`.
         5. Fai il merge con il DataFrame del carico `df`, tenendo tutte le sue righe, e salva il risultato in
            `df_completo`.
-        6. Mancano i dati dell'ultima ora del 2025: riempi la temperatura con `ffill()`.
-        7. Visualizza la temperatura con `px.line()`.
+        6. Dopo il merge gli ultimi quarti d'ora del 2025 restano senza temperatura; riempili con `ffill()`,
+           che ripete l'ultimo valore disponibile.
+        7. Visualizza la temperatura nel tempo con `px.line()`.
     """
     soluzione_5_comune = """
         meteo = pd.DataFrame(orario)
@@ -457,17 +470,17 @@ def costruisci() -> Notebook:
         assert len(df_completo) == len(df), "❌ df_completo: il merge con how=\\"left\\" tiene tutte le righe di df"
         assert df_completo["Temperature_C"].notna().all(), "❌ df_completo: restano temperature mancanti, usa ffill()"
     """
-    perche_5 = "L'interpolazione lineare stima i tre valori tra un'ora e la successiva: non è una misura. `how=\"left\"` tiene tutte le righe del carico; le ultime tre del 2025, dopo le 23:00, restano senza temperatura e le riempie `ffill`."
+    perche_5 = "L'interpolazione lineare stima i tre valori compresi tra un'ora e la successiva, quindi produce una stima e non una misura. Il merge con `how=\"left\"` tiene tutte le righe del carico; le ultime tre del 2025, dopo le 23:00, restano senza temperatura perché la serie oraria finisce a quell'ora, e `ffill` le riempie con il valore delle 23:00."
     nb.esercizio(
         titolo="Recupero e integrazione della temperatura", aula="base",
         scenario=scenario_5,
         richiesta=nb_d("""
-            1. Ricava `data_inizio` e `data_fine` dal carico: primo e ultimo giorno, come testo `AAAA-MM-GG`
-               (`.min()`, `.max()` e `.strftime("%Y-%m-%d")`).
+            1. Ricava dal carico `data_inizio` e `data_fine`, cioè il primo e l'ultimo giorno, scritti come testo
+               nel formato `AAAA-MM-GG` con `.min()`, `.max()` e `.strftime("%Y-%m-%d")`.
             2. Chiama `scarica_temperatura(data_inizio, data_fine)` e trasforma il risultato in `meteo` con
                `pd.DataFrame`.
         """, passi_comuni),
-        suggerimento="`how=\"left\"` tiene tutte le righe del DataFrame di sinistra, la temperatura dove c'è. `resample(\"15min\")` crea una riga ogni quarto d'ora e `interpolate(method=\"linear\")` riempie quelle nuove.",
+        suggerimento="`how=\"left\"` tiene tutte le righe del DataFrame di sinistra e aggiunge la temperatura dove c'è. `resample(\"15min\")` crea una riga ogni quarto d'ora, e `interpolate(method=\"linear\")` riempie le righe nuove con valori intermedi.",
         starter="""
             # 1. l'intervallo da chiedere, come testo AAAA-MM-GG
             data_inizio = df["Date"].min().strftime("%Y-%m-%d")
@@ -513,12 +526,13 @@ def costruisci() -> Notebook:
         titolo="Recupero e integrazione della temperatura", aula="avanzata", rete=True,
         scenario=scenario_5,
         richiesta=nb_d("""
-            1. Chiedi all'archivio storico di Open-Meteo la temperatura oraria di Milano (latitudine 45.4642,
-               longitudine 9.19) dal primo all'ultimo giorno del carico. URL
-               `https://archive-api.open-meteo.com/v1/archive`; parametri `latitude`, `longitude`, `start_date`
-               ed `end_date` come testo `AAAA-MM-GG`, `hourly="temperature_2m"`, `timezone="Europe/Rome"`.
-               Salva in `orario` la chiave `hourly` della risposta.
-            2. Nella seconda cella trasforma `orario` in `meteo` con `pd.DataFrame`.
+            1. Chiedi all'archivio storico di Open-Meteo la temperatura oraria di Milano, alla latitudine
+               45.4642 e longitudine 9.19, dal primo all'ultimo giorno del carico. L'indirizzo è
+               `https://archive-api.open-meteo.com/v1/archive` e i parametri sono `latitude`, `longitude`,
+               `start_date` ed `end_date`, con le date come testo `AAAA-MM-GG`, più `hourly="temperature_2m"` e
+               `timezone="Europe/Rome"`. Salva in `orario` la chiave `hourly` della risposta.
+            2. Nella cella che segue quella dei dati di riserva, trasforma `orario` in `meteo` con
+               `pd.DataFrame`.
         """, passi_comuni),
         starter="""
             import requests
@@ -546,8 +560,8 @@ def costruisci() -> Notebook:
     )
     with nb.solo("avanzata"):
         nb.md("""
-            Se la rete non risponde, la cella qui sotto carica da `../Dati/fallback/` temperature di esempio
-            (non misurate); se l'API ha risposto, saltala.
+            Se la rete non risponde, la cella qui sotto carica in `orario` le temperature di esempio della
+            cartella `../Dati/fallback/`, che non sono misurate; se l'API ha risposto, la cella va saltata.
         """)
         nb.code("""
             import json
@@ -571,17 +585,19 @@ def costruisci() -> Notebook:
     nb.sezione("Carico e temperatura")
     step(
         nb, titolo="Carico e temperatura",
-        scenario="Un punto per giorno: temperatura media sulle x, carico medio sulle y, un colore per mese. Dalla forma della nuvola di punti si legge come il carico dipende dalla temperatura.",
+        scenario="In questo step costruiamo uno scatter con un punto per giorno, la temperatura media sulle x, il carico medio sulle y e un colore diverso per ogni mese. Dalla forma della nuvola di punti si legge come il carico dipende dalla temperatura.",
         richiesta="""
-            1. Porta `df_completo` a medie giornaliere in `giornaliero`: `Date` come indice, le colonne
-               `Total Load [MW]` e `Temperature_C`, `resample("D").mean()`, poi `reset_index()`.
-            2. Aggiungi la colonna `mese` con il nome del mese (`dt.month_name()`): così lo scatter ha un colore
-               per mese invece di una scala continua.
-            3. Disegna lo scatter con `px.scatter`: temperatura sulle x, carico sulle y, `color="mese"`. Che
-               forma ha? A che temperatura il carico è più basso?
-            4. Completa le cinque frasi della cella dopo la verifica, con i numeri e i grafici degli step.
+            1. Calcola in `giornaliero` le medie giornaliere di `df_completo`, impostando `Date` come indice,
+               selezionando le colonne `Total Load [MW]` e `Temperature_C`, applicando `resample("D").mean()` e
+               riportando infine `Date` come colonna con `reset_index()`.
+            2. Aggiungi la colonna `mese` con il nome del mese, ricavato con `dt.month_name()`, in modo che lo
+               scatter abbia un colore per ogni mese invece di una scala continua.
+            3. Disegna lo scatter con `px.scatter`, con la temperatura sulle x, il carico sulle y e
+               `color="mese"`, e osserva che forma ha la nuvola e a quale temperatura il carico è più basso.
+            4. Completa le cinque frasi della cella che segue la verifica, usando i numeri e i grafici ottenuti
+               negli step precedenti.
         """,
-        suggerimento="con `dt.month`, che è un numero, Plotly colora con una scala continua; `dt.month_name()` dà un colore per mese.",
+        suggerimento="con `dt.month`, che restituisce un numero, Plotly usa una scala di colore continua, mentre con `dt.month_name()` ogni mese ha un colore distinto.",
         starter_base="""
             # 1. medie giornaliere di carico e temperatura
             df_indicizzato = df_completo.set_index("Date")
@@ -618,7 +634,7 @@ def costruisci() -> Notebook:
             assert {"Total Load [MW]", "Temperature_C", "mese"} <= set(giornaliero.columns), "❌ giornaliero: servono le colonne Total Load [MW], Temperature_C e mese"
             assert giornaliero["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.month_name()"
         """,
-        perche="Le medie giornaliere tolgono il ciclo dell'ora e del giorno: la relazione con la temperatura si vede giorno per giorno.",
+        perche="Le medie giornaliere eliminano il ciclo delle ore all'interno della giornata e lasciano un solo valore per giorno, che si può confrontare direttamente con la temperatura media dello stesso giorno.",
     )
     nb.celle.append(Cella("md", nb_d("""
         **Il carico del Nord, 2024-2025**
