@@ -599,6 +599,30 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
     for c in md:
         if "📌" in c["source"]:
             avvisi.append("box Ricorda: non si usa più")
+    # stile (STILE_2026): niente celle etichetta, niente sequenze di frasi telegrafiche
+    for c in md[1:]:
+        tags = c.get("metadata", {}).get("tags", [])
+        if set(tags) & {"indice", "chiusura", "esercizio", "prova-tu", "soluzione", "banner"}:
+            continue
+        src = c["source"]
+        if "<div" in src or src.lstrip().startswith("|") or src.lstrip().startswith(">"):
+            continue
+        corpo = re.sub(r"^<a id=[^\n]*\n", "", src)
+        corpo = re.sub(r"^#+ .*$", "", corpo, flags=re.M)
+        corpo = re.sub(r"```.*?```", "", corpo, flags=re.S).strip()
+        if not corpo:
+            continue
+        parole = corpo.split()
+        if len(parole) <= 4 and corpo.endswith(":"):
+            avvisi.append(f"cella etichetta, va fusa in una frase: {corpo!r}")
+            continue
+        righe = [r for r in corpo.splitlines() if r.strip()]
+        elenco = sum(1 for r in righe if re.match(r"\s*([-*]|\**\d+\.\**)\s", r))
+        if righe and elenco / len(righe) >= 0.5:
+            continue
+        frasi = [f for f in re.split(r"(?<=[.!?])\s+", corpo) if f.strip()]
+        if len(frasi) >= 3 and len(parole) / len(frasi) < 8:
+            avvisi.append(f"frasi telegrafiche ({len(frasi)} frasi, {len(parole) // len(frasi)} parole in media): {corpo[:60]!r}")
     # il capstone ha gli Step dentro ogni sezione, per scelta didattica
     if sezioni and not sezioni[-1].endswith("Esercizi") and nb.num != COMPITO[0] and not nb.num.startswith("E") and not nb.extra and nb.etichetta_esercizio == "Esercizio":
         avvisi.append(f"l'ultima sezione non è 'Esercizi' ma {sezioni[-1]!r}")
