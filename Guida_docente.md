@@ -1,19 +1,25 @@
 # Guida per il docente
 
-Due giornate, due aule (Base e Avanzata) con lo stesso programma. I notebook contengono quello che il corsista deve
-leggere ed eseguire; le parti che si mostrano dal vivo (VS Code, ambiente, Ruff, Data Wrangler, wrapper delle API) non
-stanno nei notebook: il materiale per prepararle è nella cartella `Extra/`, e qui sotto c'è quando farle e quanto durano.
+Il corso dura due giornate e si tiene in due versioni, Base e Avanzata, che seguono lo stesso programma. I notebook
+contengono quello che il corsista deve leggere ed eseguire, mentre le parti che il docente mostra dal vivo, cioè VS Code,
+l'ambiente del progetto, Ruff, Data Wrangler e il wrapper delle API, non compaiono nei notebook. Il materiale per
+prepararle si trova nella cartella `Extra/`, e le tabelle di questa guida indicano quando svolgerle e quanto durano.
 
 ## Prima del corso
 
-- Sui PC dell'aula: VS Code con le estensioni Python, Jupyter, Data Wrangler, GitHub Copilot; Ruff per l'aula Avanzata.
-- uv installato; la cartella del corso scaricata e `uv sync` già fatto (vedi il README, "Come si parte").
-- `Dati/fallback/` contiene risposte di esempio delle API: il corso funziona anche senza rete. Con la rete,
-  `uv run python _build/scarica_fallback.py` le sostituisce con i dati veri (temperatura di Milano, sensori lombardi).
-- I notebook si rigenerano dagli script in `_build/src/` con `uv run python _build/build.py`; le soluzioni si
-  eseguono da capo a fondo con `uv run python _build/validate.py Soluzioni_Base/*.ipynb Soluzioni_Avanzata/*.ipynb`.
-- I controlli degli esercizi (`verifica("7.1")`) stanno in `corso.py`, un file per cartella generato dal build a
-  partire dagli assert scritti nei sorgenti: nel notebook il corsista vede solo la chiamata e una riga ✅ o ❌.
+Sui PC dell'aula devono essere installati VS Code con le estensioni Python, Jupyter, Data Wrangler e GitHub Copilot,
+più Ruff per la versione Avanzata, e uv. La cartella del corso va scaricata in anticipo e `uv sync` va eseguito una
+volta, seguendo la sezione "Installazione" del README.
+
+La cartella `Dati/fallback/` contiene risposte di esempio delle API usate nel corso, in modo che tutte le celle
+funzionino anche senza rete. Quando la rete è disponibile, il comando `uv run python _build/scarica_fallback.py`
+sostituisce i file di esempio con i dati veri, cioè la temperatura di Milano e le misure dei sensori lombardi.
+
+I notebook si rigenerano dagli script in `_build/src/` con `uv run python _build/build.py`, e le soluzioni si possono
+eseguire da capo a fondo con `uv run python _build/validate.py Soluzioni_Base/*.ipynb Soluzioni_Avanzata/*.ipynb`. I
+controlli degli esercizi, richiamati nei notebook con `verifica("7.1")`, sono raccolti nel file `corso.py` presente in
+ogni cartella, che il build genera dagli assert scritti nei sorgenti; il corsista vede soltanto la chiamata e una riga
+con ✅ oppure ❌.
 
 ## Le dimostrazioni dal vivo
 
@@ -24,7 +30,7 @@ stanno nei notebook: il materiale per prepararle è nella cartella `Extra/`, e q
 | Giornata 1, nel 06 (A) | Il wrapper: chiudere la chiamata all'API in una funzione riutilizzabile | `Extra/API_wrapper.ipynb` | — | 10 min |
 | Giornata 2, dopo il 07 | Data Wrangler: aprire un DataFrame, Editing mode, un filtro e una colonna tolta, il codice pandas che genera | `Extra/Data_Wrangler.ipynb` | 15 min | 15 min |
 
-`Extra/Ruff.ipynb` resta a disposizione: si mostra solo se una classe Avanzata è avanti.
+Il notebook `Extra/Ruff.ipynb` non è in programma e si mostra soltanto se una classe Avanzata è in anticipo.
 
 ## I tempi (minuti netti)
 
@@ -60,21 +66,24 @@ Giornata 2 (Blocchi 3 e 4)
 | 11 Capstone | 110 | 110 |
 | **Totale** | **360** | **360** |
 
-Sette ore nette per giornata sono 420 minuti: restano 60-80 minuti per i problemi di installazione, le domande e le
-pause che si allungano. Si taglia a fine sezione, mai a metà.
+Una giornata di sette ore nette corrisponde a 420 minuti, quindi restano tra 60 e 80 minuti di margine per i
+problemi di installazione, le domande e le pause che si allungano. Quando occorre tagliare, conviene farlo alla fine di
+una sezione e non a metà.
 
 ## Se la classe è avanti
 
-`Aula_*/Approfondimenti_1.ipynb` e `Approfondimenti_2.ipynb` raccolgono quello che è uscito dal percorso principale,
-con i loro esercizi e le soluzioni in `Soluzioni_*/`: le operazioni con i set, il ciclo `while`, più file CSV e i
-tipi di dato (giornata 1); le differenze tra date, il fuso orario, il range slider e l'export HTML (giornata 2); in
-Avanzata anche `map`, `filter` e i generatori, `shift` e `rolling`, type hint, dataclass, decoratori e `**kwargs`.
-Si aprono a fine giornata o quando un blocco finisce in anticipo; una sezione alla volta. Si possono anche lasciare
-ai corsisti come lettura a casa.
+I notebook `Approfondimenti_1` e `Approfondimenti_2`, presenti in entrambe le cartelle Aula con le soluzioni in
+`Soluzioni_*/`, raccolgono il materiale uscito dal percorso principale. Il primo contiene le operazioni con i set, il
+ciclo `while` e la lettura di più file CSV con i tipi di dato; il secondo contiene le differenze tra date, il fuso
+orario, il range slider e l'esportazione in HTML. Nella versione Avanzata si aggiungono `map`, `filter` e i
+generatori nel primo, e `shift`, `rolling`, i type hint, le dataclass, i decoratori e `**kwargs` nel secondo. Si
+aprono a fine giornata o quando un blocco termina in anticipo, una sezione alla volta, e si possono anche lasciare ai
+corsisti come lettura per casa.
 
 ## Il percorso minimo
 
-Se la giornata va male (installazioni, rete, una classe lenta), questo è quello che non si salta:
+Se la giornata procede male, per problemi di installazione, di rete o per una classe lenta, le parti che non si
+saltano sono queste:
 
 - Giornata 1: 00, 01, 02 (liste e dizionari), 04 (`if`, `for`, funzioni), 06 (CSV ed Excel). Esercitazioni a voce.
 - Giornata 2: 07 (selezione, valori mancanti, groupby), 08 (indice temporale e resample), 09 (un grafico a linee),
@@ -91,5 +100,6 @@ Se la giornata va male (installazioni, rete, una classe lenta), questo è quello
 
 ## Homework
 
-Tra le due giornate, 40-45 minuti: `Aula_*/Homework.ipynb`, con le soluzioni in `Soluzioni_*/Homework.ipynb`.
-Si presenta in cinque minuti a fine prima giornata e si corregge insieme all'inizio della seconda.
+L'homework occupa tra 40 e 45 minuti tra le due giornate e si trova in `Aula_*/Homework.ipynb`, con le soluzioni in
+`Soluzioni_*/Homework.ipynb`. Si presenta in cinque minuti alla fine della prima giornata e si corregge insieme
+all'inizio della seconda.
