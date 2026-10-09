@@ -21,3 +21,6 @@ Aula_*/*.py
 Soluzioni_*/*.py
 !Aula_*/corso.py
 !Soluzioni_*/corso.py
+
+# worktree temporanei degli agenti
+.claude/worktrees/
