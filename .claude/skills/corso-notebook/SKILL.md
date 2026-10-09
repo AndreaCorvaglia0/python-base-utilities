@@ -44,7 +44,9 @@ il build la raccoglie nel modulo `corso.py` di ogni cartella e nel notebook rest
 Lavorare nel sorgente e lasciare il codice com'è quando la richiesta riguarda il testo; quando riguarda il codice,
 controllare che gli `# Output:` nei commenti restino veri. Un esercizio nuovo ha sempre titolo, scenario in una o
 due frasi, consegna con passi che sono frasi complete, `starter` con i `...`, `soluzione`, una `verifica=` con uno a
-tre `assert` e messaggi brevi che dicono che cosa controllare, e se serve un `suggerimento` e un `perche`. Gli
+tre `assert` e messaggi brevi che dicono che cosa controllare (senza `print` finale: la riga ✅ la aggiunge il
+toolkit), e se serve un `suggerimento` e un `perche`. Un concetto usato nella consegna deve essere già stato
+spiegato nei notebook precedenti o in quello stesso, altrimenti va introdotto nel suggerimento con un esempio. Gli
 esercizi per notebook sono due o tre, più uno facoltativo al massimo; i Prova tu al massimo due. Il materiale che
 non sta nel percorso principale va in `Approfondimenti_1` o `_2`, non in sezioni facoltative dentro i notebook.
 
