@@ -12,9 +12,15 @@ Il docente scrive in italiano; il gergo tecnico resta in inglese dove si usa in 
 
 ## Ciclo di lavoro
 
-    uv run python _build/build.py            # tutti i notebook; oppure build.py 07 E2 A1 EXTRA
-    uv run python _build/validate.py Soluzioni_Base/*.ipynb Soluzioni_Avanzata/*.ipynb Extra/*.ipynb
-    uv run python _build/check_studente.py Aula_Base/*.ipynb Aula_Avanzata/*.ipynb
+La skill `corso-notebook` (in `.claude/skills/`) descrive il procedimento completo: va seguita per qualsiasi modifica
+al materiale. In breve:
+
+    uv run python _build/controlla.py 07 E2    # build + soluzioni eseguite + Run All studente dei notebook indicati
+    uv run python _build/controlla.py          # tutto il corso
+    uv run python _build/leggi.py Aula_Base/07_Pandas_operazioni.ipynb   # rilettura cella per cella
+
+I tre passi separati restano disponibili: `_build/build.py`, `_build/validate.py` (Soluzioni ed Extra) e
+`_build/check_studente.py` (Aula).
 
 Il build deve finire con zero `[ERRORE]` e zero `[avviso]`: gli avvisi di stile (celle etichetta, frasi telegrafiche,
 "Output atteso:" secco, titoli a effetto) si risolvono riscrivendo il testo, non aggirando il lint. Dopo una modifica

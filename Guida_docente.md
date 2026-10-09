@@ -109,5 +109,6 @@ all'inizio della seconda.
 I notebook sono generati dagli script in `_build/src/` e non si modificano a mano. Le regole di scrittura stanno in
 `_build/docs/`: `STILE.md` descrive la prosa, con esempi prima e dopo, `REGOLE.md` la struttura dei notebook e
 `REQUISITI.md` le scelte prese con il docente. Il file `CLAUDE.md` nella radice del repository riassume il ciclo di
-lavoro per chi usa un agente per il coding: dopo ogni modifica si ricostruisce con `build.py`, che segnala le celle
-fuori stile, e si eseguono `validate.py` e `check_studente.py`.
+lavoro per chi usa un agente per il coding, e la skill `corso-notebook` in `.claude/skills/` lo descrive passo per
+passo: dopo ogni modifica si esegue `uv run python _build/controlla.py NN`, che ricostruisce i notebook indicati,
+segnala le celle fuori stile ed esegue soluzioni e versione studente, e si rilegge il risultato con `_build/leggi.py`.
