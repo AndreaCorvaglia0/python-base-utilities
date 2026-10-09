@@ -29,6 +29,10 @@ Uso tipico:
 
 La `verifica` di un esercizio non finisce nel notebook: build.py la raccoglie in `corso.py`, un modulo
 scritto in ogni cartella di notebook, e nel notebook resta `from corso import verifica` + `verifica("5.1")`.
+
+Lo stile della prosa è descritto in `_build/docs/STILE.md`; le regole di struttura in `_build/docs/REGOLE.md`;
+le richieste del docente in `_build/docs/REQUISITI.md`. Il lint in fondo a questo file fa rispettare quello che si
+può controllare a macchina (celle etichetta, frasi telegrafiche, frasi vietate, titoli a effetto, box Ricorda).
 """
 
 from __future__ import annotations
@@ -599,7 +603,10 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
     for c in md:
         if "📌" in c["source"]:
             avvisi.append("box Ricorda: non si usa più")
-    # stile (STILE_2026): niente celle etichetta, niente sequenze di frasi telegrafiche
+    # stile (_build/docs/STILE.md): niente celle etichetta, niente frasi telegrafiche, niente "Output atteso:" secco
+    for c in md:
+        if "Output atteso:" in c["source"] or "*Output atteso*" in c["source"]:
+            avvisi.append(f"'Output atteso:' va scritto come frase: {c['source'][:50]!r}")
     for c in md[1:]:
         tags = c.get("metadata", {}).get("tags", [])
         if set(tags) & {"indice", "chiusura", "esercizio", "prova-tu", "soluzione", "banner"}:
@@ -614,7 +621,7 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
             continue
         parole = corpo.split()
         if len(parole) <= 4 and corpo.endswith(":"):
-            avvisi.append(f"cella etichetta, va fusa in una frase: {corpo!r}")
+            errori.append(f"cella etichetta, va fusa in una frase (vedi _build/docs/STILE.md): {corpo!r}")
             continue
         righe = [r for r in corpo.splitlines() if r.strip()]
         elenco = sum(1 for r in righe if re.match(r"\s*([-*]|\**\d+\.\**)\s", r))

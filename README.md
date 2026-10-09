@@ -74,7 +74,7 @@ gli esercizi sono nelle cartelle `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 | `Dati/` | i dati usati nel corso: carico Terna, turbina eolica, prezzi, più i file di esempio (vedi `Dati/README.md`) |
 | `Schede/` | quattro schede di una pagina: leggere il codice, Excel → pandas, uv e script, gli errori più comuni; i notebook 01, 05, 06 e 07 rimandano alla loro |
 | `Slides/` | la presentazione del corso |
-| `_build/` | gli script che generano i notebook e i dati di esempio (non servono per seguire il corso) |
+| `_build/` | gli script che generano i notebook e i dati di esempio, e in `_build/docs/` le regole di scrittura del materiale (non servono per seguire il corso) |
 
 Il file `Guida_docente.md` indica quando svolgere le dimostrazioni dal vivo, riporta i tempi delle due giornate e
 suggerisce dove tagliare se si è in ritardo.

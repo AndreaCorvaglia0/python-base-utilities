@@ -103,3 +103,11 @@ saltano sono queste:
 L'homework occupa tra 40 e 45 minuti tra le due giornate e si trova in `Aula_*/Homework.ipynb`, con le soluzioni in
 `Soluzioni_*/Homework.ipynb`. Si presenta in cinque minuti alla fine della prima giornata e si corregge insieme
 all'inizio della seconda.
+
+## Per chi modifica il materiale
+
+I notebook sono generati dagli script in `_build/src/` e non si modificano a mano. Le regole di scrittura stanno in
+`_build/docs/`: `STILE.md` descrive la prosa, con esempi prima e dopo, `REGOLE.md` la struttura dei notebook e
+`REQUISITI.md` le scelte prese con il docente. Il file `CLAUDE.md` nella radice del repository riassume il ciclo di
+lavoro per chi usa un agente per il coding: dopo ogni modifica si ricostruisce con `build.py`, che segnala le celle
+fuori stile, e si eseguono `validate.py` e `check_studente.py`.
