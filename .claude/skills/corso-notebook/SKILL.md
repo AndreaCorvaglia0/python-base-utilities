@@ -13,8 +13,9 @@ complete e nessuna frase ad effetto, e vale per tutto il testo del repository, d
 
 ## 1. Prima di scrivere
 
-Leggere per intero `_build/docs/STILE.md`: contiene la diagnosi di quello che suonava artificiale, le regole e sei
-esempi prima e dopo. È il documento che decide se una frase va bene. Se la modifica riguarda la struttura di un
+Il tono è quello della skill generale `prosa-didattica`, che va seguita per ogni testo. In questo repository le stesse
+regole, con gli esempi presi dal corso, stanno in `_build/docs/STILE.md`: leggerlo per intero, perché è il documento
+che decide se una frase va bene. Se la modifica riguarda la struttura di un
 notebook (sezioni, esercizi, aule, tempi, dominio degli esempi) leggere anche `_build/docs/REGOLE.md`; se riguarda una
 scelta didattica o un dubbio su cosa voleva il docente, `_build/docs/REQUISITI.md`. Il modello di riferimento per la
 voce è il testo originale del docente, visibile nel branch `main`.
