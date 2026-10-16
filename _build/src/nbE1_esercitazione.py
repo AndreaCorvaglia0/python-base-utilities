@@ -279,7 +279,7 @@ def costruisci() -> Notebook:
         ),
         avanzata=dict(
             richiesta="""
-                1. Salva in `piatto_titolo` il nome del piatto con l'iniziale maiuscola in ogni parola, con il metodo
+                1. Salva in `piatto_titolo` il nome del piatto con la prima lettera maiuscola, con il metodo
                    `.capitalize()` delle stringhe, e in `lunghezza` il numero dei suoi caratteri.
                 2. Calcola in `quota` la spesa a persona, dividendo `spesa` per il numero di invitati.
                 3. Componi con una f-string il `messaggio`, che riporta la padrona di casa, il giorno, l'ora, il
