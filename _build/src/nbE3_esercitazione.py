@@ -75,12 +75,15 @@ def costruisci() -> Notebook:
         stesso file, che registra ora per ora la produzione di una turbina eolica in Texas durante il 2023, e
         ciascuno rilegge il file da sé, in modo che chi si blocca su un esercizio possa passare al successivo.
     """)
-    nb.md("""
-        Ogni consegna ha dei suggerimenti nascosti, che si aprono con un clic sul titolo e conviene aprire solo dopo
-        aver provato. Sotto la cella da completare, la cella `verifica` controlla il risultato e, se qualcosa non
-        torna, dice che cosa guardare, mentre la cella `soluzione` mostra la soluzione di quel solo esercizio. Chi
-        finisce prima prosegue con i due esercizi facoltativi e con la sfida finale, che non ha una verifica.
-    """)
+    aiuti = """
+        Nella consegna di ogni esercizio del nucleo {aiuti} e che conviene leggere solo
+        dopo aver provato da soli. Sotto la cella da completare, la cella `verifica` controlla il risultato e, se
+        qualcosa non torna, dice che cosa guardare, mentre la cella `soluzione` mostra la soluzione di quel solo
+        esercizio. Chi finisce prima prosegue con i due esercizi facoltativi e con la sfida finale, che non ha una
+        verifica.
+    """
+    nb.md(aiuti.replace("{aiuti}", "ci sono due suggerimenti nascosti, che si aprono con un clic"), aula="base")
+    nb.md(aiuti.replace("{aiuti}", "c'è un suggerimento nascosto, che si apre con un clic"), aula="avanzata")
 
     # ------------------------------------------------------------------ domande
     nb.sezione("Domande", intro="""
@@ -132,8 +135,8 @@ def costruisci() -> Notebook:
     nb.sezione("Esercizi", intro="""
         Il file `TexasTurbine.csv` ha 8760 righe, una per ogni ora del 2023, senza valori mancanti e senza
         duplicati. Per ogni ora riporta la potenza prodotta dalla turbina in kW, la velocità e la direzione del
-        vento, la pressione dell'aria e la sua temperatura. La cella qui sotto importa pandas e va eseguita prima
-        di cominciare.
+        vento, la pressione dell'aria e la sua temperatura. I primi cinque esercizi sono quelli che il docente
+        corregge alla fine dell'ora. La cella qui sotto importa pandas e va eseguita prima di cominciare.
     """)
     nb.code("""
         import pandas as pd
@@ -161,7 +164,7 @@ def costruisci() -> Notebook:
             "Imposta `data` come indice con `set_index` e ordina le righe con `sort_index`.",
             "Salva in `primo` e in `ultimo` il primo e l'ultimo timestamp dell'indice.",
         ],
-        esito="Se la conversione è corretta, `primo` è la mezzanotte del 1° gennaio 2023 e `ultimo` sono le 23:00 del 31 dicembre.",
+        esito="Se la conversione è corretta, il primo timestamp è la mezzanotte del 1° gennaio 2023 e l'ultimo corrisponde alle 23:00 del 31 dicembre.",
         starter_base="""
             turbina = pd.read_csv("../Dati/TexasTurbine.csv")
 
@@ -497,6 +500,7 @@ def costruisci() -> Notebook:
             giornaliera = ...
             unione = ...
             senza_intervento = ...
+            unione["motivo"] = ...
             solo_interventi = ...
         """),
         soluzione=unisci(PREPARA, manutenzioni, """
@@ -541,6 +545,12 @@ def costruisci() -> Notebook:
     )
 
     # ------------------------------------------------------------------ facoltativi
+    nb.md("""
+        Gli esercizi che seguono sono facoltativi e servono a chi ha finito i primi cinque prima dei 45 minuti. I
+        primi due applicano ancora `groupby` e il salvataggio dei file, mentre la sfida finale è un esercizio libero,
+        senza verifica, che riassume l'anno della turbina in tre righe. La correzione dell'ultimo quarto d'ora non li
+        comprende, ma anche sotto questi esercizi c'è la cella `soluzione`.
+    """)
     nb.esercizio(
         titolo="Il profilo settimanale",
         facoltativo=True,
@@ -629,7 +639,7 @@ def costruisci() -> Notebook:
     )
 
     nb.esercizio(
-        titolo="La sfida: il riepilogo dell'anno",
+        titolo="Sfida: il riepilogo dell'anno",
         facoltativo=True,
         scenario="""
             Per chiudere vogliamo un riepilogo dell'anno in tre righe, da incollare in una mail. Questo esercizio non
