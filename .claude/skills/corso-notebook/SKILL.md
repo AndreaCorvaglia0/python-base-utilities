@@ -57,6 +57,18 @@ Il gergo tecnico resta in inglese dove si usa in inglese (notebook, kernel, Data
 
 Se cambiano i tempi di un notebook, aggiornare anche la tabella in `README.md` e quelle in `Guida_docente.md`.
 
+## 3b. Le esercitazioni
+
+Le esercitazioni di fine modulo hanno un formato proprio, descritto in `_build/docs/PIANO_OTTOBRE_2026.md`: un'ora,
+di cui 45 minuti di lavoro e 15 di correzione; cinque esercizi del nucleo in difficoltà crescente, due facoltativi e
+una sfida aperta senza verifica; un filo narrativo semplice (vita quotidiana nel modulo 1, dati del corso da pandas in
+poi); ogni esercizio indipendente dagli altri. Il toolkit offre `Notebook(..., soluzioni_a_richiesta=True)` per la
+cella `soluzione("E1.3")` sotto ogni esercizio, `suggerimenti=[...]` per gli aiuti nascosti (due livelli in Base, al
+massimo uno in Avanzata) e `nb.domanda(...)` per le cinque domande di riepilogo iniziali. Le due aule nascono dallo
+stesso sorgente con un helper che chiama `nb.esercizio` due volte, come `step()` nel capstone: la Base ha lo starter
+guidato e due suggerimenti, l'Avanzata lo starter quasi vuoto e un passo in più. Prima di un passo complesso o appena
+visto va un breve paragrafo di richiamo teorico, in prosa.
+
 ## 4. Ricostruire e controllare
 
     uv run python _build/controlla.py 07 E2      # build + soluzioni eseguite + Run All studente, solo quei notebook
