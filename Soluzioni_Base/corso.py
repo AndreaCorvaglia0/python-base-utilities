@@ -195,51 +195,108 @@ assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html no
 assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\"cdn\""
 '''),
     'E1.1': ('Esercizio E1.1', r'''
-assert totale == 500, "❌ Il totale non torna: 4 notti × 85 + 160"
-assert a_persona == 250, "❌ Dividi il totale per il numero di persone"
-assert titolo == "Viaggio a Lisbona", "❌ Controlla lo spazio dopo 'a'"
+assert fattore == 2, "❌ fattore: dividi invitati per persone_ricetta"
+assert pasta_g == 640 and guanciale_g == 400 and pecorino_g == 200, "❌ Controlla le quantità: ogni dose della ricetta va moltiplicata per fattore"
+assert uova == 8 and isinstance(uova, int), "❌ uova deve valere 8 ed essere un intero: usa round()"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
-assert primi_tre == ["pane", "latte", "mele"], "❌ primi_tre: hai tolto le uova prima di selezionare?"
-assert ultimi_due == ["caffè", "olio"], "❌ ultimi_due: l'olio va aggiunto in fondo"
-assert quanti == 6, "❌ La lista finale ha 6 elementi"
+assert piatto_titolo == "Spaghetti alla carbonara", "❌ piatto_titolo: usa piatto.capitalize()"
+assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga l'ora, il numero di invitati e piatto_titolo"
+assert lunghezza == 24, "❌ lunghezza: conta i caratteri di piatto_titolo con len()"
 '''),
     'E1.3': ('Esercizio E1.3', r'''
-assert voti["storia"] == 7 and voti["inglese"] == 9, "❌ Controlla i voti di storia e inglese"
-assert materie == ["matematica", "italiano", "storia", "inglese"], "❌ materie: usa list(voti.keys())"
-assert media == 7.75, "❌ La media dei quattro voti è 7.75"
+assert spesa == ["guanciale", "pecorino", "spaghetti", "uova", "vino"], "❌ spesa: hai aggiunto il guanciale, tolto il pane e ordinato la lista con .sort()?"
+assert primi_tre == ["spaghetti", "uova", "pecorino"], "❌ primi_tre: va preso con [:3] prima di ordinare la lista"
+assert quanti == 5, "❌ quanti: la lista finale ha 5 prodotti"
+'''),
+    'E1.4': ('Esercizio E1.4', r'''
+assert prezzi.get("pepe nero") == 2.15 and prezzi["guanciale"] == 7.90, "❌ prezzi: aggiungi il pepe nero e correggi il prezzo del guanciale"
+assert round(totale, 2) == 20.5, "❌ totale: somma i valori del dizionario aggiornato con sum(prezzi.values())"
+assert prodotti == ["spaghetti", "guanciale", "uova", "pecorino", "pepe nero"], "❌ prodotti: usa list(prezzi.keys())"
+'''),
+    'E1.5': ('Esercizio E1.5', r'''
+assert tutti == lista_marta + lista_luca and len(tutti) == 8, "❌ tutti: le due liste unite con +, otto elementi"
+assert carrello == {"spaghetti", "guanciale", "uova", "vino", "pecorino", "pane"} and quanti == 6, "❌ carrello: set(tutti) elimina i doppioni; quanti è la sua lunghezza"
+assert isinstance(indirizzo, tuple) and civico == 14, "❌ indirizzo deve essere una tupla e civico il suo elemento di indice 1"
+'''),
+    'E1.6': ('Esercizio E1.6', r'''
+assert allergie == {"lattosio", "noci", "crostacei"}, "❌ allergie: trasforma la lista in un set con set()"
+assert quante == 3, "❌ quante: conta gli elementi del set con len()"
+assert problema_lattosio is True and problema_uova is False, "❌ Controlla i due booleani: ciascuno è un controllo con in sul set allergie"
+'''),
+    'E1.7': ('Esercizio E1.7', r'''
+assert bottiglie == 3 and prezzo_bottiglia == 7.9 and invitati == 8, "❌ Controlla nomi e valori di bottiglie, prezzo_bottiglia e invitati"
+assert quota_vino == T, "❌ quota_vino deve avere lo stesso valore di T"
 '''),
     'E2.1': ('Esercizio E2.1', r'''
-assert giorni_caldi(settimana) == 4, "❌ Con la soglia di default i giorni sono 4: 25.0 conta (almeno 25)"
-assert giorni_caldi(settimana, soglia=30) == 1, "❌ Sopra i 30 gradi c'è un solo giorno"
-assert giorni_caldi([]) == 0, "❌ Con una lista vuota la funzione deve restituire 0"
+assert sopra_soglia == [64.0, 51.2, 120.0, 89.9, 72.6], "❌ sopra_soglia: tieni le spese maggiori di 50, nell'ordine della lista"
+assert quante == 5, "❌ Le spese sopra i 50 euro sono 5: la spesa di 50.0 non conta"
+assert round(totale, 2) == 578.8, "❌ totale: somma tutta la lista con sum(spese)"
 '''),
     'E2.2': ('Esercizio E2.2', r'''
-assert messaggio == "Totale: 36 euro", "❌ messaggio: controlla spazi e testo, deve essere 'Totale: 36 euro'"
-assert durata == 16, "❌ La playlist dura 16 minuti"
+assert prezzo_scontato.__doc__, "❌ Manca la docstring sotto il def"
+assert normale == 44.91 and prezzo_scontato(80) == 72.0, "❌ Con lo sconto predefinito 49.90 diventa 44.91"
+assert promozione == 34.93, "❌ promozione: con sconto=30 il prezzo è 34.93"
 '''),
     'E2.3': ('Esercizio E2.3', r'''
 assert letture["kwh"].dtype == "float64", "❌ kwh non è numerica: manca decimal=','"
-assert righe == 216, "❌ Il file ha 216 righe"
-assert round(kwh_max, 1) == 5785.2, "❌ Il massimo di kwh è nella riga max di describe()"
+assert righe == 216, "❌ Il file ha 216 righe: contale con len(letture)"
+assert round(totale_kwh, 1) == 134507.7, "❌ totale_kwh: somma la colonna kwh"
 '''),
     'E2.4': ('Esercizio E2.4', r'''
+assert righe_consumi == 72 and list(consumi.columns) == ["pod", "mese", "F1", "F2", "F3"], "❌ consumi: leggi il foglio Consumi"
+assert righe_listino == 3, "❌ Il listino ha 3 righe, una per fascia"
+assert prezzo_f1 == 0.21, "❌ prezzo_f1: è il primo valore della colonna eur_kwh del listino"
+'''),
+    'E2.5': ('Esercizio E2.5', r'''
 assert list(letture_db.columns) == ["pod", "data", "kwh"], "❌ Leggi tutta la tabella letture con SELECT *"
 assert n_letture == 930, "❌ La tabella letture ha 930 righe"
+assert round(kwh_marzo, 1) == 69880.1, "❌ kwh_marzo: somma la colonna kwh di letture_db"
+'''),
+    'E2.6': ('Esercizio E2.6', r'''
+assert totali == {"gennaio": 161.7, "febbraio": 108.7, "marzo": 187.1}, "❌ totali: una chiave per mese, con la somma arrotondata"
+assert round(totale_trimestre, 2) == 457.5, "❌ totale_trimestre: somma i valori di totali"
+'''),
+    'E2.7': ('Esercizio E2.7', r'''
+import os
+assert os.path.exists("riepilogo_fascia.xlsx"), "❌ Non trovo riepilogo_fascia.xlsx nella cartella del notebook"
+assert len(f3) == 72 and len(riletto) == len(f3), "❌ Il file deve avere le 72 righe della fascia F3"
+assert list(riletto.columns) == ["pod", "cliente", "data", "fascia", "kwh"], "❌ Colonne diverse dal CSV: hai usato index=False?"
 '''),
     'E3.1': ('Esercizio E3.1', r'''
-assert len(residenziale_2023) == 744, "❌ residenziale_2023: 62 voci per 12 mesi, 744 righe"
-assert prezzo_medio.index[0] == "Hawaii", "❌ prezzo_medio: ordina dal prezzo più alto (ascending=False)"
-assert round(prezzo_medio.iloc[0], 2) == 42.41, "❌ prezzo_medio: media di price per stato"
+assert {"potenza_kw", "vento_ms", "direzione", "pressione", "temperatura"} <= set(turbina.columns), "❌ turbina: controlla i nomi nel dizionario nomi"
+assert primo == pd.Timestamp("2023-01-01 00:00"), "❌ primo: l'indice deve partire dalla mezzanotte del 1° gennaio 2023"
+assert ultimo == pd.Timestamp("2023-12-31 23:00"), "❌ ultimo: controlla %I e %p nel formato e l'ordinamento con sort_index()"
 '''),
     'E3.2': ('Esercizio E3.2', r'''
-assert len(carico) == 35132, "❌ carico: dopo drop_duplicates restano 35132 righe"
-assert len(giornaliero) == 31, "❌ giornaliero: un valore per ogni giorno di ottobre"
-assert giorno_max == pd.Timestamp("2024-10-16"), "❌ giorno_max: usa idxmax() sulla serie giornaliera"
+assert ore_luglio == 744, "❌ ore_luglio: seleziona il mese con turbina.loc[\"2023-07\"] e contalo con len()"
+assert n_ventose == 645, "❌ n_ventose: la condizione è vento_ms > 12, estremo escluso"
+assert ore_ferme == 822, "❌ ore_ferme: somma la maschera potenza_kw == 0"
 '''),
     'E3.3': ('Esercizio E3.3', r'''
-assert fig.data[0].type == "histogram", "❌ fig: usa px.histogram"
-assert ore_ferme == 822, "❌ ore_ferme: conta le righe con potenza uguale a 0"
+assert len(mensile) == 12, "❌ mensile: resample(\"ME\") produce un valore per ogni mese"
+assert mese_migliore == pd.Timestamp("2023-04-30"), "❌ mese_migliore: usa idxmax() su mensile, che restituisce l'etichetta"
+assert mese_peggiore == pd.Timestamp("2023-09-30"), "❌ mese_peggiore: usa idxmin() su mensile"
+'''),
+    'E3.4': ('Esercizio E3.4', r'''
+assert len(profilo) == 24, "❌ profilo: raggruppa per turbina.index.hour, che ha 24 valori distinti"
+assert ora_migliore == 16, "❌ ora_migliore: usa idxmax() su profilo"
+assert round(profilo.max(), 1) == 1294.1, "❌ profilo: calcola la media di potenza_kw, non la somma"
+'''),
+    'E3.5': ('Esercizio E3.5', r'''
+assert len(unione) == 365, "❌ unione: con how=\"left\" e giornaliera a sinistra restano tutti i 365 giorni"
+assert senza_intervento == 361, "❌ senza_intervento: conta i NaN di motivo prima di riempirli"
+assert (unione["motivo"] == "nessuna").sum() == 361, "❌ motivo: riempi i NaN con fillna(\"nessuna\") e riassegna la colonna"
+'''),
+    'E3.6': ('Esercizio E3.6', r'''
+assert len(settimanale) == 7, "❌ settimanale: raggruppa per turbina.index.dayofweek"
+assert giorno_migliore == "lunedì", "❌ giorno_migliore: usa settimanale.idxmax() come posizione in giorni"
+'''),
+    'E3.7': ('Esercizio E3.7', r'''
+from pathlib import Path
+assert Path("energia_mensile.csv").exists() and Path("energia_mensile.xlsx").exists(), "❌ i due file non sono nella cartella del notebook"
+assert len(riletto) == 12 and stesse_righe, "❌ riletto: il CSV deve avere 12 righe, una per mese"
+assert str(riletto["data"].dtype).startswith("datetime64"), "❌ riletto: aggiungi parse_dates=[\"data\"] a read_csv"
 '''),
     'Passo 1': ('Passo 1', r'''
 assert cliente == "Panificio Rè", "❌ cliente: il valore della chiave 'cliente'"
