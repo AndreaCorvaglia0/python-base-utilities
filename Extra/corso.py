@@ -39,6 +39,23 @@ def verifica(codice: str) -> None:
     print(f"✅ {etichetta} completato")
 
 
+def soluzione(codice: str) -> None:
+    """Mostra la soluzione dell'esercizio `codice`, e soltanto quella."""
+    import base64
+
+    if codice not in SOLUZIONI:
+        raise VerificaFallita(f"Non c'è una soluzione registrata per {codice!r}")
+    etichetta, testo = SOLUZIONI[codice]
+    sorgente = base64.b64decode(testo).decode("utf-8")
+    try:
+        from IPython.display import Code, display
+
+        print(f"Soluzione · {etichetta}")
+        display(Code(sorgente, language="python"))
+    except ImportError:
+        print(f"Soluzione · {etichetta}\n\n{sorgente}")
+
+
 VERIFICHE = {
 
     'X1.1': ('Esercizio X1.1', r'''
@@ -61,4 +78,8 @@ assert sorted(avvisi) == ["E501", "F401", "F841"], "❌ avvisi: tre codici come 
 assert riepilogo(["IT001E45678901"], 1000) == "Trovati 1 POD sopra la soglia di 1000 kWh nel file letture_pod_2025.csv: controllare le letture di luglio", "❌ riepilogo: il testo in uscita deve restare identico"
 assert riepilogo.__doc__, "❌ riepilogo: manca la docstring"
 '''),
+}
+
+# Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.
+SOLUZIONI = {
 }

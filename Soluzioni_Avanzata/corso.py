@@ -39,6 +39,23 @@ def verifica(codice: str) -> None:
     print(f"✅ {etichetta} completato")
 
 
+def soluzione(codice: str) -> None:
+    """Mostra la soluzione dell'esercizio `codice`, e soltanto quella."""
+    import base64
+
+    if codice not in SOLUZIONI:
+        raise VerificaFallita(f"Non c'è una soluzione registrata per {codice!r}")
+    etichetta, testo = SOLUZIONI[codice]
+    sorgente = base64.b64decode(testo).decode("utf-8")
+    try:
+        from IPython.display import Code, display
+
+        print(f"Soluzione · {etichetta}")
+        display(Code(sorgente, language="python"))
+    except ImportError:
+        print(f"Soluzione · {etichetta}\n\n{sorgente}")
+
+
 VERIFICHE = {
 
     '0.2': ('Esercizio 0.2', r'''
@@ -286,4 +303,8 @@ assert len(giornaliero) == 731, "❌ giornaliero: una riga per giorno, 731"
 assert {"Total Load [MW]", "Temperature_C", "mese"} <= set(giornaliero.columns), "❌ giornaliero: servono le colonne Total Load [MW], Temperature_C e mese"
 assert giornaliero["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.month_name()"
 '''),
+}
+
+# Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.
+SOLUZIONI = {
 }

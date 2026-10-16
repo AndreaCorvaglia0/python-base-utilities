@@ -56,17 +56,23 @@ def main(argv: list[str]) -> int:
     rc = 0
     # cartella -> {codice: (etichetta, controllo)}: i controlli degli esercizi, poi scritti in corso.py
     verifiche: dict[Path, dict[str, tuple[str, str]]] = {}
+    soluzioni_reg: dict[Path, dict[str, tuple[str, str]]] = {}
     prefissi: dict[Path, set[str]] = {}
 
     def raccogli(cartella: Path, nb) -> None:
         if filtro and cartella not in verifiche:
-            verifiche[cartella] = leggi_modulo_corso(cartella)    # build parziale: tengo le altre
+            verifiche[cartella], vecchie = leggi_modulo_corso(cartella)    # build parziale: tengo le altre
+            soluzioni_reg[cartella] = {k: (e, "B64:" + t) for k, (e, t) in vecchie.items()}
         d = verifiche.setdefault(cartella, {})
+        sd = soluzioni_reg.setdefault(cartella, {})
         if nb.prefisso_verifiche not in prefissi.setdefault(cartella, set()):
             prefissi[cartella].add(nb.prefisso_verifiche)
             for k in [k for k in d if k.startswith(nb.prefisso_verifiche)]:
                 del d[k]
+            for k in [k for k in sd if k.startswith(nb.prefisso_verifiche)]:
+                del sd[k]
         d.update(nb.verifiche)
+        sd.update(nb.soluzioni)
 
     for stem, nb in carica_extra(filtro):
         try:
@@ -87,8 +93,9 @@ def main(argv: list[str]) -> int:
                     print(f"[ERRORE] {e}")
                     rc = 1
     for cartella, d in verifiche.items():
-        out = scrivi_modulo_corso(cartella, dict(sorted(d.items(), key=_ordine)))
-        print(f"{'corso.py':32s} -> {out.relative_to(ROOT)}  ({len(d)} controlli)")
+        sd = soluzioni_reg.get(cartella, {})
+        out = scrivi_modulo_corso(cartella, dict(sorted(d.items(), key=_ordine)), dict(sorted(sd.items(), key=_ordine)))
+        print(f"{'corso.py':32s} -> {out.relative_to(ROOT)}  ({len(d)} controlli, {len(sd)} soluzioni a richiesta)")
     return rc
 
 

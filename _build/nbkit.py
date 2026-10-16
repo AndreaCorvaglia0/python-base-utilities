@@ -30,6 +30,13 @@ Uso tipico:
 La `verifica` di un esercizio non finisce nel notebook: build.py la raccoglie in `corso.py`, un modulo
 scritto in ogni cartella di notebook, e nel notebook resta `from corso import verifica` + `verifica("5.1")`.
 
+Per le esercitazioni (formato di ottobre 2026) ci sono tre strumenti in più:
+  - `Notebook(..., soluzioni_a_richiesta=True)`: sotto la verifica di ogni esercizio compare, nella versione
+    studente, la cella `soluzione("E1.3")`, che mostra solo quella soluzione (sta in corso.py, codificata).
+  - `nb.esercizio(..., suggerimenti=["prima l'idea", "poi il nome del metodo"])`: aiuti nascosti, uno per
+    livello, che il corsista apre con un clic (blocchi <details> dentro il riquadro dell'esercizio).
+  - `nb.domanda("Cosa stampa ...?", "Stampa 3, perché ...")`: domanda di riepilogo con la risposta nascosta.
+
 Lo stile della prosa è descritto in `_build/docs/STILE.md`; le regole di struttura in `_build/docs/REGOLE.md`;
 le richieste del docente in `_build/docs/REQUISITI.md`. Il lint in fondo a questo file fa rispettare quello che si
 può controllare a macchina (celle etichetta, frasi telegrafiche, frasi vietate, titoli a effetto, box Ricorda).
@@ -117,6 +124,11 @@ def box_html(tipo: str, corpo: str, titolo: str | None = None) -> str:
     return _div(sfondo, bordo, f"{testa}\n\n{corpo}")
 
 
+def _dettagli(titolo: str, corpo: str) -> str:
+    """Blocco che si apre con un clic: il titolo resta visibile, il contenuto no."""
+    return f"<details>\n<summary>{titolo}</summary>\n\n{textwrap.dedent(corpo).strip()}\n\n</details>"
+
+
 def citazione(tipo: str, corpo: str, titolo: str | None = None) -> str:
     """Nota e Approfondimento: testo citato (barra grigia), senza colore. Il colore resta a esercizi, soluzioni e Attenzione."""
     corpo = textwrap.dedent(corpo).strip()
@@ -176,6 +188,7 @@ class Notebook:
     prossimo: str | None = None              # testo markdown della chiusura, se diverso dal programma
     extra: bool = False                      # notebook della cartella Extra: versione unica, senza aula
     fuori_programma: bool = False   # Approfondimenti: fuori dalla catena precedente/prossimo, per le classi che vanno avanti
+    soluzioni_a_richiesta: bool = False   # esercitazioni: sotto ogni esercizio una cella soluzione("E1.3") che mostra solo quella
     celle: list[Cella] = field(default_factory=list)
     _aula_corrente: str | None = None
 
@@ -215,6 +228,10 @@ class Notebook:
         else:
             self.celle.append(Cella("md", box_html(tipo, testo, titolo), aula=self._aula(aula)))
 
+    def domanda(self, testo: str, risposta: str, aula: str | None = None) -> None:
+        """Domanda di riepilogo con la risposta nascosta, che si apre con un clic."""
+        self.celle.append(Cella("domanda", _d(testo), aula=self._aula(aula), extra={"risposta": _d(risposta)}))
+
     def prova_tu(self, richiesta: str, starter: str, soluzione: str, verifica: str | None = None,
                  aula: str | None = None, rete: bool = False) -> None:
         """Micro-esercizio inline da 2-3 minuti: box verde, cella da completare, verifica."""
@@ -228,23 +245,27 @@ class Notebook:
     def esercizio(self, titolo: str, scenario: str, richiesta: str, starter: str, soluzione: str,
                   verifica: str | None = None, suggerimento: str | None = None, perche: str | None = None,
                   bis: bool = False, passo_in_piu: dict | None = None, aula: str | None = None,
-                  rete: bool = False, facoltativo: bool = False) -> None:
+                  rete: bool = False, facoltativo: bool = False, suggerimenti: list[str] | None = None) -> None:
         """Esercizio di fine notebook: box verde, starter, verifica (+ soluzione nelle Soluzioni).
 
         passo_in_piu: dict(testo=..., starter=..., soluzione=..., verifica=...) facoltativo.
         bis=True: è l'alternativa dell'esercizio precedente (stesso numero + "bis").
+        suggerimenti: aiuti nascosti, uno per livello, che il corsista apre con un clic (blocchi <details>).
         """
         a = self._aula(aula)
         self.celle.append(Cella("esercizio", "", aula=a, extra={
             "titolo": titolo + (" (facoltativo)" if facoltativo else ""), "scenario": _d(scenario), "richiesta": _d(richiesta),
             "suggerimento": _d(suggerimento) if suggerimento else None, "bis": bis,
+            "suggerimenti": [_d(x) for x in (suggerimenti or [])],
             "passo": _d(passo_in_piu["testo"]) if passo_in_piu else None, "perche": _d(perche) if perche else None,
         }))
         self.celle.append(Cella("code", _d(starter), aula=a, solo_studente=True, rete=rete, ruolo="starter"))
         self.celle.append(Cella("md", "", aula=a, solo_soluzioni=True, ruolo="box-soluzione", extra={"perche": _d(perche) if perche else None}))
-        self.celle.append(Cella("code", _d(soluzione), aula=a, solo_soluzioni=True, rete=rete, ruolo="soluzione"))
+        self.celle.append(Cella("code", _d(soluzione), aula=a, solo_soluzioni=True, rete=rete, ruolo="soluzione", extra={"esercizio": True}))
         if verifica:
             self.celle.append(Cella("code", _d(verifica), aula=a, rete=rete, ruolo="verifica"))
+        if self.soluzioni_a_richiesta:
+            self.celle.append(Cella("code", _d(soluzione), aula=a, solo_studente=True, ruolo="rivela"))
         if passo_in_piu:
             self.celle.append(Cella("md", "", aula=a, ruolo="box-passo", extra={"testo": _d(passo_in_piu["testo"])}))
             self.celle.append(Cella("code", _d(passo_in_piu["starter"]), aula=a, solo_studente=True, rete=rete, ruolo="starter"))
@@ -307,7 +328,9 @@ class Notebook:
         out: list[tuple[str, str, dict]] = []   # (tipo, src, metadata)
         ultimo_es = ""      # numero base dell'ultimo esercizio (per il "bis")
         corrente = ""       # numero dell'esercizio in corso (base o bis)
+        n_dom = 0
         verifiche: dict[str, tuple[str, str]] = {}   # codice -> (etichetta, controllo) per corso.py
+        soluzioni_reg: dict[str, tuple[str, str]] = {}   # codice -> (etichetta, sorgente) per soluzione("E1.3")
         for c in visibili:
             if c.tipo == "sezione":
                 n_sez += 1
@@ -326,6 +349,10 @@ class Notebook:
                 if c.src:
                     src += "\n\n" + c.src
                 out.append(("md", src, {"tags": ["sottosezione"]}))
+            elif c.tipo == "domanda":
+                n_dom += 1
+                corpo = f"**Domanda {n_dom}.** {c.src}\n\n" + _dettagli("Risposta", c.extra["risposta"])
+                out.append(("md", corpo, {"tags": ["domanda"]}))
             elif c.tipo == "prova":
                 corpo = f"**{BOX['esercizio'][0]} Prova tu**\n\n{c.src}"
                 out.append(("md", _div(BOX["esercizio"][3], BOX["esercizio"][2], corpo), {"tags": ["prova-tu"]}))
@@ -354,6 +381,8 @@ class Notebook:
                     corpo += ["**Cosa fare.** " + e["richiesta"]]
                 if e["suggerimento"]:
                     corpo += ["", "*Suggerimento:* " + e["suggerimento"]]
+                for k, sugg in enumerate(e.get("suggerimenti", []), 1):
+                    corpo += ["", _dettagli(f"Suggerimento {k}", sugg)]
                 indice.append(f"    - [{self.etichetta_esercizio} {numero} · {e['titolo']}](#{anc})")
                 out.append(("md", f'<a id="{anc}"></a>\n' + _div(BOX["esercizio"][3], BOX["esercizio"][2], "\n".join(corpo)), {"tags": ["esercizio"]}))
                 c.extra["_numero"] = numero
@@ -378,6 +407,12 @@ class Notebook:
                         src = "# Verifica: esegui senza modificare\n" + src
                     if "✅" not in src:
                         src += '\nprint("✅ Tutto corretto")'
+                elif c.ruolo == "rivela":
+                    # la soluzione sta in corso.py, codificata; nel notebook resta la chiamata che la mostra
+                    tags.append("rivela")
+                    codice = corrente if self.etichetta_esercizio == "Esercizio" else f"{self.etichetta_esercizio} {corrente}"
+                    soluzioni_reg[codice] = (f"{self.etichetta_esercizio} {corrente}", src.strip("\n"))
+                    src = f'from corso import soluzione\nsoluzione("{codice}")   # mostra la soluzione di questo esercizio'
                 elif c.ruolo == "verifica":
                     # il controllo sta in corso.py (generato da build.py); nel notebook resta la chiamata
                     tags.append("verifica")
@@ -403,6 +438,7 @@ class Notebook:
                 out.append(("code", src, {"tags": tags} if tags else {}))
 
         self.verifiche = verifiche
+        self.soluzioni = soluzioni_reg
         self.prefisso_verifiche = f"{prefisso}." if self.etichetta_esercizio == "Esercizio" else f"{self.etichetta_esercizio} "
         cells = [new_markdown_cell(self.banner(aula, soluzioni), metadata={"tags": ["banner"]})]
         if indice and len(out) >= INDICE_DA:
@@ -502,6 +538,23 @@ def verifica(codice: str) -> None:
     print(f"✅ {etichetta} completato")
 
 
+def soluzione(codice: str) -> None:
+    """Mostra la soluzione dell\'esercizio `codice`, e soltanto quella."""
+    import base64
+
+    if codice not in SOLUZIONI:
+        raise VerificaFallita(f"Non c\'è una soluzione registrata per {codice!r}")
+    etichetta, testo = SOLUZIONI[codice]
+    sorgente = base64.b64decode(testo).decode("utf-8")
+    try:
+        from IPython.display import Code, display
+
+        print(f"Soluzione · {etichetta}")
+        display(Code(sorgente, language="python"))
+    except ImportError:
+        print(f"Soluzione · {etichetta}\\n\\n{sorgente}")
+
+
 VERIFICHE = {
 '''
 
@@ -513,20 +566,31 @@ def _letterale(testo: str) -> str:
     return repr(testo)
 
 
-def leggi_modulo_corso(cartella: Path) -> dict[str, tuple[str, str]]:
-    """Le verifiche già scritte in `cartella/corso.py` (vuoto se il file non c'è)."""
+def leggi_modulo_corso(cartella: Path) -> tuple[dict[str, tuple[str, str]], dict[str, tuple[str, str]]]:
+    """Le verifiche e le soluzioni già scritte in `cartella/corso.py` (vuote se il file non c'è)."""
     path = Path(cartella) / "corso.py"
     if not path.exists():
-        return {}
+        return {}, {}
     spazio: dict = {}
     exec(path.read_text(encoding="utf-8"), spazio)
-    return dict(spazio.get("VERIFICHE", {}))
+    return dict(spazio.get("VERIFICHE", {})), dict(spazio.get("SOLUZIONI", {}))
 
 
-def scrivi_modulo_corso(cartella: Path, verifiche: dict[str, tuple[str, str]]) -> Path:
+def scrivi_modulo_corso(cartella: Path, verifiche: dict[str, tuple[str, str]],
+                        soluzioni: dict[str, tuple[str, str]] | None = None) -> Path:
+    """`soluzioni` arriva come codice -> (etichetta, sorgente in chiaro) e viene scritto codificato in base64."""
+    import base64
+
     righe = [MODULO_CORSO]
     for codice, (etichetta, controllo) in verifiche.items():
         righe.append(f"    {codice!r}: ({etichetta!r}, {_letterale(controllo)}),")
+    righe.append("}\n")
+    righe.append("# Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.")
+    righe.append("SOLUZIONI = {")
+    for codice, (etichetta, sorgente) in (soluzioni or {}).items():
+        if not sorgente.startswith("B64:"):
+            sorgente = "B64:" + base64.b64encode(sorgente.encode("utf-8")).decode("ascii")
+        righe.append(f"    {codice!r}: ({etichetta!r}, {sorgente[4:]!r}),")
     righe.append("}\n")
     path = Path(cartella) / "corso.py"
     path.write_text("\n".join(righe), encoding="utf-8")
@@ -612,7 +676,7 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
         if set(tags) & {"indice", "chiusura", "esercizio", "prova-tu", "soluzione", "banner"}:
             continue
         src = c["source"]
-        if "<div" in src or src.lstrip().startswith("|") or src.lstrip().startswith(">"):
+        if "<div" in src or "<details" in src or src.lstrip().startswith("|") or src.lstrip().startswith(">"):
             continue
         corpo = re.sub(r"^<a id=[^\n]*\n", "", src)
         corpo = re.sub(r"^#+ .*$", "", corpo, flags=re.M)
