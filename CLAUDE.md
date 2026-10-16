@@ -11,6 +11,10 @@ effetto, con esempi prima/dopo), `_build/docs/REGOLE.md` (struttura, volume, dom
 (in `.claude/skills/`) descrive lo stesso tono per qualsiasi materiale didattico.
 Il docente scrive in italiano; il gergo tecnico resta in inglese dove si usa in inglese.
 
+L'edizione di ottobre 2026 (quattro giornate, 20-21 e 27-28 ottobre) segue `_build/docs/PIANO_OTTOBRE_2026.md`:
+leggerlo prima di riorganizzare moduli, esercitazioni o tempi. La sequenza di riferimento è in
+`_build/docs/PROPOSTA_PROGRAMMA_2026.md`.
+
 ## Ciclo di lavoro
 
 La skill `corso-notebook` (in `.claude/skills/`) descrive il procedimento completo: va seguita per qualsiasi modifica

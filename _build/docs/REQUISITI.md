@@ -74,3 +74,9 @@ Il setup per i corsisti resta nel README (uv sync, kernel), non nei notebook.
 4. **Dimostrazioni del docente** (VS Code, kernel, ambiente e uv, script, Ruff, Data Wrangler, wrapper API): niente nel
    notebook. Il materiale già scritto si sposta in una cartella separata `Extra/` (notebook a sé, con la teoria), così il
    docente vede come sarebbe stato svolto. Una `Guida_docente.md` dice quando farle e quanto durano; il tempo entra nel totale.
+
+## Edizione di ottobre 2026
+
+Le decisioni per le quattro giornate del 20-21 e 27-28 ottobre 2026 (moduli, esercitazioni da un'ora, allineamento
+tra Base e Avanzata, giornata finale sul capstone con Copilot) sono in `PIANO_OTTOBRE_2026.md`, che prevale su questo
+file dove i due si contraddicono.
