@@ -47,7 +47,7 @@ La tabella elenca i notebook nell'ordine in cui si svolgono, con il tempo previs
 | 1 | `05_Oggetti_ed_errori` · oggetti, metodi, documentazione, traceback | 40 min | 35 min |
 | 1 | `06_Pandas_e_import_dati` · Series, DataFrame, CSV, Excel, SQL (Avanzata: API) | 55 min | 75 min |
 | 1 | `Esercitazione_2` | 60 min | 60 min |
-| tra le due | `Homework` · una settimana nell'ufficio Analisi Consumi | 40 min | 45 min |
+| tra le due | `Homework` · una settimana nell'ufficio Analisi Consumi | 30 min | 30 min |
 | 2 | `07_Pandas_operazioni` · selezione, valori mancanti, groupby, merge | 70 min | 75 min |
 | 2 | `08_Pandas_date` · date, indice temporale, resample, ora legale | 55 min | 55 min |
 | 2 | `09_Plotly` · linee, confronto tra serie, istogrammi | 30 min | 25 min |

@@ -100,9 +100,10 @@ saltano sono queste:
 
 ## Homework
 
-L'homework occupa tra 40 e 45 minuti tra le due giornate e si trova in `Aula_*/Homework.ipynb`, con le soluzioni in
-`Soluzioni_*/Homework.ipynb`. Si presenta in cinque minuti alla fine della prima giornata e si corregge insieme
-all'inizio della seconda.
+L'homework richiede circa mezz'ora e si trova in `Aula_*/Homework.ipynb`, con le soluzioni in `Soluzioni_*/Homework.ipynb`.
+Ripercorre i temi principali dei primi due moduli con quattro passi e due facoltativi, nello stesso formato delle
+esercitazioni. Si presenta in cinque minuti alla fine del modulo 2 e si corregge insieme all'inizio del modulo 3, in
+dieci o quindici minuti.
 
 ## Per chi modifica il materiale
 
