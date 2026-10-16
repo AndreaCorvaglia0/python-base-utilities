@@ -31,8 +31,9 @@ Gli esercizi in fondo ai notebook restano nei notebook, ma escono dal tempo d'au
 lezione e come serbatoio da cui le esercitazioni attingono. I Prova tu dentro i notebook restano in aula, perché danno
 una pratica immediata dopo ogni concetto.
 
-Il modulo 4 è dedicato interamente agli agenti per il coding e al capstone con GitHub Copilot. Dopo l'introduzione a
-Copilot e ai concetti di base (notebook 10) e il capstone (notebook 11), la giornata prevede una finestra in cui i
+Il modulo 4 è dedicato interamente agli agenti per il coding e al capstone con GitHub Copilot. Si apre con il notebook
+09 su Plotly, prosegue con l'introduzione a Copilot e ai concetti di base (notebook 10) e con il capstone (notebook 11),
+e prevede una finestra in cui i
 corsisti esplorano con gli agenti Plotly, selezioni ed elaborazioni avanzate sui DataFrame pandas, sempre lavorando
 attraverso l'agente. Il capstone ha livelli di richiesta diversi per le due aule; nella Base il codice per l'API della
 temperatura è già predisposto.
@@ -120,17 +121,24 @@ materiale. Ogni blocco ha 240 minuti: 30 di pause, 60 di esercitazione nei modul
 |---|---|---|---|
 | 1 | circa 115 | circa 125 | l'Avanzata aggiunge uv, script e Ruff; entrambe stanno nei 150 |
 | 2 | circa 125 | circa 145-155 | l'Avanzata è al limite se `map`, `filter` e generatori entrano nella lezione |
-| 3 | circa 160-175 | circa 170-190 | non sta nei 150 con tutto quello che la proposta elenca |
-| 4 | Copilot, capstone e finestra con gli agenti | come la Base, con richieste più ampie | giornata intera |
+| 3 | circa 130-140 | circa 145-150 | con il notebook 09 spostato nel modulo 4 e le date in più facoltative |
+| 4 | Plotly, Copilot, capstone e finestra con gli agenti | come la Base, con richieste più ampie e Prophet facoltativo | giornata intera |
 
-## Decisioni aperte
+## Decisioni prese
 
-- **Modulo 3.** Con l'ora di esercitazione il modulo 3 non contiene i notebook 07, 08 e 09 con tutti gli argomenti
-  della proposta. Va deciso che cosa spostare: la proposta più naturale è portare il notebook 09 all'inizio del
-  modulo 4, dove la finestra con gli agenti riprende Plotly, e tenere facoltativi alcuni argomenti delle date.
-- **Modulo 2 dell'Avanzata.** Va deciso se `map`, `filter` e i generatori entrano nella lezione o restano facoltativi,
-  e se il wrapper delle API diventa un esercizio dell'esercitazione 2.
-- **Forecasting.** Va deciso se il modulo opzionale su Prophet resta, diventa un esercizio con l'agente nel modulo 4 o
-  viene tolto.
-- **Documenti da aggiornare.** README, `Guida_docente.md` e slide descrivono ancora due giornate, e vanno riscritti sui
-  quattro moduli quando la struttura è definitiva.
+- **Modulo 3.** Il notebook 09 su Plotly passa all'inizio del modulo 4, con slider, range selector ed export HTML, e
+  la finestra con gli agenti riprende Plotly subito dopo. Nel modulo 3 restano i notebook 07 e 08; le differenze tra
+  date e il fuso orario restano facoltativi, negli Approfondimenti.
+- **Modulo 2 dell'Avanzata.** Il wrapper delle API diventa la parte Avanzata dell'esercitazione 2. `map`, `filter` e
+  i generatori restano facoltativi, in `Approfondimenti_1`.
+- **Forecasting.** Si prepara un breve notebook facoltativo su Prophet per l'aula Avanzata, da usare nel modulo 4 solo
+  se il capstone finisce in anticipo. Prima di scriverlo va verificato che `prophet` si installi con `uv add` sui PC
+  dell'aula, perché dipende da un compilatore per i modelli statistici.
+
+## Ancora da fare
+
+- Costruire l'esercitazione 1 come pilota nel nuovo formato e farla provare al docente.
+- Dopo il pilota, costruire le esercitazioni 2 e 3 e il notebook su Prophet.
+- Portare `Extra/Ambiente_uv_e_script` ed `Extra/Ruff` nel percorso dell'aula Avanzata del modulo 1.
+- Spostare il notebook 09 nel modulo 4 e ricontrollare i tempi dei quattro moduli.
+- Riscrivere README, `Guida_docente.md` e slide sui quattro moduli.
