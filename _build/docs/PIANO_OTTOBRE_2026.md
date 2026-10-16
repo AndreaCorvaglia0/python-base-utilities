@@ -86,6 +86,16 @@ diventare la parte Avanzata della stessa esercitazione.
 Il primo passo è un'esercitazione pilota, la numero 1, costruita in questo formato con suggerimenti, soluzioni per
 passo e le due varianti. Il docente la prova, si sistema il formato e poi si costruiscono la 2 e la 3.
 
+## L'homework
+
+L'homework cade nella settimana tra il modulo 2 e il modulo 3 ed è un'attività breve: al massimo 30 minuti per i
+corsisti, più 10-15 minuti all'inizio del modulo 3 in cui il docente mostra le soluzioni. Serve a ripercorrere i temi
+più importanti dei primi due moduli, cioè dizionari e liste, cicli e condizioni, funzioni con valori predefiniti e la
+lettura di un file in pandas, e non a introdurre argomenti nuovi. Usa lo stesso formato delle esercitazioni, con
+suggerimenti nascosti e la soluzione di ogni passo a richiesta, così che chi resta bloccato a casa possa comunque
+arrivare in fondo. Il materiale esistente, la settimana nell'ufficio Analisi Consumi, copre già questi temi e va
+soltanto ridotto ai 30 minuti e portato nel formato.
+
 ## Argomenti facoltativi
 
 Ogni modulo conserva alcuni argomenti facoltativi, da usare se il modulo procede particolarmente veloce. Restano nei
@@ -139,6 +149,7 @@ materiale. Ogni blocco ha 240 minuti: 30 di pause, 60 di esercitazione nei modul
 
 - Costruire l'esercitazione 1 come pilota nel nuovo formato e farla provare al docente.
 - Dopo il pilota, costruire le esercitazioni 2 e 3 e il notebook su Prophet.
+- Portare l'Homework a 30 minuti nel formato delle esercitazioni (suggerimenti, soluzione per passo).
 - Portare `Extra/Ambiente_uv_e_script` ed `Extra/Ruff` nel percorso dell'aula Avanzata del modulo 1.
 - Spostare il notebook 09 nel modulo 4 e ricontrollare i tempi dei quattro moduli.
 - Riscrivere README, `Guida_docente.md` e slide sui quattro moduli.
