@@ -324,79 +324,88 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi")
     nb.esercizio(
-        titolo="Lista invertita",
-        scenario="",
-        richiesta=(
-            "Inverti la lista `[1, 2, 3, 4, 5]` con lo slicing e assegna il risultato alla variabile "
-            "`lista_invertita`. Il risultato è la lista `[5, 4, 3, 2, 1]`, con gli stessi elementi in "
-            "ordine inverso."
-        ),
+        titolo="Le fermate del ritorno",
+        scenario="""
+            Il treno che prendiamo per andare da Milano a Napoli ferma a Bologna, Firenze e Roma, e la
+            lista `andata` contiene le fermate in quest'ordine. Al ritorno le fermate sono le stesse,
+            percorse al contrario, quindi invece di riscriverle a mano le ricaviamo dalla lista
+            dell'andata con lo slicing, così se l'orario cambia basta correggere una lista sola. Il
+            ritorno è `['Napoli', 'Roma', 'Firenze', 'Bologna', 'Milano']`.
+        """,
+        richiesta="Salva in `ritorno` le fermate in ordine inverso, con uno slicing che ha passo negativo.",
         starter="""
-            lista = [1, 2, 3, 4, 5]
+            andata = ["Milano", "Bologna", "Firenze", "Roma", "Napoli"]
 
             # scrivi il tuo codice qui
-            lista_invertita = lista[...]
-            print(lista_invertita)  # Output: [5, 4, 3, 2, 1]
+            ritorno = andata[...]
+            print(ritorno)  # Output: ['Napoli', 'Roma', 'Firenze', 'Bologna', 'Milano']
         """,
         soluzione="""
-            lista = [1, 2, 3, 4, 5]
+            andata = ["Milano", "Bologna", "Firenze", "Roma", "Napoli"]
 
-            lista_invertita = lista[::-1]
-            print(lista_invertita)  # Output: [5, 4, 3, 2, 1]
+            ritorno = andata[::-1]
+            print(ritorno)  # Output: ['Napoli', 'Roma', 'Firenze', 'Bologna', 'Milano']
         """,
         verifica="""
-            assert lista_invertita == [5, 4, 3, 2, 1], "❌ Lista invertita errata"
-            print("✅ Lista invertita correttamente")
+            assert ritorno == ["Napoli", "Roma", "Firenze", "Bologna", "Milano"], "❌ ritorno: le fermate dell'andata dall'ultima alla prima"
+            assert andata[0] == "Milano", "❌ andata non va modificata: lo slicing crea una lista nuova"
         """,
     )
     nb.esercizio(
-        titolo="Posizioni pari",
-        scenario="La lista della cella qui sotto contiene dieci nomi, che alternano donne e uomini a partire da Elena.",
-        richiesta="""
-            Seleziona con lo slicing gli elementi in posizione pari, escludendo la posizione 0, e
-            assegnali a `elementi_pari`; in pratica si tratta di tutte le donne tranne Elena. Il
-            risultato è la lista `['Martina', 'Giulia', 'Francesca', 'Sara']`.
+        titolo="La squadra per il gioco",
+        scenario="""
+            A cena i dieci invitati sono seduti alternando donne e uomini, a partire da Elena, che è la
+            padrona di casa, e la lista della cella li elenca in quest'ordine. Per il gioco del dopocena
+            vogliamo la squadra delle donne senza Elena, che fa da arbitro, ricavata con uno slicing
+            invece di copiare i nomi a mano, così resta giusta anche se qualcuno cambia posto. La squadra
+            è `['Martina', 'Giulia', 'Francesca', 'Sara']`.
         """,
+        richiesta=(
+            "Salva in `squadra` gli elementi in posizione pari a partire dalla posizione 2, cioè le donne "
+            "tranne Elena, con uno slicing."
+        ),
         suggerimento=(
             "lo slicing ha tre parti, `[start:end:step]`; qui servono il punto di partenza e il passo, "
             "mentre la fine si può omettere."
         ),
         starter="""
-            lista = ["Elena", "Luigi", "Martina", "Marco", "Giulia", "Simone", "Francesca", "Alessandro", "Sara", "Lorenzo"]
+            invitati = ["Elena", "Luigi", "Martina", "Marco", "Giulia", "Simone", "Francesca", "Alessandro", "Sara", "Lorenzo"]
 
             # scrivi il tuo codice qui
-            elementi_pari = lista[...]
-            print(elementi_pari)  # Output: ['Martina', 'Giulia', 'Francesca', 'Sara']
+            squadra = invitati[...]
+            print(squadra)  # Output: ['Martina', 'Giulia', 'Francesca', 'Sara']
         """,
         soluzione="""
-            lista = ["Elena", "Luigi", "Martina", "Marco", "Giulia", "Simone", "Francesca", "Alessandro", "Sara", "Lorenzo"]
+            invitati = ["Elena", "Luigi", "Martina", "Marco", "Giulia", "Simone", "Francesca", "Alessandro", "Sara", "Lorenzo"]
 
-            elementi_pari = lista[2::2]
-            print(elementi_pari)  # Output: ['Martina', 'Giulia', 'Francesca', 'Sara']
+            squadra = invitati[2::2]
+            print(squadra)  # Output: ['Martina', 'Giulia', 'Francesca', 'Sara']
         """,
         verifica="""
-            assert elementi_pari == ["Martina", "Giulia", "Francesca", "Sara"], "❌ Elementi pari errati"
-            print("✅ Elementi pari corretti")
+            assert squadra == ["Martina", "Giulia", "Francesca", "Sara"], "❌ squadra: una posizione ogni due, partendo dalla 2"
         """,
     )
     nb.esercizio(
         titolo="Le capitali del G8",
         scenario="""
-            Il dizionario `g8` associa ai paesi del G8 la rispettiva capitale, ma è incompleto, perché
-            mancano il Regno Unito e gli Stati Uniti. Nel 2014 la Russia è stata esclusa dal gruppo,
-            che da allora si chiama G7.
+            Il dizionario `g8` associa ai paesi del G8 la loro capitale, ma mancano il Regno Unito e gli
+            Stati Uniti. Da questo dizionario vogliamo ricavarne altri due senza riscriverli: `g7`, il
+            gruppo rimasto dopo l'esclusione della Russia nel 2014, e `g10`, un gruppo ipotetico
+            allargato a Spagna, Paesi Bassi e Corea del Sud, in cui l'Italia ha spostato la capitale a
+            Bobbio. Partendo ogni volta da una copia, ciascun gruppo resta corretto anche quando modifichiamo
+            il successivo.
         """,
         richiesta="""
             1. Aggiungi a `g8` le coppie `'Regno Unito': 'Londra'` e `'Stati Uniti': 'Washington, D.C.'`.
             2. In `g7`, che la cella crea come copia di `g8`, togli la Russia con il metodo `pop`, in
                modo che `g8` resti intatto.
-            3. Nell'ipotesi che nel G7 entrino Spagna, Paesi Bassi e Corea del Sud, aggiungi i tre paesi,
-               con le capitali `'Madrid'`, `'Amsterdam'` e `'Seoul'`, a `g10`, che è una copia di `g7`.
-            4. Infine, supponendo che l'Italia sposti la capitale a Bobbio, aggiorna di conseguenza il
-               valore della chiave `'Italia'` in `g10`.
+            3. Aggiungi a `g10`, che è una copia di `g7`, i tre paesi nuovi, con le capitali `'Madrid'`,
+               `'Amsterdam'` e `'Seoul'`.
+            4. Aggiorna in `g10` il valore della chiave `'Italia'`, che diventa `'Bobbio'`.
 
             Il metodo `copy()` crea una copia indipendente del dizionario, mentre `pop(chiave)` rimuove
-            la chiave indicata insieme al suo valore.
+            la chiave indicata insieme al suo valore. Alla fine `g8` contiene ancora otto paesi, Russia
+            compresa, `g7` ne contiene sette e `g10` dieci.
         """,
         starter="""
             g8 = {
@@ -468,7 +477,6 @@ def costruisci() -> Notebook:
             assert g8['Regno Unito'] == 'Londra' and g8['Stati Uniti'] == 'Washington, D.C.', "❌ g8: mancano Regno Unito o Stati Uniti"
             assert 'Russia' not in g7 and 'Russia' in g8, "❌ g7: la Russia va tolta dalla copia g7, non da g8"
             assert g10['Paesi Bassi'] == 'Amsterdam' and g10['Corea del Sud'] == 'Seoul' and g10['Italia'] == 'Bobbio', "❌ g10: controlla i paesi nuovi e la capitale dell'Italia"
-            print("✅ Dizionari corretti")
         """,
     )
     return nb

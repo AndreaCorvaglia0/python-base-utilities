@@ -165,15 +165,17 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Rinominare e documentare una funzione",
         scenario="""
-            In un notebook condiviso c'è la funzione `f` qui sotto. Riceve un prezzo e una percentuale
-            di sconto e restituisce il prezzo scontato, ma né il suo nome né quelli dei parametri lo
-            lasciano capire.
+            In un notebook condiviso c'è la funzione `f`, che riceve un prezzo e una percentuale di sconto
+            e restituisce il prezzo scontato, ma né il suo nome né quelli dei parametri lo lasciano
+            capire. Vogliamo riscriverla in modo che chi la usa sappia che cosa fa senza leggerne il
+            corpo, con un nome che lo dice, parametri dai nomi chiari e una docstring, che `help()` mostra
+            a chi la chiama. Il calcolo non cambia, quindi `prezzo_scontato(80, 15)` restituisce `68.0`.
         """,
         richiesta="""
-            Lascia `f` com'è, perché serve al confronto. Sotto, riscrivila con il nome
-            `prezzo_scontato`, i parametri `prezzo` e `sconto_percentuale` e una docstring di una riga.
-            Il comportamento non deve cambiare: `prezzo_scontato(80, 15)` restituisce `68.0`, come
-            `f(80, 15)`.
+            1. Lascia `f` com'è, perché serve al confronto.
+            2. Sotto, scrivi la funzione `prezzo_scontato`, con i parametri `prezzo` e `sconto_percentuale`
+               e lo stesso calcolo di `f`.
+            3. Aggiungi sotto il `def` una docstring di una riga che dica che cosa restituisce la funzione.
         """,
         suggerimento="la docstring va sulla prima riga sotto il `def`, racchiusa tra tre virgolette.",
         starter="""
@@ -208,15 +210,17 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Riscrivere una cella seguendo PEP 8",
         scenario="""
-            Questa cella calcola il totale della spesa: somma i prezzi di cinque prodotti e toglie un
-            buono da 5 euro della tessera del supermercato. Il calcolo è giusto, ma la cella non segue
-            PEP 8 e il suo commento ripete il codice.
+            La cella qui sotto calcola il totale della spesa: somma i prezzi di cinque prodotti e toglie il
+            buono da 5 euro della tessera del supermercato. Il calcolo è giusto, ma tra un mese nessuno
+            ricorderà che cosa sono `P`, `t` e quel 5. Vogliamo riscriverla seguendo PEP 8, con nomi che
+            dicono che cosa contengono, gli spazi al posto giusto e un commento che spiega i 5 euro invece
+            di ripetere l'operazione. Alla fine `totale` vale 22.3, come `t`.
         """,
         richiesta="""
-            Lascia le prime due righe come sono, perché servono al confronto. Sotto, riscrivile
-            seguendo PEP 8: la lista si chiama `prezzi`, il buono va nella variabile `buono` e il
-            risultato in `totale`. Al posto del commento che ripete il codice, scrivine uno che spieghi
-            che cosa sono i 5 euro. Alla fine `totale` vale 22.3, lo stesso valore di `t`.
+            1. Lascia le prime due righe come sono, perché servono al confronto.
+            2. Sotto, riscrivile seguendo PEP 8: la lista dei prezzi va in `prezzi`, i 5 euro nella
+               variabile `buono`, che dà un nome a quel numero, e il risultato in `totale`.
+            3. Al posto del commento che ripete il codice scrivine uno che spieghi che cosa sono i 5 euro.
         """,
         starter="""
             P=[3.5,2.2 ,4.8,1.9,14.9]

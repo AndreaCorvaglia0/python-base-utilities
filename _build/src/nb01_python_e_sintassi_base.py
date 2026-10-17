@@ -256,93 +256,109 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 6
     nb.sezione("Esercizi")
     nb.esercizio(
-        titolo="Massimo, minimo e differenza",
-        scenario="",
-        richiesta=(
-            "Nella cella qui sotto sono già definite tre variabili numeriche, `a`, `b` e `c`. Calcola il "
-            "valore massimo, il valore minimo e la differenza tra i due, assegnandoli a `valore_massimo`, "
-            "`valore_minimo` e `differenza`, e stampa i tre risultati con le f-string."
-        ),
+        titolo="Temperatura massima e minima",
+        scenario="""
+            Una stazione meteo ha registrato tre temperature nella giornata, al mattino, al pomeriggio e
+            alla sera. Vogliamo un piccolo riepilogo con la massima, la minima e l'escursione termica,
+            cioè la differenza tra le due, calcolato da Python a partire dalle tre misure, in modo che
+            domani basti cambiare i tre valori. Con i dati della cella la massima è di 25 gradi, la
+            minima di 7 e l'escursione di 18.
+        """,
+        richiesta="""
+            1. Salva in `massima` la temperatura più alta delle tre e in `minima` la più bassa.
+            2. Salva in `escursione` la differenza tra la massima e la minima.
+            3. Completa i tre `print`, che stampano il riepilogo con le f-string, una riga per valore.
+        """,
         suggerimento=(
-            "usa le funzioni `max()` e `min()`, che accettano più numeri separati da virgola e "
-            "restituiscono rispettivamente il più grande e il più piccolo."
+            "le funzioni `max()` e `min()` accettano più numeri separati da virgola e restituiscono "
+            "rispettivamente il più grande e il più piccolo."
         ),
         starter="""
-            # Definizione delle variabili
-            a = 10
-            b = 25
-            c = 7
+            # Temperature della giornata, in gradi
+            mattina = 10
+            pomeriggio = 25
+            sera = 7
 
-            # Calcolo del massimo e minimo
-            valore_massimo = max(...)
-            valore_minimo = ...
-            differenza = ...
+            # Massima, minima ed escursione
+            massima = max(...)
+            minima = ...
+            escursione = ...
 
-            # Stampa dei risultati
-            print(f"Valore massimo: {valore_massimo}")  # Output: Valore massimo: 25
-            print(f"Valore minimo: {...}")              # Output: Valore minimo: 7
-            print(...)                                  # Output: Differenza: 18
+            # Riepilogo
+            print(f"Massima: {massima} gradi")  # Output: Massima: 25 gradi
+            print(f"Minima: {...} gradi")       # Output: Minima: 7 gradi
+            print(...)                          # Output: Escursione: 18 gradi
         """,
         soluzione="""
-            # Definizione delle variabili
-            a = 10
-            b = 25
-            c = 7
+            # Temperature della giornata, in gradi
+            mattina = 10
+            pomeriggio = 25
+            sera = 7
 
-            # Calcolo del massimo e minimo
-            valore_massimo = max(a, b, c)
-            valore_minimo = min(a, b, c)
-            differenza = valore_massimo - valore_minimo
+            # Massima, minima ed escursione
+            massima = max(mattina, pomeriggio, sera)
+            minima = min(mattina, pomeriggio, sera)
+            escursione = massima - minima
 
-            # Stampa dei risultati
-            print(f"Valore massimo: {valore_massimo}")  # Output: Valore massimo: 25
-            print(f"Valore minimo: {valore_minimo}")    # Output: Valore minimo: 7
-            print(f"Differenza: {differenza}")          # Output: Differenza: 18
+            # Riepilogo
+            print(f"Massima: {massima} gradi")        # Output: Massima: 25 gradi
+            print(f"Minima: {minima} gradi")          # Output: Minima: 7 gradi
+            print(f"Escursione: {escursione} gradi")  # Output: Escursione: 18 gradi
         """,
         verifica="""
-            assert valore_massimo == 25, "❌ Valore massimo errato"
-            assert valore_minimo == 7, "❌ Valore minimo errato"
-            assert differenza == 18, "❌ Differenza errata"
-            print("✅ Esercizio corretto")
+            assert massima == 25, "❌ massima: la più alta delle tre temperature, con max()"
+            assert minima == 7, "❌ minima: la più bassa delle tre temperature, con min()"
+            assert escursione == 18, "❌ escursione: la massima meno la minima"
         """,
     )
     nb.esercizio(
-        titolo="Area del cerchio",
-        scenario="",
+        titolo="L'area di un'aiuola rotonda",
+        scenario="""
+            In giardino vogliamo seminare a prato un'aiuola rotonda di 5 metri di raggio, e per comprare
+            la quantità giusta di semi ci serve la sua superficie. L'area di un cerchio si ottiene
+            moltiplicando π per il quadrato del raggio, e in Python il valore di π non va scritto a mano,
+            perché il modulo `math` lo fornisce con tutte le sue cifre decimali. L'aiuola misura circa
+            78.5 metri quadrati.
+        """,
         richiesta="""
-            Scrivi un programma che calcoli l'area di un cerchio di raggio 5 e stampi il risultato.
-            L'area si ottiene moltiplicando π per il quadrato del raggio, secondo la formula
-            $\\text{Area} = \\pi \\times r^2$.
+            1. Calcola in `area` la superficie dell'aiuola, moltiplicando π per il quadrato di `raggio`.
+            2. Stampa il risultato con una f-string, in una frase che dica quanti metri quadrati misura
+               l'aiuola.
         """,
         suggerimento="il valore di π si trova in `math.pi`, e il quadrato del raggio si calcola con l'operatore `**`.",
         starter="""
             import math
 
-            raggio = 5
+            raggio = 5  # metri
             area = ...
 
-            print(...)  # Output: L'area del cerchio è: 78.53981633974483
+            print(...)  # Output: L'aiuola misura 78.53981633974483 metri quadrati
         """,
         soluzione="""
             import math
 
-            raggio = 5
+            raggio = 5  # metri
             area = math.pi * raggio ** 2
 
-            print(f"L'area del cerchio è: {area}")  # Output: L'area del cerchio è: 78.53981633974483
+            print(f"L'aiuola misura {area} metri quadrati")  # Output: L'aiuola misura 78.53981633974483 metri quadrati
         """,
         verifica="""
-            assert math.isclose(area, 78.54, rel_tol=1e-3), "❌ Area errata"
-            print("✅ Calcolo corretto")
+            assert math.isclose(area, 78.54, rel_tol=1e-3), "❌ area: π per il raggio al quadrato"
         """,
     )
     nb.esercizio(
         titolo="Ore e minuti",
-        scenario="Un film dura 137 minuti e vogliamo scrivere la durata in ore e minuti.",
-        richiesta=(
-            "Calcola con la divisione intera `//` il numero di ore intere e assegnalo a `ore`, poi "
-            "calcola con il modulo `%` i minuti che restano e assegnali a `minuti`."
-        ),
+        scenario="""
+            L'app del cinema indica la durata dei film in minuti, e il film di stasera dura 137 minuti.
+            Una durata così si legge male, e per sapere a colpo d'occhio quanto resteremo in sala la
+            vogliamo in ore e minuti. In Python bastano due operatori che abbiamo visto, la divisione
+            intera e il modulo, che funzionano allo stesso modo per qualunque durata. Il film dura 2 ore e
+            17 minuti.
+        """,
+        richiesta="""
+            1. Salva in `ore` il numero di ore intere, con la divisione intera `//`.
+            2. Salva in `minuti` i minuti che restano, con il modulo `%`.
+        """,
         suggerimento="un'ora ha 60 minuti, quindi entrambe le operazioni dividono la durata per 60.",
         starter="""
             durata_minuti = 137

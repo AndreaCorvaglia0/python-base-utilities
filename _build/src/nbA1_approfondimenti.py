@@ -223,14 +223,19 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Due liste della spesa",
         scenario="""
-            Anna e Luca hanno scritto ciascuno la propria lista della spesa, e alcune voci compaiono più volte
-            o in tutte e due le liste. Vogliamo ricavarne un'unica lista senza doppioni e sapere quali cose
-            avevano segnato entrambi.
+            Anna e Luca hanno scritto ciascuno la propria lista della spesa, con alcune voci ripetute o
+            presenti in tutte e due. Con le operazioni sui set, invece di confrontare le liste a occhio,
+            vogliamo ricavare l'elenco unico di quello che c'è da comprare e le cose segnate da entrambi,
+            che sarebbero finite due volte nel carrello. Ci serve anche il numero dei prodotti, perché alla
+            cassa veloce se ne portano al massimo dieci. In comune ci sono latte e mele.
         """,
         richiesta="""
-            1. Salva in `da_comprare` il set di tutto quello che c'è nelle due liste, senza doppioni.
-            2. Salva in `in_comune` il set delle cose che compaiono in entrambe.
-            3. Salva in `quanti` il numero di cose da comprare.
+            1. Salva in `da_comprare` l'unione delle due liste trasformate in set, che contiene ogni voce
+               una volta sola.
+            2. Salva in `in_comune` l'intersezione degli stessi due set.
+            3. Salva in `quanti` il numero delle cose da comprare, che dice se si può usare la cassa veloce.
+
+            Le cose da comprare sono sei, quindi la cassa veloce va bene.
         """,
         suggerimento="la funzione `set()` trasforma una lista in un set, sul quale si possono poi usare i metodi `union()` e `intersection()`.",
         starter="""
@@ -262,13 +267,18 @@ def costruisci() -> Notebook:
     )
     nb.esercizio(
         titolo="Risparmiare con un ciclo while",
-        scenario="Mettiamo da parte 150 euro al mese e vogliamo sapere dopo quanti mesi arriviamo ad almeno 1000 euro.",
-        richiesta="""
-            Con un ciclo `while`, salva in `mesi` il numero di mesi necessari e in `risparmio` la somma
-            messa da parte alla fine. Se il ciclo è corretto, la stampa finale mostra `7 1050`, cioè sette
-            mesi e 1050 euro.
+        scenario="""
+            Per comprare una bicicletta da 1000 euro mettiamo da parte 150 euro al mese, e vogliamo sapere
+            dopo quanti mesi la cifra è raggiunta. Un ciclo `while` simula il salvadanaio mese per mese,
+            aggiungendo la rata finché il risparmio resta sotto i 1000 euro, e con la stessa cella si può
+            provare un'altra rata cambiando un solo numero. Servono 7 mesi, alla fine dei quali il
+            risparmio è di 1050 euro.
         """,
-        suggerimento="il ciclo continua finché vale `risparmio < 1000`, e a ogni giro `risparmio` aumenta di 150 e `mesi` di uno.",
+        richiesta="""
+            1. Scrivi un ciclo `while` che continua finché il risparmio è inferiore a 1000 euro.
+            2. A ogni giro aggiungi 150 euro a `risparmio` e un mese a `mesi`.
+        """,
+        suggerimento="la condizione si scrive `risparmio < 1000`, e dentro il ciclo l'operatore `+=` aggiunge un valore a una variabile, come in `mesi += 1`.",
         starter="""
             risparmio = 0
             mesi = 0

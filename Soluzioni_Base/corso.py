@@ -63,22 +63,23 @@ assert isinstance(citta, str) and citta.strip(), "❌ citta deve essere un testo
 assert isinstance(temperatura, (int, float)), "❌ temperatura deve essere un numero, senza virgolette"
 '''),
     '1.1': ('Esercizio 1.1', r'''
-assert valore_massimo == 25, "❌ Valore massimo errato"
-assert valore_minimo == 7, "❌ Valore minimo errato"
-assert differenza == 18, "❌ Differenza errata"
+assert massima == 25, "❌ massima: la più alta delle tre temperature, con max()"
+assert minima == 7, "❌ minima: la più bassa delle tre temperature, con min()"
+assert escursione == 18, "❌ escursione: la massima meno la minima"
 '''),
     '1.2': ('Esercizio 1.2', r'''
-assert math.isclose(area, 78.54, rel_tol=1e-3), "❌ Area errata"
+assert math.isclose(area, 78.54, rel_tol=1e-3), "❌ area: π per il raggio al quadrato"
 '''),
     '1.3': ('Esercizio 1.3', r'''
 assert ore == 2, "❌ ore: quante volte 60 sta in 137"
 assert minuti == 17, "❌ minuti: il resto della divisione per 60"
 '''),
     '2.1': ('Esercizio 2.1', r'''
-assert lista_invertita == [5, 4, 3, 2, 1], "❌ Lista invertita errata"
+assert ritorno == ["Napoli", "Roma", "Firenze", "Bologna", "Milano"], "❌ ritorno: le fermate dell'andata dall'ultima alla prima"
+assert andata[0] == "Milano", "❌ andata non va modificata: lo slicing crea una lista nuova"
 '''),
     '2.2': ('Esercizio 2.2', r'''
-assert elementi_pari == ["Martina", "Giulia", "Francesca", "Sara"], "❌ Elementi pari errati"
+assert squadra == ["Martina", "Giulia", "Francesca", "Sara"], "❌ squadra: una posizione ogni due, partendo dalla 2"
 '''),
     '2.3': ('Esercizio 2.3', r'''
 assert g8['Regno Unito'] == 'Londra' and g8['Stati Uniti'] == 'Washington, D.C.', "❌ g8: mancano Regno Unito o Stati Uniti"
@@ -96,14 +97,14 @@ assert buono == 5, "❌ buono: i 5 euro in una variabile"
 assert round(totale, 2) == round(t, 2), "❌ totale deve dare lo stesso risultato di t"
 '''),
     '4.1': ('Esercizio 4.1', r'''
-assert inverti_stringa("Python") == "nohtyP", "❌ Stringa invertita errata"
+assert inverti_stringa("Python") == "nohtyP", "❌ inverti_stringa('Python') deve restituire 'nohtyP'"
 '''),
     '4.2': ('Esercizio 4.2', r'''
 atteso = ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna']
-assert paesi_capitale_pari(g10) == atteso, "❌ Lista dei paesi errata"
+assert paesi_capitale_pari(g10) == atteso, "❌ controlla la condizione: len(capitale) deve essere pari"
 '''),
     '4.3': ('Esercizio 4.3', r'''
-assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ Lista delle parole palindrome errata"
+assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ le palindrome della lista sono anna, radar, osso e madam"
 '''),
     '5.1': ('Esercizio 5.1', r'''
 assert round(totale, 2) == 7.5, "❌ totale: la lista si chiama prezzi"

@@ -168,14 +168,18 @@ def costruisci() -> Notebook:
     """)
     nb.esercizio(
         titolo="Una cella Markdown e una cella di codice",
-        scenario="",
+        scenario="""
+            Un notebook alterna celle di testo e celle di codice, e il testo serve a dire a chi legge che
+            cosa fa il codice che segue. Come primo esercizio costruiamo una coppia di questo tipo: una
+            cella Markdown con un titolo e una frase di spiegazione e, sotto, una cella di codice che
+            stampa un messaggio. Eseguite tutte e due, la prima mostra il titolo formattato e la seconda
+            stampa `Primo comando Python del corso!`.
+        """,
         richiesta="""
             1. Sopra la cella di codice qui sotto aggiungi una **cella Markdown** con il titolo
                "Soluzione" e, sotto il titolo, il testo "Questa è la soluzione del primo esercizio."
             2. Nella **cella di codice** scrivi `print("Primo comando Python del corso!")`.
-
-            Infine esegui entrambe le celle. La cella Markdown mostra il titolo formattato, mentre la
-            cella di codice stampa il messaggio.
+            3. Esegui le due celle con `Shift + Invio`, prima quella Markdown e poi quella di codice.
         """,
         starter="""
             # scrivi qui il comando print
@@ -196,11 +200,17 @@ def costruisci() -> Notebook:
     )
     nb.esercizio(
         titolo="Il meteo di oggi",
-        scenario="",
+        scenario="""
+            Vogliamo stampare una riga sul meteo di oggi, come `Oggi a Milano ci sono 18 gradi`, a
+            partire da due variabili, una con il nome della città e una con la temperatura. Tenere i
+            valori nelle variabili invece di scriverli dentro il testo permette di rifare la stampa per
+            un'altra città, o per domani, cambiando soltanto le due assegnazioni.
+        """,
         richiesta="""
-            Crea una variabile `citta` con il nome della tua città e una variabile `temperatura` con la
-            temperatura di oggi, scritta come numero. Poi, con un solo `print`, stampa una riga come
-            `Oggi a Milano ci sono 18 gradi`.
+            1. Crea la variabile `citta` con il nome della tua città e la variabile `temperatura` con la
+               temperatura di oggi, scritta come numero perché è una misura.
+            2. Stampa la riga con un solo `print`, che unisce i pezzi di testo e i valori delle due
+               variabili.
         """,
         suggerimento=(
             "`print` accetta più valori separati da virgola e li stampa uno dopo l'altro, separati da uno "

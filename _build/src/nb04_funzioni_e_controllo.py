@@ -349,12 +349,14 @@ def costruisci() -> Notebook:
     nb.sezione("Esercizi")
     nb.esercizio(
         titolo="Stringa invertita",
-        scenario="",
-        richiesta="""
-            Scrivi una funzione `inverti_stringa` che riceva una stringa e restituisca la stessa stringa
-            con i caratteri in ordine inverso. Per esempio, `inverti_stringa('Python')` deve restituire
+        scenario="""
+            Nei giochi di enigmistica capita spesso di leggere una parola al contrario, dall'ultima lettera
+            alla prima. Vogliamo una funzione `inverti_stringa` che lo faccia per qualunque parola le
+            passiamo, così non serve riscrivere l'operazione ogni volta e la stessa idea torna utile
+            nell'esercizio sulle parole palindrome. Per esempio, `inverti_stringa('Python')` restituisce
             `'nohtyP'`.
         """,
+        richiesta="",
         suggerimento="puoi pensare alla stringa come a una **lista** di caratteri.",
         starter="""
             def inverti_stringa(stringa):
@@ -365,7 +367,7 @@ def costruisci() -> Notebook:
                 return stringa[::-1]
         """,
         verifica="""
-            assert inverti_stringa("Python") == "nohtyP", "❌ Stringa invertita errata"
+            assert inverti_stringa("Python") == "nohtyP", "❌ inverti_stringa('Python') deve restituire 'nohtyP'"
         """,
     )
 
@@ -385,14 +387,25 @@ def costruisci() -> Notebook:
     """
     nb.esercizio(
         titolo="Paesi con capitale di lunghezza pari",
-        scenario="",
-        richiesta="""
-            Scrivi una funzione `paesi_capitale_pari` che riceva un dizionario di paesi e capitali e
-            restituisca la lista dei paesi la cui capitale ha un numero pari di lettere. Il dizionario
-            `g10`, che associa dieci paesi alle loro capitali, è già definito nella cella qui sotto, dopo
-            la funzione da completare. Per esempio, `'Roma'` ha quattro lettere, quindi `'Italia'` fa parte
-            del risultato.
+        scenario="""
+            Per un quiz sulle capitali dividiamo i paesi tra due squadre, i Pari e i Dispari, e ai Pari
+            toccano quelli la cui capitale ha un numero pari di lettere. Vogliamo una funzione
+            `paesi_capitale_pari` che ricavi questo elenco da un dizionario di paesi e capitali, così la
+            regola si applica a qualunque dizionario senza contare le lettere a mano. Con `g10`, definito
+            nella cella sotto la funzione, l'elenco comincia con `'Canada'`, perché Ottawa ha sei lettere.
         """,
+        richiesta="""
+            1. Crea la lista vuota `risultato`, che raccoglierà i paesi dei Pari.
+            2. Percorri il dizionario con un ciclo `for` su `.items()`, che a ogni passo fornisce il paese
+               e la sua capitale.
+            3. Se il numero di lettere della capitale, che si ottiene con `len()`, è pari, aggiungi il
+               paese a `risultato` con `append()`.
+            4. Alla fine del ciclo restituisci `risultato`.
+
+            Con `g10` la funzione restituisce `['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti',
+            'Spagna']`.
+        """,
+        suggerimento="un numero è pari quando il resto della sua divisione per 2 è zero, cioè quando `numero % 2 == 0`.",
         starter=unisci("""
             def paesi_capitale_pari(dizionario):
                 risultato = ...  # inizializza una lista vuota
@@ -411,15 +424,16 @@ def costruisci() -> Notebook:
         """, g10),
         verifica="""
             atteso = ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna']
-            assert paesi_capitale_pari(g10) == atteso, "❌ Lista dei paesi errata"
+            assert paesi_capitale_pari(g10) == atteso, "❌ controlla la condizione: len(capitale) deve essere pari"
         """,
     )
 
-    richiesta_palindrome = """
-        Scrivi una funzione `trova_palindrome` che riceva una lista di parole e restituisca una nuova
-        lista con le sole parole palindrome, cioè quelle che si leggono allo stesso modo nei due sensi.
-        Per esempio, con la lista `['ciao', 'anna', 'radar', 'gatto', 'osso', 'madam']` la funzione deve
-        restituire `['anna', 'radar', 'osso', 'madam']`.
+    scenario_palindrome = """
+        Una parola palindroma si legge allo stesso modo nei due sensi, come `anna` o `radar`. Per un gioco
+        di enigmistica vogliamo una funzione `trova_palindrome` che riceva una lista di parole e
+        restituisca una lista nuova con le sole palindrome, così possiamo controllare elenchi lunghi
+        quanto vogliamo invece di esaminare le parole una per una. Con la lista della cella il risultato
+        è `['anna', 'radar', 'osso', 'madam']`.
     """
     test_palindrome = """
         # test
@@ -427,14 +441,18 @@ def costruisci() -> Notebook:
         print(trova_palindrome(lista_parole))
     """
     verifica_palindrome = """
-        assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ Lista delle parole palindrome errata"
+        assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ le palindrome della lista sono anna, radar, osso e madam"
     """
     nb.esercizio(
         aula="base",
         titolo="Parole palindrome",
-        scenario="",
-        richiesta=richiesta_palindrome,
-        suggerimento="una parola è palindroma se è uguale a sé stessa invertita, e per invertirla puoi usare lo stesso procedimento dell'esercizio sulla stringa invertita.",
+        scenario=scenario_palindrome,
+        richiesta="""
+            1. Nel ciclo, completa la condizione dell'`if`, che è vera quando la parola è uguale a sé
+               stessa letta al contrario.
+            2. Quando la condizione è vera, aggiungi la parola alla lista `palindrome` con `append()`.
+        """,
+        suggerimento="per leggere una parola al contrario puoi usare lo stesso procedimento dell'esercizio sulla stringa invertita.",
         starter=unisci("""
             def trova_palindrome(lista_parole):
                 palindrome = []
@@ -456,11 +474,12 @@ def costruisci() -> Notebook:
     nb.esercizio(
         aula="avanzata",
         titolo="Parole palindrome",
-        scenario="",
-        richiesta=richiesta_palindrome.rstrip() + """
-        Il corpo della funzione è una sola list comprehension con una condizione, come nella cella di
-        partenza.
-    """,
+        scenario=scenario_palindrome,
+        richiesta=(
+            "La funzione tiene soltanto alcuni elementi di una lista, cioè il caso per cui è pensata la "
+            "list comprehension con un `if` in fondo, quindi il suo corpo si scrive in una riga sola, come "
+            "suggerisce la cella di partenza."
+        ),
         starter=unisci("""
             def trova_palindrome(lista_parole):
                 return [... for ... if ...]  # completa la condizione parola == parola invertita

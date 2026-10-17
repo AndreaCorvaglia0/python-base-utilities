@@ -342,14 +342,17 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Quattro celle da sistemare",
         scenario="""
-            Le quattro celle qui sotto contengono ciascuna un errore diverso, tra quelli visti nella
-            sezione sugli errori più comuni.
+            Le quattro celle qui sotto fanno piccoli conti di tutti i giorni, come il totale di una spesa o
+            gli anni che mancano alla pensione, e ciascuna si ferma con un errore diverso tra quelli visti
+            in questo notebook. Vogliamo farle funzionare seguendo il traceback, che dice che cosa non va
+            e in quale riga, senza cambiare quello che le celle calcolano. Alla fine `totale` vale 7.5,
+            `anni_alla_pensione` vale 46, `capitale` vale `'Roma'` e `citta` contiene quattro città.
         """,
         richiesta="""
-            Esegui le celle una dopo l'altra. Per ciascuna leggi l'ultima riga del traceback, trova la
-            riga indicata dalla freccia e correggi il minimo indispensabile, senza cambiare quello che la
-            cella calcola. Alla fine devono esistere le variabili `totale`, `anni_alla_pensione` e
-            `capitale`, e la lista `citta` deve contenere quattro città.
+            1. Esegui le celle una dopo l'altra e, per ciascuna, leggi l'ultima riga del traceback, che dice
+               di quale errore si tratta.
+            2. Trova la riga indicata dalla freccia e correggi il minimo indispensabile perché la cella
+               calcoli quello che deve.
         """,
         suggerimento="ogni cella contiene un solo errore, quindi dopo averla corretta conviene rieseguirla e controllare l'output prima di passare alla successiva.",
         starter="""
@@ -405,16 +408,20 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Leggere una firma",
         scenario="""
-            Per ordinare una lista Python mette a disposizione la funzione `sorted`. Quello che serve
-            per usarla, cioè quali parametri accetta e quali valori predefiniti hanno, si legge nella
-            sua firma.
+            Abbiamo i voti degli esami del semestre e vogliamo vederli dal più alto al più basso. La
+            funzione `sorted` ordina una lista, e la sua firma, che si legge con `help(sorted)`, dice quali
+            parametri accetta, quali sono obbligatori e come si chiede l'ordine inverso, senza bisogno di
+            cercare altrove. Alla fine `dal_piu_alto` vale `[30, 28, 25, 18]`.
         """,
         richiesta="""
-            Esegui `help(sorted)` e compila il dizionario `risposte`: alla chiave `"obbligatorio"`
-            assegna il nome dell'unico parametro obbligatorio e alla chiave `"default_reverse"` il valore
-            predefinito di `reverse`. Poi usa il parametro `reverse` per ordinare `voti` dal più alto al
-            più basso e salva il risultato in `dal_piu_alto`, che alla fine deve essere la lista
-            `[30, 28, 25, 18]`.
+            1. Esegui `help(sorted)` in una cella e leggi la prima riga dell'output, che è la firma della
+               funzione.
+            2. Nel dizionario `risposte` scrivi, alla chiave `"obbligatorio"`, il nome dell'unico parametro
+               obbligatorio, cioè quello che riceve la lista da ordinare, e alla chiave `"default_reverse"`
+               il valore predefinito di `reverse`, che spiega perché `sorted(voti)` mette i voti dal più
+               basso al più alto.
+            3. Ordina `voti` dal più alto al più basso passando a `sorted` il parametro `reverse`, e salva
+               il risultato in `dal_piu_alto`.
         """,
         suggerimento="nella firma il parametro obbligatorio è quello che non è seguito da `=`.",
         starter="""
