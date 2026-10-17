@@ -644,7 +644,7 @@ def costruisci() -> Notebook:
             ha una verifica, perché il formato delle righe è libero, e la soluzione ne mostra un esempio.
         """,
         richiesta="""
-            Stampa tre righe con l'energia totale prodotta nel 2023 in MWh, il mese con l'energia più alta e l'ora del
+            Stampa tre righe con l'energia totale prodotta nel 2023 in kWh, il mese con l'energia più alta e l'ora del
             giorno con la potenza media più alta.
         """,
         starter=unisci(PREPARA, """
@@ -655,12 +655,12 @@ def costruisci() -> Notebook:
             mesi = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno",
                     "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
 
-            energia_mwh = turbina["potenza_kw"].sum() / 1000
+            energia_kwh = turbina["potenza_kw"].sum()
             mensile = turbina["potenza_kw"].resample("ME").sum()
             mese_migliore = mesi[mensile.idxmax().month - 1]
             ora_migliore = turbina.groupby(turbina.index.hour)["potenza_kw"].mean().idxmax()
 
-            print(f"Energia prodotta nel 2023: {energia_mwh:.0f} MWh")   # Output: Energia prodotta nel 2023: 8449 MWh
+            print(f"Energia prodotta nel 2023: {energia_kwh:.0f} kWh")   # Output: Energia prodotta nel 2023: 8448739 kWh
             print(f"Mese con più energia: {mese_migliore}")             # Output: Mese con più energia: aprile
             print(f"Ora con la potenza media più alta: le {ora_migliore}")  # Output: Ora con la potenza media più alta: le 16
         """),

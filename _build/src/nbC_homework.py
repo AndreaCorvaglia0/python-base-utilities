@@ -113,7 +113,7 @@ def costruisci() -> Notebook:
         richiesta="""
             1. Metti in `ore_forno` le cinque letture dalle 4 alle 8 comprese.
             2. Calcola `kwh_forno`, la loro somma, e `totale_giorno`, la somma di tutte le 24.
-            3. Calcola `quota_forno`, il peso del forno sul totale in percentuale, arrotondato a un decimale.
+            3. Calcola `quota_forno`, cioè `kwh_forno / totale_giorno * 100`, arrotondato a un decimale con `round()`.
             4. Metti in `picco` la lettura più alta della giornata.
         """,
         suggerimenti=[

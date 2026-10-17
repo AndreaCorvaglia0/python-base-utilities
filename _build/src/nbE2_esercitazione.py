@@ -272,8 +272,8 @@ def costruisci() -> Notebook:
             con un valore predefinito per lo sconto calcola il prezzo finale in entrambi i casi.
         """,
         richiesta="""
-            1. Completa la funzione `prezzo_scontato(prezzo, sconto=10)`, che restituisce il prezzo dopo lo sconto,
-               espresso in percentuale, arrotondato a due decimali.
+            1. Completa la funzione `prezzo_scontato(prezzo, sconto=10)`, che calcola il prezzo dopo lo sconto con
+               l'espressione `prezzo * (1 - sconto / 100)`, lo arrotonda a due decimali e lo restituisce.
             2. Scrivi sotto il `def` una docstring di una riga che dica che cosa fa la funzione.
             3. Chiama la funzione su un prezzo di 49.90 euro, prima senza indicare lo sconto, salvando il risultato
                in `normale`, e poi con uno sconto del 30%, salvandolo in `promozione`.
@@ -282,8 +282,8 @@ def costruisci() -> Notebook:
         """,
         richiesta_avanzata="""
             1. Scrivi la funzione `prezzo_scontato(prezzo, sconto=10, arrotonda=2)`, con una docstring di una riga,
-               che restituisce il prezzo dopo lo sconto, espresso in percentuale, arrotondato al numero di decimali
-               indicato da `arrotonda`.
+               che calcola il prezzo dopo lo sconto con l'espressione `prezzo * (1 - sconto / 100)` e lo restituisce
+               arrotondato al numero di decimali indicato da `arrotonda`.
             2. Chiama la funzione su un prezzo di 49.90 euro, prima senza indicare lo sconto, salvando il risultato
                in `normale`, e poi con uno sconto del 30%, salvandolo in `promozione`.
             3. Salva in `intero` il prezzo con lo sconto del 30% arrotondato all'euro, cioè con `arrotonda=0`.
@@ -293,8 +293,8 @@ def costruisci() -> Notebook:
         """,
         suggerimenti_base=[
             """
-            Il prezzo scontato è il prezzo meno la sua parte di sconto, cioè `prezzo * (1 - sconto / 100)`. La
-            funzione calcola questo valore, lo arrotonda e lo restituisce con `return`.
+            Il corpo della funzione calcola l'espressione, la arrotonda e la restituisce con `return`; senza il
+            `return` la funzione restituisce `None` e le due variabili restano vuote.
             """,
             """
             L'arrotondamento si fa con `round(valore, 2)`, la funzione di cui abbiamo letto la firma nel notebook 05.
