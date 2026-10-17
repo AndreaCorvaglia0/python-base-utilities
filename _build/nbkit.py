@@ -248,6 +248,11 @@ class Notebook:
                   rete: bool = False, facoltativo: bool = False, suggerimenti: list[str] | None = None) -> None:
         """Esercizio di fine notebook: box verde, starter, verifica (+ soluzione nelle Soluzioni).
 
+        scenario: il paragrafo che apre l'esercizio e dice che cosa vogliamo ottenere, perché conviene farlo in Python
+        e, quando possibile, il risultato atteso; da solo deve bastare per arrivare al risultato.
+        richiesta: i passi numerati, facoltativi, che il corsista apre con un clic nel blocco "Passo per passo";
+        una sola frase resta visibile sotto lo scenario.
+
         passo_in_piu: dict(testo=..., starter=..., soluzione=..., verifica=...) facoltativo.
         bis=True: è l'alternativa dell'esercizio precedente (stesso numero + "bis").
         suggerimenti: aiuti nascosti, uno per livello, che il corsista apre con un clic (blocchi <details>).
@@ -376,9 +381,9 @@ class Notebook:
                 if e["scenario"]:
                     corpo += [e["scenario"], ""]
                 if "\n" in e["richiesta"]:
-                    corpo += ["**Cosa fare.**", "", e["richiesta"]]
-                else:
-                    corpo += ["**Cosa fare.** " + e["richiesta"]]
+                    corpo += [_dettagli("Passo per passo", e["richiesta"])]
+                elif e["richiesta"]:
+                    corpo += [e["richiesta"]]
                 if e["suggerimento"]:
                     corpo += ["", "*Suggerimento:* " + e["suggerimento"]]
                 for k, sugg in enumerate(e.get("suggerimenti", []), 1):

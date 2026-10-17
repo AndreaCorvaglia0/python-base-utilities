@@ -199,11 +199,11 @@ assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_
 '''),
     'E1.1': ('Esercizio E1.1', r'''
 assert fattore == 2.0 and tipo_fattore is float, "❌ fattore è invitati / persone_ricetta e tipo_fattore è type(fattore)"
-assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
-assert pasta_g == 640 and isinstance(pasta_g, int), "❌ pasta_g: 320 * fattore convertito con int()"
+assert pasta_g == 640.0, "❌ pasta_g: 320 moltiplicato per fattore"
+assert annuncio == "Siamo in 8, servono 640.0 g di spaghetti", "❌ annuncio: unisci i pezzi con + convertendo i numeri con str()"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
-assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 24, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len())"
+assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 115, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len(messaggio))"
 assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga padrona di casa, giorno, ora, invitati e piatto_titolo"
 assert "2.56" in messaggio and "2.5625" not in messaggio, "❌ messaggio: la quota va scritta con due decimali, con {quota:.2f}"
 '''),

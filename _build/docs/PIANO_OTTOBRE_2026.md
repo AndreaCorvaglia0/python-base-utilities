@@ -63,18 +63,22 @@ Le esercitazioni devono funzionare per classi eterogenee:
 2. La difficoltà è sempre e soltanto in Python: nessun calcolo da impostare, nessuna nozione di matematica, nessun
    ragionamento articolato sullo scenario. Numeri e operazioni entrano di passaggio dentro gli esercizi sulle
    strutture dati; ogni esercizio applica uno a uno la teoria appena vista e tocca più punti insieme.
-3. Dopo il nucleo comune vengono gli esercizi facoltativi, per chi finisce prima. Anche questi non sono mai difficili:
+3. Ogni esercizio si apre dicendo che cosa vogliamo ottenere e perché conviene farlo in Python, in modo che il
+   corsista sappia che cosa sta costruendo prima di leggere i passi e possa arrivarci anche da solo; i passi numerati
+   sono facoltativi e si aprono con un clic, poi vengono i suggerimenti e la soluzione. Ogni richiesta ha un motivo
+   nello scenario, altrimenti si toglie.
+4. Dopo il nucleo comune vengono gli esercizi facoltativi, per chi finisce prima. Anche questi non sono mai difficili:
    sono sempre l'applicazione diretta di quello che si è appena visto, perché il corso resta un corso di base.
-4. Ogni esercizio del nucleo ha suggerimenti facoltativi, nascosti finché il corsista non li apre: due livelli nella
+5. Ogni esercizio del nucleo ha suggerimenti facoltativi, nascosti finché il corsista non li apre: due livelli nella
    Base (prima l'idea, poi il nome della funzione o del metodo), al massimo uno nell'Avanzata. Si realizzano con un
    blocco `<details>` dentro la cella Markdown, da provare una volta in VS Code sui PC dell'aula.
-5. Le soluzioni sono accessibili un esercizio alla volta, con una cella `soluzione("E1.3")` sotto ogni esercizio che
+6. Le soluzioni sono accessibili un esercizio alla volta, con una cella `soluzione("E1.3")` sotto ogni esercizio che
    mostra soltanto quella soluzione. Le soluzioni stanno in `corso.py` accanto alle verifiche, codificate in modo
    leggero perché aprendo il file non si leggano per caso. Il notebook completo delle soluzioni si distribuisce dopo
    la correzione.
-6. Gli esercizi non dipendono l'uno dall'altro: ciascuno parte dai propri dati. Quando un passo ha bisogno di un
+7. Gli esercizi non dipendono l'uno dall'altro: ciascuno parte dai propri dati. Quando un passo ha bisogno di un
    risultato precedente, una cella di recupero lo ricrea, così chi si blocca può proseguire.
-7. Base e Avanzata fanno lo stesso esercizio in due varianti, come già nel capstone: stessa consegna e stessa verifica,
+8. Base e Avanzata fanno lo stesso esercizio in due varianti, come già nel capstone: stessa consegna e stessa verifica,
    con più codice già scritto e più suggerimenti nella Base, una cella quasi vuota e talvolta un requisito in più
    nell'Avanzata. Nella Base alcuni esercizi possono essere più semplici o mancare del tutto.
 

@@ -31,6 +31,22 @@ Si legge insieme a REQUISITI.md (le richieste del docente) e al REGOLE.md (forma
 - Ogni esercizio, pur semplice, è pensato per toccare più punti della teoria (per esempio un dizionario, un suo
   metodo e una funzione di Python), in modo che rifare l'esercizio significhi ripassare la lezione.
 
+## Esercizi: prima il risultato, poi i passi
+- Un esercizio si apre con un paragrafo che dice che cosa vogliamo ottenere e perché conviene farlo in Python, nei
+  termini dello scenario: il messaggio che si rigenera quando cambia il numero degli invitati, la lista che si sistema
+  senza riscriverla, il file che un collega apre in Excel. Chi legge deve capire che cosa sta costruendo, e trovarlo
+  sensato anche in un caso gioco, prima di leggere qualunque passo; da quel paragrafo deve poter arrivare al risultato
+  da solo. Quando il risultato è breve, il paragrafo lo dice (il testo del messaggio, il valore del totale).
+- I passi numerati sono un aiuto facoltativo: stanno nel blocco "Passo per passo", che si apre con un clic, e dopo di
+  loro vengono i suggerimenti e la soluzione a richiesta. L'ordine di lettura è obiettivo, passi, suggerimenti,
+  soluzione, e ogni livello aggiunge dettagli senza ripetere il precedente.
+- Ogni richiesta ha un motivo nello scenario. Non si chiede un `int()`, un `len()` o un `type()` perché "fa
+  esercizio": se non c'è una ragione che il corsista riconosce (un SMS ha 160 caratteri, il negozio vende confezioni
+  intere), la richiesta si toglie o si cambia.
+- Il modello per la narrativa e il tono sono gli esercizi scritti dal docente nel branch `main`, per esempio quelli dei
+  notebook 02-04: un obiettivo detto in una frase, uno scenario credibile, niente di superfluo. Se ne prende lo
+  spirito, non la forma.
+
 ## Dominio
 - Esempi e esercizi semplici in scenari comuni (spesa, viaggi, voti, ricette, sport, meteo, biblioteca, negozio, musica).
 - Energia/utility solo con dati veri (Terna, TexasTurbine, U.S. Electricity Prices, Open-Meteo, sensori Lombardia) e nei

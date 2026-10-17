@@ -196,13 +196,13 @@ assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è t
 '''),
     'E1.1': ('Esercizio E1.1', r'''
 assert fattore == 2.0, "❌ fattore: dividi invitati per persone_ricetta con /"
-assert tipo_invitati is int and tipo_fattore is float, "❌ tipo_invitati e tipo_fattore: usa type() sulle due variabili"
+assert tipo_fattore is float, "❌ tipo_fattore: usa type(fattore)"
 assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
 assert piatto_titolo == "Spaghetti alla carbonara", "❌ piatto_titolo: usa piatto.capitalize()"
 assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga l'ora, il numero di invitati e piatto_titolo"
-assert lunghezza == 24, "❌ lunghezza: conta i caratteri di piatto_titolo con len()"
+assert lunghezza == 82, "❌ lunghezza: conta i caratteri di messaggio con len()"
 '''),
     'E1.3': ('Esercizio E1.3', r'''
 assert spesa == ["guanciale", "pecorino", "spaghetti", "uova", "vino"], "❌ spesa: hai aggiunto il guanciale, tolto il pane e ordinato la lista con .sort()?"
@@ -361,8 +361,8 @@ assert giornaliero["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.mont
 
 # Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.
 SOLUZIONI = {
-    'E1.1': ('Esercizio E1.1', 'cGVyc29uZV9yaWNldHRhID0gNAppbnZpdGF0aSA9IDgKCmZhdHRvcmUgPSBpbnZpdGF0aSAvIHBlcnNvbmVfcmljZXR0YQp0aXBvX2ludml0YXRpID0gdHlwZShpbnZpdGF0aSkKdGlwb19mYXR0b3JlID0gdHlwZShmYXR0b3JlKQphbm51bmNpbyA9ICJTaWFtbyBpbiAiICsgc3RyKGludml0YXRpKQoKcHJpbnQoZmF0dG9yZSwgdGlwb19pbnZpdGF0aSwgdGlwb19mYXR0b3JlKQpwcmludChhbm51bmNpbyk='),
-    'E1.2': ('Esercizio E1.2', 'Z2lvcm5vID0gInNhYmF0byIKb3JhID0gIjIwOjMwIgpwYWRyb25hX2RpX2Nhc2EgPSAiTWFydGEiCmludml0YXRpID0gOApwaWF0dG8gPSAic3BhZ2hldHRpIGFsbGEgY2FyYm9uYXJhIgoKcGlhdHRvX3RpdG9sbyA9IHBpYXR0by5jYXBpdGFsaXplKCkKbWVzc2FnZ2lvID0gZiJDZW5hIGRhIHtwYWRyb25hX2RpX2Nhc2F9IHtnaW9ybm99IGFsbGUge29yYX06IHNpYW1vIGluIHtpbnZpdGF0aX0gZSBwcmVwYXJpYW1vIHtwaWF0dG9fdGl0b2xvfS4iCmx1bmdoZXp6YSA9IGxlbihwaWF0dG9fdGl0b2xvKQoKcHJpbnQobWVzc2FnZ2lvKQpwcmludChsdW5naGV6emEp'),
+    'E1.1': ('Esercizio E1.1', 'cGVyc29uZV9yaWNldHRhID0gNAppbnZpdGF0aSA9IDgKCmZhdHRvcmUgPSBpbnZpdGF0aSAvIHBlcnNvbmVfcmljZXR0YQp0aXBvX2ZhdHRvcmUgPSB0eXBlKGZhdHRvcmUpCmFubnVuY2lvID0gIlNpYW1vIGluICIgKyBzdHIoaW52aXRhdGkpCgpwcmludChmYXR0b3JlLCB0aXBvX2ZhdHRvcmUpCnByaW50KGFubnVuY2lvKQ=='),
+    'E1.2': ('Esercizio E1.2', 'Z2lvcm5vID0gInNhYmF0byIKb3JhID0gIjIwOjMwIgpwYWRyb25hX2RpX2Nhc2EgPSAiTWFydGEiCmludml0YXRpID0gOApwaWF0dG8gPSAic3BhZ2hldHRpIGFsbGEgY2FyYm9uYXJhIgoKcGlhdHRvX3RpdG9sbyA9IHBpYXR0by5jYXBpdGFsaXplKCkKbWVzc2FnZ2lvID0gZiJDZW5hIGRhIHtwYWRyb25hX2RpX2Nhc2F9IHtnaW9ybm99IGFsbGUge29yYX06IHNpYW1vIGluIHtpbnZpdGF0aX0gZSBwcmVwYXJpYW1vIHtwaWF0dG9fdGl0b2xvfS4iCmx1bmdoZXp6YSA9IGxlbihtZXNzYWdnaW8pCgpwcmludChtZXNzYWdnaW8pCnByaW50KGx1bmdoZXp6YSk='),
     'E1.3': ('Esercizio E1.3', 'c3Blc2EgPSBbInNwYWdoZXR0aSIsICJ1b3ZhIiwgInBlY29yaW5vIiwgInBhbmUiLCAidmlubyJdCgpzcGVzYS5hcHBlbmQoImd1YW5jaWFsZSIpCnNwZXNhLnJlbW92ZSgicGFuZSIpCnByaW1pX3RyZSA9IHNwZXNhWzozXQpxdWFudGkgPSBsZW4oc3Blc2EpCnNwZXNhLnNvcnQoKQoKcHJpbnQocHJpbWlfdHJlKQpwcmludChxdWFudGkpCnByaW50KHNwZXNhKQ=='),
     'E1.4': ('Esercizio E1.4', 'cHJlenppID0geyJzcGFnaGV0dGkiOiAyLjU4LCAiZ3VhbmNpYWxlIjogOC45MCwgInVvdmEiOiAzLjQ5LCAicGVjb3Jpbm8iOiA0LjM4fQoKcHJlenppWyJwZXBlIG5lcm8iXSA9IDIuMTUKcHJlenppWyJndWFuY2lhbGUiXSA9IDcuOTAKdG90YWxlID0gc3VtKHByZXp6aS52YWx1ZXMoKSkKcHJvZG90dGkgPSBsaXN0KHByZXp6aS5rZXlzKCkpCgpwcmludChwcmV6emkpCnByaW50KHRvdGFsZSkKcHJpbnQocHJvZG90dGkp'),
     'E1.5': ('Esercizio E1.5', 'bGlzdGFfbWFydGEgPSBbInNwYWdoZXR0aSIsICJndWFuY2lhbGUiLCAidW92YSIsICJ2aW5vIl0KbGlzdGFfbHVjYSA9IFsidmlubyIsICJwZWNvcmlubyIsICJwYW5lIiwgInVvdmEiXQoKdHV0dGkgPSBsaXN0YV9tYXJ0YSArIGxpc3RhX2x1Y2EKY2FycmVsbG8gPSBzZXQodHV0dGkpCnF1YW50aSA9IGxlbihjYXJyZWxsbykKCmluZGlyaXp6byA9ICgidmlhIEdhcmliYWxkaSIsIDE0LCAiQm9sb2duYSIpCmNpdmljbyA9IGluZGlyaXp6b1sxXQoKcHJpbnQodHV0dGkpCnByaW50KGNhcnJlbGxvKQpwcmludChxdWFudGksIGNpdmljbyk='),

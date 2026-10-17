@@ -199,11 +199,11 @@ assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_
 '''),
     'E1.1': ('Esercizio E1.1', r'''
 assert fattore == 2.0 and tipo_fattore is float, "❌ fattore è invitati / persone_ricetta e tipo_fattore è type(fattore)"
-assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
-assert pasta_g == 640 and isinstance(pasta_g, int), "❌ pasta_g: 320 * fattore convertito con int()"
+assert pasta_g == 640.0, "❌ pasta_g: 320 moltiplicato per fattore"
+assert annuncio == "Siamo in 8, servono 640.0 g di spaghetti", "❌ annuncio: unisci i pezzi con + convertendo i numeri con str()"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
-assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 24, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len())"
+assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 115, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len(messaggio))"
 assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga padrona di casa, giorno, ora, invitati e piatto_titolo"
 assert "2.56" in messaggio and "2.5625" not in messaggio, "❌ messaggio: la quota va scritta con due decimali, con {quota:.2f}"
 '''),
@@ -369,8 +369,8 @@ assert giornaliero["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.mont
 
 # Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.
 SOLUZIONI = {
-    'E1.1': ('Esercizio E1.1', 'cGVyc29uZV9yaWNldHRhID0gNAppbnZpdGF0aSA9IDgKCmZhdHRvcmUgPSBpbnZpdGF0aSAvIHBlcnNvbmVfcmljZXR0YQp0aXBvX2ZhdHRvcmUgPSB0eXBlKGZhdHRvcmUpCmFubnVuY2lvID0gIlNpYW1vIGluICIgKyBzdHIoaW52aXRhdGkpCnBhc3RhX2cgPSBpbnQoMzIwICogZmF0dG9yZSkKCnByaW50KGZhdHRvcmUsIHRpcG9fZmF0dG9yZSkKcHJpbnQoYW5udW5jaW8pCnByaW50KHBhc3RhX2cp'),
-    'E1.2': ('Esercizio E1.2', 'Z2lvcm5vID0gInNhYmF0byIKb3JhID0gIjIwOjMwIgpwYWRyb25hX2RpX2Nhc2EgPSAiTWFydGEiCmludml0YXRpID0gOApwaWF0dG8gPSAic3BhZ2hldHRpIGFsbGEgY2FyYm9uYXJhIgpzcGVzYSA9IDIwLjUwCgpwaWF0dG9fdGl0b2xvID0gcGlhdHRvLmNhcGl0YWxpemUoKQpsdW5naGV6emEgPSBsZW4ocGlhdHRvX3RpdG9sbykKcXVvdGEgPSBzcGVzYSAvIGludml0YXRpCm1lc3NhZ2dpbyA9ICgKICAgIGYiQ2VuYSBkYSB7cGFkcm9uYV9kaV9jYXNhfSB7Z2lvcm5vfSBhbGxlIHtvcmF9OiBzaWFtbyBpbiB7aW52aXRhdGl9LCAiCiAgICBmInByZXBhcmlhbW8ge3BpYXR0b190aXRvbG99IGUgbGEgc3Blc2Egw6ggZGkge3F1b3RhOi4yZn0gZXVybyBhIHRlc3RhLiIKKQoKcHJpbnQobWVzc2FnZ2lvKQpwcmludChsdW5naGV6emEp'),
+    'E1.1': ('Esercizio E1.1', 'cGVyc29uZV9yaWNldHRhID0gNAppbnZpdGF0aSA9IDgKCmZhdHRvcmUgPSBpbnZpdGF0aSAvIHBlcnNvbmVfcmljZXR0YQp0aXBvX2ZhdHRvcmUgPSB0eXBlKGZhdHRvcmUpCnBhc3RhX2cgPSAzMjAgKiBmYXR0b3JlCmFubnVuY2lvID0gIlNpYW1vIGluICIgKyBzdHIoaW52aXRhdGkpICsgIiwgc2Vydm9ubyAiICsgc3RyKHBhc3RhX2cpICsgIiBnIGRpIHNwYWdoZXR0aSIKCnByaW50KGZhdHRvcmUsIHRpcG9fZmF0dG9yZSwgcGFzdGFfZykKcHJpbnQoYW5udW5jaW8p'),
+    'E1.2': ('Esercizio E1.2', 'Z2lvcm5vID0gInNhYmF0byIKb3JhID0gIjIwOjMwIgpwYWRyb25hX2RpX2Nhc2EgPSAiTWFydGEiCmludml0YXRpID0gOApwaWF0dG8gPSAic3BhZ2hldHRpIGFsbGEgY2FyYm9uYXJhIgpzcGVzYSA9IDIwLjUwCgpwaWF0dG9fdGl0b2xvID0gcGlhdHRvLmNhcGl0YWxpemUoKQpxdW90YSA9IHNwZXNhIC8gaW52aXRhdGkKbWVzc2FnZ2lvID0gKAogICAgZiJDZW5hIGRhIHtwYWRyb25hX2RpX2Nhc2F9IHtnaW9ybm99IGFsbGUge29yYX06IHNpYW1vIGluIHtpbnZpdGF0aX0sICIKICAgIGYicHJlcGFyaWFtbyB7cGlhdHRvX3RpdG9sb30gZSBsYSBzcGVzYSDDqCBkaSB7cXVvdGE6LjJmfSBldXJvIGEgdGVzdGEuIgopCmx1bmdoZXp6YSA9IGxlbihtZXNzYWdnaW8pCgpwcmludChtZXNzYWdnaW8pCnByaW50KGx1bmdoZXp6YSk='),
     'E1.3': ('Esercizio E1.3', 'c3Blc2EgPSBbInNwYWdoZXR0aSIsICJ1b3ZhIiwgInBlY29yaW5vIiwgInBhbmUiLCAidmlubyJdCgpzcGVzYS5hcHBlbmQoImd1YW5jaWFsZSIpCnNwZXNhLnJlbW92ZSgicGFuZSIpCnNwZXNhLmluc2VydCgxLCAicGVwZSBuZXJvIikKcHJpbWlfdHJlID0gc3Blc2FbOjNdCnF1YW50aSA9IGxlbihzcGVzYSkKc3Blc2Euc29ydCgpCgpwcmludChwcmltaV90cmUpCnByaW50KHF1YW50aSkKcHJpbnQoc3Blc2Ep'),
     'E1.4': ('Esercizio E1.4', 'cHJlenppID0geyJzcGFnaGV0dGkiOiAyLjU4LCAiZ3VhbmNpYWxlIjogOC45MCwgInVvdmEiOiAzLjQ5LCAicGVjb3Jpbm8iOiA0LjM4fQppbnZpdGF0aSA9IDgKCnByZXp6aVsicGVwZSBuZXJvIl0gPSAyLjE1CnByZXp6aVsiZ3VhbmNpYWxlIl0gPSA3LjkwCnRvdGFsZSA9IHN1bShwcmV6emkudmFsdWVzKCkpCnByb2RvdHRpID0gbGlzdChwcmV6emkua2V5cygpKQpxdW90YSA9IHJvdW5kKHRvdGFsZSAvIGludml0YXRpLCAyKQoKcHJpbnQodG90YWxlLCBxdW90YSkKcHJpbnQocHJvZG90dGkp'),
     'E1.5': ('Esercizio E1.5', 'bGlzdGFfbWFydGEgPSBbInNwYWdoZXR0aSIsICJndWFuY2lhbGUiLCAidW92YSIsICJ2aW5vIl0KbGlzdGFfbHVjYSA9IFsidmlubyIsICJwZWNvcmlubyIsICJwYW5lIiwgInVvdmEiXQoKbWFydGEgPSBzZXQobGlzdGFfbWFydGEpCmx1Y2EgPSBzZXQobGlzdGFfbHVjYSkKY2FycmVsbG8gPSBtYXJ0YS51bmlvbihsdWNhKQppbl9jb211bmUgPSBtYXJ0YS5pbnRlcnNlY3Rpb24obHVjYSkKc29sb19sdWNhID0gbHVjYS5kaWZmZXJlbmNlKG1hcnRhKQoKaW5kaXJpenpvID0gKCJ2aWEgR2FyaWJhbGRpIiwgMTQsICJCb2xvZ25hIikKY2l2aWNvID0gaW5kaXJpenpvWzFdCgpwcmludChjYXJyZWxsbykKcHJpbnQoaW5fY29tdW5lLCBzb2xvX2x1Y2EpCnByaW50KGNpdmljbyk='),

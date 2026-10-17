@@ -67,6 +67,10 @@ Prima di scrivere, e soprattutto prima di correggere un testo esistente, convien
 - **Il testo parla a chi impara.** Si rivolge al lettore con il "tu" nelle consegne e il "noi" nel lavoro comune, e non
   descrive il corso dall'esterno, come farebbe chi lo organizza: niente "il docente corregge", "nel gruppo avanzato",
   "i cinque esercizi del nucleo". Le note per il docente o per il committente stanno altrove.
+- **Un esercizio comincia dal risultato.** La consegna si apre dicendo che cosa si vuole ottenere e perché vale la pena
+  farlo con lo strumento che si sta imparando, in modo che chi legge sappia che cosa sta costruendo prima di qualunque
+  passo. I passi, i suggerimenti e la soluzione vengono dopo, in quest'ordine, e ogni richiesta ha un motivo
+  riconoscibile nello scenario.
 - **Titoli piatti e descrittivi.** "Selezione dei dati", "Valori mancanti", "Esercizi". Mai titoli con promesse o
   aggettivi ("Le scorciatoie che servono davvero", "In cinque regole").
 

@@ -61,6 +61,14 @@ le quattro operazioni, niente conversioni di unità o ragionamenti sullo scenari
 passaggio dentro esercizi su strutture dati, stringhe o dati, e ogni esercizio applica uno a uno la teoria appena
 vista toccando più punti insieme.
 
+Un esercizio si apre con un paragrafo che dice che cosa vogliamo ottenere e perché conviene farlo in Python, nei
+termini dello scenario, e quando possibile il risultato atteso: da quel paragrafo il corsista deve poter arrivare al
+risultato da solo. I passi numerati (`richiesta=`) finiscono nel blocco "Passo per passo", che si apre con un clic,
+seguito dai suggerimenti e dalla soluzione a richiesta. Ogni richiesta ha un motivo che il corsista riconosce nello
+scenario; una richiesta che serve solo a "fare esercizio" si toglie. La narrativa e il tono sono quelli degli
+esercizi del docente nel branch `main` (notebook 02-04): obiettivo in una frase, scenario credibile, niente di
+superfluo.
+
 Gli esempi dei notebook di sintassi (00-05) stanno in scenari comuni, come spesa, viaggi, voti o meteo; i dati
 del settore energetico compaiono da pandas in poi, con i dataset veri o quelli inventati già presenti in `Dati/`.
 Il gergo tecnico resta in inglese dove si usa in inglese (notebook, kernel, DataFrame, slicing, encoding).

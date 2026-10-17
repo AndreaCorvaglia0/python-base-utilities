@@ -196,13 +196,13 @@ assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è t
 '''),
     'E1.1': ('Esercizio E1.1', r'''
 assert fattore == 2.0, "❌ fattore: dividi invitati per persone_ricetta con /"
-assert tipo_invitati is int and tipo_fattore is float, "❌ tipo_invitati e tipo_fattore: usa type() sulle due variabili"
+assert tipo_fattore is float, "❌ tipo_fattore: usa type(fattore)"
 assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
 assert piatto_titolo == "Spaghetti alla carbonara", "❌ piatto_titolo: usa piatto.capitalize()"
 assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga l'ora, il numero di invitati e piatto_titolo"
-assert lunghezza == 24, "❌ lunghezza: conta i caratteri di piatto_titolo con len()"
+assert lunghezza == 82, "❌ lunghezza: conta i caratteri di messaggio con len()"
 '''),
     'E1.3': ('Esercizio E1.3', r'''
 assert spesa == ["guanciale", "pecorino", "spaghetti", "uova", "vino"], "❌ spesa: hai aggiunto il guanciale, tolto il pane e ordinato la lista con .sort()?"

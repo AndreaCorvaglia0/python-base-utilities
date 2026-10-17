@@ -46,13 +46,14 @@ def costruisci() -> Notebook:
         si prosegue con cinque esercizi, ciascuno con i propri dati, da fare nell'ordine perché la difficoltà cresce.
     """)
     aiuti = """
-        Nella consegna di ogni esercizio {aiuti}, da leggere solo dopo aver provato da solo. Sotto la cella da
-        completare ci sono la verifica, che conferma il risultato o dice che cosa controllare, e la cella
-        `soluzione`, che mostra soltanto la soluzione di quell'esercizio. Se finisci prima, in fondo al notebook
-        trovi gli esercizi facoltativi.
+        Ogni esercizio comincia dicendo che cosa vogliamo ottenere e perché, e da lì si può arrivare al risultato da
+        soli. Chi preferisce procedere per gradi apre con un clic il blocco Passo per passo, e sotto {aiuti}, da
+        leggere solo dopo aver provato. Sotto la cella da completare ci sono la verifica, che conferma il risultato o
+        dice che cosa controllare, e la cella `soluzione`, che mostra soltanto la soluzione di quell'esercizio. Se
+        finisci prima, in fondo al notebook trovi gli esercizi facoltativi.
     """
-    nb.md(aiuti.replace("{aiuti}", "trovi due suggerimenti nascosti, che si aprono con un clic"), aula="base")
-    nb.md(aiuti.replace("{aiuti}", "trovi un suggerimento nascosto, che si apre con un clic"), aula="avanzata")
+    nb.md(aiuti.replace("{aiuti}", "due suggerimenti, anche loro nascosti"), aula="base")
+    nb.md(aiuti.replace("{aiuti}", "un suggerimento, anche lui nascosto"), aula="avanzata")
 
     # ------------------------------------------------------------------ 1. Domande
     nb.sezione("Domande", intro="""
@@ -104,19 +105,20 @@ def costruisci() -> Notebook:
         nb,
         titolo="Gli invitati",
         scenario="""
-            La ricetta di Marta è scritta per quattro persone e a cena saranno in otto. Nella cella ci sono già le
-            due variabili con questi numeri, e da qui partono i primi conti e il primo messaggio.
+            La ricetta di Marta è per quattro persone e sabato saranno in otto. Vogliamo una cella che, dato il
+            numero di invitati, calcoli di quanto moltiplicare la ricetta e componga l'annuncio da mettere in testa
+            ai messaggi, in modo che se all'ultimo si aggiunge qualcuno basti cambiare un numero e il resto si
+            aggiorni da solo. Alla fine `fattore` vale 2.0 e `annuncio` comincia con `Siamo in 8`.
         """,
         base=dict(
             richiesta="""
-                1. Salva in `fattore` il risultato della divisione tra `invitati` e `persone_ricetta`.
-                2. Salva in `tipo_invitati` il tipo della variabile `invitati` e in `tipo_fattore` quello di `fattore`,
-                   con la funzione `type()`.
-                3. Componi con l'operatore `+` il testo `annuncio`, che deve valere `"Siamo in 8"`, unendo il testo fisso
-                   alla variabile `invitati` convertita in stringa con `str()`.
+                1. Salva in `fattore` il risultato della divisione tra `invitati` e `persone_ricetta`, con `/`.
+                2. Stampando `fattore` compare `2.0` e non `2`: salva in `tipo_fattore` il tipo della variabile, con
+                   la funzione `type()`, per vedere che cosa ha prodotto la divisione.
+                3. Componi `annuncio` unendo con l'operatore `+` il testo `"Siamo in "` e la variabile `invitati`,
+                   che prima va convertita in stringa con `str()`.
 
-                Alla fine `fattore` vale 2.0, `tipo_invitati` è `int`, `tipo_fattore` è `float` e `annuncio` vale
-                `"Siamo in 8"`.
+                Alla fine `fattore` vale 2.0, `tipo_fattore` è `float` e `annuncio` vale `"Siamo in 8"`.
             """,
             suggerimenti=[
                 """
@@ -124,8 +126,7 @@ def costruisci() -> Notebook:
                     intero. Un testo e un numero non si uniscono con `+` finché il numero non diventa un testo.
                 """,
                 """
-                    Servono `invitati / persone_ricetta`, `type(invitati)`, `type(fattore)` e
-                    `"Siamo in " + str(invitati)`.
+                    Servono `invitati / persone_ricetta`, `type(fattore)` e `"Siamo in " + str(invitati)`.
                 """,
             ],
             starter="""
@@ -133,11 +134,10 @@ def costruisci() -> Notebook:
                 invitati = 8
 
                 fattore = invitati / ...
-                tipo_invitati = type(...)
-                tipo_fattore = ...
+                tipo_fattore = type(...)
                 annuncio = "Siamo in " + ...
 
-                print(fattore, tipo_invitati, tipo_fattore)
+                print(fattore, tipo_fattore)
                 print(annuncio)
             """,
             soluzione="""
@@ -145,42 +145,40 @@ def costruisci() -> Notebook:
                 invitati = 8
 
                 fattore = invitati / persone_ricetta
-                tipo_invitati = type(invitati)
                 tipo_fattore = type(fattore)
                 annuncio = "Siamo in " + str(invitati)
 
-                print(fattore, tipo_invitati, tipo_fattore)
+                print(fattore, tipo_fattore)
                 print(annuncio)
             """,
             verifica="""
                 assert fattore == 2.0, "❌ fattore: dividi invitati per persone_ricetta con /"
-                assert tipo_invitati is int and tipo_fattore is float, "❌ tipo_invitati e tipo_fattore: usa type() sulle due variabili"
+                assert tipo_fattore is float, "❌ tipo_fattore: usa type(fattore)"
                 assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
             """,
         ),
         avanzata=dict(
             richiesta="""
-                1. Salva in `fattore` il risultato della divisione tra `invitati` e `persone_ricetta`, e in
-                   `tipo_fattore` il suo tipo, con la funzione `type()`.
-                2. Componi con l'operatore `+` il testo `annuncio`, che deve valere `"Siamo in 8"`, convertendo
-                   `invitati` in stringa con `str()`.
-                3. Salva in `pasta_g` i grammi di spaghetti per otto persone, cioè 320 moltiplicato per `fattore`,
-                   convertiti in numero intero con `int()`.
+                1. Salva in `fattore` il risultato della divisione tra `invitati` e `persone_ricetta` e, visto che
+                   stampa `2.0` e non `2`, salva in `tipo_fattore` il suo tipo con `type()`.
+                2. Salva in `pasta_g` i grammi di spaghetti per otto persone, cioè 320 moltiplicato per `fattore`.
+                3. Componi `annuncio` unendo con `+` il testo `"Siamo in "`, il numero di invitati, il testo
+                   `", servono "`, i grammi di pasta e il testo `" g di spaghetti"`, convertendo i numeri con `str()`.
 
-                Alla fine `fattore` vale 2.0, `tipo_fattore` è `float`, `annuncio` vale `"Siamo in 8"` e `pasta_g`
-                vale 640, come intero.
+                Alla fine `fattore` vale 2.0, `tipo_fattore` è `float`, `pasta_g` vale 640.0 e `annuncio` vale
+                `"Siamo in 8, servono 640.0 g di spaghetti"`.
             """,
             suggerimenti=[
                 """
-                    `int()` toglie la parte decimale di un numero con la virgola, mentre `str()` trasforma un numero
-                    nel testo che serve per unirlo a un'altra stringa con `+`.
+                    `str()` trasforma un numero nel testo che serve per unirlo a un'altra stringa con `+`; i grammi
+                    restano `640.0` perché `fattore` è un numero con la virgola e il prodotto lo resta.
                 """,
             ],
             starter="""
                 persone_ricetta = 4
                 invitati = 8
 
-                # da creare: fattore, tipo_fattore, annuncio, pasta_g
+                # da creare: fattore, tipo_fattore, pasta_g, annuncio
             """,
             soluzione="""
                 persone_ricetta = 4
@@ -188,17 +186,16 @@ def costruisci() -> Notebook:
 
                 fattore = invitati / persone_ricetta
                 tipo_fattore = type(fattore)
-                annuncio = "Siamo in " + str(invitati)
-                pasta_g = int(320 * fattore)
+                pasta_g = 320 * fattore
+                annuncio = "Siamo in " + str(invitati) + ", servono " + str(pasta_g) + " g di spaghetti"
 
-                print(fattore, tipo_fattore)
+                print(fattore, tipo_fattore, pasta_g)
                 print(annuncio)
-                print(pasta_g)
             """,
             verifica="""
                 assert fattore == 2.0 and tipo_fattore is float, "❌ fattore è invitati / persone_ricetta e tipo_fattore è type(fattore)"
-                assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
-                assert pasta_g == 640 and isinstance(pasta_g, int), "❌ pasta_g: 320 * fattore convertito con int()"
+                assert pasta_g == 640.0, "❌ pasta_g: 320 moltiplicato per fattore"
+                assert annuncio == "Siamo in 8, servono 640.0 g di spaghetti", "❌ annuncio: unisci i pezzi con + convertendo i numeri con str()"
             """,
         ),
     )
@@ -208,9 +205,11 @@ def costruisci() -> Notebook:
         nb,
         titolo="Il messaggio agli invitati",
         scenario="""
-            Marta vuole mandare agli invitati un messaggio con il giorno, l'ora e il piatto della cena. Le
-            informazioni sono già nelle variabili della cella, e il messaggio si compone a partire da queste, in modo
-            che per aggiornarlo basti cambiare una variabile.
+            Marta deve avvisare gli invitati del giorno, dell'ora e del piatto. Invece di scrivere il messaggio a
+            mano vogliamo comporlo con una f-string dalle variabili già nella cella, così se la cena slitta alle 21
+            si cambia `ora` e il testo si rigenera. Il piatto, scritto in minuscolo nella lista della spesa, nel
+            messaggio va con l'iniziale maiuscola, e prima di inviarlo vogliamo sapere quanti caratteri è, perché
+            un SMS ne contiene al massimo 160. Il messaggio comincia con `Cena da Marta sabato alle 20:30: siamo in 8`.
         """,
         base=dict(
             richiesta="""
@@ -218,10 +217,9 @@ def costruisci() -> Notebook:
                    `.capitalize()` delle stringhe, che restituisce una nuova stringa scritta in questo modo.
                 2. Completa la f-string di `messaggio`, inserendo tra le graffe le variabili dell'ora, del numero di
                    invitati e del piatto.
-                3. Salva in `lunghezza` il numero di caratteri di `piatto_titolo`, con la funzione `len()`.
+                3. Salva in `lunghezza` il numero di caratteri del messaggio, con la funzione `len()`.
 
-                Il messaggio stampato è `Cena da Marta sabato alle 20:30: siamo in 8 e prepariamo Spaghetti Alla
-                Carbonara.` e `lunghezza` vale 24.
+                Il messaggio stampato è `Cena da Marta sabato alle 20:30: siamo in 8 e prepariamo Spaghetti alla carbonara.` e `lunghezza` vale 82, quindi l'SMS ci sta.
             """,
             suggerimenti=[
                 """
@@ -231,7 +229,7 @@ def costruisci() -> Notebook:
                 """,
                 """
                     La prima riga è `piatto_titolo = piatto.capitalize()`; nella f-string servono `{ora}`, `{invitati}` e
-                    `{piatto_titolo}`, e la lunghezza si ottiene con `len(piatto_titolo)`.
+                    `{piatto_titolo}`, e la lunghezza si ottiene con `len(messaggio)`.
                 """,
             ],
             starter="""
@@ -257,7 +255,7 @@ def costruisci() -> Notebook:
 
                 piatto_titolo = piatto.capitalize()
                 messaggio = f"Cena da {padrona_di_casa} {giorno} alle {ora}: siamo in {invitati} e prepariamo {piatto_titolo}."
-                lunghezza = len(piatto_titolo)
+                lunghezza = len(messaggio)
 
                 print(messaggio)
                 print(lunghezza)
@@ -265,20 +263,21 @@ def costruisci() -> Notebook:
             verifica="""
                 assert piatto_titolo == "Spaghetti alla carbonara", "❌ piatto_titolo: usa piatto.capitalize()"
                 assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga l'ora, il numero di invitati e piatto_titolo"
-                assert lunghezza == 24, "❌ lunghezza: conta i caratteri di piatto_titolo con len()"
+                assert lunghezza == 82, "❌ lunghezza: conta i caratteri di messaggio con len()"
             """,
         ),
         avanzata=dict(
             richiesta="""
                 1. Salva in `piatto_titolo` il nome del piatto con la prima lettera maiuscola, con il metodo
-                   `.capitalize()` delle stringhe, e in `lunghezza` il numero dei suoi caratteri.
-                2. Calcola in `quota` la spesa a persona, dividendo `spesa` per il numero di invitati.
+                   `.capitalize()` delle stringhe.
+                2. Gli invitati dividono la spesa: calcola in `quota` la spesa a persona, dividendo `spesa` per il
+                   numero di invitati.
                 3. Componi con una f-string il `messaggio`, che riporta la padrona di casa, il giorno, l'ora, il
                    numero di invitati, il piatto e la quota a persona con due decimali. Dentro le graffe il formato
                    `{quota:.2f}` mostra il numero con due cifre dopo il punto.
+                4. Salva in `lunghezza` il numero di caratteri del messaggio, con `len()`.
 
-                Il messaggio stampato è `Cena da Marta sabato alle 20:30: siamo in 8, prepariamo Spaghetti Alla
-                Carbonara e la spesa è di 2.56 euro a testa.` e `lunghezza` vale 24.
+                Il messaggio stampato è `Cena da Marta sabato alle 20:30: siamo in 8, prepariamo Spaghetti alla carbonara e la spesa è di 2.56 euro a testa.` e `lunghezza` vale 115, quindi l'SMS ci sta.
             """,
             suggerimenti=[
                 """
@@ -294,7 +293,7 @@ def costruisci() -> Notebook:
                 piatto = "spaghetti alla carbonara"
                 spesa = 20.50
 
-                # da creare: piatto_titolo, lunghezza, quota, messaggio
+                # da creare: piatto_titolo, quota, messaggio, lunghezza
             """,
             soluzione="""
                 giorno = "sabato"
@@ -305,18 +304,18 @@ def costruisci() -> Notebook:
                 spesa = 20.50
 
                 piatto_titolo = piatto.capitalize()
-                lunghezza = len(piatto_titolo)
                 quota = spesa / invitati
                 messaggio = (
                     f"Cena da {padrona_di_casa} {giorno} alle {ora}: siamo in {invitati}, "
                     f"prepariamo {piatto_titolo} e la spesa è di {quota:.2f} euro a testa."
                 )
+                lunghezza = len(messaggio)
 
                 print(messaggio)
                 print(lunghezza)
             """,
             verifica="""
-                assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 24, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len())"
+                assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 115, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len(messaggio))"
                 assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga padrona di casa, giorno, ora, invitati e piatto_titolo"
                 assert "2.56" in messaggio and "2.5625" not in messaggio, "❌ messaggio: la quota va scritta con due decimali, con {quota:.2f}"
             """,
@@ -328,10 +327,11 @@ def costruisci() -> Notebook:
         nb,
         titolo="La lista della spesa",
         scenario="""
-            Marta ha scritto la lista della spesa man mano che le venivano in mente i prodotti, e prima di uscire
-            vuole sistemarla, aggiungendo quello che manca e togliendo quello che ha già in casa. I primi prodotti
-            della lista li compra nel negozio sotto casa, gli altri al supermercato insieme a Luca, a cui manda la
-            lista in ordine alfabetico.
+            Marta ha buttato giù la lista della spesa nell'ordine in cui le venivano in mente i prodotti. Prima di
+            uscire vogliamo sistemarla con qualche riga di codice invece di riscriverla: aggiungere il guanciale che
+            manca, togliere il pane che ha già in casa, mettere da parte i primi tre prodotti, che compra nel negozio
+            sotto casa, e mandare a Luca la lista in ordine alfabetico per il supermercato. Alla fine la lista
+            ordinata comincia con `'guanciale'`.
         """,
         base=dict(
             richiesta="""
@@ -438,9 +438,10 @@ def costruisci() -> Notebook:
         nb,
         titolo="Il carrello con i prezzi",
         scenario="""
-            Al supermercato Marta annota nel dizionario `prezzi` il costo di ogni prodotto che mette nel carrello.
-            Nel dizionario manca ancora il pepe nero, e il prezzo del guanciale è sbagliato, perché il cartellino
-            sullo scaffale riportava quello della settimana precedente.
+            Al supermercato Marta segna nel dizionario `prezzi` quanto costa ogni prodotto che mette nel carrello,
+            così prima della cassa sa già il totale e ha l'elenco di quello che ha preso. Il dizionario va completato:
+            manca il pepe nero, e il prezzo del guanciale è quello della settimana scorsa. Alla fine `totale` vale
+            20.5 e `prodotti` elenca i cinque nomi, con `'pepe nero'` per ultimo.
         """,
         base=dict(
             richiesta="""
@@ -497,8 +498,8 @@ def costruisci() -> Notebook:
                 1. Aggiungi il pepe nero, che costa 2.15 euro, e correggi il prezzo del guanciale, che è di 7.90 euro.
                 2. Calcola in `totale` la somma dei prezzi e salva in `prodotti` la lista dei nomi dei prodotti; la
                    funzione `sum()` accetta direttamente il risultato di `prezzi.values()`.
-                3. Calcola in `quota` la spesa per ciascuno degli otto invitati, arrotondata al centesimo con
-                   `round()`.
+                3. Gli invitati dividono la spesa: calcola in `quota` la parte di ciascuno degli otto, arrotondata al
+                   centesimo con `round()`.
 
                 Alla fine `totale` vale 20.5, `prodotti` contiene cinque nomi con `'pepe nero'` all'ultimo posto e
                 `quota` vale 2.56.
@@ -541,9 +542,10 @@ def costruisci() -> Notebook:
         nb,
         titolo="Due liste, un carrello",
         scenario="""
-            Marta e Luca hanno scritto ciascuno la propria lista, e alcuni prodotti compaiono in entrambe. Per non
-            comprarli due volte uniscono le liste in un solo carrello, e intanto Luca si segna l'indirizzo di Marta,
-            che non cambia e quindi sta bene in una tupla.
+            Marta e Luca hanno scritto ciascuno la propria lista e alcuni prodotti compaiono in entrambe. Vogliamo un
+            unico carrello in cui ogni prodotto compaia una volta sola, senza cercare i doppioni a occhio, e salvare
+            l'indirizzo di Marta in una tupla, perché non cambia e Luca deve averlo sotto mano quando passa a portare
+            la spesa. Alla fine `carrello` contiene sei prodotti e `civico` vale 14.
         """,
         base=dict(
             richiesta="""
@@ -692,9 +694,11 @@ def costruisci() -> Notebook:
         titolo="Allergie",
         facoltativo=True,
         scenario="""
-            Marta ha chiesto agli invitati se hanno allergie o intolleranze e ha raccolto le risposte in una lista, in
-            cui alcune voci si ripetono perché più persone hanno dato la stessa risposta. Nella carbonara ci sono
-            uova e pecorino, quindi le interessa sapere se qualcuno è allergico alle uova o intollerante al lattosio.
+            Marta ha chiesto a tutti se hanno allergie o intolleranze e ha incollato le risposte in una lista, con le
+            ripetizioni di chi ha risposto la stessa cosa. Prima di confermare la carbonara, che contiene uova e
+            pecorino, vogliamo l'elenco delle allergie diverse e una risposta secca, vera o falsa, a due domande:
+            qualcuno è intollerante al lattosio, qualcuno è allergico alle uova. Alla fine `quante` vale 3,
+            `problema_lattosio` è `True` e `problema_uova` è `False`.
         """,
         base=dict(
             richiesta=allergie_richiesta,
@@ -751,10 +755,11 @@ def costruisci() -> Notebook:
         titolo="La cella del collega",
         facoltativo=True,
         scenario="""
-            Luca, un collega di Marta che viene alla cena, ha scritto in un notebook condiviso la cella che divide tra
-            gli invitati il costo del vino. Il calcolo è giusto, ma i nomi delle variabili non dicono che cosa
-            contengono, mancano gli spazi attorno agli operatori e il commento ripete l'operazione invece di
-            spiegarla.
+            Luca ha scritto in un notebook condiviso la cella che divide tra gli invitati il costo del vino. Il
+            calcolo è giusto, ma tra una settimana nessuno ricorderà che cosa sono `B`, `p` e `N`. Vogliamo
+            riscriverla seguendo PEP 8 in modo che si legga da sola: nomi che dicono che cosa contengono, spazi
+            attorno agli operatori e un commento che spiega il perché invece di ripetere l'operazione. Alla fine
+            `quota_vino` vale lo stesso di `T`, circa 2.96 euro.
         """,
         base=dict(
             richiesta="""
@@ -765,7 +770,7 @@ def costruisci() -> Notebook:
                 3. Al posto del commento che ripete il codice scrivine uno che spieghi perché il costo si divide per
                    il numero di invitati.
 
-                Alla fine `quota_vino` vale circa 2.96 euro, lo stesso valore di `T`.
+                Alla fine `quota_vino` vale lo stesso di `T`.
             """,
             suggerimenti=[
                 """
@@ -817,9 +822,10 @@ def costruisci() -> Notebook:
         titolo="Sfida: il menu e lo scontrino",
         facoltativo=True,
         scenario="""
-            Per chiudere i preparativi Marta vuole un notebook che contenga il menu della serata e lo scontrino della
-            spesa. Non c'è un unico risultato giusto, quindi l'esercizio non ha una verifica e la cella `soluzione`
-            mostra soltanto un esempio.
+            Per chiudere i preparativi Marta vuole un notebook con il menu della serata in una cella Markdown e, sotto,
+            lo scontrino della spesa stampato dal dizionario `prezzi`: una riga per prodotto con il prezzo a due
+            decimali e il totale in fondo, così se un prezzo cambia basta correggere il dizionario. Non c'è un unico
+            risultato giusto, quindi l'esercizio non ha una verifica e la cella `soluzione` mostra un esempio.
         """,
         richiesta="""
             1. Sopra la cella di codice qui sotto aggiungi una cella Markdown con un titolo, per esempio
