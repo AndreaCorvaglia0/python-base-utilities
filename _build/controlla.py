@@ -41,13 +41,15 @@ def main(argv: list[str]) -> int:
         for f in files:
             stem = f.stem
             for n in filtro:
-                if (n == "EXTRA" and cartella == "Extra") or stem.startswith(n + "_") or (n == "C" and stem == "Homework") \
+                if (n == "EXTRA" and cartella == "Extra") or stem.startswith(n + "_") or (n == "C" and stem.startswith("Homework")) \
                         or (n.startswith("E") and stem == f"Esercitazione_{n[1:]}") or (n.startswith("A") and stem == f"Approfondimenti_{n[1:]}"):
                     scelti.append(str(f.relative_to(ROOT)))
         return scelti
 
     soluzioni = seleziona("Soluzioni_Base") + seleziona("Soluzioni_Avanzata") + (seleziona("Extra") if not filtro or "EXTRA" in filtro else [])
-    aula = seleziona("Aula_Base") + seleziona("Aula_Avanzata")
+    riserva = seleziona("Riserva/Base") + seleziona("Riserva/Avanzata")
+    soluzioni += [f for f in riserva if f.endswith("_Soluzioni.ipynb")]
+    aula = seleziona("Aula_Base") + seleziona("Aula_Avanzata") + [f for f in riserva if not f.endswith("_Soluzioni.ipynb")]
     esito = 0
     if soluzioni:
         rc, out = run(["_build/validate.py", *soluzioni])

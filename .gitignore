@@ -17,6 +17,8 @@ Aula_*/*.csv
 Aula_*/*.xlsx
 Soluzioni_*/*.csv
 Soluzioni_*/*.xlsx
+Riserva/*/*.csv
+Riserva/*/*.xlsx
 Aula_*/*.py
 Soluzioni_*/*.py
 !Aula_*/corso.py

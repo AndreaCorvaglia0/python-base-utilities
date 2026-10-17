@@ -4,7 +4,7 @@ Costruisce i notebook del corso a partire dagli script in `_build/src/`.
     uv run python _build/build.py            # tutti
     uv run python _build/build.py 05 07      # solo quei numeri (C = homework, E1..E3 = esercitazioni, EXTRA = cartella Extra)
 
-Output: Aula_Base/, Aula_Avanzata/ (versione studente) e Soluzioni_Base/, Soluzioni_Avanzata/, più Extra/.
+Output: Aula_Base/, Aula_Avanzata/ (versione studente) e Soluzioni_Base/, Soluzioni_Avanzata/, più Extra/ e Riserva/ (Homework).
 In ogni cartella scrive anche `corso.py`, il modulo con i controlli degli esercizi (`verifica("7.1")`).
 """
 
@@ -86,8 +86,13 @@ def main(argv: list[str]) -> int:
         for aula in nb.aule:
             for soluzioni in (False, True):
                 try:
-                    out = nb.build(CARTELLE[(aula, soluzioni)], aula=aula, soluzioni=soluzioni)
-                    raccogli(CARTELLE[(aula, soluzioni)], nb)
+                    if nb.num == "C":      # l'Homework è materiale di riserva: fuori dalle cartelle dei corsisti
+                        cartella = ROOT / "Riserva" / aula.capitalize()
+                        nb.file = "Homework_Soluzioni" if soluzioni else "Homework"
+                    else:
+                        cartella = CARTELLE[(aula, soluzioni)]
+                    out = nb.build(cartella, aula=aula, soluzioni=soluzioni)
+                    raccogli(cartella, nb)
                     print(f"{stem:32s} -> {out.relative_to(ROOT)}")
                 except ValueError as e:
                     print(f"[ERRORE] {e}")

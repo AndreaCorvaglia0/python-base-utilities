@@ -2,8 +2,8 @@
 
 from nbkit import Notebook
 
-EXCEL = "../Dati/homework/clienti.xlsx"
-DB = "../Dati/homework/anagrafica.db"
+EXCEL = "../../Dati/homework/clienti.xlsx"
+DB = "../../Dati/homework/anagrafica.db"
 
 
 def costruisci() -> Notebook:
@@ -29,14 +29,14 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Prima di cominciare", intro="""
-        I file dell'homework si trovano nella cartella `../Dati/homework/`, e la cella qui sotto ne mostra l'elenco.
+        I file dell'homework si trovano nella cartella `../../Dati/homework/`, e la cella qui sotto ne mostra l'elenco.
         Se la lista risulta vuota, il percorso relativo non porta alla cartella giusta, di solito perché il notebook
         è stato spostato fuori da Aula_Base o Aula_Avanzata.
     """)
     nb.code("""
         from pathlib import Path
 
-        list(Path("../Dati/homework").glob("*"))
+        list(Path("../../Dati/homework").glob("*"))
     """)
     nb.md("""
         L'homework richiede circa mezz'ora e lo riprendiamo insieme all'inizio del modulo 3. Ogni passo comincia
@@ -380,7 +380,7 @@ def costruisci() -> Notebook:
             un controllo. L'unica riga anomala è dell'officina, POD `IT001E31047092`, con 1530.3 kWh il 12 marzo.
         """,
         richiesta="""
-            1. Leggi `../Dati/homework/letture_marzo.csv` in `letture`, indicando a `read_csv` il separatore delle
+            1. Leggi `../../Dati/homework/letture_marzo.csv` in `letture`, indicando a `read_csv` il separatore delle
                colonne e quello dei decimali.
             2. Le istruzioni già scritte sotto la lettura mostrano le prime righe con `head()`, i tipi delle colonne con
                `info()` e le statistiche con `describe()`. Controlla che `kwh` sia `float64`, perché un numero letto
@@ -398,7 +398,7 @@ def costruisci() -> Notebook:
         starter="""
             import pandas as pd
 
-            letture = pd.read_csv("../Dati/homework/letture_marzo.csv", ...)
+            letture = pd.read_csv("../../Dati/homework/letture_marzo.csv", ...)
             letture.info()
             print(letture.head())
             print(letture.describe())
@@ -411,7 +411,7 @@ def costruisci() -> Notebook:
         soluzione="""
             import pandas as pd
 
-            letture = pd.read_csv("../Dati/homework/letture_marzo.csv", sep=";", decimal=",")
+            letture = pd.read_csv("../../Dati/homework/letture_marzo.csv", sep=";", decimal=",")
             letture.info()
             print(letture.head())
             print(letture.describe())

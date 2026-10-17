@@ -1,0 +1,100 @@
+"""Controllo degli esercizi del corso. Generato da _build/build.py: non modificare a mano.
+
+In ogni notebook, sotto un esercizio:
+
+    from corso import verifica
+    verifica("7.1")
+
+Se il risultato è giusto stampa ✅, altrimenti una riga che dice cosa non torna.
+I controlli sono in fondo a questo file, uno per esercizio.
+"""
+
+import inspect
+
+
+class VerificaFallita(Exception):
+    """Il risultato dell'esercizio non è quello atteso: nel notebook compare una riga sola, senza traceback."""
+
+    def _render_traceback_(self):
+        return [f"\x1b[31m❌ {self}\x1b[0m"]
+
+
+def verifica(codice: str) -> None:
+    """Controlla le variabili del notebook per l'esercizio `codice`."""
+    if codice not in VERIFICHE:
+        raise VerificaFallita(f"Non c'è un controllo per {codice!r}")
+    etichetta, controllo = VERIFICHE[codice]
+    spazio = dict(inspect.currentframe().f_back.f_globals)
+    try:
+        exec(compile(controllo, f"<verifica {codice}>", "exec"), spazio)
+    except AssertionError as e:
+        msg = str(e).removeprefix("❌").strip() or "Il risultato non è quello atteso"
+        raise VerificaFallita(msg) from None
+    except NameError as e:
+        nome = getattr(e, "name", None)
+        msg = f"Non trovo la variabile `{nome}`: hai eseguito la cella dell'esercizio?" if nome else str(e)
+        raise VerificaFallita(msg) from None
+    except Exception as e:
+        raise VerificaFallita(f"{type(e).__name__}: {e}") from None
+    print(f"✅ {etichetta} completato")
+
+
+def soluzione(codice: str) -> None:
+    """Mostra la soluzione dell'esercizio `codice`, e soltanto quella."""
+    import base64
+
+    if codice not in SOLUZIONI:
+        raise VerificaFallita(f"Non c'è una soluzione registrata per {codice!r}")
+    etichetta, testo = SOLUZIONI[codice]
+    sorgente = base64.b64decode(testo).decode("utf-8")
+    try:
+        from IPython.display import Code, display
+
+        print(f"Soluzione · {etichetta}")
+        display(Code(sorgente, language="python"))
+    except ImportError:
+        print(f"Soluzione · {etichetta}\n\n{sorgente}")
+
+
+VERIFICHE = {
+
+    'Passo 1': ('Passo 1', r'''
+assert cliente == "Panificio Rè", "❌ cliente: il valore della chiave 'cliente'"
+assert kwh == 1654.2, "❌ kwh: il valore della chiave 'kwh_febbraio'"
+assert round(costo, 2) == 347.38, "❌ costo: consumo per prezzo"
+'''),
+    'Passo 2': ('Passo 2', r'''
+assert ore_forno == [9.5, 11.2, 10.8, 9.9, 8.4], "❌ ore_forno: dalle 4 alle 8 comprese"
+assert quota_forno == 57.0, "❌ quota_forno: kwh_forno diviso totale_giorno, per 100, arrotondato a un decimale"
+assert picco == 11.2, "❌ picco: la lettura più alta, con max()"
+'''),
+    'Passo 3': ('Passo 3', r'''
+assert sorted(sopra_soglia) == ["IT001E31047092", "IT001E31048128", "IT001E31049306"], "❌ sopra_soglia: i tre POD con più di 2000 kWh"
+assert round(totale_kwh, 1) == 16244.1, "❌ totale_kwh: la somma di tutti i valori del dizionario"
+'''),
+    'Passo 4': ('Passo 4', r'''
+assert costo(1000) == 210.0, "❌ costo(1000) deve dare 210.0: il prezzo di default è 0.21 e la quota fissa 0"
+assert costo(1000, prezzo=0.19, quota_fissa=8) == 198.0, "❌ costo(1000, prezzo=0.19, quota_fissa=8) deve dare 198.0"
+assert costo_bar == 152.92, "❌ costo_bar: 690.1 kWh al prezzo di default, più 8 euro"
+'''),
+    'Passo 5': ('Passo 5', r'''
+assert letture["kwh"].dtype == "float64", "❌ letture: kwh deve essere numerica, controlla sep e decimal"
+assert list(anomale["pod"]) == ["IT001E31047092"], "❌ anomale: una riga sola, quella dell'officina, con kwh > 500"
+assert list(pd.read_csv("letture_anomale.csv").columns) == ["pod", "data", "kwh"], "❌ letture_anomale.csv: salva senza l'indice, con index=False"
+'''),
+    'Passo 6': ('Passo 6', r'''
+assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
+assert leggi_tabella("pod").shape == (8, 3), "❌ leggi_tabella: deve restituire tutta la tabella, 8 righe e 3 colonne"
+assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, quella dell'Officina Meccanica Fumagalli"
+'''),
+}
+
+# Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.
+SOLUZIONI = {
+    'Passo 1': ('Passo 1', 'cGFuaWZpY2lvID0geyJjbGllbnRlIjogIlBhbmlmaWNpbyBSw6giLCAicG9kIjogIklUMDAxRTMxMDQ1MjAxIiwgImt3aF9mZWJicmFpbyI6IDE2NTQuMn0KcHJlenpvID0gMC4yMQoKY2xpZW50ZSA9IHBhbmlmaWNpb1siY2xpZW50ZSJdCmt3aCA9IHBhbmlmaWNpb1sia3doX2ZlYmJyYWlvIl0KY29zdG8gPSBrd2ggKiBwcmV6em8KcHJpbnQoY2xpZW50ZSwga3doLCAia1doIGEgZmViYnJhaW8sIGNvc3RvIiwgcm91bmQoY29zdG8sIDIpLCAiZXVybyIp'),
+    'Passo 2': ('Passo 2', 'bGV0dHVyZSA9IFswLjgsIDAuNywgMC45LCAxLjEsIDkuNSwgMTEuMiwgMTAuOCwgOS45LCA4LjQsIDQuMiwgMy45LCAzLjUsCiAgICAgICAgICAgMy4xLCAyLjQsIDIuMCwgMS44LCAyLjIsIDIuNiwgMi45LCAxLjUsIDEuMiwgMS4wLCAwLjksIDAuOF0KCm9yZV9mb3JubyA9IGxldHR1cmVbNDo5XQprd2hfZm9ybm8gPSBzdW0ob3JlX2Zvcm5vKQp0b3RhbGVfZ2lvcm5vID0gc3VtKGxldHR1cmUpCnF1b3RhX2Zvcm5vID0gcm91bmQoa3doX2Zvcm5vIC8gdG90YWxlX2dpb3JubyAqIDEwMCwgMSkKcGljY28gPSBtYXgobGV0dHVyZSkKcHJpbnQoZiJGb3Jubzoge2t3aF9mb3JubzouMWZ9IGtXaCBzdSB7dG90YWxlX2dpb3JubzouMWZ9LCBpbCB7cXVvdGFfZm9ybm99JSAocGljY28ge3BpY2NvfSBrV2gpIik='),
+    'Passo 3': ('Passo 3', 'Y29uc3VtaV9mZWJicmFpbyA9IHsKICAgICJJVDAwMUUzMTA0NTIwMSI6IDE2NTQuMiwKICAgICJJVDAwMUUzMTA0NTg3NyI6IDgxMi42LAogICAgIklUMDAxRTMxMDQ2MzEwIjogNjkwLjEsCiAgICAiSVQwMDFFMzEwNDcwOTIiOiAzMzEwLjQsCiAgICAiSVQwMDFFMzEwNDc1NTUiOiA0MzEuOCwKICAgICJJVDAwMUUzMTA0ODEyOCI6IDQ4OTAuNywKICAgICJJVDAwMUUzMTA0ODc0MyI6IDExNzguMywKICAgICJJVDAwMUUzMTA0OTMwNiI6IDMyNzYuMCwKfQpzb2dsaWEgPSAyMDAwCgpzb3ByYV9zb2dsaWEgPSBbcG9kIGZvciBwb2QsIGt3aCBpbiBjb25zdW1pX2ZlYmJyYWlvLml0ZW1zKCkgaWYga3doID4gc29nbGlhXQp0b3RhbGVfa3doID0gc3VtKGNvbnN1bWlfZmViYnJhaW8udmFsdWVzKCkpCnByaW50KGYie2xlbihzb3ByYV9zb2dsaWEpfSBQT0Qgc29wcmEgaSB7c29nbGlhfSBrV2gsIHN1IHt0b3RhbGVfa3doOi4xZn0ga1doIHRvdGFsaSIp'),
+    'Passo 4': ('Passo 4', 'ZGVmIGNvc3RvKGt3aCwgcHJlenpvPTAuMjEsIHF1b3RhX2Zpc3NhPTAuMCk6CiAgICAiIiJDb3N0byBpbiBldXJvIGRpIHVuIGNvbnN1bW8gaW4ga1doLCBwacO5IGxhIHF1b3RhIGZpc3NhLCBhcnJvdG9uZGF0byBhaSBjZW50ZXNpbWkuIiIiCiAgICByZXR1cm4gcm91bmQoa3doICogcHJlenpvICsgcXVvdGFfZmlzc2EsIDIpCgoKY29zdG9fcGFuaWZpY2lvID0gY29zdG8oMTY1NC4yKQpjb3N0b19zZXJyYSA9IGNvc3RvKDMyNzYuMCwgcHJlenpvPTAuMTcpCmNvc3RvX2JhciA9IGNvc3RvKDY5MC4xLCBxdW90YV9maXNzYT04KQpwcmludChmIlBhbmlmaWNpbzoge2Nvc3RvX3BhbmlmaWNpb30gZXVybywgU2VycmE6IHtjb3N0b19zZXJyYX0gZXVybywgQmFyOiB7Y29zdG9fYmFyfSBldXJvIik='),
+    'Passo 5': ('Passo 5', 'aW1wb3J0IHBhbmRhcyBhcyBwZAoKbGV0dHVyZSA9IHBkLnJlYWRfY3N2KCIuLi8uLi9EYXRpL2hvbWV3b3JrL2xldHR1cmVfbWFyem8uY3N2Iiwgc2VwPSI7IiwgZGVjaW1hbD0iLCIpCmxldHR1cmUuaW5mbygpCnByaW50KGxldHR1cmUuaGVhZCgpKQpwcmludChsZXR0dXJlLmRlc2NyaWJlKCkpCgptYXNrID0gbGV0dHVyZVsia3doIl0gPiA1MDAKYW5vbWFsZSA9IGxldHR1cmVbbWFza10KYW5vbWFsZS50b19jc3YoImxldHR1cmVfYW5vbWFsZS5jc3YiLCBpbmRleD1GYWxzZSkKYW5vbWFsZQ=='),
+    'Passo 6': ('Passo 6', 'aW1wb3J0IHBhbmRhcyBhcyBwZAppbXBvcnQgc3FsaXRlMwoKCmRlZiBsZWdnaV90YWJlbGxhKG5vbWUpOgogICAgIiIiTGVnZ2UgdHV0dGEgbGEgdGFiZWxsYSBgbm9tZWAgZGEgYW5hZ3JhZmljYS5kYiBlIGxhIHJlc3RpdHVpc2NlIGNvbWUgRGF0YUZyYW1lLiIiIgogICAgY29uID0gc3FsaXRlMy5jb25uZWN0KCIuLi8uLi9EYXRpL2hvbWV3b3JrL2FuYWdyYWZpY2EuZGIiKQogICAgZGYgPSBwZC5yZWFkX3NxbChmIlNFTEVDVCAqIEZST00ge25vbWV9IiwgY29uKQogICAgY29uLmNsb3NlKCkKICAgIHJldHVybiBkZgoKCmxpc3Rpbm8gPSBwZC5yZWFkX2V4Y2VsKCIuLi8uLi9EYXRpL2hvbWV3b3JrL2NsaWVudGkueGxzeCIsIHNoZWV0X25hbWU9Ikxpc3Rpbm8iKQpwb3RlbnplID0gbGVnZ2lfdGFiZWxsYSgicG9kIikKb2ZmaWNpbmEgPSBwb3RlbnplW3BvdGVuemVbImNsaWVudGUiXSA9PSAiT2ZmaWNpbmEgTWVjY2FuaWNhIEZ1bWFnYWxsaSJdCgpwcmludChsaXN0aW5vKQpvZmZpY2luYQ=='),
+}

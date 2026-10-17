@@ -232,15 +232,18 @@ class Notebook:
         """Domanda di riepilogo con la risposta nascosta, che si apre con un clic."""
         self.celle.append(Cella("domanda", _d(testo), aula=self._aula(aula), extra={"risposta": _d(risposta)}))
 
-    def prova_tu(self, richiesta: str, starter: str, soluzione: str, verifica: str | None = None,
-                 aula: str | None = None, rete: bool = False) -> None:
-        """Micro-esercizio inline da 2-3 minuti: box verde, cella da completare, verifica."""
+    def hands_on(self, richiesta: str, starter: str, soluzione: str, verifica: str | None = None,
+                 aula: str | None = None, rete: bool = False, prova_anche: str | None = None) -> None:
+        """Hands-on inline da uno a tre minuti, subito dopo l'esempio che riprende: box verde, cella da completare,
+        verifica. `prova_anche` è una riga facoltativa, sempre banale, per chi vuole esplorare un altro caso."""
         a = self._aula(aula)
-        self.celle.append(Cella("prova", _d(richiesta), aula=a))
+        self.celle.append(Cella("prova", _d(richiesta), aula=a, extra={"prova_anche": _d(prova_anche) if prova_anche else None}))
         self.celle.append(Cella("code", _d(starter), aula=a, solo_studente=True, rete=rete, ruolo="starter"))
         self.celle.append(Cella("code", _d(soluzione), aula=a, solo_soluzioni=True, rete=rete, ruolo="soluzione"))
         if verifica:
             self.celle.append(Cella("code", _d(verifica), aula=a, rete=rete, ruolo="verifica", extra={"prova": True}))
+
+    prova_tu = hands_on   # nome precedente, tenuto per i sorgenti non ancora aggiornati
 
     def esercizio(self, titolo: str, scenario: str, richiesta: str, starter: str, soluzione: str,
                   verifica: str | None = None, suggerimento: str | None = None, perche: str | None = None,
@@ -293,8 +296,6 @@ class Notebook:
             return None
         n, f, t = PROGRAMMA[i + 1]
         testo = f"Prossimo: [{n} · {t}]({f}.ipynb)"
-        if self.num == "E2":
-            testo += f" · e, prima della seconda giornata, l'[{COMPITO[2]}]({COMPITO[1]}.ipynb)"
         return testo
 
     def banner(self, aula: str, soluzioni: bool) -> str:
@@ -307,7 +308,8 @@ class Notebook:
             titolo += " · Soluzioni"
         testa = ["Extra · materiale per il docente"] if self.extra else []
         testa.append(f"⏱ ~{tempo} min")
-        testa.append("Dati: " + (", ".join(f"`../Dati/{d}`" for d in dati) if dati else "nessuno"))
+        radice = "../../Dati/" if self.num == COMPITO[0] else "../Dati/"
+        testa.append("Dati: " + (", ".join(f"`{radice}{d}`" for d in dati) if dati else "nessuno"))
         righe = [" &nbsp;·&nbsp; ".join(testa), "", "**In questo notebook impariamo a**", ""]
         righe += [f"- {o}" for o in obiettivi]
         return f'<a id="inizio"></a>\n# {titolo}\n\n' + "\n".join(righe)
@@ -359,9 +361,11 @@ class Notebook:
                 corpo = f"**Domanda {n_dom}.** {c.src}\n\n" + _dettagli("Risposta", c.extra["risposta"])
                 out.append(("md", corpo, {"tags": ["domanda"]}))
             elif c.tipo == "prova":
-                corpo = f"**{BOX['esercizio'][0]} Prova tu**\n\n{c.src}"
+                corpo = f"**{BOX['esercizio'][0]} Hands-on**\n\n{c.src}"
+                if c.extra.get("prova_anche"):
+                    corpo += f"\n\n*Prova anche:* {c.extra['prova_anche']}"
                 out.append(("md", _div(BOX["esercizio"][3], BOX["esercizio"][2], corpo), {"tags": ["prova-tu"]}))
-                corrente = "Prova tu"
+                corrente = "Hands-on"
             elif c.tipo == "esercizio":
                 e = c.extra
                 if e["bis"]:
@@ -701,6 +705,6 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
         if len(frasi) >= 3 and len(parole) / len(frasi) < 8:
             avvisi.append(f"frasi telegrafiche ({len(frasi)} frasi, {len(parole) // len(frasi)} parole in media): {corpo[:60]!r}")
     # il capstone ha gli Step dentro ogni sezione, per scelta didattica
-    if sezioni and not sezioni[-1].endswith("Esercizi") and nb.num != COMPITO[0] and not nb.num.startswith("E") and not nb.extra and nb.etichetta_esercizio == "Esercizio":
+    if sezioni and not sezioni[-1].endswith(("Esercizi", "Extra")) and nb.num != COMPITO[0] and not nb.num.startswith("E") and not nb.extra and nb.etichetta_esercizio == "Esercizio":
         avvisi.append(f"l'ultima sezione non è 'Esercizi' ma {sezioni[-1]!r}")
     return errori, avvisi
