@@ -199,38 +199,25 @@ assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'o
 assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
 '''),
     'E1.1': ('Esercizio E1.1', r'''
-assert fattore == 2.0 and tipo_fattore is float, "❌ fattore è invitati / persone_ricetta e tipo_fattore è type(fattore)"
-assert pasta_g == 640.0, "❌ pasta_g: 320 moltiplicato per fattore"
-assert annuncio == "Siamo in 8, servono 640.0 g di spaghetti", "❌ annuncio: unisci i pezzi con + convertendo i numeri con str()"
+assert valore_massimo == 25 and valore_minimo == 7 and differenza == 18, "❌ Controlla max(), min() e la differenza"
+assert media == 14.0, "❌ media: (a + b + c) / 3, arrotondata con round(..., 1)"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
-assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 115, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len(messaggio))"
-assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga padrona di casa, giorno, ora, invitati e piatto_titolo"
-assert "2.56" in messaggio and "2.5625" not in messaggio, "❌ messaggio: la quota va scritta con due decimali, con {quota:.2f}"
+assert round(area, 6) == 78.539816, "❌ area: math.pi moltiplicato per raggio ** 2"
+assert round(circonferenza, 6) == 31.415927, "❌ circonferenza: 2 * math.pi * raggio"
 '''),
     'E1.3': ('Esercizio E1.3', r'''
-assert spesa == ["guanciale", "pecorino", "pepe nero", "spaghetti", "uova", "vino"], "❌ spesa: controlla append, remove, insert e l'ordinamento finale con .sort()"
-assert primi_tre == ["spaghetti", "pepe nero", "uova"], "❌ primi_tre: va preso con [:3] dopo insert e prima di .sort()"
-assert quanti == 6, "❌ quanti: la lista finale ha 6 prodotti"
+assert lista_invertita == [5, 4, 3, 2, 1], "❌ lista_invertita: slicing con passo -1"
+assert ultimi_due == [4, 5] and ogni_due == [1, 3, 5], "❌ ultimi_due è lista[-2:] e ogni_due è lista[::2]"
 '''),
     'E1.4': ('Esercizio E1.4', r'''
-assert prezzi.get("pepe nero") == 2.15 and prezzi["guanciale"] == 7.90, "❌ prezzi: aggiungi il pepe nero e correggi il prezzo del guanciale"
-assert round(totale, 2) == 20.5 and prodotti == ["spaghetti", "guanciale", "uova", "pecorino", "pepe nero"], "❌ Controlla totale (sum dei valori) e prodotti (list delle chiavi)"
-assert quota == 2.56, "❌ quota: dividi il totale per gli invitati e arrotonda con round(..., 2)"
+assert elementi_pari == ["Martina", "Giulia", "Francesca", "Sara"], "❌ elementi_pari: lista[2::2]"
+assert uomini == ["Luigi", "Marco", "Simone", "Alessandro", "Lorenzo"] and quanti_uomini == 5, "❌ uomini è lista[1::2] e quanti_uomini è len(uomini)"
 '''),
     'E1.5': ('Esercizio E1.5', r'''
-assert carrello == {"spaghetti", "guanciale", "uova", "vino", "pecorino", "pane"} and in_comune == {"uova", "vino"}, "❌ Controlla carrello (union) e in_comune (intersection)"
-assert solo_luca == {"pecorino", "pane"}, "❌ solo_luca: parti dal set di Luca e togli quello di Marta con difference()"
-assert isinstance(indirizzo, tuple) and civico == 14, "❌ indirizzo deve essere una tupla e civico il suo elemento di indice 1"
-'''),
-    'E1.6': ('Esercizio E1.6', r'''
-assert allergie == {"lattosio", "noci", "crostacei"}, "❌ allergie: trasforma la lista in un set con set()"
-assert quante == 3, "❌ quante: conta gli elementi del set con len()"
-assert problema_lattosio is True and problema_uova is False, "❌ Controlla i due booleani: ciascuno è un controllo con in sul set allergie"
-'''),
-    'E1.7': ('Esercizio E1.7', r'''
-assert bottiglie == 3 and prezzo_bottiglia == 7.9 and invitati == 8, "❌ Controlla nomi e valori di bottiglie, prezzo_bottiglia e invitati"
-assert quota_vino == T, "❌ quota_vino deve avere lo stesso valore di T"
+assert g8.get('Regno Unito') == 'Londra' and g8.get('Stati Uniti') == 'Washington, D.C.', "❌ Aggiungi le due coppie con g8[chiave] = valore"
+assert quanti == 8 and capitale_italia == 'Roma', "❌ quanti è len(g8) e capitale_italia è g8['Italia']"
+assert paesi[0] == 'Canada' and paesi[-1] == 'Stati Uniti', "❌ paesi: sorted(g8.keys())"
 '''),
     'E2.1': ('Esercizio E2.1', r'''
 assert sopra_soglia == [64.0, 51.2, 120.0, 89.9, 72.6] and quante == 5, "❌ sopra_soglia: tieni le 5 spese maggiori di 50"

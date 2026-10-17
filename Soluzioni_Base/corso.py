@@ -196,38 +196,21 @@ assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html no
 assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\"cdn\""
 '''),
     'E1.1': ('Esercizio E1.1', r'''
-assert fattore == 2.0, "❌ fattore: dividi invitati per persone_ricetta con /"
-assert tipo_fattore is float, "❌ tipo_fattore: usa type(fattore)"
-assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
+assert valore_massimo == 25 and valore_minimo == 7, "❌ valore_massimo e valore_minimo: usa max() e min() sui tre numeri"
+assert differenza == 18, "❌ differenza: massimo meno minimo"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
-assert piatto_titolo == "Spaghetti alla carbonara", "❌ piatto_titolo: usa piatto.capitalize()"
-assert "Marta" in messaggio and "sabato" in messaggio and "20:30" in messaggio and "in 8" in messaggio and "Spaghetti alla carbonara" in messaggio, "❌ messaggio: controlla che contenga l'ora, il numero di invitati e piatto_titolo"
-assert lunghezza == 82, "❌ lunghezza: conta i caratteri di messaggio con len()"
+assert round(area, 6) == 78.539816, "❌ area: math.pi moltiplicato per raggio ** 2"
 '''),
     'E1.3': ('Esercizio E1.3', r'''
-assert spesa == ["guanciale", "pecorino", "spaghetti", "uova", "vino"], "❌ spesa: hai aggiunto il guanciale, tolto il pane e ordinato la lista con .sort()?"
-assert primi_tre == ["spaghetti", "uova", "pecorino"], "❌ primi_tre: va preso con [:3] prima di ordinare la lista"
-assert quanti == 5, "❌ quanti: la lista finale ha 5 prodotti"
+assert lista_invertita == [5, 4, 3, 2, 1], "❌ lista_invertita: slicing con passo -1, cioè lista[::-1]"
 '''),
     'E1.4': ('Esercizio E1.4', r'''
-assert prezzi.get("pepe nero") == 2.15 and prezzi["guanciale"] == 7.90, "❌ prezzi: aggiungi il pepe nero e correggi il prezzo del guanciale"
-assert round(totale, 2) == 20.5, "❌ totale: somma i valori del dizionario aggiornato con sum(prezzi.values())"
-assert prodotti == ["spaghetti", "guanciale", "uova", "pecorino", "pepe nero"], "❌ prodotti: usa list(prezzi.keys())"
+assert elementi_pari == ["Martina", "Giulia", "Francesca", "Sara"], "❌ elementi_pari: slicing dalla posizione 2 con passo 2, cioè lista[2::2]"
 '''),
     'E1.5': ('Esercizio E1.5', r'''
-assert tutti == lista_marta + lista_luca and len(tutti) == 8, "❌ tutti: le due liste unite con +, otto elementi"
-assert carrello == {"spaghetti", "guanciale", "uova", "vino", "pecorino", "pane"} and quanti == 6, "❌ carrello: set(tutti) elimina i doppioni; quanti è la sua lunghezza"
-assert isinstance(indirizzo, tuple) and civico == 14, "❌ indirizzo deve essere una tupla e civico il suo elemento di indice 1"
-'''),
-    'E1.6': ('Esercizio E1.6', r'''
-assert allergie == {"lattosio", "noci", "crostacei"}, "❌ allergie: trasforma la lista in un set con set()"
-assert quante == 3, "❌ quante: conta gli elementi del set con len()"
-assert problema_lattosio is True and problema_uova is False, "❌ Controlla i due booleani: ciascuno è un controllo con in sul set allergie"
-'''),
-    'E1.7': ('Esercizio E1.7', r'''
-assert bottiglie == 3 and prezzo_bottiglia == 7.9 and invitati == 8, "❌ Controlla nomi e valori di bottiglie, prezzo_bottiglia e invitati"
-assert quota_vino == T, "❌ quota_vino deve avere lo stesso valore di T"
+assert g8.get('Regno Unito') == 'Londra' and g8.get('Stati Uniti') == 'Washington, D.C.', "❌ Aggiungi le due coppie con g8[chiave] = valore"
+assert len(g8) == 8, "❌ Alla fine il dizionario ha otto paesi"
 '''),
     'E2.1': ('Esercizio E2.1', r'''
 assert sopra_soglia == [64.0, 51.2, 120.0, 89.9, 72.6], "❌ sopra_soglia: tieni le spese maggiori di 50, nell'ordine della lista"
