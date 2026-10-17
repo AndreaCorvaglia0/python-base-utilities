@@ -30,7 +30,7 @@ def costruisci() -> Notebook:
         file="11_Capstone",
         titolo="Capstone: il carico del Nord e la temperatura",
         blocco=4,
-        giornata=2,
+        giornata=4,
         intento="Analizziamo due anni di carico elettrico della zona Nord insieme alla temperatura di Milano, per descrivere come il carico dipende dall'ora, dal giorno della settimana e dalla temperatura.",
         obiettivi=[
             "caricare, unire e pulire una serie temporale reale, con i salti dell'ora legale",

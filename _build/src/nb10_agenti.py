@@ -9,7 +9,7 @@ def costruisci() -> Notebook:
         file="10_Agenti_per_il_coding",
         titolo="Agenti per il coding",
         blocco=4,
-        giornata=2,
+        giornata=4,
         intento="Usiamo Copilot in VS Code per scrivere codice e farcelo spiegare, e impariamo a leggere e controllare uno script scritto da un agente prima di eseguirlo.",
         obiettivi=[
             "usare Copilot in VS Code per completare, chiedere e far spiegare",

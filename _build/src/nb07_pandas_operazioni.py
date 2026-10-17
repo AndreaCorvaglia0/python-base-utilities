@@ -9,7 +9,7 @@ def costruisci() -> Notebook:
         file="07_Pandas_operazioni",
         titolo="Pandas: operazioni sui DataFrame",
         blocco=3,
-        giornata=2,
+        giornata=3,
         intento=(
             "Il notebook mostra come selezionare, pulire, trasformare, ordinare e raggruppare i dati di un "
             "DataFrame, e come unire tabelle diverse."

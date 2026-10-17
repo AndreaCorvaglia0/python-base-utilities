@@ -21,7 +21,7 @@ def costruisci() -> Notebook:
         file="06_Pandas_e_import_dati",
         titolo="Pandas: Series, DataFrame e import dei dati",
         blocco=2,
-        giornata=1,
+        giornata=2,
         intento=(
             "Il notebook presenta le due strutture dati di pandas, Series e DataFrame, e mostra come leggere "
             "i dati da file CSV ed Excel, da un database SQL e da un'API web."

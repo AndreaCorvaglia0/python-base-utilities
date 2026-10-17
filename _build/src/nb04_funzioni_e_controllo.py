@@ -9,7 +9,7 @@ def costruisci() -> Notebook:
         file="04_Funzioni_e_controllo",
         titolo="Funzioni e controllo del flusso",
         blocco=2,
-        giornata=1,
+        giornata=2,
         intento=(
             "Il notebook mostra come eseguire un blocco di codice solo quando una condizione è vera, come "
             "ripetere un'operazione con i cicli e come raccogliere il codice in funzioni riutilizzabili."

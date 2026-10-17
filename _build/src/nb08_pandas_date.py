@@ -11,7 +11,7 @@ def costruisci() -> Notebook:
         file="08_Pandas_date",
         titolo="Pandas: le date",
         blocco=3,
-        giornata=2,
+        giornata=3,
         intento="Le misure raccolte nel tempo arrivano spesso con timestamp scritti come testo, che vanno convertiti in date prima di poterli ordinare, cercarvi i buchi, aggregarli per ore o per giorni e togliere i duplicati dovuti all'ora legale.",
         obiettivi=[
             "convertire testo in date con `pd.to_datetime` ed estrarne ora, giorno e mese",

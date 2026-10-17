@@ -58,13 +58,15 @@ AULE = ("base", "avanzata")
 NOMI_AULA = {"base": "Aula Base", "avanzata": "Aula Avanzata"}
 
 # ---------------------------------------------------------------------------
-# Programma: numero -> (file, titolo). Serve per i link "prossimo notebook".
+# Programma: numero -> (file, titolo[, aule]). Serve per i link "prossimo notebook"; il quarto elemento, se c'è,
+# dice a quali aule il notebook appartiene (gli altri valgono per entrambe).
 # ---------------------------------------------------------------------------
 PROGRAMMA = [
     ("00", "00_Notebook", "Jupyter e i notebook"),
     ("01", "01_Python_e_sintassi_base", "Introduzione a Python e sintassi base"),
     ("02", "02_Tipi_di_dato", "Tipi di dato e manipolazione"),
     ("03", "03_Codice_leggibile", "Codice leggibile"),
+    ("S", "Ambiente_script_e_Ruff", "Ambiente, script e Ruff", ("avanzata",)),
     ("E1", "Esercitazione_1", "Esercitazione 1"),
     ("04", "04_Funzioni_e_controllo", "Funzioni e controllo del flusso"),
     ("05", "05_Oggetti_ed_errori", "Oggetti ed errori"),
@@ -72,20 +74,29 @@ PROGRAMMA = [
     ("E2", "Esercitazione_2", "Esercitazione 2"),
     ("07", "07_Pandas_operazioni", "Pandas: operazioni sui DataFrame"),
     ("08", "08_Pandas_date", "Pandas: le date"),
-    ("09", "09_Plotly", "Plotly per serie storiche"),
     ("E3", "Esercitazione_3", "Esercitazione 3"),
+    ("09", "09_Plotly", "Plotly per serie storiche"),
     ("10", "10_Agenti_per_il_coding", "Agenti per il coding"),
     ("11", "11_Capstone", "Capstone: il carico del Nord e la temperatura"),
 ]
 COMPITO = ("C", "Homework", "Homework")
 
 NOMI_BLOCCO = {
-    1: "Blocco 1 · Setup, Python e sintassi di base",
-    2: "Blocco 2 · Controllo del flusso, funzioni e primi dati in pandas",
-    3: "Blocco 3 · Analisi dei dati con pandas e visualizzazione",
-    4: "Blocco 4 · Agenti per il coding e caso d'uso end-to-end",
-    0: "Tra le due giornate",
+    1: "Modulo 1 · Setup, Python e sintassi di base",
+    2: "Modulo 2 · Controllo del flusso, funzioni e primi dati in pandas",
+    3: "Modulo 3 · Analisi dei dati con pandas e visualizzazione",
+    4: "Modulo 4 · Agenti per il coding e capstone",
+    0: "Materiale di riserva",
 }
+
+
+def programma(aula: str) -> list[tuple[str, str, str]]:
+    """Le voci del programma che valgono per `aula`, come (numero, file, titolo)."""
+    return [(p[0], p[1], p[2]) for p in PROGRAMMA if len(p) < 4 or aula in p[3]]
+
+
+def _nome_link(n: str, t: str) -> str:
+    return f"{n} · {t}" if n[0].isdigit() else t
 
 # ---------------------------------------------------------------------------
 # Sistema visivo. Un posto solo: cambiare qui cambia tutto.
@@ -285,21 +296,21 @@ class Notebook:
     def _per_aula(self, valore, aula: str):
         return valore[aula] if isinstance(valore, dict) else valore
 
-    def _link_prossimo(self) -> str | None:
+    def _link_prossimo(self, aula: str) -> str | None:
         if self.prossimo is not None:
             return self.prossimo
-        nums = [p[0] for p in PROGRAMMA]
+        voci = programma(aula)
+        nums = [p[0] for p in voci]
         if self.num not in nums:
             return None
         i = nums.index(self.num)
-        if i + 1 >= len(PROGRAMMA):
+        if i + 1 >= len(voci):
             return None
-        n, f, t = PROGRAMMA[i + 1]
-        testo = f"Prossimo: [{n} · {t}]({f}.ipynb)"
-        return testo
+        n, f, t = voci[i + 1]
+        return f"Prossimo: [{_nome_link(n, t)}]({f}.ipynb)"
 
     def banner(self, aula: str, soluzioni: bool) -> str:
-        """Testata piana: titolo, tempo e dati su una riga, i tre obiettivi. Blocco, giornata e aula stanno in chiusura."""
+        """Testata piana: titolo, tempo e dati su una riga, i tre obiettivi. Modulo e aula stanno in chiusura."""
         obiettivi = self._per_aula(self.obiettivi, aula)
         dati = self._per_aula(self.dati, aula)
         tempo = self._per_aula(self.tempo, aula)
@@ -314,12 +325,13 @@ class Notebook:
         righe += [f"- {o}" for o in obiettivi]
         return f'<a id="inizio"></a>\n# {titolo}\n\n' + "\n".join(righe)
 
-    def _link_precedente(self) -> str | None:
-        nums = [p[0] for p in PROGRAMMA]
+    def _link_precedente(self, aula: str) -> str | None:
+        voci = programma(aula)
+        nums = [p[0] for p in voci]
         if self.extra or self.num not in nums or nums.index(self.num) == 0:
             return None
-        n, f, t = PROGRAMMA[nums.index(self.num) - 1]
-        return f"Precedente: [{n} · {t}]({f}.ipynb)"
+        n, f, t = voci[nums.index(self.num) - 1]
+        return f"Precedente: [{_nome_link(n, t)}]({f}.ipynb)"
 
     def build(self, root: Path | str, aula: str, soluzioni: bool = False, lint: bool = True) -> Path:
         assert aula in AULE
@@ -465,13 +477,11 @@ class Notebook:
             chiusura = f"---\n\n**Fine dell'{self.titolo.lower()}.**"
         else:
             chiusura = f"---\n\n**Fine del notebook {self.num}.**"
-        link = [l for l in (self._link_precedente(), None if self.extra else self._link_prossimo()) if l]
+        link = [l for l in (self._link_precedente(aula), None if self.extra else self._link_prossimo(aula)) if l]
         if link:
             chiusura += " " + " &nbsp;·&nbsp; ".join(link)
         if not self.extra:
             meta = ["Approfondimenti: se la classe è avanti" if self.fuori_programma else NOMI_BLOCCO[self.blocco]]
-            if self.giornata:
-                meta.append(f"Giornata {self.giornata}")
             meta.append(NOMI_AULA[aula])
             chiusura += "\n\n<sub>" + " · ".join(meta) + "</sub>"
         cells.append(new_markdown_cell(chiusura, metadata={"tags": ["chiusura"]}))

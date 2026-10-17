@@ -8,8 +8,8 @@ def costruisci() -> Notebook:
         num="09",
         file="09_Plotly",
         titolo="Plotly per serie storiche",
-        blocco=3,
-        giornata=2,
+        blocco=4,
+        giornata=4,
         intento="Plotly produce grafici interattivi, che per una serie storica permettono di ingrandire un periodo, selezionare un intervallo e confrontare più serie nello stesso grafico.",
         obiettivi=[
             "fare grafici a linee, istogrammi e scatter con Plotly Express",

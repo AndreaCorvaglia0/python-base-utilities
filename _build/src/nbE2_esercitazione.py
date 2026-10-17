@@ -29,7 +29,7 @@ def costruisci() -> Notebook:
         file="Esercitazione_2",
         titolo="Esercitazione 2",
         blocco=2,
-        giornata=1,
+        giornata=2,
         intento="Un'ora di domande ed esercizi sui notebook 04-06: funzioni, cicli, condizioni e lettura dei dati con pandas.",
         obiettivi={
             "base": [

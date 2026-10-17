@@ -37,7 +37,7 @@ def costruisci() -> Notebook:
         file="Esercitazione_3",
         titolo="Esercitazione 3",
         blocco=3,
-        giornata=2,
+        giornata=3,
         intento="Un'ora di domande ed esercizi sui notebook 07 e 08: maschere, groupby, ordinamento e date.",
         obiettivi=[
             "selezionare righe con una maschera booleana e sommare per gruppo con `groupby`",

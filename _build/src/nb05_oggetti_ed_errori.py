@@ -26,7 +26,7 @@ def costruisci() -> Notebook:
         file="05_Oggetti_ed_errori",
         titolo="Oggetti ed errori",
         blocco=2,
-        giornata=1,
+        giornata=2,
         intento=(
             "Il notebook insegna a leggere una riga di codice scritta da altri, riconoscendo librerie, classi, "
             "oggetti, metodi e attributi, e a leggere un messaggio di errore per capire che cosa è andato storto e dove."

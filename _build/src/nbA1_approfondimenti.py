@@ -9,7 +9,7 @@ def costruisci() -> Notebook:
         file="Approfondimenti_1",
         titolo="Approfondimenti 1",
         blocco=2,
-        giornata=1,
+        giornata=2,
         fuori_programma=True,
         intento="Raccoglie gli argomenti della prima giornata che restano fuori quando il tempo manca; si affronta in classe se si è in anticipo sul programma, oppure a casa.",
         obiettivi={

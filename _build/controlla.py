@@ -16,6 +16,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PY = [sys.executable]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from nbkit import PROGRAMMA  # noqa: E402
 
 
 def run(args: list[str]) -> tuple[int, str]:
@@ -42,6 +45,7 @@ def main(argv: list[str]) -> int:
             stem = f.stem
             for n in filtro:
                 if (n == "EXTRA" and cartella == "Extra") or stem.startswith(n + "_") or (n == "C" and stem.startswith("Homework")) \
+                        or any(p[0] == n and stem == p[1] for p in PROGRAMMA) \
                         or (n.startswith("E") and stem == f"Esercitazione_{n[1:]}") or (n.startswith("A") and stem == f"Approfondimenti_{n[1:]}"):
                     scelti.append(str(f.relative_to(ROOT)))
         return scelti
