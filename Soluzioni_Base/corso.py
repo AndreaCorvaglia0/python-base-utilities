@@ -232,39 +232,31 @@ assert n_letture == 930 and list(letture_db.columns) == ["pod", "data", "kwh"], 
 assert round(kwh_marzo, 1) == 69880.1, "❌ kwh_marzo: somma la colonna kwh di letture_db"
 '''),
     'E3.1': ('Esercizio E3.1', r'''
-assert {"potenza_kw", "vento_ms", "direzione", "pressione", "temperatura"} <= set(turbina.columns), "❌ turbina: controlla i nomi nel dizionario nomi"
-assert primo == pd.Timestamp("2023-01-01 00:00"), "❌ primo: l'indice deve partire dalla mezzanotte del 1° gennaio 2023"
-assert ultimo == pd.Timestamp("2023-12-31 23:00"), "❌ ultimo: controlla %I e %p nel formato e l'ordinamento con sort_index()"
+assert len(ascolti_103) == 1, "❌ ascolti_103: deve restare una sola riga, quella con UserID 103"
+assert ascolti_103["Song"].tolist() == ["Song A"] and ascolti_103["Plays"].tolist() == [4], "❌ ascolti_103: la riga dell'utente 103 ha Song A e 4 ascolti"
 '''),
     'E3.2': ('Esercizio E3.2', r'''
-assert ore_luglio == 744, "❌ ore_luglio: seleziona il mese con turbina.loc[\"2023-07\"] e contalo con len()"
-assert n_ventose == 645, "❌ n_ventose: la condizione è vento_ms > 12, estremo escluso"
-assert ore_ferme == 822, "❌ ore_ferme: somma la maschera potenza_kw == 0"
+atteso = {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}
+assert ascolti_per_canzone.to_dict() == atteso, "❌ ascolti_per_canzone: raggruppa per Song e somma Plays"
 '''),
     'E3.3': ('Esercizio E3.3', r'''
-assert len(mensile) == 12, "❌ mensile: resample(\"ME\") produce un valore per ogni mese"
-assert mese_migliore == pd.Timestamp("2023-04-30"), "❌ mese_migliore: usa idxmax() su mensile, che restituisce l'etichetta"
-assert mese_peggiore == pd.Timestamp("2023-09-30"), "❌ mese_peggiore: usa idxmin() su mensile"
+assert ascolti_per_artista.tolist() == [19, 7, 2, 1], "❌ ascolti_per_artista: somma Plays per Artist e ordina con ascending=False"
+assert artista_top == "Artist X", "❌ artista_top: usa idxmax() sui totali"
 '''),
     'E3.4': ('Esercizio E3.4', r'''
-assert len(profilo) == 24, "❌ profilo: raggruppa per turbina.index.hour, che ha 24 valori distinti"
-assert ora_migliore == 16, "❌ ora_migliore: usa idxmax() su profilo"
-assert round(profilo.max(), 1) == 1294.1, "❌ profilo: calcola la media di potenza_kw, non la somma"
+assert isinstance(utenti_assidui, set), "❌ utenti_assidui: costruiscilo con set(utenti)"
+assert utenti_assidui == {101, 103, 105}, "❌ utenti_assidui: la maschera è ascolti[\"Plays\"] > 3 e la colonna è UserID"
 '''),
     'E3.5': ('Esercizio E3.5', r'''
-assert len(unione) == 365, "❌ unione: con how=\"left\" e giornaliera a sinistra restano tutti i 365 giorni"
-assert senza_intervento == 361, "❌ senza_intervento: conta i NaN di motivo prima di riempirli"
-assert (unione["motivo"] == "nessuna").sum() == 361, "❌ motivo: riempi i NaN con fillna(\"nessuna\") e riassegna la colonna"
+assert isinstance(df_serie.index, pd.DatetimeIndex) and df_serie.index.is_monotonic_increasing, "❌ df_serie: converti timestamp_str, usa set_index(\"timestamp\") e sort_index()"
+assert list(df_serie.columns) == ["power_kw", "temp_c"], "❌ df_serie: tieni le colonne power_kw e temp_c"
+assert len(periodo) == 22 and str(periodo.index[0]) == "2025-03-01 12:00:00", "❌ periodo: df_serie.loc[\"2025-03-01 12:00\":\"2025-03-01 18:00\"]"
 '''),
     'E3.6': ('Esercizio E3.6', r'''
-assert len(settimanale) == 7, "❌ settimanale: raggruppa per turbina.index.dayofweek"
-assert giorno_migliore == "lunedì", "❌ giorno_migliore: usa settimanale.idxmax() come posizione in giorni"
-'''),
-    'E3.7': ('Esercizio E3.7', r'''
-from pathlib import Path
-assert Path("energia_mensile.csv").exists() and Path("energia_mensile.xlsx").exists(), "❌ i due file non sono nella cartella del notebook"
-assert len(riletto) == 12 and stesse_righe, "❌ riletto: il CSV deve avere 12 righe, una per mese"
-assert str(riletto["data"].dtype).startswith("datetime64"), "❌ riletto: aggiungi parse_dates=[\"data\"] a read_csv"
+assert df_15min["date"].nunique() == 3, "❌ date: usa df_15min.index.date"
+assert df_15min["is_weekend"].sum() == 192, "❌ is_weekend: df_15min.index.dayofweek >= 5"
+assert len(media_oraria) == 72 and round(media_oraria.iloc[0], 3) == 230.925, "❌ media_oraria: df_15min[\"power_kw\"].resample(\"h\").mean()"
+assert round(somma_oraria.iloc[0], 1) == 923.7, "❌ somma_oraria: come media_oraria, con sum() al posto di mean()"
 '''),
     'Passo 1': ('Passo 1', r'''
 assert cliente == "Panificio Rè", "❌ cliente: il valore della chiave 'cliente'"

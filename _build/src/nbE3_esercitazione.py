@@ -1,53 +1,34 @@
-"""E3 · Esercitazione 3: un'ora di lavoro sui notebook 07 e 08, con l'anno 2023 di una turbina eolica in Texas."""
+"""E3 · Esercitazione 3: un'ora di domande ed esercizi sui notebook 07-08, sugli esercizi originali del docente."""
 
 from textwrap import dedent
 
 from nbkit import Notebook
 
-# Il codice dell'esercizio E3.1, già scritto in testa agli esercizi successivi: chi non ha finito il primo può proseguire.
-PREPARA = """
-    # la turbina con i nomi brevi e l'indice di date, come nell'esercizio E3.1
-    turbina = pd.read_csv("../Dati/TexasTurbine.csv")
-    turbina = turbina.rename(columns={
-        "System power generated | (kW)": "potenza_kw",
-        "Wind speed | (m/s)": "vento_ms",
-        "Wind direction | (deg)": "direzione",
-        "Pressure | (atm)": "pressione",
-        "Air temperature | ('C)": "temperatura",
-    })
-    turbina["data"] = pd.to_datetime("2023 " + turbina["Time stamp"], format="%Y %b %d, %I:%M %p")
-    turbina = turbina.set_index("data").sort_index()
+
+def unisci(*parti: str) -> str:
+    """Toglie l'indentazione a ogni pezzo di codice e li unisce con una riga vuota."""
+    return "\n\n".join(dedent(p).strip("\n") for p in parti)
+
+
+def esercizio_due_aule(nb: Notebook, titolo: str, scenario: str, base: dict, avanzata: dict,
+                       facoltativo: bool = False) -> None:
+    """Lo stesso esercizio per le due aule: titolo e scenario in comune, il resto può cambiare.
+
+    `base` e `avanzata` contengono richiesta, starter, soluzione, verifica e suggerimenti; le chiavi che mancano
+    in `avanzata` si prendono da `base`.
+    """
+    nb.esercizio(titolo=titolo, scenario=scenario, facoltativo=facoltativo, aula="base", **base)
+    nb.esercizio(titolo=titolo, scenario=scenario, facoltativo=facoltativo, aula="avanzata", **{**base, **avanzata})
+
+
+# Le righe che ricostruiscono la serie dell'esercizio E3.5 con i buchi riempiti, come nel notebook 08: aprono gli
+# starter dell'esercizio E3.6 e della sfida, che così si possono fare anche senza aver risolto E3.5.
+PREPARA_SERIE = """
+    # la serie dell'esercizio E3.5, con i buchi riempiti dall'interpolazione come nel notebook 08
+    df["timestamp"] = pd.to_datetime(df["timestamp_str"], format="%d/%m/%Y %H:%M")
+    df_serie = df[["timestamp", "power_kw", "temp_c"]].set_index("timestamp").sort_index()
+    df_15min = df_serie.asfreq("15min").interpolate(method="linear")
 """
-
-
-def unisci(*parti: str | None) -> str:
-    """Toglie l'indentazione a ogni pezzo di codice e li separa con una riga vuota."""
-    return "\n\n".join(dedent(p).strip("\n") for p in parti if p)
-
-
-def consegna(passi: list[str], esito: str | None) -> str:
-    """I passi numerati della consegna, seguiti dalla frase che descrive il risultato."""
-    testo = "\n".join(f"{i}. {p}" for i, p in enumerate(passi, 1))
-    return testo + (f"\n\n{esito}" if esito else "")
-
-
-def esercizio(nb: Notebook, titolo: str, scenario: str, passi: list[str], esito: str | None,
-              starter_base: str, starter_avanzata: str, soluzione: str, verifica_base: str,
-              suggerimenti_base: list[str], passo_avanzata: str, soluzione_avanzata: str,
-              verifica_avanzata: str, suggerimento_avanzata: str | None = None,
-              esito_avanzata: str | None = None) -> None:
-    """Lo stesso esercizio per le due aule: starter guidato e due suggerimenti in Base, starter quasi vuoto e un passo in più in Avanzata."""
-    nb.esercizio(
-        titolo=titolo, scenario=scenario, richiesta=consegna(passi, esito),
-        starter=starter_base, soluzione=soluzione, verifica=verifica_base,
-        suggerimenti=suggerimenti_base, aula="base",
-    )
-    esito_a = " ".join(e for e in (esito, esito_avanzata) if e) or None
-    nb.esercizio(
-        titolo=titolo, scenario=scenario, richiesta=consegna(passi + [passo_avanzata], esito_a),
-        starter=starter_avanzata, soluzione=unisci(soluzione, soluzione_avanzata), verifica=verifica_avanzata,
-        suggerimenti=[suggerimento_avanzata] if suggerimento_avanzata else None, aula="avanzata",
-    )
 
 
 def costruisci() -> Notebook:
@@ -57,640 +38,647 @@ def costruisci() -> Notebook:
         titolo="Esercitazione 3",
         blocco=3,
         giornata=2,
-        intento="Questa esercitazione riprende i notebook 07 e 08 su un anno di dati orari di una turbina eolica in Texas: date, selezioni, resampling, groupby e merge.",
+        intento="Un'ora di domande ed esercizi sui notebook 07 e 08: maschere, groupby, ordinamento e date.",
         obiettivi=[
-            "convertire in date un testo senza anno e usarlo come indice",
-            "selezionare periodi e ore e aggregare per mese, per giorno e per ora",
-            "unire due tabelle sulla data e trattare i valori mancanti che ne risultano",
+            "selezionare righe con una maschera booleana e sommare per gruppo con `groupby`",
+            "ordinare un risultato con `sort_values` e trovarne il valore più alto con `idxmax`",
+            "convertire un testo in date, usarlo come indice e cambiare la frequenza con `resample`",
         ],
         tempo=60,
-        dati=["TexasTurbine.csv"],
+        dati=[],
         soluzioni_a_richiesta=True,
     )
 
-    # ------------------------------------------------------------------ apertura
+    # ------------------------------------------------------------------ come funziona l'ora
     nb.md("""
-        Questa esercitazione chiude la giornata e riprende quello che abbiamo visto nei notebook 07 e 08. Hai 45
-        minuti per lavorare sugli esercizi, poi li guardiamo insieme. Tutti gli esercizi usano lo stesso file, che
-        registra ora per ora la produzione di una turbina eolica in Texas durante il 2023, e ciascuno rilegge il file
-        da sé, quindi se ti blocchi su uno puoi passare al successivo.
+        Questa esercitazione chiude il modulo su pandas e riprende quello che abbiamo visto nei notebook 07 e 08.
+        Hai 45 minuti per lavorare sugli esercizi, poi li guardiamo insieme. Si comincia con quattro domande di
+        riepilogo e si prosegue con sei esercizi, da fare nell'ordine perché la difficoltà cresce; in fondo c'è una
+        sfida libera, senza verifica, per il tempo che resta.
     """)
     aiuti = """
         Ogni esercizio comincia dicendo che cosa vogliamo ottenere e perché, e da lì si può arrivare al risultato da
         soli. Chi preferisce procedere per gradi apre con un clic il blocco Passo per passo, e sotto {aiuti}, da
         leggere solo dopo aver provato. Sotto la cella da completare ci sono la verifica, che conferma il risultato o
-        dice che cosa controllare, e la cella `soluzione`, che mostra soltanto la soluzione di quell'esercizio. Se
-        finisci prima, in fondo al notebook trovi due esercizi facoltativi e una sfida senza verifica.
+        dice che cosa controllare, e la cella `soluzione`, che mostra soltanto la soluzione di quell'esercizio.
     """
     nb.md(aiuti.replace("{aiuti}", "due suggerimenti, anche loro nascosti"), aula="base")
     nb.md(aiuti.replace("{aiuti}", "un suggerimento, anche lui nascosto"), aula="avanzata")
 
-    # ------------------------------------------------------------------ domande
+    # ------------------------------------------------------------------ 1. Domande
     nb.sezione("Domande", intro="""
-        Le cinque domande che seguono riguardano i notebook 07 e 08. Per ciascuna conviene formulare la risposta a
-        mente o provarla in una cella di codice, e solo dopo aprire la risposta per confrontarla.
+        Le quattro domande che seguono riguardano i notebook 07 e 08 e richiedono pochi minuti. Per ciascuna
+        conviene prevedere la risposta a mente e solo dopo aprirla con un clic. In caso di dubbio si può provare la
+        riga in una cella di codice e, se il risultato sorprende, rileggere la parte del notebook che tratta
+        quell'argomento.
     """)
     nb.domanda(
-        "Su un DataFrame con indice `0, 1, 2, 3, ...`, quante righe restituiscono `df.loc[0:2]` e `df.iloc[0:2]`?",
+        "Con `numeri = pd.Series([4, 9, 2, 7])`, che cosa restituisce `numeri > 5`, e che cosa restituisce `numeri[numeri > 5]`?",
         """
-            `df.loc[0:2]` restituisce 3 righe, mentre `df.iloc[0:2]` ne restituisce 2. `loc` seleziona per etichetta e
-            include l'etichetta finale dell'intervallo, invece `iloc` seleziona per posizione ed esclude la posizione
-            finale, come lo slicing delle liste.
+            `numeri > 5` restituisce una maschera booleana, cioè una Series della stessa lunghezza con `False`,
+            `True`, `False`, `True`, un valore per ogni elemento. Messa tra quadre, la maschera tiene soltanto gli
+            elementi in cui vale `True`, quindi `numeri[numeri > 5]` contiene 9 e 7, con le etichette 1 e 3.
         """,
     )
     nb.domanda(
-        "Che cosa restituisce `df.groupby(\"x\")[\"y\"].sum()`?",
+        "Su un DataFrame `vendite` con le colonne `Categoria` e `Vendite`, che cosa restituisce `vendite.groupby(\"Categoria\")[\"Vendite\"].sum()`?",
         """
-            Restituisce una Series che ha come indice i valori distinti della colonna `x` e come valori la somma di `y`
-            per ciascuno di essi. Senza la funzione finale, `df.groupby("x")` restituirebbe soltanto un oggetto
-            GroupBy, che descrive i gruppi ma non calcola nulla.
+            Restituisce una Series con una riga per ogni categoria distinta: l'indice contiene le categorie e i valori
+            sono la somma delle vendite di ciascuna. Senza la funzione finale, `groupby` restituirebbe soltanto un
+            oggetto GroupBy, che descrive i gruppi ma non calcola nulla.
         """,
     )
     nb.domanda(
-        "Che cosa fa `serie.resample(\"D\").mean()` su una serie con un valore ogni ora, e che cosa serve perché funzioni?",
+        "Che cosa fa `pd.to_datetime` su una colonna di testo con valori come `\"01/03/2025 08:15\"`, e perché serve?",
         """
-            Raccoglie in un gruppo le 24 misure di ogni giorno e ne calcola la media, quindi la serie oraria diventa una
-            serie con un valore al giorno. Perché funzioni, la serie deve avere un indice di date, che si ottiene con
-            `set_index` su una colonna già convertita con `pd.to_datetime`.
+            Converte il testo in valori di tipo `datetime64`, in questo caso il 1° marzo 2025 alle 8:15. Finché la
+            colonna resta testo pandas non sa che rappresenta degli istanti, mentre dopo la conversione la può
+            ordinare nel tempo, usare come indice per selezionare un periodo e scomporre in ora, giorno e mese.
         """,
     )
     nb.domanda(
-        "Di che cosa ha bisogno `pd.to_datetime` quando il testo di una data è ambiguo, come `\"01/02/2025\"`?",
+        "Su una serie con un valore ogni quarto d'ora per tre giorni e un indice di date, che cosa restituisce `serie.resample(\"D\").mean()`?",
         """
-            Ha bisogno di sapere in che ordine sono scritti giorno e mese, perché la stessa stringa può essere il 1°
-            febbraio o il 2 gennaio. Si indica con `dayfirst=True` oppure, in modo più preciso, descrivendo il formato
-            con `format="%d/%m/%Y"`.
-        """,
-    )
-    nb.domanda(
-        "In un `pd.merge` con `how=\"left\"`, che cosa succede alle righe di sinistra la cui chiave non compare nella tabella di destra?",
-        """
-            Restano nel risultato, perché il left join conserva tutte le righe della tabella di sinistra, e nelle
-            colonne che arrivano dalla tabella di destra ricevono `NaN`. Con il valore predefinito `how="inner"`,
-            invece, quelle righe verrebbero scartate.
+            Restituisce una serie con tre valori, uno per giorno, ciascuno uguale alla media delle misure di quel
+            giorno. Ogni valore ha come etichetta la mezzanotte del giorno a cui si riferisce, e senza un indice di
+            date `resample` non funzionerebbe.
         """,
     )
 
-    # ------------------------------------------------------------------ esercizi
+    # ------------------------------------------------------------------ 2. Esercizi
     nb.sezione("Esercizi", intro="""
-        Il file `TexasTurbine.csv` ha 8760 righe, una per ogni ora del 2023, senza valori mancanti e senza
-        duplicati. Per ogni ora riporta la potenza prodotta dalla turbina in kW, la velocità e la direzione del
-        vento, la pressione dell'aria e la sua temperatura.
-        I primi cinque sono gli esercizi che guardiamo insieme alla fine dell'ora. La cella qui sotto importa pandas e va eseguita prima di cominciare.
+        I primi quattro esercizi ripercorrono le selezioni, i raggruppamenti e l'ordinamento del notebook 07 sul
+        DataFrame `ascolti`, che una piattaforma di streaming musicale usa per registrare quante volte ogni utente
+        ha ascoltato una canzone. Gli ultimi due lavorano sulle misure quartorarie del notebook 08. La cella qui
+        sotto importa pandas e crea `ascolti`, e va eseguita prima di cominciare; gli esercizi partono tutti dagli
+        stessi dati, quindi si possono affrontare anche senza aver risolto i precedenti.
     """)
     nb.code("""
         import pandas as pd
+
+        # DataFrame degli ascolti
+        dati_ascolti = {
+            "UserID": [101, 102, 103, 104, 105, 106],
+            "Song": ["Song A", "Song B", "Song A", "Song C", "Song B", "Song D"],
+            "Artist": ["Artist X", "Artist Y", "Artist X", "Artist Z", "Artist Y", "Artist W"],
+            "Plays": [15, 2, 4, 1, 5, 2],
+        }
+        ascolti = pd.DataFrame(dati_ascolti)
+        ascolti
     """)
 
-    nb.md("""
-        Nel file la colonna `Time stamp` contiene le date come testo, nella forma `Jan 1, 12:00 am`, con il nome
-        abbreviato del mese in inglese, l'ora da 1 a 12 seguita da am o pm, e senza l'anno. Per convertirle conviene
-        descrivere il formato con il parametro `format` di `pd.to_datetime`, indicando un codice per ogni parte:
-        `%b` per il mese abbreviato, `%d` per il giorno, `%I` per l'ora nel formato a 12 ore, `%M` per i minuti e
-        `%p` per am o pm. Poiché senza anno pandas userebbe il 1900, aggiungiamo `"2023 "` in testa alla stringa e
-        `%Y` in testa al formato.
-    """)
-
-    esercizio(
+    # E3.1 ---------------------------------------------------------------
+    esercizio_due_aule(
         nb,
-        titolo="Leggere e datare la turbina",
+        titolo="Gli ascolti di un utente",
         scenario="""
-            Il file della turbina ha colonne dai nomi lunghi, come `System power generated | (kW)`, e le date
-            scritte come testo, senza l'anno. Vogliamo dare alle colonne nomi brevi, più facili da scrivere, e
-            trasformare `Time stamp` in un indice di date, con il quale pandas seleziona un mese scrivendone l'anno e
-            il mese e somma per giorno o per mese. Lo stesso codice apre tutti gli esercizi successivi. Se la
-            conversione è corretta, l'indice va dalla mezzanotte del 1° gennaio 2023 alle 23:00 del 31 dicembre.
+            L'utente con `UserID` 103 vuole sapere quali canzoni risultano nella sua cronologia e quante volte le ha
+            ascoltate. Vogliamo quindi tutte le righe di `ascolti` che lo riguardano, e con una maschera booleana
+            pandas le trova allo stesso modo in una tabella di sei righe o di sei milioni. Il risultato è una sola
+            riga, con `Song A` di `Artist X` e 4 ascolti.
         """,
-        passi=[
-            "Rinomina le colonne con `rename`, usando i nomi brevi `potenza_kw`, `vento_ms`, `direzione`, `pressione` e `temperatura`.",
-            "Crea la colonna `data` convertendo con `pd.to_datetime` la stringa `\"2023 \" + turbina[\"Time stamp\"]`, con il formato che descrive il testo.",
-            "Imposta `data` come indice con `set_index` e ordina le righe con `sort_index`.",
-            "Salva in `primo` e in `ultimo` il primo e l'ultimo timestamp dell'indice, che dicono se la conversione ha letto bene le ore e se le righe sono in ordine.",
-        ],
-        esito="Se la conversione è corretta, il primo timestamp è la mezzanotte del 1° gennaio 2023 e l'ultimo corrisponde alle 23:00 del 31 dicembre.",
-        starter_base="""
-            turbina = pd.read_csv("../Dati/TexasTurbine.csv")
-
-            nomi = {
-                "System power generated | (kW)": "potenza_kw",
-                "Wind speed | (m/s)": ...,
-                "Wind direction | (deg)": ...,
-                "Pressure | (atm)": ...,
-                "Air temperature | ('C)": ...,
-            }
-            turbina = turbina.rename(columns=nomi)
-            turbina["data"] = pd.to_datetime("2023 " + turbina["Time stamp"], format=...)
-            turbina = turbina.set_index(...).sort_index()
-
-            primo = ...
-            ultimo = ...
-            print(primo, ultimo)
-        """,
-        starter_avanzata="""
-            turbina = pd.read_csv("../Dati/TexasTurbine.csv")
-
-            turbina = ...
-            primo = ...
-            ultimo = ...
-            ordinato = ...
-            passi = ...
-        """,
-        soluzione="""
-            turbina = pd.read_csv("../Dati/TexasTurbine.csv")
-
-            nomi = {
-                "System power generated | (kW)": "potenza_kw",
-                "Wind speed | (m/s)": "vento_ms",
-                "Wind direction | (deg)": "direzione",
-                "Pressure | (atm)": "pressione",
-                "Air temperature | ('C)": "temperatura",
-            }
-            turbina = turbina.rename(columns=nomi)
-            turbina["data"] = pd.to_datetime("2023 " + turbina["Time stamp"], format="%Y %b %d, %I:%M %p")
-            turbina = turbina.set_index("data").sort_index()
-
-            primo = turbina.index[0]
-            ultimo = turbina.index[-1]
-            print(primo, ultimo)
-        """,
-        verifica_base="""
-            assert {"potenza_kw", "vento_ms", "direzione", "pressione", "temperatura"} <= set(turbina.columns), "❌ turbina: controlla i nomi nel dizionario nomi"
-            assert primo == pd.Timestamp("2023-01-01 00:00"), "❌ primo: l'indice deve partire dalla mezzanotte del 1° gennaio 2023"
-            assert ultimo == pd.Timestamp("2023-12-31 23:00"), "❌ ultimo: controlla %I e %p nel formato e l'ordinamento con sort_index()"
-        """,
-        suggerimenti_base=[
-            """
-                Ogni parte della stringa `2023 Jan 1, 12:00 am` ha il suo codice, e il formato deve ripetere anche gli
-                spazi, la virgola e i due punti del testo. Il primo e l'ultimo elemento dell'indice si leggono come in
-                una lista.
+        base=dict(
+            richiesta="""
+                1. Costruisci in `cond` la maschera delle righe in cui `UserID` vale 103.
+                2. Salva in `ascolti_103` le righe di `ascolti` in cui la maschera vale `True` e mostrale.
             """,
-            """
-                Il formato completo è `"%Y %b %d, %I:%M %p"`, l'indice si imposta con `set_index("data")`, e il primo
-                timestamp è `turbina.index[0]`.
+            suggerimenti=[
+                """
+                    Una maschera booleana nasce dal confronto tra una colonna e un valore, e messa tra quadre dopo il
+                    DataFrame tiene soltanto le righe in cui vale `True`.
+                """,
+                """
+                    Il confronto è `ascolti["UserID"] == 103`, con il doppio uguale, e la selezione è
+                    `ascolti[cond]`.
+                """,
+            ],
+            starter="""
+                cond = ...
+                ascolti_103 = ascolti[...]
+                ascolti_103
             """,
-        ],
-        passo_avanzata="Per essere sicuro che nell'indice non manchino ore, salva in `ordinato` il valore di `turbina.index.is_monotonic_increasing` e in `passi` il conteggio degli intervalli tra due timestamp consecutivi, calcolati con `diff()` come nel notebook 08.",
-        esito_avanzata="Il conteggio `passi` ha un solo valore, un'ora, che compare 8759 volte.",
-        soluzione_avanzata="""
-            ordinato = turbina.index.is_monotonic_increasing
-            passi = turbina.index.to_series().diff().value_counts()
-            print(ordinato)
-            passi
-        """,
-        verifica_avanzata="""
-            assert {"potenza_kw", "vento_ms", "direzione", "pressione", "temperatura"} <= set(turbina.columns), "❌ turbina: controlla i nomi passati a rename"
-            assert primo == pd.Timestamp("2023-01-01 00:00") and ultimo == pd.Timestamp("2023-12-31 23:00"), "❌ primo, ultimo: controlla il formato e l'ordinamento dell'indice"
-            assert ordinato and len(passi) == 1 and passi.iloc[0] == 8759, "❌ passi: tutti gli 8759 intervalli devono valere un'ora"
-        """,
-        suggerimento_avanzata="""
-            Il formato è `"%Y %b %d, %I:%M %p"`. Gli intervalli si calcolano sull'indice trasformato in Series, con
-            `turbina.index.to_series().diff()`, e si contano con `value_counts()`.
-        """,
+            soluzione="""
+                cond = ascolti["UserID"] == 103
+                ascolti_103 = ascolti[cond]
+                ascolti_103
+            """,
+            verifica="""
+                assert len(ascolti_103) == 1, "❌ ascolti_103: deve restare una sola riga, quella con UserID 103"
+                assert ascolti_103["Song"].tolist() == ["Song A"] and ascolti_103["Plays"].tolist() == [4], "❌ ascolti_103: la riga dell'utente 103 ha Song A e 4 ascolti"
+            """,
+        ),
+        avanzata=dict(
+            richiesta="""
+                1. Costruisci in `cond` la maschera delle righe in cui `UserID` vale 103 e salva in `ascolti_103` le
+                   righe che la rispettano.
+                2. Nella risposta all'utente bastano la canzone e il numero di ascolti: salva in `risposta` le sole
+                   colonne `Song` e `Plays` delle stesse righe, selezionando righe e colonne insieme con `loc`.
+            """,
+            suggerimenti=[
+                """
+                    `loc` accetta la maschera come primo argomento e la lista delle colonne come secondo, come in
+                    `ascolti.loc[cond, ["Song", "Plays"]]`.
+                """,
+            ],
+            starter="""
+                # da creare: cond, ascolti_103, risposta
+            """,
+            soluzione="""
+                cond = ascolti["UserID"] == 103
+                ascolti_103 = ascolti[cond]
+                risposta = ascolti.loc[cond, ["Song", "Plays"]]
+                risposta
+            """,
+            verifica="""
+                assert len(ascolti_103) == 1 and ascolti_103["Plays"].tolist() == [4], "❌ ascolti_103: la maschera è ascolti[\\"UserID\\"] == 103"
+                assert list(risposta.columns) == ["Song", "Plays"] and len(risposta) == 1, "❌ risposta: ascolti.loc[cond, [\\"Song\\", \\"Plays\\"]]"
+            """,
+        ),
     )
 
-    esercizio(
+    # E3.2 ---------------------------------------------------------------
+    esercizio_due_aule(
         nb,
-        titolo="Selezionare ore e periodi",
+        titolo="Totale di ascolti per canzone",
         scenario="""
-            Per il resoconto dell'anno il gestore della turbina ci chiede tre conteggi: se nei dati di luglio ci sono
-            tutte le ore del mese, in quante ore il vento ha superato i 12 m/s e in quante la turbina non ha
-            prodotto nulla. Su 8760 righe nessuno li farebbe a mano, mentre con l'indice di date un mese si seleziona
-            scrivendone l'anno e il mese, e le ore che rispettano una condizione si contano con una maschera
-            booleana. Luglio ha 31 giorni, quindi le sue ore sono 744.
+            Per la classifica della settimana vogliamo il totale degli ascolti di ogni canzone, sommando quelli di
+            tutti gli utenti. Con `groupby` pandas raccoglie le righe della stessa canzone e ne somma gli ascolti in
+            una sola istruzione, che resta uguale quando le canzoni diventano migliaia. Il risultato è una Series con
+            19 ascolti per `Song A`, 7 per `Song B`, 1 per `Song C` e 2 per `Song D`.
         """,
-        passi=[
-            "Seleziona in `luglio` le righe di luglio 2023 con `loc` e salva in `ore_luglio` il loro numero, da confrontare con le 744 ore del mese.",
-            "Salva in `ventose` le ore in cui `vento_ms` è maggiore di 12, usando una maschera booleana, e in `n_ventose` il loro numero.",
-            "Salva in `ore_ferme` il numero di ore in cui `potenza_kw` vale 0.",
-        ],
-        esito="Luglio è completo, quindi `ore_luglio` vale 744; le ore con il vento sopra i 12 m/s sono 645 e quelle in cui la turbina non ha prodotto nulla sono 822.",
-        starter_base=unisci(PREPARA, """
-            luglio = turbina.loc[...]
-            ore_luglio = ...
-
-            ventose = turbina[...]
-            n_ventose = ...
-
-            ore_ferme = ...
-            print(ore_luglio, n_ventose, ore_ferme)
-        """),
-        starter_avanzata=unisci(PREPARA, """
-            luglio = ...
-            ore_luglio = ...
-            ventose = ...
-            n_ventose = ...
-            ore_ferme = ...
-            ventose_query = ...
-        """),
-        soluzione=unisci(PREPARA, """
-            luglio = turbina.loc["2023-07"]
-            ore_luglio = len(luglio)
-
-            ventose = turbina[turbina["vento_ms"] > 12]
-            n_ventose = len(ventose)
-
-            ore_ferme = (turbina["potenza_kw"] == 0).sum()
-            print(ore_luglio, n_ventose, ore_ferme)
-        """),
-        verifica_base="""
-            assert ore_luglio == 744, "❌ ore_luglio: seleziona il mese con turbina.loc[\\"2023-07\\"] e contalo con len()"
-            assert n_ventose == 645, "❌ n_ventose: la condizione è vento_ms > 12, estremo escluso"
-            assert ore_ferme == 822, "❌ ore_ferme: somma la maschera potenza_kw == 0"
-        """,
-        suggerimenti_base=[
-            """
-                Con un indice di date, `loc` accetta una data scritta solo in parte, come l'anno e il mese. Il numero
-                di righe di un DataFrame si ottiene con `len()`, mentre la somma di una maschera conta i suoi `True`.
+        base=dict(
+            richiesta="""
+                1. Raggruppa `ascolti` per la colonna `Song`.
+                2. Somma la colonna `Plays` di ogni gruppo e salva il risultato in `ascolti_per_canzone`.
             """,
-            """
-                Il mese si seleziona con `turbina.loc["2023-07"]`; la maschera del vento è `turbina["vento_ms"] > 12`
-                e va messa dentro `turbina[...]`, mentre per le ore ferme basta `(turbina["potenza_kw"] == 0).sum()`.
+            suggerimenti=[
+                """
+                    La forma tipica è `df.groupby("colonna_di_raggruppamento")["colonna"].funzione()`, e la funzione
+                    che somma è `sum()`.
+                """,
+                """
+                    La riga completa è `ascolti.groupby("Song")["Plays"].sum()`.
+                """,
+            ],
+            starter="""
+                ascolti_per_canzone = ascolti.groupby("...")["..."].sum()
+                ascolti_per_canzone
             """,
-        ],
-        passo_avanzata="Ripeti il filtro del vento con `.query()`, in cui la condizione si scrive come testo e si legge quasi come la richiesta del gestore, salvando il risultato in `ventose_query`, e controlla che abbia lo stesso numero di righe di `ventose`.",
-        soluzione_avanzata="""
-            ventose_query = turbina.query("vento_ms > 12")
-            len(ventose_query) == n_ventose
-        """,
-        verifica_avanzata="""
-            assert ore_luglio == 744, "❌ ore_luglio: seleziona il mese con loc e una data parziale"
-            assert n_ventose == 645 and ore_ferme == 822, "❌ n_ventose, ore_ferme: controlla le due maschere"
-            assert len(ventose_query) == 645, "❌ ventose_query: dentro query il nome della colonna va senza virgolette"
-        """,
-        suggerimento_avanzata="""
-            Dentro la stringa di `query` il nome della colonna si scrive senza virgolette, come in `"vento_ms > 12"`.
-        """,
+            soluzione="""
+                ascolti_per_canzone = ascolti.groupby("Song")["Plays"].sum()
+                ascolti_per_canzone
+            """,
+            verifica="""
+                atteso = {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}
+                assert ascolti_per_canzone.to_dict() == atteso, "❌ ascolti_per_canzone: raggruppa per Song e somma Plays"
+            """,
+        ),
+        avanzata=dict(
+            richiesta="""
+                1. Calcola in `ascolti_per_canzone` il totale degli ascolti di ogni canzone con `groupby`.
+                2. Un totale alto può venire da molti utenti o da uno solo, e la classifica vuole distinguere i due
+                   casi: salva in `riepilogo` un DataFrame con il totale e il numero di utenti di ogni canzone,
+                   calcolati insieme con `agg(["sum", "count"])`.
+
+                In `riepilogo` la riga di `Song A` ha 19 ascolti da 2 utenti.
+            """,
+            suggerimenti=[
+                """
+                    Dopo aver scelto la colonna `Plays`, `agg` accetta la lista delle funzioni da applicare, e il
+                    risultato ha una colonna per ciascuna, con i nomi `sum` e `count`.
+                """,
+            ],
+            starter="""
+                # da creare: ascolti_per_canzone, riepilogo
+            """,
+            soluzione="""
+                ascolti_per_canzone = ascolti.groupby("Song")["Plays"].sum()
+                riepilogo = ascolti.groupby("Song")["Plays"].agg(["sum", "count"])
+                riepilogo
+            """,
+            verifica="""
+                assert ascolti_per_canzone.to_dict() == {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}, "❌ ascolti_per_canzone: raggruppa per Song e somma Plays"
+                assert riepilogo.loc["Song A", "sum"] == 19 and riepilogo.loc["Song A", "count"] == 2, "❌ riepilogo: groupby(\\"Song\\")[\\"Plays\\"].agg([\\"sum\\", \\"count\\"])"
+            """,
+        ),
     )
 
-    nb.md("""
-        Il metodo `resample` è un `groupby` guidato dal tempo, perché raccoglie in un gruppo tutte le righe dello
-        stesso periodo e lascia alla funzione che segue, come `sum()` o `mean()`, il compito di combinarle. Con
-        l'alias `ME` il periodo è il mese, e ogni gruppo prende come etichetta l'ultimo giorno del mese. La turbina
-        registra la potenza media di ogni ora in kW, e un'ora a 1000 kW produce 1000 kWh, quindi la somma dei valori
-        orari di un mese è l'energia del mese in kWh. L'etichetta del valore più alto si ottiene con `idxmax()`, e
-        quella del più basso con `idxmin()`.
-    """)
-
-    esercizio(
+    # E3.3 ---------------------------------------------------------------
+    esercizio_due_aule(
         nb,
-        titolo="L'energia per mese",
+        titolo="L'artista più ascoltato",
         scenario="""
-            Il gestore della turbina vuole confrontare l'energia prodotta nei dodici mesi del 2023 e sapere quali
-            sono stati il mese migliore e il peggiore. Con `resample` le 8760 ore diventano dodici totali mensili in
-            una sola riga di codice, e la stessa riga, con un alias diverso, darebbe i totali per settimana o per
-            giorno. Il risultato è una Series con 12 valori, in cui il mese migliore è aprile e il peggiore è
-            settembre.
+            Nella newsletter del mese la piattaforma pubblica la classifica degli artisti, dal più ascoltato al meno
+            ascoltato, e in apertura il nome del primo. Vogliamo ottenere entrambi da `ascolti` raggruppando per
+            artista, sommando gli ascolti e ordinando i totali, in modo che il mese prossimo basti rieseguire la
+            cella sui dati nuovi. In testa alla classifica c'è `Artist X`, con 19 ascolti.
         """,
-        passi=[
-            "Calcola in `mensile` l'energia di ogni mese in kWh, sommando `potenza_kw` con `resample(\"ME\")`.",
-            "Salva in `mese_migliore` l'etichetta del mese con l'energia più alta e in `mese_peggiore` quella del mese con l'energia più bassa.",
-        ],
-        esito="Il risultato `mensile` è una Series con 12 valori, e ogni etichetta è l'ultimo giorno di un mese, quindi `mese_migliore` è il 30 aprile 2023 e `mese_peggiore` il 30 settembre.",
-        starter_base=unisci(PREPARA, """
-            mensile = turbina["potenza_kw"].resample(...).sum()
-            mese_migliore = ...
-            mese_peggiore = ...
-            print(mese_migliore, mese_peggiore)
-            mensile
-        """),
-        starter_avanzata=unisci(PREPARA, """
-            mensile = ...
-            mese_migliore = ...
-            mese_peggiore = ...
-            mensile_vento = ...
-        """),
-        soluzione=unisci(PREPARA, """
-            mensile = turbina["potenza_kw"].resample("ME").sum()
-            mese_migliore = mensile.idxmax()
-            mese_peggiore = mensile.idxmin()
-            print(mese_migliore, mese_peggiore)
-            mensile
-        """),
-        verifica_base="""
-            assert len(mensile) == 12, "❌ mensile: resample(\\"ME\\") produce un valore per ogni mese"
-            assert mese_migliore == pd.Timestamp("2023-04-30"), "❌ mese_migliore: usa idxmax() su mensile, che restituisce l'etichetta"
-            assert mese_peggiore == pd.Timestamp("2023-09-30"), "❌ mese_peggiore: usa idxmin() su mensile"
-        """,
-        suggerimenti_base=[
-            """
-                Conviene selezionare prima la colonna `potenza_kw`, poi raggruppare per mese e sommare. Il mese
-                migliore è l'etichetta del valore più alto, non il valore stesso.
+        base=dict(
+            richiesta="""
+                1. Raggruppa le righe per `Artist`, somma `Plays` e ordina i totali in modo decrescente, come nella
+                   classifica, salvando il risultato in `ascolti_per_artista`.
+                2. Salva in `artista_top` il nome dell'artista con il totale più alto, quello da mettere in apertura.
             """,
-            """
-                La prima riga è `turbina["potenza_kw"].resample("ME").sum()`, e le etichette del massimo e del minimo
-                si ottengono con `mensile.idxmax()` e `mensile.idxmin()`.
+            suggerimenti=[
+                """
+                    I tre metodi si scrivono uno dopo l'altro: `groupby` e `sum()` danno i totali, e
+                    `sort_values(ascending=False)` li mette dal più grande al più piccolo. Il metodo `idxmax()`
+                    restituisce l'etichetta del valore massimo, cioè il nome dell'artista.
+                """,
+                """
+                    La prima riga è `ascolti.groupby("Artist")["Plays"].sum().sort_values(ascending=False)`, e la
+                    seconda `ascolti_per_artista.idxmax()`.
+                """,
+            ],
+            starter="""
+                ascolti_per_artista = ascolti.groupby(...)[...].sum().sort_values(ascending=False)
+                artista_top = ascolti_per_artista.idxmax()
+                artista_top  # Output: 'Artist X'
             """,
-        ],
-        passo_avanzata="Per vedere se il mese più produttivo è anche il più ventoso, calcola in `mensile_vento`, con un solo `resample(\"ME\")` seguito da `agg`, un DataFrame con la somma di `potenza_kw` e la media di `vento_ms` per ogni mese.",
-        esito_avanzata="In aprile la velocità media del vento è di circa 8.5 m/s.",
-        soluzione_avanzata="""
-            mensile_vento = turbina.resample("ME").agg({"potenza_kw": "sum", "vento_ms": "mean"})
-            mensile_vento
-        """,
-        verifica_avanzata="""
-            assert len(mensile) == 12, "❌ mensile: resample(\\"ME\\") produce un valore per ogni mese"
-            assert mese_migliore == pd.Timestamp("2023-04-30") and mese_peggiore == pd.Timestamp("2023-09-30"), "❌ mese_migliore, mese_peggiore: usa idxmax() e idxmin()"
-            assert round(mensile_vento.loc["2023-04-30", "vento_ms"], 1) == 8.5, "❌ mensile_vento: la colonna vento_ms è la media del mese"
-        """,
-        suggerimento_avanzata="""
-            A `agg` si passa un dizionario che associa a ogni colonna la sua funzione, come
-            `{"potenza_kw": "sum", "vento_ms": "mean"}`.
-        """,
+            soluzione="""
+                ascolti_per_artista = ascolti.groupby("Artist")["Plays"].sum().sort_values(ascending=False)
+                artista_top = ascolti_per_artista.idxmax()
+                artista_top  # Output: 'Artist X'
+            """,
+            verifica="""
+                assert ascolti_per_artista.tolist() == [19, 7, 2, 1], "❌ ascolti_per_artista: somma Plays per Artist e ordina con ascending=False"
+                assert artista_top == "Artist X", "❌ artista_top: usa idxmax() sui totali"
+            """,
+        ),
+        avanzata=dict(
+            richiesta="""
+                1. Calcola in `ascolti_per_artista` i totali per artista in ordine decrescente e salva in
+                   `artista_top` il nome del primo.
+                2. Sotto la classifica la newsletter riporta tutte le righe di `ascolti`, raggruppate per artista in
+                   ordine alfabetico e, per lo stesso artista, dall'ascolto più numeroso al meno numeroso: salvale in
+                   `elenco` con un solo `sort_values` su due colonne.
+
+                La prima riga di `elenco` è quella di `Artist W`, seguita dalle due di `Artist X`, prima i 15 ascolti
+                e poi i 4.
+            """,
+            suggerimenti=[
+                """
+                    `sort_values` accetta in `by` una lista di colonne e in `ascending` una lista con un valore per
+                    ciascuna, come in `by=["Artist", "Plays"], ascending=[True, False]`.
+                """,
+            ],
+            starter="""
+                # da creare: ascolti_per_artista, artista_top, elenco
+            """,
+            soluzione="""
+                ascolti_per_artista = ascolti.groupby("Artist")["Plays"].sum().sort_values(ascending=False)
+                artista_top = ascolti_per_artista.idxmax()
+
+                elenco = ascolti.sort_values(by=["Artist", "Plays"], ascending=[True, False])
+                print(artista_top)  # Output: Artist X
+                elenco
+            """,
+            verifica="""
+                assert ascolti_per_artista.tolist() == [19, 7, 2, 1] and artista_top == "Artist X", "❌ ascolti_per_artista e artista_top: groupby, sum, sort_values e idxmax"
+                assert elenco["UserID"].tolist() == [106, 101, 103, 105, 102, 104], "❌ elenco: by=[\\"Artist\\", \\"Plays\\"], ascending=[True, False]"
+            """,
+        ),
     )
 
-    nb.md("""
-        Nel notebook 08 abbiamo raggruppato per ora dopo aver aggiunto al DataFrame una colonna con l'ora di ogni
-        riga. Con un indice di date si può fare a meno di quella colonna, perché `groupby` accetta, al posto del nome
-        di una colonna, una sequenza di valori lunga quanto il DataFrame, come `turbina.index.hour`. Il risultato ha
-        come indice le ore del giorno, da 0 a 23.
-    """)
-
-    esercizio(
+    # E3.4 ---------------------------------------------------------------
+    esercizio_due_aule(
         nb,
-        titolo="Il profilo orario",
+        titolo="Gli utenti più assidui",
         scenario="""
-            La produzione di una turbina segue il vento, che cambia nel corso della giornata. Vogliamo il profilo
-            orario della turbina, cioè la potenza media in ciascuna delle 24 ore calcolata su tutti i giorni
-            dell'anno, e l'ora in cui in media rende di più. A mano bisognerebbe mettere in fila 365 valori per ogni
-            ora, mentre con `groupby` sull'ora dell'indice basta una riga. Il profilo ha 24 valori e l'ora migliore
-            è quella delle 16.
+            La piattaforma vuole mandare un messaggio di ringraziamento agli utenti che hanno ascoltato una canzone
+            più di 3 volte, e ci serve quindi l'insieme dei loro `UserID`. Lo raccogliamo in un set perché un utente che avesse superato i 3 ascolti con più canzoni comparirebbe più
+            volte, mentre deve ricevere un solo messaggio. Gli utenti sono 101, 103 e 105, e Python può mostrarli in
+            un ordine qualsiasi, perché un set non ha ordine.
         """,
-        passi=[
-            "Calcola in `profilo` la potenza media per ora del giorno, raggruppando `potenza_kw` per `turbina.index.hour`.",
-            "Salva in `ora_migliore` l'ora con la potenza media più alta.",
-        ],
-        esito="Il risultato `profilo` è una Series con 24 valori, uno per ogni ora da 0 a 23, e `ora_migliore` vale 16, con una potenza media di circa 1294 kW.",
-        starter_base=unisci(PREPARA, """
-            profilo = turbina.groupby(...)["potenza_kw"].mean()
-            ora_migliore = ...
-            print(ora_migliore)
-            profilo
-        """),
-        starter_avanzata=unisci(PREPARA, """
-            profilo = ...
-            ora_migliore = ...
-            profilo_stat = ...
-        """),
-        soluzione=unisci(PREPARA, """
-            profilo = turbina.groupby(turbina.index.hour)["potenza_kw"].mean()
-            ora_migliore = profilo.idxmax()
-            print(ora_migliore)
-            profilo
-        """),
-        verifica_base="""
-            assert len(profilo) == 24, "❌ profilo: raggruppa per turbina.index.hour, che ha 24 valori distinti"
-            assert ora_migliore == 16, "❌ ora_migliore: usa idxmax() su profilo"
-            assert round(profilo.max(), 1) == 1294.1, "❌ profilo: calcola la media di potenza_kw, non la somma"
-        """,
-        suggerimenti_base=[
-            """
-                Dentro le parentesi di `groupby` va l'ora di ogni riga, che si legge dall'indice; dopo il
-                raggruppamento si sceglie la colonna e si calcola la media.
+        base=dict(
+            richiesta="""
+                1. Costruisci in `cond` la maschera delle righe in cui `Plays` è maggiore di 3.
+                2. Seleziona con `loc` la colonna `UserID` delle sole righe della maschera e salvala in `utenti`.
+                3. Salva in `utenti_assidui` il set costruito da `utenti`.
             """,
-            """
-                La forma è `turbina.groupby(turbina.index.hour)["potenza_kw"].mean()`, e l'ora migliore è l'etichetta
-                del massimo, `profilo.idxmax()`.
+            suggerimenti=[
+                """
+                    `loc` accetta la maschera delle righe come primo argomento e il nome della colonna come secondo,
+                    e la funzione `set()` costruisce un set da una Series.
+                """,
+                """
+                    Le righe sono `ascolti["Plays"] > 3`, `ascolti.loc[cond, "UserID"]` e `set(utenti)`.
+                """,
+            ],
+            starter="""
+                cond = ascolti["Plays"] > ...
+                utenti = ascolti.loc[cond, "..."]
+                utenti_assidui = set(...)
+                utenti_assidui  # Output: {105, 101, 103}
             """,
-        ],
-        passo_avanzata="Per sapere, accanto alla media, fin dove arriva la potenza in ogni ora, calcola in `profilo_stat`, con `agg`, la media e il massimo della potenza per ogni ora, in un DataFrame con le colonne `mean` e `max`.",
-        esito_avanzata="Il valore più alto della colonna `max` è di circa 3004 kW.",
-        soluzione_avanzata="""
-            profilo_stat = turbina.groupby(turbina.index.hour)["potenza_kw"].agg(["mean", "max"])
-            profilo_stat
-        """,
-        verifica_avanzata="""
-            assert len(profilo) == 24 and ora_migliore == 16, "❌ profilo, ora_migliore: raggruppa per turbina.index.hour e usa idxmax()"
-            assert list(profilo_stat.columns) == ["mean", "max"], "❌ profilo_stat: passa ad agg la lista [\\"mean\\", \\"max\\"]"
-            assert round(profilo_stat["max"].max(), 1) == 3004.0, "❌ profilo_stat: la colonna max è la potenza massima di ogni ora"
-        """,
-        suggerimento_avanzata="""
-            Dopo aver scelto la colonna, a `agg` si può passare anche una lista di nomi di funzioni, come
-            `["mean", "max"]`, e ogni funzione diventa una colonna del risultato.
-        """,
+            soluzione="""
+                cond = ascolti["Plays"] > 3
+                utenti = ascolti.loc[cond, "UserID"]
+                utenti_assidui = set(utenti)
+                utenti_assidui  # Output: {105, 101, 103}
+            """,
+            verifica="""
+                assert isinstance(utenti_assidui, set), "❌ utenti_assidui: costruiscilo con set(utenti)"
+                assert utenti_assidui == {101, 103, 105}, "❌ utenti_assidui: la maschera è ascolti[\\"Plays\\"] > 3 e la colonna è UserID"
+            """,
+        ),
+        avanzata=dict(
+            richiesta="""
+                1. Salva in `utenti_assidui` il set degli `UserID` delle righe in cui `Plays` è maggiore di 3,
+                   selezionando la colonna con `loc` e la maschera.
+                2. Nel messaggio vogliamo dire anche quanti minuti hanno ascoltato in tutto. Aggiungi ad `ascolti`
+                   la colonna `Length` con la durata di ogni canzone, che supponiamo di 3 minuti per tutte, e salva
+                   in `minuti_assidui` la somma di `Plays` per `Length` sulle righe della maschera.
+
+                `minuti_assidui` vale 72.
+            """,
+            suggerimenti=[
+                """
+                    Assegnando un solo valore a una colonna nuova, come in `ascolti["Length"] = 3`, pandas lo ripete
+                    in tutte le righe; il prodotto di due colonne è una Series, che si filtra con la stessa maschera.
+                """,
+            ],
+            starter="""
+                # da creare: utenti_assidui, la colonna Length, minuti_assidui
+            """,
+            soluzione="""
+                cond = ascolti["Plays"] > 3
+                utenti_assidui = set(ascolti.loc[cond, "UserID"])
+
+                ascolti["Length"] = 3
+                minuti = ascolti["Plays"] * ascolti["Length"]
+                minuti_assidui = minuti[cond].sum()
+
+                print(utenti_assidui)  # Output: {105, 101, 103}
+                print(minuti_assidui)  # Output: 72
+            """,
+            verifica="""
+                assert utenti_assidui == {101, 103, 105}, "❌ utenti_assidui: set(ascolti.loc[cond, \\"UserID\\"]) con cond = Plays > 3"
+                assert ascolti["Length"].tolist() == [3] * 6, "❌ Length: assegna 3 alla colonna nuova"
+                assert minuti_assidui == 72, "❌ minuti_assidui: somma Plays * Length sulle righe della maschera"
+            """,
+        ),
     )
 
+    # ------------------------------------------------------------------ serie temporali
     nb.md("""
-        Due tabelle che descrivono gli stessi giorni si uniscono con `pd.merge`, indicando con `on` la colonna che fa
-        da chiave, in questo caso la data. Con `how="left"` il risultato conserva tutte le righe della tabella di
-        sinistra, e le colonne che arrivano da destra valgono `NaN` nelle righe la cui data non compare nell'altra
-        tabella. Questi valori mancanti si contano con `isnull().sum()` e si sostituiscono con `fillna()`. Perché le
-        chiavi corrispondano, le due colonne devono avere lo stesso tipo, per cui le date della seconda tabella
-        vanno create con `pd.to_datetime` e non lasciate come testo.
+        Gli ultimi due esercizi usano il dataset di prova del notebook 08: tre giorni di misure quartorarie di
+        potenza (`power_kw`) e di temperatura (`temp_c`) a partire dal 1° marzo 2025, da cui sono state tolte 18
+        righe per simulare le acquisizioni mancanti. La cella qui sotto lo ricostruisce con lo stesso seme casuale,
+        quindi i valori sono identici a quelli del notebook, e va eseguita prima dei due esercizi. Il timestamp è
+        una stringa nella forma `01/03/2025 00:15`, che `pd.to_datetime` legge con il formato `"%d/%m/%Y %H:%M"`:
+        `%d` è il giorno, `%m` il mese, `%Y` l'anno a quattro cifre, `%H` l'ora e `%M` i minuti.
     """)
+    nb.code("""
+        import numpy as np
+        np.random.seed(42)
 
-    manutenzioni = """
-        manutenzioni = pd.DataFrame({
-            "data": pd.to_datetime(["2023-03-15", "2023-06-14", "2023-11-08", "2023-12-15"]),
-            "motivo": ["ispezione delle pale", "sostituzione di un sensore", "controllo del generatore", "riparazione del freno"],
+        intervallo = pd.date_range("2025-03-01 00:00", periods=3 * 24 * 4, freq="15min")
+        ore = intervallo.hour + intervallo.minute / 60
+        power_kw = 220 + 60 * np.sin(2 * np.pi * (ore / 24)) + np.random.normal(0, 8, size=len(intervallo))
+        temp_c = 12 + 5 * np.sin(2 * np.pi * ((ore - 6) / 24)) + np.random.normal(0, 0.7, size=len(intervallo))
+
+        df = pd.DataFrame({
+            "timestamp_str": intervallo.strftime("%d/%m/%Y %H:%M"),
+            "power_kw": power_kw.round(1),
+            "temp_c": temp_c.round(1),
         })
-    """
-    esercizio(
+
+        indici_da_togliere = np.random.choice(df.index, size=18, replace=False)
+        df = df.drop(indici_da_togliere).reset_index(drop=True)
+        df.head()
+    """)
+
+    # E3.5 ---------------------------------------------------------------
+    esercizio_due_aule(
         nb,
-        titolo="I giorni di manutenzione",
+        titolo="Un pomeriggio di misure",
         scenario="""
-            Il registro delle manutenzioni, inventato per questo esercizio, elenca quattro giorni del 2023 in cui un
-            tecnico è intervenuto sulla turbina. Vogliamo una tabella con l'energia prodotta in ogni giorno
-            dell'anno e, accanto, il motivo dell'intervento, con la scritta `nessuna` nei giorni senza intervento,
-            per vedere se nei giorni di manutenzione la produzione è calata. Con `merge` è pandas ad abbinare le
-            date, e un registro più lungo non cambia il codice. La tabella ha 365 righe, e soltanto quattro hanno un
-            motivo diverso da `nessuna`.
+            Vogliamo le misure del pomeriggio del 1° marzo, dalle 12:00 alle 18:00. Finché il timestamp è testo
+            pandas non sa ordinarlo né selezionarne un periodo, mentre dopo averlo convertito in date e usato come
+            indice basta scrivere i due estremi dentro `loc`. Il risultato ha 22 righe, perché con gli estremi
+            inclusi le sei ore contengono 25 quarti d'ora, e tre misure mancano.
         """,
-        passi=[
-            "Calcola in `giornaliera` l'energia di ogni giorno con `resample(\"D\")` e `sum()`, e applica `reset_index()` in modo che la data diventi la colonna `data`, su cui fare l'unione.",
-            "Unisci `giornaliera` e `manutenzioni` sulla colonna `data` con un left join, che conserva tutti i giorni dell'anno, e salva il risultato in `unione`.",
-            "Salva in `senza_intervento` il numero di valori mancanti della colonna `motivo` di `unione`, per controllare che le quattro date del registro abbiano trovato il loro giorno.",
-            "Sostituisci i valori mancanti di `motivo` con il testo `\"nessuna\"`.",
-        ],
-        esito="Il risultato `unione` ha una riga per ogni giorno dell'anno, 365 in tutto, e `senza_intervento` vale 361, cioè tutti i giorni tranne i quattro del registro.",
-        starter_base=unisci(PREPARA, manutenzioni, """
-            giornaliera = turbina["potenza_kw"].resample(...).sum().reset_index()
-            unione = pd.merge(..., ..., on=..., how=...)
-            senza_intervento = ...
-            unione["motivo"] = ...
-
-            print(senza_intervento)
-            unione[unione["motivo"] != "nessuna"]
-        """),
-        starter_avanzata=unisci(PREPARA, manutenzioni, """
-            giornaliera = ...
-            unione = ...
-            senza_intervento = ...
-            unione["motivo"] = ...
-            solo_interventi = ...
-        """),
-        soluzione=unisci(PREPARA, manutenzioni, """
-            giornaliera = turbina["potenza_kw"].resample("D").sum().reset_index()
-            unione = pd.merge(giornaliera, manutenzioni, on="data", how="left")
-            senza_intervento = unione["motivo"].isnull().sum()
-            unione["motivo"] = unione["motivo"].fillna("nessuna")
-
-            print(senza_intervento)
-            unione[unione["motivo"] != "nessuna"]
-        """),
-        verifica_base="""
-            assert len(unione) == 365, "❌ unione: con how=\\"left\\" e giornaliera a sinistra restano tutti i 365 giorni"
-            assert senza_intervento == 361, "❌ senza_intervento: conta i NaN di motivo prima di riempirli"
-            assert (unione["motivo"] == "nessuna").sum() == 361, "❌ motivo: riempi i NaN con fillna(\\"nessuna\\") e riassegna la colonna"
-        """,
-        suggerimenti_base=[
-            """
-                Il left join conserva tutte le righe della tabella che si passa per prima, quindi `giornaliera` va a
-                sinistra. I valori mancanti di una colonna si contano con lo stesso metodo usato nel notebook 07.
+        base=dict(
+            richiesta="""
+                1. Crea in `df` la colonna `timestamp` convertendo `timestamp_str` con `pd.to_datetime` e il formato
+                   `"%d/%m/%Y %H:%M"`.
+                2. Costruisci `df_serie` con le colonne `power_kw` e `temp_c`, il timestamp come indice e le righe
+                   in ordine di tempo, usando `set_index` e `sort_index`.
+                3. Seleziona in `periodo` le righe dal `2025-03-01 12:00` al `2025-03-01 18:00` con `.loc`.
             """,
+            suggerimenti=[
+                """
+                    Il formato si passa a `pd.to_datetime` con il parametro `format`. Con un indice di date, `loc`
+                    accetta un intervallo tra due stringhe, separate dai due punti come in uno slicing, e include
+                    entrambi gli estremi.
+                """,
+                """
+                    Le righe che mancano sono `format="%d/%m/%Y %H:%M"`, `set_index("timestamp")` e
+                    `df_serie.loc["2025-03-01 12:00":"2025-03-01 18:00"]`.
+                """,
+            ],
+            starter="""
+                df["timestamp"] = pd.to_datetime(df["timestamp_str"], format=...)
+                df_serie = df[["timestamp", "power_kw", "temp_c"]].set_index(...).sort_index()
+
+                periodo = df_serie.loc[...]
+                len(periodo)  # Output: 22
+            """,
+            soluzione="""
+                df["timestamp"] = pd.to_datetime(df["timestamp_str"], format="%d/%m/%Y %H:%M")
+                df_serie = df[["timestamp", "power_kw", "temp_c"]].set_index("timestamp").sort_index()
+
+                periodo = df_serie.loc["2025-03-01 12:00":"2025-03-01 18:00"]
+                len(periodo)  # Output: 22
+            """,
+            verifica="""
+                assert isinstance(df_serie.index, pd.DatetimeIndex) and df_serie.index.is_monotonic_increasing, "❌ df_serie: converti timestamp_str, usa set_index(\\"timestamp\\") e sort_index()"
+                assert list(df_serie.columns) == ["power_kw", "temp_c"], "❌ df_serie: tieni le colonne power_kw e temp_c"
+                assert len(periodo) == 22 and str(periodo.index[0]) == "2025-03-01 12:00:00", "❌ periodo: df_serie.loc[\\"2025-03-01 12:00\\":\\"2025-03-01 18:00\\"]"
+            """,
+        ),
+        avanzata=dict(
+            richiesta="""
+                1. Converti `timestamp_str` in date con il formato `"%d/%m/%Y %H:%M"` e costruisci `df_serie` con
+                   `power_kw` e `temp_c`, il timestamp come indice e le righe in ordine di tempo.
+                2. Seleziona in `periodo` le righe dal `2025-03-01 12:00` al `2025-03-01 18:00`.
+                3. Per sapere dove la serie ha dei buchi, salva in `intervalli` il conteggio delle distanze tra due
+                   timestamp consecutivi, calcolate con `diff()` sull'indice trasformato in Series.
+
+                In `intervalli` la distanza di 15 minuti compare 252 volte, quella di 30 minuti 16 volte e quella di
+                45 minuti una volta, cioè ci sono 16 buchi da una misura e uno da due, per un totale di 18 misure
+                mancanti.
+            """,
+            suggerimenti=[
+                """
+                    L'indice diventa una Series con `df_serie.index.to_series()`, `diff()` calcola la distanza da
+                    ogni valore al precedente e `value_counts()` conta quante volte compare ciascuna distanza.
+                """,
+            ],
+            starter="""
+                # da creare: df_serie, periodo, intervalli
+            """,
+            soluzione="""
+                df["timestamp"] = pd.to_datetime(df["timestamp_str"], format="%d/%m/%Y %H:%M")
+                df_serie = df[["timestamp", "power_kw", "temp_c"]].set_index("timestamp").sort_index()
+
+                periodo = df_serie.loc["2025-03-01 12:00":"2025-03-01 18:00"]
+                intervalli = df_serie.index.to_series().diff().value_counts()
+
+                print(len(periodo))  # Output: 22
+                intervalli
+            """,
+            verifica="""
+                assert isinstance(df_serie.index, pd.DatetimeIndex) and df_serie.index.is_monotonic_increasing, "❌ df_serie: converti timestamp_str, usa set_index e sort_index()"
+                assert len(periodo) == 22, "❌ periodo: df_serie.loc[\\"2025-03-01 12:00\\":\\"2025-03-01 18:00\\"]"
+                assert intervalli[pd.Timedelta("15min")] == 252 and intervalli[pd.Timedelta("30min")] == 16, "❌ intervalli: df_serie.index.to_series().diff().value_counts()"
+            """,
+        ),
+    )
+
+    # E3.6 ---------------------------------------------------------------
+    nb.md("""
+        Con un indice di date le parti del tempo si leggono direttamente dall'indice: `df.index.date` dà la sola
+        data di ogni riga e `df.index.dayofweek` il giorno della settimana, che vale 0 il lunedì e 6 la domenica.
+        Il metodo `resample("h")` raccoglie invece in un gruppo tutte le misure della stessa ora, come un `groupby`
+        guidato dal tempo, e lascia al metodo che segue il compito di combinarle: `mean()` ne calcola la media e
+        `sum()` la somma. Ogni gruppo prende come etichetta l'inizio dell'ora.
+    """)
+    esercizio_due_aule(
+        nb,
+        titolo="Il fine settimana e le medie orarie",
+        scenario="""
+            Vogliamo aggiungere alla serie quartoraria due colonne, la data di ogni misura e un valore che dica se
+            la misura cade nel fine settimana, e poi passare dai quarti d'ora alle ore calcolando per ogni ora la
+            media e la somma di `power_kw`. Le prime righe della cella ricostruiscono la serie dell'esercizio E3.5
+            con i buchi riempiti, come nel notebook 08, quindi ogni ora contiene quattro misure e la somma vale
+            quattro volte la media. Poiché il 1° marzo 2025 è un sabato, 192 delle 288 righe cadono nel weekend;
+            il risultato orario ha 72 valori, e per la prima ora la media è 230.925 e la somma 923.7.
+        """,
+        base=dict(
+            richiesta="""
+                1. Aggiungi a `df_15min` la colonna `date`, con la sola data letta dall'indice.
+                2. Aggiungi la colonna `is_weekend`, che vale `True` il sabato e la domenica, confrontando con 5 il
+                   giorno della settimana dell'indice.
+                3. Calcola in `media_oraria` la media oraria di `power_kw` con `resample("h")`, e in `somma_oraria`
+                   la somma oraria della stessa colonna.
+            """,
+            suggerimenti=[
+                """
+                    Le due colonne si ricavano da `df_15min.index.date` e da `df_15min.index.dayofweek`, e il
+                    sabato e la domenica sono i giorni con valore maggiore o uguale a 5. Il resampling si applica
+                    alla sola colonna `power_kw`.
+                """,
+                """
+                    Le righe sono `df_15min.index.dayofweek >= 5` e `df_15min["power_kw"].resample("h").mean()`, e
+                    per la somma si cambia soltanto `mean()` in `sum()`.
+                """,
+            ],
+            starter=unisci(PREPARA_SERIE, """
+                df_15min["date"] = ...
+                df_15min["is_weekend"] = ...
+
+                media_oraria = df_15min["power_kw"].resample(...).mean()
+                somma_oraria = ...
+
+                print(df_15min["is_weekend"].sum())  # Output: 192
+                pd.DataFrame({"mean": media_oraria, "sum": somma_oraria}).head()
+            """),
+            soluzione=unisci(PREPARA_SERIE, """
+                df_15min["date"] = df_15min.index.date
+                df_15min["is_weekend"] = df_15min.index.dayofweek >= 5
+
+                media_oraria = df_15min["power_kw"].resample("h").mean()
+                somma_oraria = df_15min["power_kw"].resample("h").sum()
+
+                print(df_15min["is_weekend"].sum())  # Output: 192
+                pd.DataFrame({"mean": media_oraria, "sum": somma_oraria}).head()
+            """),
+            verifica="""
+                assert df_15min["date"].nunique() == 3, "❌ date: usa df_15min.index.date"
+                assert df_15min["is_weekend"].sum() == 192, "❌ is_weekend: df_15min.index.dayofweek >= 5"
+                assert len(media_oraria) == 72 and round(media_oraria.iloc[0], 3) == 230.925, "❌ media_oraria: df_15min[\\"power_kw\\"].resample(\\"h\\").mean()"
+                assert round(somma_oraria.iloc[0], 1) == 923.7, "❌ somma_oraria: come media_oraria, con sum() al posto di mean()"
+            """,
+        ),
+        avanzata=dict(
+            richiesta="""
+                1. Aggiungi a `df_15min` la colonna `date`, con la sola data di ogni misura, e la colonna
+                   `is_weekend`, che vale `True` il sabato e la domenica, leggendole dall'indice.
+                2. Calcola in `media_oraria` e in `somma_oraria` la media e la somma di `power_kw` per ogni ora.
+                3. Le misure quartorarie oscillano per il rumore, e una media mobile su due ore le rende più
+                   regolari senza cambiarne la frequenza: salva in `media_mobile` la media di `power_kw` su una
+                   finestra di 8 quarti d'ora, con `rolling`.
+
+                Le prime sette righe di `media_mobile` sono `NaN`, perché non hanno otto valori precedenti, e
+                l'ottava vale circa 237.9.
+            """,
+            suggerimenti=[
+                """
+                    `df_15min.index.dayofweek >= 5` riconosce il weekend; `rolling(8)` raccoglie ogni valore con i
+                    sette precedenti, e il `mean()` che segue ne calcola la media, come nel notebook 09.
+                """,
+            ],
+            starter=unisci(PREPARA_SERIE, """
+                # da creare: le colonne date e is_weekend, media_oraria, somma_oraria, media_mobile
+            """),
+            soluzione=unisci(PREPARA_SERIE, """
+                df_15min["date"] = df_15min.index.date
+                df_15min["is_weekend"] = df_15min.index.dayofweek >= 5
+
+                media_oraria = df_15min["power_kw"].resample("h").mean()
+                somma_oraria = df_15min["power_kw"].resample("h").sum()
+                media_mobile = df_15min["power_kw"].rolling(8).mean()
+
+                print(df_15min["is_weekend"].sum())  # Output: 192
+                media_mobile.head(10)
+            """),
+            verifica="""
+                assert df_15min["date"].nunique() == 3 and df_15min["is_weekend"].sum() == 192, "❌ date e is_weekend: leggile da df_15min.index"
+                assert len(media_oraria) == 72 and round(somma_oraria.iloc[0], 1) == 923.7, "❌ media_oraria e somma_oraria: resample(\\"h\\") con mean() e sum()"
+                assert media_mobile.isna().sum() == 7 and round(media_mobile.iloc[7], 1) == 237.9, "❌ media_mobile: df_15min[\\"power_kw\\"].rolling(8).mean()"
+            """,
+        ),
+    )
+
+    # Sfida ---------------------------------------------------------------
+    nb.esercizio(
+        titolo="Sfida: una riga per giorno",
+        facoltativo=True,
+        scenario="""
+            Partendo dalla serie quartoraria con i buchi riempiti, vogliamo un riepilogo dei tre giorni da leggere a
+            colpo d'occhio, con una riga per giorno come `01/03/2025: 218.7 kW`, in cui la potenza media del giorno
+            viene calcolata e non scritta a mano. Con un `resample` giornaliero e un ciclo `for` sugli elementi del
+            risultato, la stessa cella funziona anche su un mese di dati. La forma delle righe è libera, quindi
+            l'esercizio non ha una verifica e la cella `soluzione` mostra un esempio, in cui le medie dei tre giorni
+            sono 218.7, 220.3 e 220.1 kW.
+        """,
+        richiesta="""
+            1. Calcola la media giornaliera di `power_kw` con `resample("D")`.
+            2. Scorri il risultato con un ciclo `for` e stampa una riga per giorno con una f-string.
+        """,
+        suggerimenti=[
             """
-                L'unione si scrive `pd.merge(giornaliera, manutenzioni, on="data", how="left")`, il conteggio
-                `unione["motivo"].isnull().sum()` e la sostituzione `unione["motivo"].fillna("nessuna")`, da
-                riassegnare alla colonna.
+                Come un dizionario, una Series ha il metodo `items()`, che nel ciclo restituisce ogni etichetta con il
+                suo valore. L'etichetta è un timestamp, che `strftime("%d/%m/%Y")` scrive come testo, e nella f-string
+                `{valore:.1f}` mostra un decimale.
             """,
         ],
-        passo_avanzata="Per avere la tabella dei soli giorni con intervento, da mandare al tecnico, ripeti l'unione con `how=\"inner\"`, salvando il risultato in `solo_interventi`, e confronta il suo numero di righe con quello di `unione`.",
-        esito_avanzata="La tabella `solo_interventi` ha quattro righe.",
-        soluzione_avanzata="""
-            solo_interventi = pd.merge(giornaliera, manutenzioni, on="data", how="inner")
-            print(len(unione), len(solo_interventi))
-            solo_interventi
-        """,
-        verifica_avanzata="""
-            assert len(unione) == 365 and senza_intervento == 361, "❌ unione, senza_intervento: left join con giornaliera a sinistra, poi isnull().sum()"
-            assert (unione["motivo"] == "nessuna").sum() == 361, "❌ motivo: riempi i NaN con fillna(\\"nessuna\\") e riassegna la colonna"
-            assert len(solo_interventi) == 4, "❌ solo_interventi: con how=\\"inner\\" restano i quattro giorni presenti in entrambe le tabelle"
-        """,
-        suggerimento_avanzata="""
-            Il conteggio dei `NaN` va fatto prima di `fillna`, perché dopo la sostituzione non ce ne sono più.
-        """,
-    )
-
-    # ------------------------------------------------------------------ facoltativi
-    nb.md("""
-        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi. I primi
-        due applicano ancora `groupby` e il salvataggio su file, mentre la sfida finale, senza verifica, riassume
-        l'anno della turbina in tre righe. Anche sotto questi esercizi c'è la cella `soluzione`.
-    """)
-    nb.esercizio(
-        titolo="Il profilo settimanale",
-        facoltativo=True,
-        scenario="""
-            Il carico elettrico cambia molto tra i giorni feriali e il fine settimana, mentre una turbina produce
-            quando c'è vento, qualunque giorno sia. Vogliamo calcolare la potenza media della turbina per giorno
-            della settimana, per vedere come si distribuisce la produzione del 2023, e scrivere per nome il giorno
-            migliore, perché in un riepilogo la parola `lunedì` si legge meglio del numero 0. Il risultato ha sette
-            valori, e il giorno migliore è il lunedì.
-        """,
-        richiesta=consegna([
-            "Calcola in `settimanale` la potenza media per giorno della settimana, raggruppando `potenza_kw` per `turbina.index.dayofweek`, in cui il lunedì vale 0.",
-            "Usando la lista `giorni`, già scritta nella cella, salva in `giorno_migliore` il nome del giorno con la media più alta.",
-        ], "Il risultato `settimanale` ha sette valori, e `giorno_migliore` vale `\"lunedì\"`."),
-        suggerimenti=["""
-            L'indice di `settimanale` va da 0 a 6, come le posizioni della lista `giorni`, quindi l'etichetta
-            restituita da `settimanale.idxmax()` si può usare direttamente come posizione nella lista.
-        """],
-        starter=unisci(PREPARA, """
-            giorni = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
-
-            settimanale = ...
-            giorno_migliore = ...
-            print(giorno_migliore)
-        """),
-        soluzione=unisci(PREPARA, """
-            giorni = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
-
-            settimanale = turbina.groupby(turbina.index.dayofweek)["potenza_kw"].mean()
-            giorno_migliore = giorni[settimanale.idxmax()]
-            print(giorno_migliore)
-        """),
-        verifica="""
-            assert len(settimanale) == 7, "❌ settimanale: raggruppa per turbina.index.dayofweek"
-            assert giorno_migliore == "lunedì", "❌ giorno_migliore: usa settimanale.idxmax() come posizione in giorni"
-        """,
-    )
-
-    nb.md("""
-        Il metodo `to_csv()` scrive un DataFrame o una Series in un file CSV, nello stesso modo in cui `to_excel()`,
-        visto nel notebook 06, lo scrive in un file Excel. Se si indica soltanto il nome del file, questo viene
-        creato nella cartella del notebook, e l'indice viene scritto come prima colonna. Rileggendo il CSV con
-        `read_csv` le date tornano testo, a meno di indicare con `parse_dates` le colonne da convertire.
-    """)
-
-    nb.esercizio(
-        titolo="Le tabelle per il collega",
-        facoltativo=True,
-        scenario="""
-            Un collega che lavora con Excel ci chiede l'energia mensile della turbina, e per l'archivio dell'ufficio
-            la stessa tabella va salvata anche in CSV, un formato di testo che qualunque programma sa leggere.
-            Vogliamo scrivere i due file dalla Series dei totali mensili e, prima di mandarli, riaprire il CSV per
-            controllare che contenga tutti i mesi e che le date si rileggano come date. Se i dati cambiano, la stessa
-            cella riscrive entrambi i file. Il CSV riletto ha 12 righe, una per mese.
-        """,
-        richiesta=consegna([
-            "Salva `mensile` nel file `energia_mensile.csv` con `to_csv()` e nel file `energia_mensile.xlsx` con `to_excel()`.",
-            "Rileggi il CSV con `pd.read_csv` in `riletto`, convertendo in date la colonna `data` con `parse_dates=[\"data\"]`, perché altrimenti le date tornerebbero testo.",
-            "Salva in `stesse_righe` il risultato del confronto tra il numero di righe di `riletto` e quello di `mensile`, che dice se nel file ci sono tutti i mesi.",
-        ], "Il file CSV ha due colonne, `data` e `potenza_kw`, perché `to_csv()` scrive anche l'indice, e `stesse_righe` vale `True`."),
-        suggerimenti=["""
-            Il confronto tra le lunghezze si scrive `len(riletto) == len(mensile)` e vale `True` se il file contiene
-            tutti i 12 mesi.
-        """],
-        starter=unisci(PREPARA, """
-            mensile = turbina["potenza_kw"].resample("ME").sum()
-
-            ...
-            ...
-            riletto = ...
-            stesse_righe = ...
-            print(stesse_righe)
-            riletto.head()
-        """),
-        soluzione=unisci(PREPARA, """
-            mensile = turbina["potenza_kw"].resample("ME").sum()
-
-            mensile.to_csv("energia_mensile.csv")
-            mensile.to_excel("energia_mensile.xlsx")
-            riletto = pd.read_csv("energia_mensile.csv", parse_dates=["data"])
-            stesse_righe = len(riletto) == len(mensile)
-            print(stesse_righe)
-            riletto.head()
-        """),
-        verifica="""
-            from pathlib import Path
-            assert Path("energia_mensile.csv").exists() and Path("energia_mensile.xlsx").exists(), "❌ i due file non sono nella cartella del notebook"
-            assert len(riletto) == 12 and stesse_righe, "❌ riletto: il CSV deve avere 12 righe, una per mese"
-            assert str(riletto["data"].dtype).startswith("datetime64"), "❌ riletto: aggiungi parse_dates=[\\"data\\"] a read_csv"
-        """,
-    )
-
-    nb.esercizio(
-        titolo="Sfida: il riepilogo dell'anno",
-        facoltativo=True,
-        scenario="""
-            Per chiudere vogliamo un riepilogo dell'anno della turbina in tre righe, da incollare in una mail al
-            gestore: l'energia totale prodotta nel 2023, il mese con più energia e l'ora del giorno con la potenza
-            media più alta. Se le tre righe vengono calcolate in una sola cella, quando i dati vengono aggiornati
-            basta rieseguirla per rifare la mail. Il formato delle righe è libero, quindi l'esercizio non ha una verifica e la soluzione ne
-            mostra un esempio; un riepilogo corretto riporta circa 8448739 kWh, aprile e le 16.
-        """,
-        richiesta=consegna([
-            "Calcola l'energia totale del 2023 come somma di `potenza_kw`.",
-            "Trova il mese con l'energia più alta con `resample(\"ME\")` e `idxmax()`. Nella mail il nome `aprile` si legge meglio della data `2023-04-30`, e per ottenerlo puoi leggere l'attributo `.month` del risultato, che va da 1 a 12, e prendere il nome da una lista dei mesi, tenendo conto che le posizioni della lista partono da 0.",
-            "Trova l'ora con la potenza media più alta raggruppando `potenza_kw` per `turbina.index.hour`, come nel profilo orario.",
-            "Stampa le tre righe del riepilogo con tre `print` e tre f-string.",
-        ], None),
-        starter=unisci(PREPARA, """
-            # il riepilogo dell'anno, in tre righe
+        starter=unisci(PREPARA_SERIE, """
+            # il riepilogo, una riga per giorno
             ...
         """),
-        soluzione=unisci(PREPARA, """
-            mesi = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno",
-                    "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+        soluzione=unisci(PREPARA_SERIE, """
+            giornaliera = df_15min["power_kw"].resample("D").mean()
 
-            energia_kwh = turbina["potenza_kw"].sum()
-            mensile = turbina["potenza_kw"].resample("ME").sum()
-            mese_migliore = mesi[mensile.idxmax().month - 1]
-            ora_migliore = turbina.groupby(turbina.index.hour)["potenza_kw"].mean().idxmax()
-
-            print(f"Energia prodotta nel 2023: {energia_kwh:.0f} kWh")   # Output: Energia prodotta nel 2023: 8448739 kWh
-            print(f"Mese con più energia: {mese_migliore}")             # Output: Mese con più energia: aprile
-            print(f"Ora con la potenza media più alta: le {ora_migliore}")  # Output: Ora con la potenza media più alta: le 16
+            for giorno, valore in giornaliera.items():
+                print(f"{giorno.strftime('%d/%m/%Y')}: {valore:.1f} kW")
+            # Output:
+            # 01/03/2025: 218.7 kW
+            # 02/03/2025: 220.3 kW
+            # 03/03/2025: 220.1 kW
         """),
+        verifica=None,
     )
-
     return nb

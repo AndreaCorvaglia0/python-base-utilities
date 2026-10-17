@@ -248,39 +248,31 @@ assert {"idsensore", "tipologia", "provincia"} <= set(sensori_mi.columns), "❌ 
 assert set(sensori_mi["provincia"]) == {"MI"}, "❌ sensori_mi deve contenere solo la provincia MI"
 '''),
     'E3.1': ('Esercizio E3.1', r'''
-assert {"potenza_kw", "vento_ms", "direzione", "pressione", "temperatura"} <= set(turbina.columns), "❌ turbina: controlla i nomi passati a rename"
-assert primo == pd.Timestamp("2023-01-01 00:00") and ultimo == pd.Timestamp("2023-12-31 23:00"), "❌ primo, ultimo: controlla il formato e l'ordinamento dell'indice"
-assert ordinato and len(passi) == 1 and passi.iloc[0] == 8759, "❌ passi: tutti gli 8759 intervalli devono valere un'ora"
+assert len(ascolti_103) == 1 and ascolti_103["Plays"].tolist() == [4], "❌ ascolti_103: la maschera è ascolti[\"UserID\"] == 103"
+assert list(risposta.columns) == ["Song", "Plays"] and len(risposta) == 1, "❌ risposta: ascolti.loc[cond, [\"Song\", \"Plays\"]]"
 '''),
     'E3.2': ('Esercizio E3.2', r'''
-assert ore_luglio == 744, "❌ ore_luglio: seleziona il mese con loc e una data parziale"
-assert n_ventose == 645 and ore_ferme == 822, "❌ n_ventose, ore_ferme: controlla le due maschere"
-assert len(ventose_query) == 645, "❌ ventose_query: dentro query il nome della colonna va senza virgolette"
+assert ascolti_per_canzone.to_dict() == {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}, "❌ ascolti_per_canzone: raggruppa per Song e somma Plays"
+assert riepilogo.loc["Song A", "sum"] == 19 and riepilogo.loc["Song A", "count"] == 2, "❌ riepilogo: groupby(\"Song\")[\"Plays\"].agg([\"sum\", \"count\"])"
 '''),
     'E3.3': ('Esercizio E3.3', r'''
-assert len(mensile) == 12, "❌ mensile: resample(\"ME\") produce un valore per ogni mese"
-assert mese_migliore == pd.Timestamp("2023-04-30") and mese_peggiore == pd.Timestamp("2023-09-30"), "❌ mese_migliore, mese_peggiore: usa idxmax() e idxmin()"
-assert round(mensile_vento.loc["2023-04-30", "vento_ms"], 1) == 8.5, "❌ mensile_vento: la colonna vento_ms è la media del mese"
+assert ascolti_per_artista.tolist() == [19, 7, 2, 1] and artista_top == "Artist X", "❌ ascolti_per_artista e artista_top: groupby, sum, sort_values e idxmax"
+assert elenco["UserID"].tolist() == [106, 101, 103, 105, 102, 104], "❌ elenco: by=[\"Artist\", \"Plays\"], ascending=[True, False]"
 '''),
     'E3.4': ('Esercizio E3.4', r'''
-assert len(profilo) == 24 and ora_migliore == 16, "❌ profilo, ora_migliore: raggruppa per turbina.index.hour e usa idxmax()"
-assert list(profilo_stat.columns) == ["mean", "max"], "❌ profilo_stat: passa ad agg la lista [\"mean\", \"max\"]"
-assert round(profilo_stat["max"].max(), 1) == 3004.0, "❌ profilo_stat: la colonna max è la potenza massima di ogni ora"
+assert utenti_assidui == {101, 103, 105}, "❌ utenti_assidui: set(ascolti.loc[cond, \"UserID\"]) con cond = Plays > 3"
+assert ascolti["Length"].tolist() == [3] * 6, "❌ Length: assegna 3 alla colonna nuova"
+assert minuti_assidui == 72, "❌ minuti_assidui: somma Plays * Length sulle righe della maschera"
 '''),
     'E3.5': ('Esercizio E3.5', r'''
-assert len(unione) == 365 and senza_intervento == 361, "❌ unione, senza_intervento: left join con giornaliera a sinistra, poi isnull().sum()"
-assert (unione["motivo"] == "nessuna").sum() == 361, "❌ motivo: riempi i NaN con fillna(\"nessuna\") e riassegna la colonna"
-assert len(solo_interventi) == 4, "❌ solo_interventi: con how=\"inner\" restano i quattro giorni presenti in entrambe le tabelle"
+assert isinstance(df_serie.index, pd.DatetimeIndex) and df_serie.index.is_monotonic_increasing, "❌ df_serie: converti timestamp_str, usa set_index e sort_index()"
+assert len(periodo) == 22, "❌ periodo: df_serie.loc[\"2025-03-01 12:00\":\"2025-03-01 18:00\"]"
+assert intervalli[pd.Timedelta("15min")] == 252 and intervalli[pd.Timedelta("30min")] == 16, "❌ intervalli: df_serie.index.to_series().diff().value_counts()"
 '''),
     'E3.6': ('Esercizio E3.6', r'''
-assert len(settimanale) == 7, "❌ settimanale: raggruppa per turbina.index.dayofweek"
-assert giorno_migliore == "lunedì", "❌ giorno_migliore: usa settimanale.idxmax() come posizione in giorni"
-'''),
-    'E3.7': ('Esercizio E3.7', r'''
-from pathlib import Path
-assert Path("energia_mensile.csv").exists() and Path("energia_mensile.xlsx").exists(), "❌ i due file non sono nella cartella del notebook"
-assert len(riletto) == 12 and stesse_righe, "❌ riletto: il CSV deve avere 12 righe, una per mese"
-assert str(riletto["data"].dtype).startswith("datetime64"), "❌ riletto: aggiungi parse_dates=[\"data\"] a read_csv"
+assert df_15min["date"].nunique() == 3 and df_15min["is_weekend"].sum() == 192, "❌ date e is_weekend: leggile da df_15min.index"
+assert len(media_oraria) == 72 and round(somma_oraria.iloc[0], 1) == 923.7, "❌ media_oraria e somma_oraria: resample(\"h\") con mean() e sum()"
+assert media_mobile.isna().sum() == 7 and round(media_mobile.iloc[7], 1) == 237.9, "❌ media_mobile: df_15min[\"power_kw\"].rolling(8).mean()"
 '''),
     'Passo 1': ('Passo 1', r'''
 assert cliente == "Panificio Rè", "❌ cliente: il valore della chiave 'cliente'"
