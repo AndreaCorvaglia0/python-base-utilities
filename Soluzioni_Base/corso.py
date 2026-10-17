@@ -254,7 +254,7 @@ assert n_letture == 930, "❌ La tabella letture ha 930 righe"
 assert round(kwh_marzo, 1) == 69880.1, "❌ kwh_marzo: somma la colonna kwh di letture_db"
 '''),
     'E2.6': ('Esercizio E2.6', r'''
-assert totali == {"gennaio": 161.7, "febbraio": 108.7, "marzo": 187.1}, "❌ totali: una chiave per mese, con la somma arrotondata"
+assert totali == {"gennaio": 161.7, "febbraio": 108.7, "marzo": 187.1}, "❌ totali: una chiave per mese, con la somma delle spese di quel mese"
 assert round(totale_trimestre, 2) == 457.5, "❌ totale_trimestre: somma i valori di totali"
 '''),
     'E2.7': ('Esercizio E2.7', r'''
@@ -323,7 +323,6 @@ assert list(anomale["pod"]) == ["IT001E31047092"], "❌ anomale: una riga sola, 
 assert list(pd.read_csv("letture_anomale.csv").columns) == ["pod", "data", "kwh"], "❌ letture_anomale.csv: salva senza l'indice, con index=False"
 '''),
     'Passo 6': ('Passo 6', r'''
-assert list(anagrafica.columns) == ["pod", "cliente", "comune"], "❌ anagrafica: è il foglio Anagrafica? Controlla sheet_name"
 assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
 assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, presa dalla tabella pod con il WHERE"
 '''),

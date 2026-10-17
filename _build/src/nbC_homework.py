@@ -17,7 +17,7 @@ def costruisci() -> Notebook:
         obiettivi=[
             "usare liste, dizionari, cicli e funzioni su un caso di lavoro",
             "leggere un CSV italiano con pandas e trovare le righe anomale",
-            "leggere un Excel a due fogli e una tabella di un database SQL",
+            "scegliere il foglio di un Excel e leggere una tabella di un database SQL",
         ],
         tempo=30,
         soluzioni_a_richiesta=True,
@@ -39,11 +39,12 @@ def costruisci() -> Notebook:
         list(Path("../Dati/homework").glob("*"))
     """)
     nb.md("""
-        L'homework richiede circa mezz'ora e lo riprendiamo insieme all'inizio del modulo 3.
-        Ogni passo ha una cella da completare, in cui i `...` prendono il posto del codice da scrivere, seguita da una
-        cella di verifica, che stampa ✅ quando il risultato è giusto e altrimenti una riga che dice che cosa
-        controllare. Nella consegna di ogni passo ci sono due suggerimenti nascosti, da aprire con un clic solo dopo
-        aver provato, e sotto la verifica la cella `soluzione` mostra la soluzione di quel passo e di nessun altro.
+        L'homework richiede circa mezz'ora e lo riprendiamo insieme all'inizio del modulo 3. Ogni passo comincia
+        dicendo che cosa vogliamo ottenere e perché, e da lì si può arrivare al risultato da soli; chi preferisce
+        procedere per gradi apre con un clic il blocco Passo per passo, e sotto i suggerimenti, anche loro nascosti,
+        da leggere solo dopo aver provato. Nella cella da completare i `...` prendono il posto del codice da
+        scrivere, e sotto ci sono la verifica, che stampa ✅ quando il risultato è giusto e altrimenti dice che cosa
+        controllare, e la cella `soluzione`, che mostra la soluzione di quel passo e di nessun altro.
     """)
     nb.md("""
         I passi sono indipendenti, quindi chi si blocca su uno può passare al successivo, e i due segnati come
@@ -56,8 +57,9 @@ def costruisci() -> Notebook:
     nb.sezione("La settimana", intro="""
         L'homework segue una settimana di lavoro nell'ufficio Analisi Consumi di una piccola società di vendita di
         energia, che gestisce otto POD di clienti business. Il collega che se ne occupava, facendo tutto a mano in
-        Excel, è in ferie, e in sua assenza sbrighiamo con Python le richieste che arrivano ogni giorno. Un POD è il codice del punto
-        di prelievo, nella forma `IT001E...`, e identifica un contatore; per questo un cliente con più sedi ha più POD.
+        Excel, è in ferie, e in sua assenza sbrighiamo con Python le richieste che arrivano ogni giorno. Un POD è il
+        codice del punto di prelievo, nella forma `IT001E...`, e identifica un contatore; per questo un cliente con
+        più sedi ha più POD.
     """)
 
     # Passo 1 · lunedì
@@ -68,13 +70,19 @@ def costruisci() -> Notebook:
             "Il nome del cliente è `panificio[\"cliente\"]`, il consumo di febbraio sta sotto la chiave del mese, e `costo = kwh * prezzo`.",
         ],
         scenario="""
-            Lunedì mattina il capo chiede il consumo di febbraio del Panificio Rè e quanto gli costa al prezzo di
-            listino, che è di 0.21 euro/kWh. I dati del cliente sono raccolti in un dizionario.
+            Lunedì mattina il capo chiede quanto ha consumato a febbraio il Panificio Rè e quanto gli costa quel
+            consumo al prezzo di listino di 0.21 euro/kWh. I dati del cliente sono già raccolti in un dizionario,
+            quindi invece di ricopiarli a mano li leggiamo dalle sue chiavi e calcoliamo il costo con una
+            moltiplicazione, in modo che la stessa cella funzioni anche con il dizionario di un altro cliente. La
+            riga da mandare al capo è `Panificio Rè 1654.2 kWh a febbraio, costo 347.38 euro`.
         """,
         richiesta="""
-            Prendi dal dizionario `panificio` il nome del cliente, da salvare in `cliente`, e il consumo di febbraio,
-            da salvare in `kwh`; poi calcola `costo`, cioè il consumo moltiplicato per `prezzo`. Se tutto è corretto,
-            la cella stampa la riga `Panificio Rè 1654.2 kWh a febbraio, costo 347.38 euro`.
+            1. Salva in `cliente` il nome del cliente, con cui comincia la riga per il capo, e in `kwh` il consumo di
+               febbraio, leggendoli dal dizionario `panificio` con le loro chiavi.
+            2. Calcola in `costo` il consumo moltiplicato per `prezzo`.
+
+            Il `print` già scritto nella cella compone la riga e arrotonda il costo al centesimo, quindi `costo` può
+            restare con tutti i suoi decimali.
         """,
         starter="""
             panificio = {"cliente": "Panificio Rè", "pod": "IT001E31045201", "kwh_febbraio": 1654.2}
@@ -106,15 +114,20 @@ def costruisci() -> Notebook:
         titolo="Martedì: le 24 letture del panificio",
         facoltativo=True,
         scenario="""
-            Martedì arrivano le 24 letture orarie del giorno prima del Panificio Rè, in kWh, una per ogni ora da
-            mezzanotte alle 23. Il titolare sostiene che quasi tutto il consumo dipende dal forno, che resta acceso
-            dalle 4 alle 8, e per verificarlo misuriamo quale quota del consumo giornaliero cade in quelle ore.
+            Martedì arrivano le 24 letture orarie del Panificio Rè del giorno prima, una per ogni ora da mezzanotte
+            alle 23. Il titolare sostiene che quasi tutto il consumo dipenda dal forno, acceso dalle 4 alle 8, e per
+            rispondergli calcoliamo la percentuale del consumo del giorno che cade in quelle ore e cerchiamo la
+            lettura più alta, per vedere se il picco è del forno. Le letture sono già in una lista, quindi bastano
+            uno slicing e due funzioni di Python, senza sommare a mano. Il forno pesa per il 57.0% e il picco è di
+            11.2 kWh.
         """,
         richiesta="""
             1. Metti in `ore_forno` le cinque letture dalle 4 alle 8 comprese.
             2. Calcola `kwh_forno`, la loro somma, e `totale_giorno`, la somma di tutte le 24.
-            3. Calcola `quota_forno`, cioè `kwh_forno / totale_giorno * 100`, arrotondato a un decimale con `round()`.
-            4. Metti in `picco` la lettura più alta della giornata.
+            3. Calcola `quota_forno`, cioè `kwh_forno / totale_giorno * 100`, arrotondata a un decimale con
+               `round()`, perché nella risposta al titolare la percentuale si scrive con un solo decimale.
+            4. Metti in `picco` la lettura più alta della giornata e controlla nella lista che cada in una delle ore
+               del forno.
         """,
         suggerimenti=[
             "Le ore sono posizioni della lista, quindi un intervallo di ore è uno slicing; la somma e il massimo di una lista si ottengono con due funzioni di Python.",
@@ -151,9 +164,11 @@ def costruisci() -> Notebook:
 
     # Passo 3 · mercoledì (ciclo in Base, comprehension in Avanzata)
     scenario_3 = """
-        Mercoledì si riparte dai consumi di febbraio degli otto POD, che il collega in ferie aveva lasciato in un
-        dizionario. Il commerciale vuole la lista dei POD che superano i 2000 kWh al mese, e il capo vuole conoscere
-        anche il consumo totale.
+        Mercoledì il commerciale chiede l'elenco dei POD che a febbraio hanno superato i 2000 kWh, e il capo vuole
+        anche il consumo totale di tutti i POD. I consumi stanno nel dizionario lasciato dal collega in ferie, con il
+        POD come chiave, e conviene scorrerlo con il codice invece di cercare a occhio, perché la stessa cella
+        funziona con 8 POD come con 800 e, se il commerciale cambia la soglia, basta modificare un numero. I POD
+        sopra la soglia sono tre, su 16244.1 kWh totali.
     """
     starter_3 = """
         consumi_febbraio = {
@@ -190,8 +205,9 @@ def costruisci() -> Notebook:
         titolo="Mercoledì: chi supera la soglia",
         scenario=scenario_3,
         richiesta="""
-            Con un ciclo `for` su `consumi_febbraio.items()` e un `if`, costruisci la lista `sopra_soglia`
-            con i POD che superano `soglia`. Calcola poi `totale_kwh`, la somma di tutti i consumi.
+            1. Con un ciclo `for` su `consumi_febbraio.items()`, che a ogni giro dà un POD e il suo consumo, e un
+               `if` che confronta il consumo con `soglia`, aggiungi alla lista `sopra_soglia` i POD che la superano.
+            2. Calcola in `totale_kwh` la somma di tutti i consumi del dizionario.
         """,
         suggerimenti=[
             "Il ciclo passa su ogni coppia POD e consumo del dizionario, e dentro il ciclo una condizione decide se aggiungere il POD alla lista; il totale non ha bisogno del ciclo.",
@@ -220,8 +236,9 @@ def costruisci() -> Notebook:
         titolo="Mercoledì: chi supera la soglia",
         scenario=scenario_3,
         richiesta="""
-            Costruisci la lista `sopra_soglia` con i POD che superano `soglia` usando una list comprehension
-            su `consumi_febbraio.items()`. Calcola poi `totale_kwh`, la somma di tutti i consumi.
+            1. Costruisci la lista `sopra_soglia` con una list comprehension su `consumi_febbraio.items()`, che tiene
+               i POD con un consumo maggiore di `soglia`.
+            2. Calcola in `totale_kwh` la somma di tutti i consumi del dizionario.
         """,
         suggerimenti=[
             "La forma è `[pod for pod, kwh in ... if ...]`, con la condizione in coda, mentre per il totale basta applicare `sum()` ai `.values()` del dizionario.",
@@ -244,9 +261,11 @@ def costruisci() -> Notebook:
 
     # Passo 4 · giovedì (un argomento con default in più in Avanzata)
     scenario_4 = """
-        Giovedì il conto fatto lunedì va ripetuto per altri clienti. Il collega in ferie copiava la riga e cambiava
-        i numeri a mano, mentre il collega senior suggerisce di scrivere una funzione che abbia il prezzo di listino
-        come valore di default.
+        Giovedì il capo chiede il costo di febbraio anche per altri clienti. Invece di copiare la riga di lunedì e
+        cambiare i numeri a mano, come faceva il collega in ferie, scriviamo una funzione `costo` che riceve il
+        consumo e il prezzo, con il listino di 0.21 euro/kWh come valore di default, e restituisce l'importo
+        arrotondato al centesimo. In questo modo per i clienti a listino basta passare il consumo, mentre per chi ha
+        un prezzo concordato, come la Serra Fiorita a 0.17 euro/kWh, si aggiunge il prezzo nella chiamata.
     """
     suggerimenti_4 = [
         "La funzione riceve i kWh e un prezzo con valore predefinito, calcola il prodotto, lo arrotonda e lo restituisce.",
@@ -257,8 +276,15 @@ def costruisci() -> Notebook:
         titolo="Giovedì: il conto diventa una funzione",
         scenario=scenario_4,
         richiesta="""
-            1. Scrivi la funzione `costo(kwh, prezzo=0.21)`, con una docstring di una riga, che restituisce con `return` il costo in euro arrotondato a due decimali.
-            2. Usala per calcolare `costo_panificio`, il costo di 1654.2 kWh al prezzo di default, e `costo_serra`, il costo di 3276.0 kWh a 0.17 euro/kWh, passando il prezzo per nome.
+            1. Scrivi la funzione `costo(kwh, prezzo=0.21)`, che restituisce con `return` il consumo moltiplicato per
+               il prezzo, arrotondato a due decimali con `round()` perché l'importo è in euro e centesimi.
+            2. Sotto il `def` aggiungi una docstring di una riga, che il collega, al rientro dalle ferie, potrà
+               leggere con `help(costo)` per sapere che cosa calcola la funzione.
+            3. Usala per calcolare `costo_panificio`, il costo dei 1654.2 kWh del panificio al prezzo di listino, e
+               `costo_serra`, il costo dei 3276.0 kWh della serra a 0.17 euro/kWh. Nella seconda chiamata scrivi
+               `prezzo=0.17`, in modo che chi la rilegge capisca subito che quel numero è un prezzo.
+
+            Alla fine `costo_panificio` vale 347.38 e `costo_serra` vale 556.92.
         """,
         suggerimenti=suggerimenti_4,
         starter="""
@@ -296,8 +322,17 @@ def costruisci() -> Notebook:
         titolo="Giovedì: il conto diventa una funzione",
         scenario=scenario_4,
         richiesta="""
-            1. Scrivi la funzione `costo(kwh, prezzo=0.21, quota_fissa=0.0)`, con una docstring di una riga, che restituisce con `return` il costo in euro, calcolato come consumo per prezzo più la quota fissa e arrotondato a due decimali.
-            2. Usala per calcolare tre costi, passando per nome gli argomenti diversi dal consumo: `costo_panificio` per 1654.2 kWh con tutti i valori di default, `costo_serra` per 3276.0 kWh a 0.17 euro/kWh e `costo_bar` per 690.1 kWh con 8 euro di quota fissa.
+            1. Alcuni clienti, come il Bar Centrale, pagano anche una quota fissa mensile, quindi scrivi la funzione
+               `costo(kwh, prezzo=0.21, quota_fissa=0.0)`, che restituisce con `return` il consumo per il prezzo più
+               la quota fissa, arrotondato al centesimo.
+            2. Aggiungi una docstring di una riga, che il collega, al rientro dalle ferie, potrà leggere con
+               `help(costo)`.
+            3. Usala per tre clienti, passando per nome gli argomenti diversi dal consumo, in modo che in ogni
+               chiamata si legga quale valore cambia: `costo_panificio` per 1654.2 kWh con i valori di default,
+               `costo_serra` per 3276.0 kWh a 0.17 euro/kWh e `costo_bar` per i 690.1 kWh del bar con 8 euro di
+               quota fissa.
+
+            Alla fine `costo_panificio` vale 347.38, `costo_serra` 556.92 e `costo_bar` 152.92.
         """,
         suggerimenti=suggerimenti_4[1:],
         starter="""
@@ -338,16 +373,23 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Venerdì: il file del distributore",
         scenario="""
-            Venerdì arriva dal distributore il CSV con le letture giornaliere di marzo degli otto POD, che usa il punto
-            e virgola come separatore e la virgola per i decimali. Nel frattempo l'officina di Lecco segnala che la sua
-            bolletta di marzo è il triplo del solito.
+            Venerdì il distributore manda il CSV con le letture giornaliere di marzo degli otto POD, scritto
+            all'italiana con il punto e virgola tra le colonne e la virgola nei decimali, e l'officina di Lecco
+            segnala una bolletta di marzo tripla del solito. Una giornata normale resta sotto i 250 kWh, quindi con
+            pandas cerchiamo tra le 248 righe quelle sopra i 500 e le salviamo in un CSV da girare al distributore per
+            un controllo. L'unica riga anomala è dell'officina, POD `IT001E31047092`, con 1530.3 kWh il 12 marzo.
         """,
         richiesta="""
-            1. Leggi `../Dati/homework/letture_marzo.csv` in `letture` con i parametri adatti a un CSV italiano e guarda `info()`, `head()` e `describe()`, controllando che la colonna `kwh` sia numerica.
-            2. Crea `mask`, la condizione che confronta tutta la colonna `kwh` con il valore 500, e poi `anomale = letture[mask]`, che contiene solo le righe in cui la condizione è vera.
-            3. Salva `anomale` nel file `letture_anomale.csv`, nella cartella del notebook, senza l'indice.
-
-            Lo stesso filtro si può scrivere anche in una sola espressione, `letture[letture["kwh"] > 500]`, che tiene solo le righe con `kwh` sopra 500.
+            1. Leggi `../Dati/homework/letture_marzo.csv` in `letture`, indicando a `read_csv` il separatore delle
+               colonne e quello dei decimali.
+            2. Le istruzioni già scritte sotto la lettura mostrano le prime righe con `head()`, i tipi delle colonne con
+               `info()` e le statistiche con `describe()`. Controlla che `kwh` sia `float64`, perché un numero letto
+               come testo non si può confrontare con 500, e che il suo massimo sia molto sopra i 250 kWh.
+            3. Scrivi in `mask` la condizione che confronta tutta la colonna `kwh` con 500. Il risultato ha un
+               `True` o un `False` per ogni riga, e `letture[mask]`, già scritto nella cella, tiene in `anomale`
+               soltanto le righe con `True`.
+            4. Salva `anomale` nel file `letture_anomale.csv`, nella cartella del notebook, senza l'indice, perché
+               il distributore lo apre in Excel e l'indice comparirebbe come una colonna in più senza nome.
         """,
         suggerimenti=[
             "Un CSV salvato da Excel in italiano usa un separatore di colonne e un separatore decimale diversi da quelli standard, e `read_csv` ha un parametro per ciascuno; la maschera confronta tutta la colonna con la soglia.",
@@ -385,17 +427,19 @@ def costruisci() -> Notebook:
             assert list(pd.read_csv("letture_anomale.csv").columns) == ["pod", "data", "kwh"], "❌ letture_anomale.csv: salva senza l'indice, con index=False"
         """,
         perche="""
-            `info()` mostra subito se `kwh` è stata letta come numero, perché in quel caso il suo tipo è `float64`. Le
-            letture normali di marzo restano sotto i 250 kWh al giorno, quindi la soglia di 500 lascia passare soltanto
-            la lettura anomala dell'officina.
+            `info()` mostra subito se `kwh` è stata letta come numero, perché in quel caso il suo tipo è `float64`. La
+            maschera e la selezione si scrivono spesso in una sola espressione, `letture[letture["kwh"] > 500]`, che
+            tiene le stesse righe; tenerle separate, come qui, permette di guardare la maschera prima di usarla.
         """,
     )
 
     # Passo 6 · sabato, facoltativo (in Avanzata la lettura SQL sta in leggi_tabella)
     scenario_6 = """
-        Sabato siamo di reperibilità. L'Officina Meccanica Fumagalli contesta la bolletta e chiede la potenza del suo
-        contatore e i prezzi applicati, ma il gestionale è spento e restano a disposizione soltanto l'Excel dei clienti
-        e il database con l'anagrafica dei POD.
+        Sabato siamo di reperibilità e l'Officina Meccanica Fumagalli, che contesta la bolletta, chiede la potenza
+        del suo contatore e i prezzi per fascia che le applichiamo. Il gestionale è spento, ma la potenza sta nella
+        tabella `pod` del database dell'anagrafica e i prezzi nel foglio Listino dell'Excel dei clienti, e con pandas
+        leggiamo da lì soltanto quello che serve, in poche righe che tornano utili alla prossima reperibilità. Il
+        contatore dell'officina ha 30 kW e i prezzi sono di 0.21, 0.19 e 0.17 euro/kWh nelle fasce F1, F2 e F3.
     """
     nb.esercizio(
         aula="base",
@@ -403,8 +447,11 @@ def costruisci() -> Notebook:
         titolo="Sabato: la reperibilità",
         scenario=scenario_6,
         richiesta=f"""
-            1. Leggi i due fogli di `{EXCEL}` in `anagrafica` e `listino`, con una chiamata a `read_excel` per ciascuno e il foglio scelto con `sheet_name`.
-            2. Apri `{DB}` con `sqlite3.connect` e leggi con `pd.read_sql` tutta la tabella `pod` in `potenze` e la sola riga dell'officina in `officina`, usando un `WHERE` sulla colonna `cliente`; alla fine chiudi la connessione.
+            1. Leggi in `listino` il foglio `Listino` di `{EXCEL}`, indicandolo con `sheet_name`, perché senza
+               questo parametro `read_excel` legge il primo foglio, che è l'anagrafica dei clienti.
+            2. Apri `{DB}` con `sqlite3.connect` e leggi con `pd.read_sql` in `officina` la sola riga dell'officina
+               della tabella `pod`, con un `WHERE` sulla colonna `cliente`. La riga `con.close()`, già scritta
+               nella cella, chiude poi la connessione, che a quel punto non serve più.
         """,
         suggerimenti=[
             "Con `read_excel` il foglio si sceglie con `sheet_name`; con il database si apre la connessione, si legge con `read_sql` e si chiude la connessione.",
@@ -414,15 +461,12 @@ def costruisci() -> Notebook:
             import pandas as pd
             import sqlite3
 
-            anagrafica = pd.read_excel("{EXCEL}", sheet_name=...)
             listino = pd.read_excel("{EXCEL}", sheet_name=...)
 
             con = sqlite3.connect("{DB}")
-            potenze = pd.read_sql("...", con)
             officina = pd.read_sql("...", con)
             con.close()
 
-            print(anagrafica)
             print(listino)
             officina
         """,
@@ -430,20 +474,16 @@ def costruisci() -> Notebook:
             import pandas as pd
             import sqlite3
 
-            anagrafica = pd.read_excel("{EXCEL}", sheet_name="Anagrafica")
             listino = pd.read_excel("{EXCEL}", sheet_name="Listino")
 
             con = sqlite3.connect("{DB}")
-            potenze = pd.read_sql("SELECT * FROM pod", con)
             officina = pd.read_sql("SELECT * FROM pod WHERE cliente = 'Officina Meccanica Fumagalli'", con)
             con.close()
 
-            print(anagrafica)
             print(listino)
             officina
         """,
         verifica="""
-            assert list(anagrafica.columns) == ["pod", "cliente", "comune"], "❌ anagrafica: è il foglio Anagrafica? Controlla sheet_name"
             assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
             assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, presa dalla tabella pod con il WHERE"
         """,
@@ -459,9 +499,14 @@ def costruisci() -> Notebook:
         titolo="Sabato: la reperibilità",
         scenario=scenario_6,
         richiesta=f"""
-            1. Leggi i due fogli di `{EXCEL}` in `anagrafica` e `listino`, con una chiamata a `read_excel` per ciascuno e il foglio scelto con `sheet_name`.
-            2. Scrivi la funzione `leggi_tabella(nome)`, che apre `{DB}` con `sqlite3.connect`, legge tutta la tabella `nome` con `pd.read_sql`, chiude la connessione e restituisce il DataFrame; poi usala per mettere in `potenze` la tabella `pod`.
-            3. In `officina` metti la sola riga dell'Officina Meccanica Fumagalli, filtrando `potenze` con una condizione sulla colonna `cliente`, come venerdì.
+            1. Leggi in `listino` il foglio `Listino` di `{EXCEL}`, scelto con `sheet_name`, perché il primo foglio
+               del file è l'anagrafica dei clienti.
+            2. Scrivi la funzione `leggi_tabella(nome)`, che apre `{DB}` con `sqlite3.connect`, legge tutta la
+               tabella `nome` con `pd.read_sql`, chiude la connessione e restituisce il DataFrame, in modo che alla
+               prossima reperibilità basti una riga per leggere una tabella senza lasciare aperta la connessione.
+               Usala per mettere in `potenze` la tabella `pod`.
+            3. In `officina` metti la sola riga dell'Officina Meccanica Fumagalli, filtrando `potenze` con una
+               condizione sulla colonna `cliente`, come venerdì.
         """,
         suggerimenti=[
             "La funzione racchiude i tre passi del database, apertura, lettura e chiusura, e il nome ricevuto entra nella query con una f-string: `f\"SELECT * FROM {nome}\"`.",
@@ -475,12 +520,10 @@ def costruisci() -> Notebook:
                 ...
 
 
-            anagrafica = pd.read_excel("{EXCEL}", sheet_name=...)
             listino = pd.read_excel("{EXCEL}", sheet_name=...)
             potenze = leggi_tabella("pod")
             officina = ...
 
-            print(anagrafica)
             print(listino)
             officina
         """,
@@ -497,17 +540,15 @@ def costruisci() -> Notebook:
                 return df
 
 
-            anagrafica = pd.read_excel("{EXCEL}", sheet_name="Anagrafica")
             listino = pd.read_excel("{EXCEL}", sheet_name="Listino")
             potenze = leggi_tabella("pod")
             officina = potenze[potenze["cliente"] == "Officina Meccanica Fumagalli"]
 
-            print(anagrafica)
             print(listino)
             officina
         ''',
         verifica="""
-            assert list(anagrafica.columns) == ["pod", "cliente", "comune"] and set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ anagrafica e listino: controlla sheet_name"
+            assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
             assert leggi_tabella("pod").shape == (8, 3), "❌ leggi_tabella: deve restituire tutta la tabella, 8 righe e 3 colonne"
             assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, quella dell'Officina Meccanica Fumagalli"
         """,

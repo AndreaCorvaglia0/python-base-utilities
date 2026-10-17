@@ -65,11 +65,15 @@ def costruisci() -> Notebook:
         usiamo da pandas in poi. Ogni esercizio legge i propri dati, quindi se ti blocchi su uno puoi passare al
         successivo.
     """)
-    nb.md("""
-        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi, che
-        applicano in modo diretto quello che abbiamo appena visto. La sfida finale è un esercizio libero, senza
-        verifica. Anche sotto questi esercizi c'è la cella `soluzione`.
-    """)
+    aiuti = """
+        Ogni esercizio comincia dicendo che cosa vogliamo ottenere e perché, e da lì si può arrivare al risultato da
+        soli. Chi preferisce procedere per gradi apre con un clic il blocco Passo per passo, e sotto {aiuti}, da
+        leggere solo dopo aver provato. Sotto la cella da completare ci sono la verifica, che conferma il risultato o
+        dice che cosa controllare, e la cella `soluzione`, che mostra soltanto la soluzione di quell'esercizio. Se
+        finisci prima, in fondo al notebook trovi gli esercizi facoltativi.
+    """
+    nb.md(aiuti.replace("{aiuti}", "due suggerimenti, anche loro nascosti"), aula="base")
+    nb.md(aiuti.replace("{aiuti}", "un suggerimento, anche lui nascosto"), aula="avanzata")
 
     # ------------------------------------------------------------------ 1
     nb.sezione("Domande", intro="""
@@ -159,24 +163,27 @@ def costruisci() -> Notebook:
         nb,
         titolo="Le spese sopra soglia",
         scenario="""
-            Nella lista `spese` abbiamo annotato quanto abbiamo speso in dodici giornate di ottobre. Vogliamo sapere
-            in quanti giorni abbiamo superato i 50 euro e quanto abbiamo speso in tutto.
+            Nella lista `spese` abbiamo annotato quanto abbiamo speso in dodici giornate di ottobre, con l'idea di
+            non superare i 50 euro al giorno. Vogliamo un ciclo che metta da parte le spese oltre questo limite, per
+            vedere quali sono state, e che ci dica quante sono e quanto abbiamo speso nel mese. Lo stesso codice
+            vale per la lista di novembre o per un limite diverso, perché basta cambiare `spese` o `soglia`. Alla
+            fine le spese oltre il limite sono cinque e il totale del mese è di 578.8 euro.
         """,
         richiesta="""
             1. Con un ciclo `for` sulla lista e un `if` al suo interno, aggiungi alla lista `sopra_soglia` le spese
-               maggiori di 50 euro.
-            2. Salva in `quante` il numero di spese sopra la soglia.
-            3. Salva in `totale` la somma di tutte le spese, calcolata con la funzione `sum`.
+               maggiori di `soglia`.
+            2. Salva in `quante` il numero di spese oltre il limite.
+            3. Salva in `totale` la somma di tutte le spese del mese, calcolata con la funzione `sum`.
 
             Le spese sopra i 50 euro sono cinque, perché la spesa di 50.0 euro non supera la soglia, e il totale
             del mese è di 578.8 euro.
         """,
         richiesta_avanzata="""
             1. Con un ciclo `for` sulla lista e un `if` al suo interno, aggiungi alla lista `sopra_soglia` le spese
-               maggiori di 50 euro.
+               maggiori di `soglia`.
             2. Nello stesso ciclo, senza scriverne un secondo, accumula in `totale_sopra` la somma delle sole spese
-               sopra la soglia.
-            3. Salva in `quante` il numero di spese sopra la soglia e in `totale` la somma di tutte le spese.
+               oltre il limite, per sapere quanto hanno pesato sul mese.
+            3. Salva in `quante` il numero di spese oltre il limite e in `totale` la somma di tutte le spese.
 
             Le spese sopra i 50 euro sono cinque, perché la spesa di 50.0 euro non supera la soglia, e sommano
             397.7 euro; il totale del mese è di 578.8 euro.
@@ -268,15 +275,20 @@ def costruisci() -> Notebook:
         nb,
         titolo="Lo sconto come funzione",
         scenario="""
-            Il negozio sotto casa applica di solito uno sconto del 10%, ma in alcune giornate lo alza. Una funzione
-            con un valore predefinito per lo sconto calcola il prezzo finale in entrambi i casi.
+            Il negozio sotto casa applica di solito uno sconto del 10%, che nei giorni di promozione sale al 30%.
+            Invece di rifare il conto per ogni articolo vogliamo una funzione che riceva il prezzo e restituisca il
+            prezzo scontato al centesimo, con il 10% quando non indichiamo altro, e che valga per qualunque articolo
+            e qualunque sconto. Con una docstring, chi la riprende in un altro notebook legge con `help()` che cosa
+            fa. Un maglione da 49.90 euro costa 44.91 euro nei giorni normali e 34.93 euro in promozione.
         """,
         richiesta="""
             1. Completa la funzione `prezzo_scontato(prezzo, sconto=10)`, che calcola il prezzo dopo lo sconto con
-               l'espressione `prezzo * (1 - sconto / 100)`, lo arrotonda a due decimali e lo restituisce.
-            2. Scrivi sotto il `def` una docstring di una riga che dica che cosa fa la funzione.
-            3. Chiama la funzione su un prezzo di 49.90 euro, prima senza indicare lo sconto, salvando il risultato
-               in `normale`, e poi con uno sconto del 30%, salvandolo in `promozione`.
+               l'espressione `prezzo * (1 - sconto / 100)`, lo arrotonda a due decimali, cioè al centesimo, e lo
+               restituisce.
+            2. Scrivi sotto il `def` una docstring di una riga che dica che cosa fa la funzione, in modo che
+               `help(prezzo_scontato)` la mostri.
+            3. Chiama la funzione sul prezzo del maglione, 49.90 euro, prima senza indicare lo sconto, salvando il
+               risultato in `normale`, e poi con uno sconto del 30%, salvandolo in `promozione`.
 
             Con lo sconto predefinito il prezzo diventa 44.91 euro, con lo sconto del 30% diventa 34.93 euro.
         """,
@@ -284,12 +296,13 @@ def costruisci() -> Notebook:
             1. Scrivi la funzione `prezzo_scontato(prezzo, sconto=10, arrotonda=2)`, con una docstring di una riga,
                che calcola il prezzo dopo lo sconto con l'espressione `prezzo * (1 - sconto / 100)` e lo restituisce
                arrotondato al numero di decimali indicato da `arrotonda`.
-            2. Chiama la funzione su un prezzo di 49.90 euro, prima senza indicare lo sconto, salvando il risultato
-               in `normale`, e poi con uno sconto del 30%, salvandolo in `promozione`.
-            3. Salva in `intero` il prezzo con lo sconto del 30% arrotondato all'euro, cioè con `arrotonda=0`.
+            2. Chiama la funzione sul prezzo del maglione, 49.90 euro, prima senza indicare lo sconto, salvando il
+               risultato in `normale`, e poi con uno sconto del 30%, salvandolo in `promozione`.
+            3. Sul volantino della promozione il negozio scrive i prezzi all'euro, quindi salva in `intero` il
+               prezzo con lo sconto del 30% arrotondato con `arrotonda=0`.
 
             Con lo sconto predefinito il prezzo diventa 44.91 euro, con lo sconto del 30% diventa 34.93 euro, che
-            arrotondati all'euro sono 35.0.
+            sul volantino diventano 35.0.
         """,
         suggerimenti_base=[
             """
@@ -368,23 +381,33 @@ def costruisci() -> Notebook:
         titolo="Il CSV del distributore",
         scenario="""
             Il distributore ci manda i consumi mensili del 2025 di sei POD, divisi per fascia oraria, nel file
-            `letture_pod_2025.csv`, esportato da un Excel configurato in italiano come quello letto nel notebook 06.
+            `letture_pod_2025.csv`, e nella mail che lo accompagna scrive quante righe contiene e qual è il consumo
+            totale. Vogliamo leggere il file con pandas e ricavare gli stessi due numeri, per controllare che sia
+            arrivato intero prima di usarlo; quando arriverà il file aggiornato basterà rieseguire la cella. Il file
+            è esportato da un Excel in italiano, come quello del notebook 06, e la mail riporta 216 righe e
+            134507.7 kWh.
         """,
         richiesta="""
             1. Leggi `../Dati/letture_pod_2025.csv` nel DataFrame `letture`, con i parametri adatti al formato
                italiano.
-            2. Controlla con `info()` che la colonna `kwh` sia di tipo `float64`, cioè numerica.
-            3. Salva in `righe` il numero di righe del DataFrame e in `totale_kwh` la somma della colonna `kwh`.
+            2. Controlla con `info()` che la colonna `kwh` sia di tipo `float64`, perché soltanto una colonna
+               numerica si può sommare.
+            3. Salva in `righe` il numero di righe del DataFrame e in `totale_kwh` la somma della colonna `kwh`, i
+               due numeri da confrontare con la mail.
 
-            Il file ha 216 righe e il consumo totale è di circa 134507.7 kWh.
+            Il file ha 216 righe e il consumo totale è di circa 134507.7 kWh, come scritto nella mail.
         """,
         richiesta_avanzata="""
             1. Leggi `../Dati/letture_pod_2025.csv` nel DataFrame `letture`, con i parametri adatti al formato
-               italiano e tenendo soltanto le colonne `pod`, `fascia` e `kwh`.
-            2. Controlla con `info()` che la colonna `kwh` sia di tipo `float64`, cioè numerica.
-            3. Salva in `righe` il numero di righe del DataFrame e in `totale_kwh` la somma della colonna `kwh`.
+               italiano, e tieni soltanto le colonne `pod`, `fascia` e `kwh`, perché il nome del cliente e la data
+               non servono a questo controllo e senza di loro `info()` mostra solo quello che interessa.
+            2. Controlla con `info()` che la colonna `kwh` sia di tipo `float64`, perché soltanto una colonna
+               numerica si può sommare.
+            3. Salva in `righe` il numero di righe del DataFrame e in `totale_kwh` la somma della colonna `kwh`, i
+               due numeri da confrontare con la mail.
 
-            Il DataFrame ha 216 righe e 3 colonne, e il consumo totale è di circa 134507.7 kWh.
+            Il DataFrame ha 216 righe e 3 colonne, e il consumo totale è di circa 134507.7 kWh, come scritto nella
+            mail.
         """,
         suggerimenti_base=[
             """
@@ -462,24 +485,30 @@ def costruisci() -> Notebook:
         scenario="""
             Il file `bolletta_esempio.xlsx` raccoglie in tre fogli i dati delle bollette degli stessi sei POD: i
             consumi mensili per fascia nel foglio `Consumi`, i prezzi nel foglio `Listino` e i clienti nel foglio
-            `Anagrafica`. Per calcolare una bolletta ci servono i consumi e il listino.
+            `Anagrafica`. Per preparare una bolletta servono i consumi e il listino, quindi vogliamo leggere questi
+            due fogli in due DataFrame e ricavare il prezzo della fascia F1. Leggendo il file da Python, quando
+            arriva il listino aggiornato basta rieseguire la cella. Il prezzo della fascia F1 è di 0.21 euro al kWh.
         """,
         richiesta="""
             1. Leggi il foglio `Consumi` nel DataFrame `consumi` e il foglio `Listino` nel DataFrame `listino`,
-               indicando a `read_excel` il nome del foglio.
-            2. Salva in `righe_consumi` e `righe_listino` il numero di righe dei due DataFrame.
+               indicando a `read_excel` il nome del foglio, perché senza questa indicazione la funzione legge
+               soltanto il primo.
+            2. Salva in `righe_consumi` e `righe_listino` il numero di righe dei due DataFrame, che conferma di
+               aver letto i fogli giusti, perché i consumi hanno una riga per POD e per mese e il listino una per
+               fascia.
             3. Salva in `prezzo_f1` il prezzo in euro al kWh della fascia F1, che si trova nella prima riga del
                listino, nella colonna `eur_kwh`.
 
-            Il foglio dei consumi ha 72 righe, una per POD e per mese, il listino ne ha 3, una per fascia, e il
-            prezzo della fascia F1 è di 0.21 euro al kWh.
+            Il foglio dei consumi ha 72 righe, il listino ne ha 3 e il prezzo della fascia F1 è di 0.21 euro al
+            kWh.
         """,
         richiesta_avanzata="""
             1. Leggi il foglio `Consumi` nel DataFrame `consumi` e il foglio `Listino` nel DataFrame `listino`.
-            2. Salva in `righe_consumi` e `righe_listino` il numero di righe dei due DataFrame e in `prezzo_f1` il
-               prezzo in euro al kWh della fascia F1, preso dalla colonna `eur_kwh` del listino.
-            3. Leggi poi tutti i fogli del file con una sola chiamata nel dizionario `fogli`, e salva in
-               `nomi_fogli` la lista dei nomi dei fogli.
+            2. Salva in `righe_consumi` e `righe_listino` il numero di righe dei due DataFrame, per controllare di
+               aver letto i fogli giusti, e in `prezzo_f1` il prezzo in euro al kWh della fascia F1, preso dalla
+               colonna `eur_kwh` del listino.
+            3. Un file che arriva da altri può contenere fogli di cui non conosciamo il nome, quindi leggi tutti i
+               fogli con una sola chiamata nel dizionario `fogli` e salva in `nomi_fogli` la lista dei loro nomi.
 
             Il foglio dei consumi ha 72 righe, il listino ne ha 3, il prezzo della fascia F1 è di 0.21 euro al kWh
             e i fogli sono `Consumi`, `Listino` e `Anagrafica`, in quest'ordine.
@@ -563,12 +592,16 @@ def costruisci() -> Notebook:
         titolo="La tabella dal database",
         scenario="""
             Le letture giornaliere di marzo 2025 di trenta POD stanno nella tabella `letture` del database SQLite
-            `utility.db`, che ha le colonne `pod`, `data` e `kwh`.
+            `utility.db`, che ha le colonne `pod`, `data` e `kwh`. Vogliamo portare la tabella in un DataFrame per
+            calcolare il consumo complessivo del mese e controllare dal numero di righe che ci siano tutte le
+            letture, una per giorno e per POD. La query rilegge ogni volta il contenuto del database, quindi la
+            stessa cella resta valida quando arrivano letture nuove. La tabella ha 930 righe e il consumo di marzo
+            è di 69880.1 kWh.
         """,
         richiesta="""
             1. Apri la connessione a `../Dati/utility.db` con `sqlite3.connect` e salvala in `con`.
             2. Leggi tutta la tabella `letture` nel DataFrame `letture_db` con `pd.read_sql`, poi chiudi la
-               connessione.
+               connessione, che non serve più.
             3. Salva in `n_letture` il numero di righe e in `kwh_marzo` la somma della colonna `kwh`.
 
             La tabella ha 930 righe, cioè 31 giorni per 30 POD, e il consumo complessivo di marzo è di 69880.1 kWh.
@@ -576,8 +609,9 @@ def costruisci() -> Notebook:
         richiesta_avanzata="""
             1. Apri la connessione a `../Dati/utility.db` e leggi tutta la tabella `letture` nel DataFrame
                `letture_db`.
-            2. Con una seconda query, che usa la clausola `WHERE`, leggi nel DataFrame `letture_pod` soltanto le
-               righe del POD `IT001E10087109`, e poi chiudi la connessione.
+            2. Il cliente del POD `IT001E10087109` ha chiesto le sue letture di marzo, quindi con una seconda query,
+               che usa la clausola `WHERE`, leggi nel DataFrame `letture_pod` soltanto le sue righe, e poi chiudi la
+               connessione.
             3. Salva in `n_letture` il numero di righe di `letture_db` e in `kwh_marzo` la somma della sua colonna
                `kwh`.
 
@@ -662,14 +696,16 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ facoltativi
     nb.md("""
-        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi, che
-        applicano in modo diretto quello che abbiamo appena visto. La sfida finale è un esercizio libero, senza
-        verifica. Anche sotto questi esercizi c'è la cella `soluzione`.
+        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi. Il
+        primo riprende il ciclo su un dizionario del notebook 04 e il secondo scrive un file Excel per un collega,
+        mentre la sfida finale, senza verifica, compone un riepilogo di tre righe dal file delle bollette. Anche
+        sotto questi esercizi c'è la cella `soluzione`.
     """, aula="base")
     nb.md("""
-        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi, che
-        applicano in modo diretto quello che abbiamo appena visto. La sfida finale è un esercizio libero, senza
-        verifica. Anche sotto questi esercizi c'è la cella `soluzione`.
+        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi. Il
+        primo riprende il ciclo su un dizionario del notebook 04, il secondo scrive un file Excel per un collega e
+        il terzo raccoglie in una funzione la chiamata a un'API, mentre la sfida finale, senza verifica, compone un
+        riepilogo di tre righe dal file delle bollette. Anche sotto questi esercizi c'è la cella `soluzione`.
     """, aula="avanzata")
 
     # E2.6 ------------------------------------------------------------
@@ -678,12 +714,14 @@ def costruisci() -> Notebook:
         titolo="Il riepilogo per mese",
         scenario="""
             Le spese del primo trimestre sono raccolte in un dizionario che associa a ogni mese la lista delle spese
-            di quel mese. Vogliamo un secondo dizionario con il totale di ciascun mese.
+            di quel mese. Vogliamo un secondo dizionario con il totale di ciascun mese, per confrontare i mesi a
+            colpo d'occhio, e il totale del trimestre. Il ciclo sul dizionario funziona allo stesso modo con tre mesi
+            o con dodici, quindi a fine anno la cella resta la stessa. Alla fine gennaio vale 161.7 euro, febbraio
+            108.7 e marzo 187.1, e il trimestre 457.5 euro.
         """,
         richiesta="""
-            1. Con un ciclo `for` su `spese_mesi.items()`, assegna a `totali[mese]` la somma delle spese del mese,
-               arrotondata a due decimali.
-            2. Salva in `totale_trimestre` la somma dei tre totali.
+            1. Con un ciclo `for` su `spese_mesi.items()`, assegna a `totali[mese]` la somma delle spese del mese.
+            2. Salva in `totale_trimestre` la somma dei tre totali, che sono i valori del dizionario `totali`.
 
             Il dizionario `totali` è `{'gennaio': 161.7, 'febbraio': 108.7, 'marzo': 187.1}` e il totale del
             trimestre è di 457.5 euro.
@@ -691,8 +729,8 @@ def costruisci() -> Notebook:
         suggerimenti_base=[
             """
             A ogni passo il ciclo su `.items()` fornisce il nome del mese e la sua lista di spese, e la riga dentro
-            il ciclo assegna alla chiave `mese` di `totali` la somma della lista, ottenuta con `sum` e arrotondata
-            con `round`. I tre totali sono i valori del dizionario, cioè `totali.values()`.
+            il ciclo assegna alla chiave `mese` di `totali` la somma della lista, ottenuta con `sum`. I tre totali
+            si ottengono con `totali.values()`, che si può passare direttamente a `sum`.
             """,
         ],
         starter_base="""
@@ -729,7 +767,7 @@ def costruisci() -> Notebook:
 
             totali = {}
             for mese, lista in spese_mesi.items():
-                totali[mese] = round(sum(lista), 2)
+                totali[mese] = sum(lista)
 
             totale_trimestre = sum(totali.values())
 
@@ -737,7 +775,7 @@ def costruisci() -> Notebook:
             print(totale_trimestre)  # Output: 457.5
         """,
         verifica="""
-            assert totali == {"gennaio": 161.7, "febbraio": 108.7, "marzo": 187.1}, "❌ totali: una chiave per mese, con la somma arrotondata"
+            assert totali == {"gennaio": 161.7, "febbraio": 108.7, "marzo": 187.1}, "❌ totali: una chiave per mese, con la somma delle spese di quel mese"
             assert round(totale_trimestre, 2) == 457.5, "❌ totale_trimestre: somma i valori di totali"
         """,
         facoltativo=True,
@@ -748,26 +786,29 @@ def costruisci() -> Notebook:
         nb,
         titolo="Il file per il collega",
         scenario="""
-            Un collega ci chiede le letture della fascia F3 del CSV del distributore in un file Excel, da aprire
-            per conto suo. La cella qui sotto rilegge il CSV, quindi l'esercizio non dipende dall'E2.3.
+            Un collega che segue i consumi notturni e festivi ci chiede le letture della fascia F3 del CSV del
+            distributore in un file Excel, da aprire per conto suo. Vogliamo selezionare con pandas le sole righe di
+            quella fascia e scriverle in `riepilogo_fascia.xlsx` senza la colonna dell'indice, che per lui sarebbe
+            una colonna di numeri senza significato. Prima di mandare il file lo rileggiamo, per controllare che
+            contenga tutte le righe. Alla fine il file ha 72 righe, cioè 12 mesi per 6 POD.
         """,
         richiesta="""
             1. Salva in `f3` le sole righe della fascia F3, con la selezione `letture[letture["fascia"] == "F3"]`,
                che tiene le righe in cui la condizione tra parentesi quadre è vera e che il notebook 07 tratta per
                esteso.
             2. Scrivi `f3` nel file `riepilogo_fascia.xlsx`, nella cartella del notebook, con il metodo `to_excel()`
-               e `index=False`.
+               e `index=False`, che lascia fuori la colonna dell'indice.
             3. Rileggi il file con `read_excel` nel DataFrame `riletto` e confronta il suo numero di righe con
-               quello di `f3`.
+               quello di `f3`, per essere sicuro che il collega riceva tutte le letture.
 
-            Il file contiene 72 righe, cioè 12 mesi per 6 POD, e le stesse colonne del CSV, senza la colonna
-            dell'indice.
+            Il file contiene 72 righe e le stesse colonne del CSV, senza la colonna dell'indice.
         """,
         richiesta_avanzata="""
             1. Salva in `f3` le sole righe della fascia F3, con una selezione condizionale sulla colonna `fascia`.
             2. Scrivi `f3` nel file `riepilogo_fascia.xlsx`, nella cartella del notebook, senza la colonna
                dell'indice.
-            3. Rileggi il file nel DataFrame `riletto` e confronta il suo numero di righe con quello di `f3`.
+            3. Rileggi il file nel DataFrame `riletto` e confronta il suo numero di righe con quello di `f3`, per
+               essere sicuro che il collega riceva tutte le letture.
 
             Il file contiene 72 righe, cioè 12 mesi per 6 POD, e le stesse colonne del CSV.
         """,
@@ -849,16 +890,22 @@ def costruisci() -> Notebook:
         nb.esercizio(
             titolo="Il wrapper dell'API",
             scenario="""
-                Nel notebook 06 abbiamo chiesto al portale di Regione Lombardia l'anagrafica dei sensori meteo,
-                ripetendo ogni volta gli stessi passi. Una funzione che li raccoglie, detta wrapper, permette di
-                chiedere i sensori di una provincia con una sola chiamata.
+                Nel notebook 06 abbiamo chiesto al portale di Regione Lombardia l'anagrafica dei sensori meteo
+                ripetendo ogni volta l'indirizzo, i parametri e il controllo della risposta. Vogliamo raccogliere
+                questi passi in una funzione, detta wrapper, che riceve la sigla di una provincia e restituisce i
+                suoi sensori in un DataFrame, così per passare da Milano a Bergamo basta cambiare l'argomento.
+                Poiché il portale a volte non risponde, prepariamo anche la lettura di un file di riserva con gli
+                stessi dati. Alla fine `sensori_mi` contiene soltanto i sensori della provincia di Milano.
             """,
             richiesta="""
-                1. Scrivi la funzione `sensori(provincia)`, con una docstring, che chiama l'endpoint
-                   `https://www.dati.lombardia.it/resource/nf78-nj6b.json` con il parametro di query `provincia`,
-                   un `timeout` di 30 secondi e `raise_for_status()`, e restituisce la risposta come DataFrame.
-                2. Salva in `sensori_mi` i sensori della provincia di Milano, con la chiamata `sensori("MI")`.
-                3. Se il portale non risponde, completa ed esegui la seconda cella, che legge il file di riserva
+                1. Scrivi la funzione `sensori(provincia)`, con una docstring che dica che cosa restituisce, che
+                   chiama l'endpoint `https://www.dati.lombardia.it/resource/nf78-nj6b.json` con il parametro di
+                   query `provincia` e restituisce la risposta come DataFrame.
+                2. Nella chiamata indica un `timeout` di 30 secondi, perché la cella non resti ferma se il portale
+                   non risponde, e subito dopo chiama `raise_for_status()`, che interrompe la funzione con un errore
+                   se il portale segnala un problema, invece di restituire dati incompleti.
+                3. Salva in `sensori_mi` i sensori della provincia di Milano, con la chiamata `sensori("MI")`.
+                4. Se il portale non risponde, completa ed esegui la seconda cella, che legge il file di riserva
                    `../Dati/fallback/lombardia_sensori.json` e deve tenere in `sensori_mi` le sole righe con
                    provincia `MI`.
 
@@ -904,61 +951,74 @@ def costruisci() -> Notebook:
         nb,
         titolo="Sfida: il riepilogo per l'ufficio",
         scenario="""
-            Per chiudere, l'ufficio vuole un riepilogo di tre righe sui consumi del CSV del distributore, da
-            incollare in una mail. L'esercizio è aperto e non ha una verifica, perché il risultato si controlla
-            confrontandolo con i numeri trovati negli esercizi precedenti.
+            Ogni mese l'ufficio commerciale vuole in una mail un riepilogo di tre righe sul file delle bollette:
+            quanti clienti ci sono, quanti kWh hanno consumato in tutto e quale fascia pesa di più. Vogliamo una
+            cella che ricavi i tre numeri da `bolletta_esempio.xlsx` e stampi le righe da incollare, in modo che il
+            mese prossimo basti rieseguirla sul file nuovo. Il formato delle righe è libero, quindi l'esercizio non
+            ha una verifica; un riepilogo corretto riporta 6 clienti, circa 92159.1 kWh e la fascia F1.
         """,
         richiesta="""
-            1. Partendo dal DataFrame `letture`, che la cella rilegge, calcola il consumo totale in kWh, il numero
-               di POD diversi e la fascia con il consumo più alto.
-            2. Stampa le tre informazioni con tre `print` e tre f-string, una per riga.
+            1. Leggi i fogli `Anagrafica` e `Consumi` del file e salva in `n_clienti` il numero di righe
+               dell'anagrafica, che ne ha una per cliente.
+            2. Il foglio `Consumi` ha una colonna per fascia, quindi con un ciclo sulla lista `["F1", "F2", "F3"]`
+               calcola la somma di ciascuna colonna e aggiungila a `totale`.
+            3. Nello stesso ciclo, con un `if` che confronta ogni somma con la più alta trovata fino a quel
+               momento, tieni da parte in `fascia_max` e `kwh_max` la fascia con il consumo più alto e il suo
+               valore.
+            4. Stampa le tre righe del riepilogo con tre `print` e tre f-string.
 
-            Un riepilogo corretto riporta circa 134507.7 kWh, 6 POD e la fascia F1.
+            Il consumo totale è di circa 92159.1 kWh, e la fascia F1 ne conta circa 41383.1.
         """,
         suggerimenti_base=[
             """
-            Il numero di POD diversi è la lunghezza del set dei valori della colonna `pod`, perché un set non
-            ammette duplicati. Il consumo di una fascia è la somma di `kwh` sulle sole righe di quella fascia, con
-            la selezione dell'esercizio sul file per il collega, e un ciclo sulle tre fasce che tiene da parte la
-            più alta trova quella cercata.
+            Dentro il ciclo la colonna di una fascia si seleziona con `consumi[fascia]`, perché la variabile
+            `fascia` contiene il nome della colonna, e la sua somma è `consumi[fascia].sum()`. Per tenere da parte
+            la più alta si confronta ogni somma con `kwh_max` e, se è maggiore, si aggiornano sia `fascia_max` sia
+            `kwh_max`.
             """,
         ],
-        starter_base=f"""
+        starter_base="""
             import pandas as pd
 
-            {LEGGI_CSV}
+            anagrafica = pd.read_excel("../Dati/bolletta_esempio.xlsx", sheet_name=...)
+            consumi = pd.read_excel("../Dati/bolletta_esempio.xlsx", sheet_name=...)
 
-            # il consumo totale, il numero di POD diversi e la fascia con il consumo più alto
-            ...
-
-            print(...)
-            print(...)
-            print(...)
-        """,
-        starter_avanzata=f"""
-            import pandas as pd
-
-            {LEGGI_CSV}
-        """,
-        soluzione=f"""
-            import pandas as pd
-
-            {LEGGI_CSV}
-
-            totale = letture["kwh"].sum()
-            n_pod = len(set(letture["pod"]))
-
+            n_clienti = ...
+            totale = 0
             fascia_max = ""
             kwh_max = 0
             for fascia in ["F1", "F2", "F3"]:
-                kwh_fascia = letture[letture["fascia"] == fascia]["kwh"].sum()
+                ...
+
+            print(...)
+            print(...)
+            print(...)
+        """,
+        starter_avanzata="""
+            import pandas as pd
+
+            # il riepilogo in tre righe a partire da ../Dati/bolletta_esempio.xlsx
+        """,
+        soluzione="""
+            import pandas as pd
+
+            anagrafica = pd.read_excel("../Dati/bolletta_esempio.xlsx", sheet_name="Anagrafica")
+            consumi = pd.read_excel("../Dati/bolletta_esempio.xlsx", sheet_name="Consumi")
+
+            n_clienti = len(anagrafica)
+            totale = 0
+            fascia_max = ""
+            kwh_max = 0
+            for fascia in ["F1", "F2", "F3"]:
+                kwh_fascia = consumi[fascia].sum()
+                totale = totale + kwh_fascia
                 if kwh_fascia > kwh_max:
                     fascia_max = fascia
                     kwh_max = kwh_fascia
 
-            print(f"Consumo totale 2025: {{totale:.1f}} kWh")
-            print(f"POD nel file: {{n_pod}}")
-            print(f"Fascia con il consumo più alto: {{fascia_max}} ({{kwh_max:.1f}} kWh)")
+            print(f"Clienti nel file: {n_clienti}")
+            print(f"Consumo totale 2025: {totale:.1f} kWh")
+            print(f"Fascia con il consumo più alto: {fascia_max} ({kwh_max:.1f} kWh)")
         """,
         verifica=None,
         facoltativo=True,

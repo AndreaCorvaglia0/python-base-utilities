@@ -76,13 +76,14 @@ def costruisci() -> Notebook:
         da sé, quindi se ti blocchi su uno puoi passare al successivo.
     """)
     aiuti = """
-        Nella consegna di ogni esercizio {aiuti}, da leggere solo dopo aver provato da solo. Sotto la cella da
-        completare ci sono la verifica, che controlla il risultato e, se qualcosa non torna, dice che cosa guardare,
-        e la cella `soluzione`, che mostra soltanto la soluzione di quell'esercizio. Se finisci prima, in fondo al
-        notebook trovi due esercizi facoltativi e una sfida senza verifica.
+        Ogni esercizio comincia dicendo che cosa vogliamo ottenere e perché, e da lì si può arrivare al risultato da
+        soli. Chi preferisce procedere per gradi apre con un clic il blocco Passo per passo, e sotto {aiuti}, da
+        leggere solo dopo aver provato. Sotto la cella da completare ci sono la verifica, che conferma il risultato o
+        dice che cosa controllare, e la cella `soluzione`, che mostra soltanto la soluzione di quell'esercizio. Se
+        finisci prima, in fondo al notebook trovi due esercizi facoltativi e una sfida senza verifica.
     """
-    nb.md(aiuti.replace("{aiuti}", "trovi due suggerimenti nascosti, che si aprono con un clic"), aula="base")
-    nb.md(aiuti.replace("{aiuti}", "trovi un suggerimento nascosto, che si apre con un clic"), aula="avanzata")
+    nb.md(aiuti.replace("{aiuti}", "due suggerimenti, anche loro nascosti"), aula="base")
+    nb.md(aiuti.replace("{aiuti}", "un suggerimento, anche lui nascosto"), aula="avanzata")
 
     # ------------------------------------------------------------------ domande
     nb.sezione("Domande", intro="""
@@ -154,14 +155,17 @@ def costruisci() -> Notebook:
         nb,
         titolo="Leggere e datare la turbina",
         scenario="""
-            Prima di analizzare la produzione della turbina diamo alle colonne nomi brevi e trasformiamo il testo di
-            `Time stamp` in un indice di date, in modo da poter selezionare e aggregare per periodo.
+            Il file della turbina ha colonne dai nomi lunghi, come `System power generated | (kW)`, e le date
+            scritte come testo, senza l'anno. Vogliamo dare alle colonne nomi brevi, più facili da scrivere, e
+            trasformare `Time stamp` in un indice di date, con il quale pandas seleziona un mese scrivendone l'anno e
+            il mese e somma per giorno o per mese. Lo stesso codice apre tutti gli esercizi successivi. Se la
+            conversione è corretta, l'indice va dalla mezzanotte del 1° gennaio 2023 alle 23:00 del 31 dicembre.
         """,
         passi=[
             "Rinomina le colonne con `rename`, usando i nomi brevi `potenza_kw`, `vento_ms`, `direzione`, `pressione` e `temperatura`.",
             "Crea la colonna `data` convertendo con `pd.to_datetime` la stringa `\"2023 \" + turbina[\"Time stamp\"]`, con il formato che descrive il testo.",
             "Imposta `data` come indice con `set_index` e ordina le righe con `sort_index`.",
-            "Salva in `primo` e in `ultimo` il primo e l'ultimo timestamp dell'indice.",
+            "Salva in `primo` e in `ultimo` il primo e l'ultimo timestamp dell'indice, che dicono se la conversione ha letto bene le ore e se le righe sono in ordine.",
         ],
         esito="Se la conversione è corretta, il primo timestamp è la mezzanotte del 1° gennaio 2023 e l'ultimo corrisponde alle 23:00 del 31 dicembre.",
         starter_base="""
@@ -225,7 +229,7 @@ def costruisci() -> Notebook:
                 timestamp è `turbina.index[0]`.
             """,
         ],
-        passo_avanzata="Controlla l'indice salvando in `ordinato` il valore di `turbina.index.is_monotonic_increasing` e in `passi` il conteggio degli intervalli tra due timestamp consecutivi, calcolati con `diff()` come nel notebook 08.",
+        passo_avanzata="Per essere sicuro che nell'indice non manchino ore, salva in `ordinato` il valore di `turbina.index.is_monotonic_increasing` e in `passi` il conteggio degli intervalli tra due timestamp consecutivi, calcolati con `diff()` come nel notebook 08.",
         esito_avanzata="Il conteggio `passi` ha un solo valore, un'ora, che compare 8759 volte.",
         soluzione_avanzata="""
             ordinato = turbina.index.is_monotonic_increasing
@@ -248,16 +252,18 @@ def costruisci() -> Notebook:
         nb,
         titolo="Selezionare ore e periodi",
         scenario="""
-            Con l'indice di date un periodo si seleziona scrivendone solo una parte, mentre le ore che rispettano una
-            condizione si selezionano con una maschera booleana. Vogliamo sapere quante ore conta luglio, in quante
-            ore il vento ha superato i 12 m/s e in quante la turbina non ha prodotto nulla.
+            Per il resoconto dell'anno il gestore della turbina ci chiede tre conteggi: se nei dati di luglio ci sono
+            tutte le ore del mese, in quante ore il vento ha superato i 12 m/s e in quante la turbina non ha
+            prodotto nulla. Su 8760 righe nessuno li farebbe a mano, mentre con l'indice di date un mese si seleziona
+            scrivendone l'anno e il mese, e le ore che rispettano una condizione si contano con una maschera
+            booleana. Luglio ha 31 giorni, quindi le sue ore sono 744.
         """,
         passi=[
-            "Seleziona in `luglio` le righe di luglio 2023 con `loc` e salva in `ore_luglio` il loro numero.",
+            "Seleziona in `luglio` le righe di luglio 2023 con `loc` e salva in `ore_luglio` il loro numero, da confrontare con le 744 ore del mese.",
             "Salva in `ventose` le ore in cui `vento_ms` è maggiore di 12, usando una maschera booleana, e in `n_ventose` il loro numero.",
             "Salva in `ore_ferme` il numero di ore in cui `potenza_kw` vale 0.",
         ],
-        esito="Luglio ha 31 giorni, quindi `ore_luglio` vale 744.",
+        esito="Luglio è completo, quindi `ore_luglio` vale 744; le ore con il vento sopra i 12 m/s sono 645 e quelle in cui la turbina non ha prodotto nulla sono 822.",
         starter_base=unisci(PREPARA, """
             luglio = turbina.loc[...]
             ore_luglio = ...
@@ -301,7 +307,7 @@ def costruisci() -> Notebook:
                 e va messa dentro `turbina[...]`, mentre per le ore ferme basta `(turbina["potenza_kw"] == 0).sum()`.
             """,
         ],
-        passo_avanzata="Ripeti il filtro del vento con `.query()`, salvando il risultato in `ventose_query`, e controlla che abbia lo stesso numero di righe di `ventose`.",
+        passo_avanzata="Ripeti il filtro del vento con `.query()`, in cui la condizione si scrive come testo e si legge quasi come la richiesta del gestore, salvando il risultato in `ventose_query`, e controlla che abbia lo stesso numero di righe di `ventose`.",
         soluzione_avanzata="""
             ventose_query = turbina.query("vento_ms > 12")
             len(ventose_query) == n_ventose
@@ -329,14 +335,17 @@ def costruisci() -> Notebook:
         nb,
         titolo="L'energia per mese",
         scenario="""
-            Il gestore della turbina vuole sapere quanta energia è stata prodotta in ciascun mese del 2023 e quali
-            sono stati il mese migliore e il peggiore.
+            Il gestore della turbina vuole confrontare l'energia prodotta nei dodici mesi del 2023 e sapere quali
+            sono stati il mese migliore e il peggiore. Con `resample` le 8760 ore diventano dodici totali mensili in
+            una sola riga di codice, e la stessa riga, con un alias diverso, darebbe i totali per settimana o per
+            giorno. Il risultato è una Series con 12 valori, in cui il mese migliore è aprile e il peggiore è
+            settembre.
         """,
         passi=[
             "Calcola in `mensile` l'energia di ogni mese in kWh, sommando `potenza_kw` con `resample(\"ME\")`.",
             "Salva in `mese_migliore` l'etichetta del mese con l'energia più alta e in `mese_peggiore` quella del mese con l'energia più bassa.",
         ],
-        esito="Il risultato `mensile` è una Series con 12 valori, e ogni etichetta è l'ultimo giorno di un mese.",
+        esito="Il risultato `mensile` è una Series con 12 valori, e ogni etichetta è l'ultimo giorno di un mese, quindi `mese_migliore` è il 30 aprile 2023 e `mese_peggiore` il 30 settembre.",
         starter_base=unisci(PREPARA, """
             mensile = turbina["potenza_kw"].resample(...).sum()
             mese_migliore = ...
@@ -372,8 +381,8 @@ def costruisci() -> Notebook:
                 si ottengono con `mensile.idxmax()` e `mensile.idxmin()`.
             """,
         ],
-        passo_avanzata="Calcola in `mensile_vento`, con un solo `resample(\"ME\")` seguito da `agg`, un DataFrame con la somma di `potenza_kw` e la media di `vento_ms` per ogni mese.",
-        esito_avanzata="Con `mensile_vento` si vede se il mese più produttivo è anche il più ventoso.",
+        passo_avanzata="Per vedere se il mese più produttivo è anche il più ventoso, calcola in `mensile_vento`, con un solo `resample(\"ME\")` seguito da `agg`, un DataFrame con la somma di `potenza_kw` e la media di `vento_ms` per ogni mese.",
+        esito_avanzata="In aprile la velocità media del vento è di circa 8.5 m/s.",
         soluzione_avanzata="""
             mensile_vento = turbina.resample("ME").agg({"potenza_kw": "sum", "vento_ms": "mean"})
             mensile_vento
@@ -400,14 +409,17 @@ def costruisci() -> Notebook:
         nb,
         titolo="Il profilo orario",
         scenario="""
-            La produzione di una turbina segue il vento, che a sua volta cambia con l'ora del giorno. Vogliamo
-            calcolare la potenza media della turbina in ciascuna delle 24 ore e trovare l'ora in cui rende di più.
+            La produzione di una turbina segue il vento, che cambia nel corso della giornata. Vogliamo il profilo
+            orario della turbina, cioè la potenza media in ciascuna delle 24 ore calcolata su tutti i giorni
+            dell'anno, e l'ora in cui in media rende di più. A mano bisognerebbe mettere in fila 365 valori per ogni
+            ora, mentre con `groupby` sull'ora dell'indice basta una riga. Il profilo ha 24 valori e l'ora migliore
+            è quella delle 16.
         """,
         passi=[
             "Calcola in `profilo` la potenza media per ora del giorno, raggruppando `potenza_kw` per `turbina.index.hour`.",
             "Salva in `ora_migliore` l'ora con la potenza media più alta.",
         ],
-        esito="Il risultato `profilo` è una Series con 24 valori, uno per ogni ora da 0 a 23.",
+        esito="Il risultato `profilo` è una Series con 24 valori, uno per ogni ora da 0 a 23, e `ora_migliore` vale 16, con una potenza media di circa 1294 kW.",
         starter_base=unisci(PREPARA, """
             profilo = turbina.groupby(...)["potenza_kw"].mean()
             ora_migliore = ...
@@ -440,7 +452,8 @@ def costruisci() -> Notebook:
                 del massimo, `profilo.idxmax()`.
             """,
         ],
-        passo_avanzata="Calcola in `profilo_stat`, con `agg`, la media e il massimo della potenza per ogni ora, in un DataFrame con le colonne `mean` e `max`.",
+        passo_avanzata="Per sapere, accanto alla media, fin dove arriva la potenza in ogni ora, calcola in `profilo_stat`, con `agg`, la media e il massimo della potenza per ogni ora, in un DataFrame con le colonne `mean` e `max`.",
+        esito_avanzata="Il valore più alto della colonna `max` è di circa 3004 kW.",
         soluzione_avanzata="""
             profilo_stat = turbina.groupby(turbina.index.hour)["potenza_kw"].agg(["mean", "max"])
             profilo_stat
@@ -476,16 +489,19 @@ def costruisci() -> Notebook:
         titolo="I giorni di manutenzione",
         scenario="""
             Il registro delle manutenzioni, inventato per questo esercizio, elenca quattro giorni del 2023 in cui un
-            tecnico è intervenuto sulla turbina. Vogliamo affiancare il motivo dell'intervento alla produzione di
-            ogni giorno, con la scritta `nessuna` nei giorni senza intervento.
+            tecnico è intervenuto sulla turbina. Vogliamo una tabella con l'energia prodotta in ogni giorno
+            dell'anno e, accanto, il motivo dell'intervento, con la scritta `nessuna` nei giorni senza intervento,
+            per vedere se nei giorni di manutenzione la produzione è calata. Con `merge` è pandas ad abbinare le
+            date, e un registro più lungo non cambia il codice. La tabella ha 365 righe, e soltanto quattro hanno un
+            motivo diverso da `nessuna`.
         """,
         passi=[
-            "Calcola in `giornaliera` l'energia di ogni giorno con `resample(\"D\")` e `sum()`, e applica `reset_index()` in modo che la data diventi la colonna `data`.",
-            "Unisci `giornaliera` e `manutenzioni` sulla colonna `data` con un left join e salva il risultato in `unione`.",
-            "Salva in `senza_intervento` il numero di valori mancanti della colonna `motivo` di `unione`.",
+            "Calcola in `giornaliera` l'energia di ogni giorno con `resample(\"D\")` e `sum()`, e applica `reset_index()` in modo che la data diventi la colonna `data`, su cui fare l'unione.",
+            "Unisci `giornaliera` e `manutenzioni` sulla colonna `data` con un left join, che conserva tutti i giorni dell'anno, e salva il risultato in `unione`.",
+            "Salva in `senza_intervento` il numero di valori mancanti della colonna `motivo` di `unione`, per controllare che le quattro date del registro abbiano trovato il loro giorno.",
             "Sostituisci i valori mancanti di `motivo` con il testo `\"nessuna\"`.",
         ],
-        esito="Il risultato `unione` ha una riga per ogni giorno dell'anno, 365 in tutto, e soltanto quattro righe hanno un motivo diverso da `nessuna`.",
+        esito="Il risultato `unione` ha una riga per ogni giorno dell'anno, 365 in tutto, e `senza_intervento` vale 361, cioè tutti i giorni tranne i quattro del registro.",
         starter_base=unisci(PREPARA, manutenzioni, """
             giornaliera = turbina["potenza_kw"].resample(...).sum().reset_index()
             unione = pd.merge(..., ..., on=..., how=...)
@@ -527,7 +543,8 @@ def costruisci() -> Notebook:
                 riassegnare alla colonna.
             """,
         ],
-        passo_avanzata="Ripeti l'unione con `how=\"inner\"`, salvando il risultato in `solo_interventi`, e confronta il suo numero di righe con quello di `unione`.",
+        passo_avanzata="Per avere la tabella dei soli giorni con intervento, da mandare al tecnico, ripeti l'unione con `how=\"inner\"`, salvando il risultato in `solo_interventi`, e confronta il suo numero di righe con quello di `unione`.",
+        esito_avanzata="La tabella `solo_interventi` ha quattro righe.",
         soluzione_avanzata="""
             solo_interventi = pd.merge(giornaliera, manutenzioni, on="data", how="inner")
             print(len(unione), len(solo_interventi))
@@ -553,14 +570,16 @@ def costruisci() -> Notebook:
         titolo="Il profilo settimanale",
         facoltativo=True,
         scenario="""
-            Il carico elettrico cambia molto tra i giorni feriali e il fine settimana, mentre la produzione di una
-            turbina dipende dal vento e non dal calendario. Vogliamo vedere come si distribuisce la potenza media sui
-            sette giorni della settimana del 2023.
+            Il carico elettrico cambia molto tra i giorni feriali e il fine settimana, mentre una turbina produce
+            quando c'è vento, qualunque giorno sia. Vogliamo calcolare la potenza media della turbina per giorno
+            della settimana, per vedere come si distribuisce la produzione del 2023, e scrivere per nome il giorno
+            migliore, perché in un riepilogo la parola `lunedì` si legge meglio del numero 0. Il risultato ha sette
+            valori, e il giorno migliore è il lunedì.
         """,
         richiesta=consegna([
             "Calcola in `settimanale` la potenza media per giorno della settimana, raggruppando `potenza_kw` per `turbina.index.dayofweek`, in cui il lunedì vale 0.",
             "Usando la lista `giorni`, già scritta nella cella, salva in `giorno_migliore` il nome del giorno con la media più alta.",
-        ], "Il risultato `settimanale` ha sette valori, e `giorno_migliore` è una stringa come `\"martedì\"`."),
+        ], "Il risultato `settimanale` ha sette valori, e `giorno_migliore` vale `\"lunedì\"`."),
         suggerimenti=["""
             L'indice di `settimanale` va da 0 a 6, come le posizioni della lista `giorni`, quindi l'etichetta
             restituita da `settimanale.idxmax()` si può usare direttamente come posizione nella lista.
@@ -596,14 +615,17 @@ def costruisci() -> Notebook:
         titolo="Le tabelle per il collega",
         facoltativo=True,
         scenario="""
-            Un collega che lavora con Excel ci chiede l'energia mensile della turbina, e gliela mandiamo sia in CSV
-            sia in Excel. Prima di inviare i file conviene riaprirne uno e controllare che contenga tutti i mesi.
+            Un collega che lavora con Excel ci chiede l'energia mensile della turbina, e per l'archivio dell'ufficio
+            la stessa tabella va salvata anche in CSV, un formato di testo che qualunque programma sa leggere.
+            Vogliamo scrivere i due file dalla Series dei totali mensili e, prima di mandarli, riaprire il CSV per
+            controllare che contenga tutti i mesi e che le date si rileggano come date. Se i dati cambiano, la stessa
+            cella riscrive entrambi i file. Il CSV riletto ha 12 righe, una per mese.
         """,
         richiesta=consegna([
             "Salva `mensile` nel file `energia_mensile.csv` con `to_csv()` e nel file `energia_mensile.xlsx` con `to_excel()`.",
-            "Rileggi il CSV con `pd.read_csv` in `riletto`, convertendo in date la colonna `data` con `parse_dates=[\"data\"]`.",
-            "Salva in `stesse_righe` il risultato del confronto tra il numero di righe di `riletto` e quello di `mensile`.",
-        ], "Il file CSV ha due colonne, `data` e `potenza_kw`, perché `to_csv()` scrive anche l'indice."),
+            "Rileggi il CSV con `pd.read_csv` in `riletto`, convertendo in date la colonna `data` con `parse_dates=[\"data\"]`, perché altrimenti le date tornerebbero testo.",
+            "Salva in `stesse_righe` il risultato del confronto tra il numero di righe di `riletto` e quello di `mensile`, che dice se nel file ci sono tutti i mesi.",
+        ], "Il file CSV ha due colonne, `data` e `potenza_kw`, perché `to_csv()` scrive anche l'indice, e `stesse_righe` vale `True`."),
         suggerimenti=["""
             Il confronto tra le lunghezze si scrive `len(riletto) == len(mensile)` e vale `True` se il file contiene
             tutti i 12 mesi.
@@ -640,13 +662,18 @@ def costruisci() -> Notebook:
         titolo="Sfida: il riepilogo dell'anno",
         facoltativo=True,
         scenario="""
-            Per chiudere vogliamo un riepilogo dell'anno in tre righe, da incollare in una mail. Questo esercizio non
-            ha una verifica, perché il formato delle righe è libero, e la soluzione ne mostra un esempio.
+            Per chiudere vogliamo un riepilogo dell'anno della turbina in tre righe, da incollare in una mail al
+            gestore: l'energia totale prodotta nel 2023, il mese con più energia e l'ora del giorno con la potenza
+            media più alta. Se le tre righe vengono calcolate in una sola cella, quando i dati vengono aggiornati
+            basta rieseguirla per rifare la mail. Il formato delle righe è libero, quindi l'esercizio non ha una verifica e la soluzione ne
+            mostra un esempio; un riepilogo corretto riporta circa 8448739 kWh, aprile e le 16.
         """,
-        richiesta="""
-            Stampa tre righe con l'energia totale prodotta nel 2023 in kWh, il mese con l'energia più alta e l'ora del
-            giorno con la potenza media più alta.
-        """,
+        richiesta=consegna([
+            "Calcola l'energia totale del 2023 come somma di `potenza_kw`.",
+            "Trova il mese con l'energia più alta con `resample(\"ME\")` e `idxmax()`. Nella mail il nome `aprile` si legge meglio della data `2023-04-30`, e per ottenerlo puoi leggere l'attributo `.month` del risultato, che va da 1 a 12, e prendere il nome da una lista dei mesi, tenendo conto che le posizioni della lista partono da 0.",
+            "Trova l'ora con la potenza media più alta raggruppando `potenza_kw` per `turbina.index.hour`, come nel profilo orario.",
+            "Stampa le tre righe del riepilogo con tre `print` e tre f-string.",
+        ], None),
         starter=unisci(PREPARA, """
             # il riepilogo dell'anno, in tre righe
             ...
