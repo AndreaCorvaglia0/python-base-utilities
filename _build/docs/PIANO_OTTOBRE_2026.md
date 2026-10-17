@@ -75,6 +75,9 @@ Le esercitazioni devono funzionare per classi eterogenee:
    con più codice già scritto e più suggerimenti nella Base, una cella quasi vuota e talvolta un requisito in più
    nell'Avanzata. Nella Base alcuni esercizi possono essere più semplici o mancare del tutto.
 
+Il testo delle esercitazioni, come tutto il materiale, parla al corsista e non descrive l'ora dal punto di vista
+del docente: le indicazioni per la correzione stanno nella `Guida_docente.md`.
+
 Il corsista in difficoltà ha quindi una sequenza di aiuti: il messaggio della verifica, il primo suggerimento, il
 secondo, la soluzione di quel passo e infine il docente. Chi è più avanti finisce senza suggerimenti e prosegue con
 gli esercizi facoltativi. La correzione dei 15 minuti finali riguarda solo il nucleo comune.

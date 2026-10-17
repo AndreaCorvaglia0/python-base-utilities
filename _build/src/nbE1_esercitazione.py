@@ -40,16 +40,19 @@ def costruisci() -> Notebook:
     )
 
     # ------------------------------------------------------------------ come funziona l'ora
-    apertura = """
-        L'esercitazione chiude la giornata e dura un'ora, divisa in 45 minuti di lavoro individuale e 15 minuti di
-        correzione, durante i quali il docente mostra le soluzioni. Dopo cinque domande di riepilogo vengono cinque
-        esercizi, ciascuno con i propri dati, che conviene affrontare nell'ordine perché la difficoltà cresce. Nella
-        consegna di ogni esercizio {aiuti}. Sotto la cella da completare si trovano la verifica, che conferma il
-        risultato o dice che cosa controllare, e la cella `soluzione`, che mostra soltanto la soluzione di
-        quell'esercizio. Chi finisce prima prosegue con gli esercizi facoltativi che chiudono il notebook.
+    nb.md("""
+        Questa esercitazione chiude la giornata e riprende quello che abbiamo visto nei notebook 00-03. Hai 45
+        minuti per lavorare sugli esercizi, poi li guardiamo insieme. Si comincia con cinque domande di riepilogo e
+        si prosegue con cinque esercizi, ciascuno con i propri dati, da fare nell'ordine perché la difficoltà cresce.
+    """)
+    aiuti = """
+        Nella consegna di ogni esercizio {aiuti}, da leggere solo dopo aver provato da solo. Sotto la cella da
+        completare ci sono la verifica, che conferma il risultato o dice che cosa controllare, e la cella
+        `soluzione`, che mostra soltanto la soluzione di quell'esercizio. Se finisci prima, in fondo al notebook
+        trovi gli esercizi facoltativi.
     """
-    nb.md(apertura.replace("{aiuti}", "ci sono due suggerimenti nascosti, che si aprono con un clic"), aula="base")
-    nb.md(apertura.replace("{aiuti}", "c'è un suggerimento nascosto, che si apre con un clic"), aula="avanzata")
+    nb.md(aiuti.replace("{aiuti}", "trovi due suggerimenti nascosti, che si aprono con un clic"), aula="base")
+    nb.md(aiuti.replace("{aiuti}", "trovi un suggerimento nascosto, che si apre con un clic"), aula="avanzata")
 
     # ------------------------------------------------------------------ 1. Domande
     nb.sezione("Domande", intro="""
@@ -99,7 +102,8 @@ def costruisci() -> Notebook:
         Gli esercizi seguono i preparativi di una cena. Sabato sera Marta ha otto invitati e vuole cucinare gli
         spaghetti alla carbonara, ma la sua ricetta è scritta per quattro persone. Ogni esercizio riguarda una parte
         dei preparativi e lavora sui dati scritti nella propria cella, quindi si può affrontare anche senza aver
-        risolto i precedenti. I primi cinque sono quelli che il docente corregge alla fine dell'ora.
+        risolto i precedenti.
+        I primi cinque sono gli esercizi che guardiamo insieme alla fine dell'ora.
     """)
 
     # E1.1 ---------------------------------------------------------------
@@ -664,10 +668,10 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ facoltativi
     nb.md("""
-        Gli esercizi che seguono sono facoltativi e servono a chi ha finito i primi cinque prima dei 45 minuti. I
-        primi due applicano ancora i set e le regole di PEP 8 del notebook 03, mentre la sfida finale è un esercizio
-        libero, senza verifica, che mette insieme le celle Markdown e le f-string. La correzione dell'ultimo quarto
-        d'ora non li comprende, ma anche sotto questi esercizi c'è la cella `soluzione`.
+        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi. I primi
+        due applicano ancora i set e le regole di PEP 8 del notebook 03, mentre la sfida finale è un esercizio libero,
+        senza verifica, che mette insieme le celle Markdown e le f-string. Anche sotto questi esercizi c'è la cella
+        `soluzione`.
     """)
 
     # E1.6 ---------------------------------------------------------------

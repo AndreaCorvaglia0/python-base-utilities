@@ -20,6 +20,11 @@ notebook (sezioni, esercizi, aule, tempi, dominio degli esempi) leggere anche `_
 scelta didattica o un dubbio su cosa voleva il docente, `_build/docs/REQUISITI.md`. Il modello di riferimento per la
 voce è il testo originale del docente, visibile nel branch `main`.
 
+Il testo dei notebook parla al corsista, con il "tu" nelle consegne e il "noi" quando si lavora insieme, e non
+descrive mai il corso dal punto di vista di chi lo organizza: niente "il docente corregge", "nell'aula Avanzata",
+"nucleo comune". Quello che serve al docente va in `Guida_docente.md`; quello che serve a chi ha commissionato il
+lavoro si scrive nel rapporto finale, non nel materiale.
+
 Le cose che il docente non vuole più vedere: celle etichetta come "Esempio:" o "Unione:", sequenze di frasi
 telegrafiche, catene di due punti al posto di una frase, antitesi e chiusure brillanti, domande retoriche, aperture con
 "Qui" o "Ora", elenchi con il grassetto in testa al posto della spiegazione, un "Output atteso:" secco. Al loro posto

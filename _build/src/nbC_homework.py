@@ -24,7 +24,7 @@ def costruisci() -> Notebook:
         dati=["homework/letture_marzo.csv", "homework/clienti.xlsx", "homework/anagrafica.db"],
         etichetta_esercizio="Passo",
         prefisso_esercizi="",
-        prossimo="Le soluzioni si correggono insieme all'inizio del modulo 3.",
+        prossimo="Le soluzioni le guardiamo insieme all'inizio del modulo 3.",
     )
 
     # ------------------------------------------------------------------ 1
@@ -39,7 +39,7 @@ def costruisci() -> Notebook:
         list(Path("../Dati/homework").glob("*"))
     """)
     nb.md("""
-        L'homework richiede circa mezz'ora e si corregge insieme all'inizio del modulo 3, in una decina di minuti.
+        L'homework richiede circa mezz'ora e lo riprendiamo insieme all'inizio del modulo 3.
         Ogni passo ha una cella da completare, in cui i `...` prendono il posto del codice da scrivere, seguita da una
         cella di verifica, che stampa ✅ quando il risultato è giusto e altrimenti una riga che dice che cosa
         controllare. Nella consegna di ogni passo ci sono due suggerimenti nascosti, da aprire con un clic solo dopo

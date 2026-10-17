@@ -59,19 +59,16 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ come funziona l'ora
     nb.md("""
-        L'esercitazione occupa un'ora. I primi 45 minuti sono dedicati al lavoro individuale, mentre negli ultimi
-        15 il docente mostra le soluzioni degli esercizi da E2.1 a E2.5, che formano il nucleo comune. Si comincia
-        con cinque domande sui notebook 04-06, ciascuna con la risposta nascosta in un riquadro che si apre con un
-        clic, e si prosegue con gli esercizi: i primi due riguardano le spese di un mese, i tre successivi i dati
-        dei POD che usiamo da pandas in poi.
+        Questa esercitazione chiude la giornata e riprende quello che abbiamo visto nei notebook 04-06. Hai 45
+        minuti per lavorare sugli esercizi, poi li guardiamo insieme. Si comincia con cinque domande di riepilogo e si
+        prosegue con cinque esercizi: i primi due riguardano le spese di un mese, i tre successivi i dati dei POD che
+        usiamo da pandas in poi. Ogni esercizio legge i propri dati, quindi se ti blocchi su uno puoi passare al
+        successivo.
     """)
     nb.md("""
-        Ogni esercizio ha uno scenario, i passi da svolgere e una cella da completare, seguita da una cella di
-        verifica che stampa ✅ quando il risultato è corretto e, altrimenti, una riga che dice che cosa controllare.
-        Chi resta bloccato può aprire i suggerimenti nel riquadro dell'esercizio, uno alla volta, e come ultima
-        risorsa eseguire la cella `soluzione(...)`, che mostra la soluzione di quell'esercizio e di nessun altro.
-        Gli esercizi non dipendono l'uno dall'altro, perché ciascuno legge i propri dati, e quelli facoltativi
-        servono a chi finisce prima.
+        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi, che
+        applicano in modo diretto quello che abbiamo appena visto. La sfida finale è un esercizio libero, senza
+        verifica. Anche sotto questi esercizi c'è la cella `soluzione`.
     """)
 
     # ------------------------------------------------------------------ 1
@@ -665,15 +662,14 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ facoltativi
     nb.md("""
-        Gli esercizi che seguono sono facoltativi e non rientrano nella correzione finale. Servono a chi ha finito
-        il nucleo comune e applicano in modo diretto quello che abbiamo appena fatto: un dizionario percorso con un
-        ciclo, la scrittura di un file Excel e, per chiudere, un riepilogo da comporre liberamente.
+        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi, che
+        applicano in modo diretto quello che abbiamo appena visto. La sfida finale è un esercizio libero, senza
+        verifica. Anche sotto questi esercizi c'è la cella `soluzione`.
     """, aula="base")
     nb.md("""
-        Gli esercizi che seguono sono facoltativi e non rientrano nella correzione finale. Servono a chi ha finito
-        il nucleo comune e applicano in modo diretto quello che abbiamo appena fatto: un dizionario percorso con un
-        ciclo, la scrittura di un file Excel, una funzione che chiama un'API e, per chiudere, un riepilogo da
-        comporre liberamente.
+        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi, che
+        applicano in modo diretto quello che abbiamo appena visto. La sfida finale è un esercizio libero, senza
+        verifica. Anche sotto questi esercizi c'è la cella `soluzione`.
     """, aula="avanzata")
 
     # E2.6 ------------------------------------------------------------

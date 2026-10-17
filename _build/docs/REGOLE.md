@@ -8,6 +8,8 @@ Si legge insieme a REQUISITI.md (le richieste del docente) e al REGOLE.md (forma
   ad effetto: niente antitesi, slogan, metafore, domande retoriche, triadi, "davvero", "che contano".
 - Il modello è la prosa del docente nei notebook originali. Niente celle etichetta ("Esempio:"), niente catene di due
   punti, niente frasi telegrafiche in sequenza, niente elenchi con grassetto in testa al posto della spiegazione.
+- Il testo parla al corsista, mai del corso visto da chi lo organizza: niente "il docente", "l'aula", "la
+  correzione" nei notebook; le note per il docente stanno nella Guida (vedi STILE.md, "A chi parla il testo").
 - Titoli descrittivi e piatti. Commenti di codice brevi; `# Output: ...` ammesso. "Noi" quando lavoriamo, impersonale
   per le regole, "tu" nelle consegne. Italiano con il gergo in inglese dove si usa in inglese.
 

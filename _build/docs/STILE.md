@@ -35,6 +35,18 @@ Il riferimento è il testo originale del docente, nei notebook del branch `main`
 Frasi complete, con soggetto e verbo, legate tra loro; si dice che cosa fa lo strumento e a cosa serve; il codice
 sotto illustra la frase. È il tono di un manuale o di un articolo tecnico che spiega come si fa una cosa.
 
+## A chi parla il testo
+
+Tutto quello che sta in un notebook, in una scheda o in un'esercitazione è scritto per il corsista, e il corsista
+deve poterlo leggere senza accorgersi che dietro ci sono un committente, un docente e un piano. Il testo gli si
+rivolge direttamente, con il "tu" nelle consegne e il "noi" quando lavoriamo insieme ("Hai 45 minuti per gli
+esercizi, poi li guardiamo insieme"), e non racconta l'organizzazione dall'esterno ("il docente corregge i primi
+cinque", "nell'aula Avanzata", "il nucleo comune", "chi finisce prima"). Si può introdurre il materiale e dire in
+una riga come si usa, ma mai descrivere il corso come lo descriverebbe chi lo ha progettato. Le note per il
+docente stanno in `Guida_docente.md`, e quelle per chi ha commissionato il lavoro restano nella chat. Prima di
+chiudere una modifica si rilegge il testo nei panni di un corsista e ci si chiede se una frase suona strana o
+fuori posto: se la risposta è sì, va riscritta.
+
 ## Le regole
 
 - **Prosa, non appunti.** Ogni cella di testo è un paragrafo di 2-5 frasi complete (circa 40-90 parole), che

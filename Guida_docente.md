@@ -80,6 +80,15 @@ generatori nel primo, e `shift`, `rolling`, i type hint, le dataclass, i decorat
 aprono a fine giornata o quando un blocco termina in anticipo, una sezione alla volta, e si possono anche lasciare ai
 corsisti come lettura per casa.
 
+## Le esercitazioni
+
+Le tre esercitazioni durano un'ora ciascuna: 45 minuti di lavoro dei corsisti e 15 di correzione, in cui si mostrano
+le soluzioni dei primi cinque esercizi; i facoltativi e la sfida non si correggono, ma hanno anche loro la cella
+`soluzione`. I corsisti trovano nei notebook i suggerimenti nascosti e la soluzione di ogni esercizio a richiesta, e il
+testo dei notebook non parla del docente né della correzione: quello che serve a chi conduce l'ora sta qui. In Base ogni
+esercizio ha due suggerimenti e uno starter guidato, in Avanzata un suggerimento, uno starter quasi vuoto e un passo in
+più. I notebook delle soluzioni si distribuiscono dopo la correzione.
+
 ## Il percorso minimo
 
 Se la giornata procede male, per problemi di installazione, di rete o per una classe lenta, le parti che non si

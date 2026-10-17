@@ -604,6 +604,7 @@ FRASI_VIETATE = [
     "come richiesto", "in questa versione", "per l'aula", "aula base", "aula avanzata",
     "questa sezione è pensata", "questo notebook è pensato", "versione del corso", "istruzioni del corso",
     "compito a casa", "compiti a casa",
+    "il docente", "nucleo comune", "chi finisce prima", "chi ha finito", "la correzione finale",
 ]
 TITOLI_SOSPETTI = ["davvero", "che serv", "che cont", "sul serio", "uno alla volta", "in cinque", "in sei", "senza paura", "che fanno la differenza"]
 PAROLE_SOSPETTE = [

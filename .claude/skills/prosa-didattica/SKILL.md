@@ -64,6 +64,9 @@ Prima di scrivere, e soprattutto prima di correggere un testo esistente, convien
 - **Lingua.** Italiano curato, con il gergo tecnico in inglese dove nella pratica si usa in inglese (notebook,
   kernel, DataFrame, slicing, encoding, commit). Niente parentesi che spezzano la frase quando basta una subordinata.
   Le stesse regole valgono per un testo in un'altra lingua: cambiano i connettivi, non il registro.
+- **Il testo parla a chi impara.** Si rivolge al lettore con il "tu" nelle consegne e il "noi" nel lavoro comune, e non
+  descrive il corso dall'esterno, come farebbe chi lo organizza: niente "il docente corregge", "nel gruppo avanzato",
+  "i cinque esercizi del nucleo". Le note per il docente o per il committente stanno altrove.
 - **Titoli piatti e descrittivi.** "Selezione dei dati", "Valori mancanti", "Esercizi". Mai titoli con promesse o
   aggettivi ("Le scorciatoie che servono davvero", "In cinque regole").
 

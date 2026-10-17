@@ -70,20 +70,19 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ apertura
     nb.md("""
-        Questa esercitazione dura un'ora. Per i primi 45 minuti si lavora da soli sugli esercizi, e negli ultimi 15
-        il docente mostra e commenta le soluzioni dei cinque esercizi del nucleo comune. Tutti gli esercizi usano lo
-        stesso file, che registra ora per ora la produzione di una turbina eolica in Texas durante il 2023, e
-        ciascuno rilegge il file da sé, in modo che chi si blocca su un esercizio possa passare al successivo.
+        Questa esercitazione chiude la giornata e riprende quello che abbiamo visto nei notebook 07 e 08. Hai 45
+        minuti per lavorare sugli esercizi, poi li guardiamo insieme. Tutti gli esercizi usano lo stesso file, che
+        registra ora per ora la produzione di una turbina eolica in Texas durante il 2023, e ciascuno rilegge il file
+        da sé, quindi se ti blocchi su uno puoi passare al successivo.
     """)
     aiuti = """
-        Nella consegna di ogni esercizio del nucleo {aiuti} e che conviene leggere solo
-        dopo aver provato da soli. Sotto la cella da completare, la cella `verifica` controlla il risultato e, se
-        qualcosa non torna, dice che cosa guardare, mentre la cella `soluzione` mostra la soluzione di quel solo
-        esercizio. Chi finisce prima prosegue con i due esercizi facoltativi e con la sfida finale, che non ha una
-        verifica.
+        Nella consegna di ogni esercizio {aiuti}, da leggere solo dopo aver provato da solo. Sotto la cella da
+        completare ci sono la verifica, che controlla il risultato e, se qualcosa non torna, dice che cosa guardare,
+        e la cella `soluzione`, che mostra soltanto la soluzione di quell'esercizio. Se finisci prima, in fondo al
+        notebook trovi due esercizi facoltativi e una sfida senza verifica.
     """
-    nb.md(aiuti.replace("{aiuti}", "ci sono due suggerimenti nascosti, che si aprono con un clic"), aula="base")
-    nb.md(aiuti.replace("{aiuti}", "c'è un suggerimento nascosto, che si apre con un clic"), aula="avanzata")
+    nb.md(aiuti.replace("{aiuti}", "trovi due suggerimenti nascosti, che si aprono con un clic"), aula="base")
+    nb.md(aiuti.replace("{aiuti}", "trovi un suggerimento nascosto, che si apre con un clic"), aula="avanzata")
 
     # ------------------------------------------------------------------ domande
     nb.sezione("Domande", intro="""
@@ -135,8 +134,8 @@ def costruisci() -> Notebook:
     nb.sezione("Esercizi", intro="""
         Il file `TexasTurbine.csv` ha 8760 righe, una per ogni ora del 2023, senza valori mancanti e senza
         duplicati. Per ogni ora riporta la potenza prodotta dalla turbina in kW, la velocità e la direzione del
-        vento, la pressione dell'aria e la sua temperatura. I primi cinque esercizi sono quelli che il docente
-        corregge alla fine dell'ora. La cella qui sotto importa pandas e va eseguita prima di cominciare.
+        vento, la pressione dell'aria e la sua temperatura.
+        I primi cinque sono gli esercizi che guardiamo insieme alla fine dell'ora. La cella qui sotto importa pandas e va eseguita prima di cominciare.
     """)
     nb.code("""
         import pandas as pd
@@ -546,10 +545,9 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ facoltativi
     nb.md("""
-        Gli esercizi che seguono sono facoltativi e servono a chi ha finito i primi cinque prima dei 45 minuti. I
-        primi due applicano ancora `groupby` e il salvataggio dei file, mentre la sfida finale è un esercizio libero,
-        senza verifica, che riassume l'anno della turbina in tre righe. La correzione dell'ultimo quarto d'ora non li
-        comprende, ma anche sotto questi esercizi c'è la cella `soluzione`.
+        Gli esercizi che seguono sono facoltativi: se hai finito i primi cinque, puoi continuare con questi. I primi
+        due applicano ancora `groupby` e il salvataggio su file, mentre la sfida finale, senza verifica, riassume
+        l'anno della turbina in tre righe. Anche sotto questi esercizi c'è la cella `soluzione`.
     """)
     nb.esercizio(
         titolo="Il profilo settimanale",
