@@ -17,8 +17,8 @@ Il corso si svolge in quattro giornate, una per modulo:
 | 4 | mercoledì 28 ottobre 2026 | Modulo 4 · Agenti per il coding e capstone |
 
 In ogni giornata l'aula Base occupa le prime quattro ore e l'aula Avanzata le quattro successive, sullo stesso modulo.
-Ogni blocco di quattro ore contiene almeno due pause da 15 minuti. L'homework cade nella settimana tra il 21 e il 27,
-quindi si presenta alla fine del modulo 2 e si corregge all'inizio del modulo 3.
+Ogni blocco di quattro ore contiene almeno due pause da 15 minuti. L'homework non è più un'attività prevista e resta
+come riserva in `Riserva/`.
 
 ## La struttura di un modulo
 
@@ -105,51 +105,47 @@ passo e le due varianti. Il docente la prova, si sistema il formato e poi si cos
 
 ## L'homework
 
-L'homework cade nella settimana tra il modulo 2 e il modulo 3 ed è un'attività breve: al massimo 30 minuti per i
-corsisti, più 10-15 minuti all'inizio del modulo 3 in cui il docente mostra le soluzioni. Serve a ripercorrere i temi
-più importanti dei primi due moduli, cioè dizionari e liste, cicli e condizioni, funzioni con valori predefiniti e la
-lettura di un file in pandas, e non a introdurre argomenti nuovi. Usa lo stesso formato delle esercitazioni, con
-suggerimenti nascosti e la soluzione di ogni passo a richiesta, così che chi resta bloccato a casa possa comunque
-arrivare in fondo. Il materiale esistente, la settimana nell'ufficio Analisi Consumi, copre già questi temi e va
-soltanto ridotto ai 30 minuti e portato nel formato.
+L'homework, la settimana nell'ufficio Analisi Consumi, era pensato per la settimana tra il modulo 2 e il modulo 3.
+Con le sezioni Extra in fondo ai notebook non è più un'attività prevista: resta in `Riserva/Base/` e
+`Riserva/Avanzata/`, nel formato delle esercitazioni, da distribuire solo a una classe molto più veloce del previsto. I
+suoi passi migliori sono già riusati nelle sezioni Extra dei notebook 04 e 06.
 
 ## Argomenti facoltativi
 
 Ogni modulo conserva alcuni argomenti facoltativi, da usare se il modulo procede particolarmente veloce. Restano nei
 notebook `Approfondimenti_1` e `Approfondimenti_2` e non entrano nel tempo pianificato.
 
-## Differenze tra il materiale attuale e la proposta
+## Differenze tra il materiale e la proposta
 
-Il materiale è stato costruito su due giornate e in alcuni punti si discosta dalla proposta. Queste sono le differenze
-da risolvere quando si riorganizza il corso sui quattro moduli.
+Il materiale era stato costruito su due giornate; con la riorganizzazione sui quattro moduli le differenze con la
+proposta sono queste, con la scelta fatta per ciascuna.
 
-| Argomento | Proposta | Materiale attuale |
+| Argomento | Proposta | Materiale di ottobre 2026 |
 |---|---|---|
-| Ambienti virtuali, uv, script `.py`, Ruff | (A) nel modulo 1 | dimostrazioni del docente in `Extra/` |
-| `map`, `filter`, iterabili e generatori | (A) nel notebook 04 | Avanzata, in `Approfondimenti_1` |
-| Wrapper delle API | (A) con esercizi nel notebook 06 | dimostrazione in `Extra/API_wrapper` |
+| Ambienti virtuali, uv, script `.py`, Ruff | (A) nel modulo 1 | notebook `Ambiente_script_e_Ruff` della sola Avanzata, modulo 1 |
+| `map`, `filter`, iterabili e generatori | (A) nel notebook 04 | restano facoltativi, in `Approfondimenti_1` |
+| Wrapper delle API | (A) con esercizi nel notebook 06 | esercizio facoltativo dell'Avanzata nell'Esercitazione 2 |
 | Più file CSV e tipi di dato | entrambe le aule, notebook 06 | in `Approfondimenti_1` |
 | `.query()` | entrambe le aule, notebook 07 | solo Avanzata |
 | Indici, `agg` | entrambe le aule, notebook 07 | indice a due colonne e `agg` solo Avanzata |
-| Differenze tra date, fuso orario | entrambe le aule, notebook 08 | in `Approfondimenti_2` |
+| Differenze tra date, fuso orario | entrambe le aule, notebook 08 | restano facoltativi, in `Approfondimenti_2` |
 | Resampling | (A) nel notebook 08 | entrambe le aule, perché il capstone Base aggrega per giorno |
 | `shift` e `rolling` | (A) nel notebook 08 | Avanzata, in `Approfondimenti_2` |
-| Slider, range selector, export HTML | entrambe le aule, notebook 09 | in `Approfondimenti_2` |
-| Esercitazioni | non indicate come blocco | tre da 20 minuti, domande ed esercizi |
-| Forecasting con Prophet | (A) modulo opzionale da confermare | non presente |
+| Slider, range selector, export HTML | entrambe le aule, notebook 09 | nel notebook 09, modulo 4 |
+| Esercitazioni | non indicate come blocco | tre da 60 minuti sugli esercizi originali del docente |
+| Forecasting con Prophet | (A) modulo opzionale da confermare | da preparare, dopo la verifica dell'installazione |
 
-## Stima del tempo
+## I tempi
 
-Le stime partono dai tempi dei notebook nella `Guida_docente.md`, tolti gli esercizi di fine notebook che escono dal
-tempo d'aula. Sono stime proporzionali al contenuto, non misure, e vanno ricontrollate quando si riorganizza il
-materiale. Ogni blocco ha 240 minuti: 30 di pause, 60 di esercitazione nei moduli 1-3, e circa 150 di lezione.
+Ogni blocco ha 240 minuti: 30 di pause, 60 di esercitazione nei moduli 1-3, e circa 150 di lezione. I tempi dei
+notebook sono nei banner e nella `Guida_docente.md`; le sezioni Extra non sono comprese.
 
 | Modulo | Lezione Base | Lezione Avanzata | Nota |
 |---|---|---|---|
-| 1 | circa 115 | circa 125 | l'Avanzata aggiunge uv, script e Ruff; entrambe stanno nei 150 |
-| 2 | circa 125 | circa 145-155 | l'Avanzata è al limite se `map`, `filter` e generatori entrano nella lezione |
-| 3 | circa 130-140 | circa 145-150 | con il notebook 09 spostato nel modulo 4 e le date in più facoltative |
-| 4 | Plotly, Copilot, capstone e finestra con gli agenti | come la Base, con richieste più ampie e Prophet facoltativo | giornata intera |
+| 1 | 135 | 150 | l'Avanzata aggiunge il notebook su uv, script e Ruff (30) |
+| 2 | 140 | 150 | l'Avanzata ha la sezione sulle API nel 06 |
+| 3 | 130 | 135 | compresa la demo di Data Wrangler (15) |
+| 4 | 210 | 210 | 09 (45), 10 (45), capstone (100) e 20 minuti di finestra con gli agenti; nessuna esercitazione |
 
 ## Decisioni prese
 
@@ -164,9 +160,7 @@ materiale. Ogni blocco ha 240 minuti: 30 di pause, 60 di esercitazione nei modul
 
 ## Ancora da fare
 
-- Costruire l'esercitazione 1 come pilota nel nuovo formato e farla provare al docente.
-- Dopo il pilota, costruire le esercitazioni 2 e 3 e il notebook su Prophet.
-- L'Homework resta come riserva fuori dalle cartelle `Aula_*`; il suo materiale migliore passa nelle sezioni Extra.
-- Portare `Extra/Ambiente_uv_e_script` ed `Extra/Ruff` nel percorso dell'aula Avanzata del modulo 1.
-- Spostare il notebook 09 nel modulo 4 e ricontrollare i tempi dei quattro moduli.
-- Riscrivere README, `Guida_docente.md` e slide sui quattro moduli.
+- Il notebook facoltativo su Prophet per l'Avanzata, dopo aver verificato che `uv add prophet` funzioni sui PC
+  dell'aula.
+- La prova in VS Code sui PC dell'aula dei blocchi che si aprono con un clic, della riga rossa della verifica e del
+  codice colorato di `soluzione()`.

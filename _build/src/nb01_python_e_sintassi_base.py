@@ -19,7 +19,7 @@ def costruisci() -> Notebook:
             "fare calcoli con gli operatori aritmetici e il modulo `math`",
             "costruire stringhe con la concatenazione, `.format()` e le f-string",
         ],
-        tempo={"base": 45, "avanzata": 35},
+        tempo={"base": 40, "avanzata": 30},
         dati=[],
     )
 

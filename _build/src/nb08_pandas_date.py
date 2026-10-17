@@ -18,7 +18,7 @@ def costruisci() -> Notebook:
             "usare il tempo come indice per selezionare periodi, trovare i buchi e cambiare granularità con `resample`",
             "riconoscere l'ora legale nei dati e togliere i duplicati del cambio d'ora",
         ],
-        tempo={"base": 55, "avanzata": 55},
+        tempo={"base": 50, "avanzata": 50},
         dati=["load_total_north_hourly_2024.xlsx"],
     )
 

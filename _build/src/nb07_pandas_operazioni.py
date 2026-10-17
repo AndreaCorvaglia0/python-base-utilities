@@ -26,7 +26,7 @@ def costruisci() -> Notebook:
                 "raggruppare con `groupby` e unire DataFrame con `merge` e `concat`",
             ],
         },
-        tempo={"base": 70, "avanzata": 75},
+        tempo={"base": 65, "avanzata": 70},
         dati=["U.S. Electricity Prices.csv", "letture_pod_2025.csv"],
     )
 

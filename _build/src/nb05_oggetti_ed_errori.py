@@ -36,7 +36,7 @@ def costruisci() -> Notebook:
             "leggere la documentazione e i type hint di una funzione",
             "leggere un traceback dal basso e riconoscere gli errori più comuni",
         ],
-        tempo={"base": 40, "avanzata": 35},
+        tempo={"base": 35, "avanzata": 30},
         dati=["TexasTurbine.csv"],
     )
 

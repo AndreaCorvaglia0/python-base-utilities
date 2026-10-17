@@ -1,6 +1,6 @@
 # Istruzioni per chi lavora su questo repository
 
-Materiale di un corso Python di due giornate (versioni Base e Avanzata). I notebook in `Aula_*/`, `Soluzioni_*/` ed
+Materiale di un corso Python in quattro moduli (versioni Base e Avanzata). I notebook in `Aula_*/`, `Soluzioni_*/` ed
 `Extra/` sono GENERATI: non si modificano a mano. Si modifica il sorgente in `_build/src/` e si ricostruisce.
 
 ## Prima di scrivere o modificare testo

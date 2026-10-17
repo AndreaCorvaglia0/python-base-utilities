@@ -26,7 +26,7 @@ def costruisci() -> Notebook:
                 "scrivere in forma compatta con `lambda` e list comprehension",
             ],
         },
-        tempo={"base": 55, "avanzata": 60},
+        tempo={"base": 50, "avanzata": 50},
         dati=[],
     )
 

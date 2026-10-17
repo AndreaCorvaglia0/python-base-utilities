@@ -37,7 +37,7 @@ def costruisci() -> Notebook:
             "costruire la serie giornaliera e i profili medi per ora e per giorno della settimana",
             "unire il carico con la temperatura di Open-Meteo e leggere la relazione tra i due",
         ],
-        tempo={"base": 110, "avanzata": 110},
+        tempo={"base": 100, "avanzata": 100},
         dati=["load_total_north_hourly_2024.xlsx", "load_total_north_hourly_2025.xlsx", "fallback/meteo_milano_2024_2025.json"],
         etichetta_esercizio="Step",
         prefisso_esercizi="",

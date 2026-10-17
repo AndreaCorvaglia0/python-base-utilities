@@ -38,7 +38,7 @@ def costruisci() -> Notebook:
                 "chiedere dati a un'API con `requests` e trasformare la risposta JSON in un DataFrame",
             ],
         },
-        tempo={"base": 55, "avanzata": 75},
+        tempo={"base": 55, "avanzata": 70},
         dati={
             "base": DATI_BASE,
             "avanzata": DATI_BASE + ["fallback/lombardia_sensori.json", "fallback/lombardia_misure_2001.json"],
