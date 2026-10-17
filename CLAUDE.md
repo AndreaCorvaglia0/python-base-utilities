@@ -7,7 +7,7 @@ Materiale di un corso Python di due giornate (versioni Base e Avanzata). I noteb
 
 Leggere, in quest'ordine, `_build/docs/STILE.md` (la prosa: tono da manuale tecnico, frasi complete, nessuna frase ad
 effetto, con esempi prima/dopo), `_build/docs/REGOLE.md` (struttura, volume, dominio degli esempi) e
-`_build/docs/REQUISITI.md` (le richieste del docente). Lo stile vale per tutto: notebook, README, Guida, Schede. La skill generale `prosa-didattica`
+`_build/docs/REQUISITI.md` (le richieste del docente); per gli esercizi anche `_build/docs/HANDS_ON.md`. Lo stile vale per tutto: notebook, README, Guida, Schede. La skill generale `prosa-didattica`
 (in `.claude/skills/`) descrive lo stesso tono per qualsiasi materiale didattico.
 Il docente scrive in italiano; il gergo tecnico resta in inglese dove si usa in inglese.
 
