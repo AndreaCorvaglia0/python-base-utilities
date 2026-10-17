@@ -75,6 +75,10 @@ Le esercitazioni devono funzionare per classi eterogenee:
    con più codice già scritto e più suggerimenti nella Base, una cella quasi vuota e talvolta un requisito in più
    nell'Avanzata. Nella Base alcuni esercizi possono essere più semplici o mancare del tutto.
 
+Le domande di riepilogo che aprono l'esercitazione sono un controllo rapido di pochi concetti: dirette, con una
+risposta breve e senza sottigliezze (il tipo restituito da una divisione, per esempio, non è un tema del corso). Se un
+concetto è piccolo, due domande si possono fondere in una.
+
 Il testo delle esercitazioni, come tutto il materiale, parla al corsista e non descrive l'ora dal punto di vista
 del docente: le indicazioni per la correzione stanno nella `Guida_docente.md`.
 

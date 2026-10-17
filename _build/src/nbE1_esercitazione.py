@@ -42,7 +42,7 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ come funziona l'ora
     nb.md("""
         Questa esercitazione chiude la giornata e riprende quello che abbiamo visto nei notebook 00-03. Hai 45
-        minuti per lavorare sugli esercizi, poi li guardiamo insieme. Si comincia con cinque domande di riepilogo e
+        minuti per lavorare sugli esercizi, poi li guardiamo insieme. Si comincia con quattro domande di riepilogo e
         si prosegue con cinque esercizi, ciascuno con i propri dati, da fare nell'ordine perché la difficoltà cresce.
     """)
     aiuti = """
@@ -56,7 +56,7 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 1. Domande
     nb.sezione("Domande", intro="""
-        Le cinque domande che seguono riguardano i notebook 00-03 e richiedono pochi minuti. Per ciascuna conviene
+        Le quattro domande che seguono riguardano i notebook 00-03 e richiedono pochi minuti. Per ciascuna conviene
         prevedere la risposta a mente e solo dopo aprirla con un clic. In caso di dubbio si può provare la riga in
         una cella di codice e, se il risultato sorprende, rileggere la parte del notebook che tratta quell'argomento.
     """)
@@ -65,13 +65,6 @@ def costruisci() -> Notebook:
         """
             Restituisce `2`. L'operatore `//` calcola la divisione intera e del quoziente, 2.25, tiene soltanto la
             parte intera, quindi con nove uova si preparano due dosi intere.
-        """,
-    )
-    nb.domanda(
-        "Che tipo ha il valore di `8 / 4`, cioè il fattore che trasforma una ricetta per quattro in una ricetta per otto?",
-        """
-            È un `float` e vale `2.0`. La divisione con `/` restituisce sempre un `float`, anche quando il risultato
-            è un numero intero; la divisione intera `8 // 4`, invece, restituisce l'intero `2`.
         """,
     )
     nb.domanda(

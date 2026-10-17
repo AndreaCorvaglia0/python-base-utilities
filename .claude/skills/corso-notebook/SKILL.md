@@ -69,7 +69,8 @@ di cui 45 minuti di lavoro e 15 di correzione; cinque esercizi del nucleo in dif
 una sfida aperta senza verifica; un filo narrativo semplice (vita quotidiana nel modulo 1, dati del corso da pandas in
 poi); ogni esercizio indipendente dagli altri. Il toolkit offre `Notebook(..., soluzioni_a_richiesta=True)` per la
 cella `soluzione("E1.3")` sotto ogni esercizio, `suggerimenti=[...]` per gli aiuti nascosti (due livelli in Base, al
-massimo uno in Avanzata) e `nb.domanda(...)` per le cinque domande di riepilogo iniziali. Le due aule nascono dallo
+massimo uno in Avanzata) e `nb.domanda(...)` per le domande di riepilogo iniziali, che sono quattro o cinque, dirette e con risposta breve:
+un autocontrollo di concetti, non quesiti sottili. Le due aule nascono dallo
 stesso sorgente con un helper che chiama `nb.esercizio` due volte, come `step()` nel capstone: la Base ha lo starter
 guidato e due suggerimenti, l'Avanzata lo starter quasi vuoto e un passo in più. Prima di un passo complesso o appena
 visto va un breve paragrafo di richiamo teorico, in prosa.
