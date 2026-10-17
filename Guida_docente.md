@@ -75,17 +75,17 @@ Modulo 4 · mercoledì 28 ottobre · Agenti per il coding e capstone
 
 | | Base | Avanzata |
 |---|---|---|
-| 09 Plotly per serie storiche | 45 | 45 |
-| 10 Agenti per il coding | 45 | 45 |
-| 11 Capstone | 100 | 100 |
-| Finestra con gli agenti | 20 | 20 |
+| 09 Plotly per serie storiche | 25 | 25 |
+| 10 Agenti per il coding | 35 | 35 |
+| 11 Capstone, step 1-6 | 110 | 110 |
+| 11 Capstone, step 7 con Copilot | 40 | 40 |
 | **Totale** | **210** | **210** |
 
-La finestra con gli agenti è il tempo in cui i corsisti, con Copilot, riprendono Plotly e le operazioni sui DataFrame
-sui dati del capstone, con richieste proprie; si colloca dopo lo step 4 del capstone o alla fine, a seconda di come
-procede la classe. Nel modulo 4 i 240 minuti meno le due pause lasciano esattamente i 210 della tabella, quindi la
-finestra è anche il margine della giornata. Quando occorre tagliare, conviene farlo alla fine di una sezione e non a
-metà.
+Il notebook 09 dà il minimo di Plotly che serve per leggere un grafico scritto da un agente, e lo slider,
+l'istogramma e lo scatter si mostrano senza fermarsi. Lo step 7 del capstone è la parte aperta della giornata: i
+corsisti scelgono una richiesta tra quelle elencate e la portano a termine con Copilot, applicando le tre abitudini
+del notebook 10; è anche il margine del modulo, perché si accorcia senza perdere nulla di quello che precede. Quando
+occorre tagliare, conviene farlo alla fine di una sezione e non a metà.
 
 ## Le dimostrazioni dal vivo
 
@@ -135,7 +135,8 @@ sono queste:
 - Modulo 2: 04 (`if`, `for`, funzioni), 06 (CSV ed Excel). Esercitazione ridotta a tre esercizi.
 - Modulo 3: 07 (selezione, valori mancanti, groupby), 08 (indice temporale e resample). Esercitazione ridotta a tre
   esercizi.
-- Modulo 4: 09 (un grafico a linee), 10 ridotto alla prova guidata con un prompt solo, 11 (step 1-4).
+- Modulo 4: 09 (un grafico a linee), 10 ridotto alla prova guidata con un prompt solo, 11 (step 1-4 e una richiesta
+  dello step 7).
 
 ## Dove tagliare se si è in ritardo
 
@@ -144,9 +145,9 @@ sono queste:
 - 06 Avanzata: la sezione sulle API si accorcia all'esempio dell'anagrafica dei sensori.
 - 07 Avanzata: `query`, l'assegnazione condizionale con `.loc`, l'indice a due colonne e `agg` sono le parti in più
   rispetto a Base: si possono citare e basta.
-- 09: slider ed esportazione in HTML si possono lasciare come lettura.
-- Capstone: gli step 1-4 sono il minimo; 5 e 6 si possono fare insieme sullo schermo del docente, e la finestra con
-  gli agenti si riduce.
+- 09: la sezione sugli altri grafici si può solo mostrare.
+- Capstone: gli step 1-4 sono il minimo; 5 e 6 si possono fare insieme sullo schermo del docente, e lo step 7 si
+  riduce a una richiesta.
 
 ## Per chi modifica il materiale
 

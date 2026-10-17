@@ -35,10 +35,9 @@ la 1 interamente, le altre con esercizi aggiunti nello stesso stile. La sezione 
 `REGOLE.md` descrive la funzione di ciascun posto.
 
 Il modulo 4 è dedicato interamente agli agenti per il coding e al capstone con GitHub Copilot. Si apre con il notebook
-09 su Plotly, prosegue con l'introduzione a Copilot e ai concetti di base (notebook 10) e con il capstone (notebook 11),
-e prevede una finestra in cui i
-corsisti esplorano con gli agenti Plotly, selezioni ed elaborazioni avanzate sui DataFrame pandas, sempre lavorando
-attraverso l'agente. Il capstone ha livelli di richiesta diversi per le due aule; nella Base il codice per l'API della
+09 su Plotly, ridotto al minimo che serve per leggere un grafico scritto da un agente, prosegue con l'introduzione a
+Copilot (notebook 10) e con il capstone (notebook 11), il cui ultimo step è aperto: sui dati del capstone i corsisti
+chiedono a Copilot grafici e tabelle che li interessano e controllano quello che scrive. Il capstone ha livelli di richiesta diversi per le due aule; nella Base il codice per l'API della
 temperatura è già predisposto.
 
 ## Base e Avanzata
@@ -145,7 +144,7 @@ notebook sono nei banner e nella `Guida_docente.md`; le sezioni Extra non sono c
 | 1 | 135 | 150 | l'Avanzata aggiunge il notebook su uv, script e Ruff (30) |
 | 2 | 140 | 150 | l'Avanzata ha la sezione sulle API nel 06 |
 | 3 | 130 | 135 | compresa la demo di Data Wrangler (15) |
-| 4 | 210 | 210 | 09 (45), 10 (45), capstone (100) e 20 minuti di finestra con gli agenti; nessuna esercitazione |
+| 4 | 210 | 210 | 09 (25), 10 (35), capstone (150, di cui 40 per lo step 7 di richieste libere a Copilot); nessuna esercitazione |
 
 ## Decisioni prese
 

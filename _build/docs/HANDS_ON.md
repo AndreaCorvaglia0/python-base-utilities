@@ -101,12 +101,11 @@ l'ora dall'indice e contare le righe delle 12; dopo "Resampling" un resample a d
 attuali sul carico Terna (giornaliero; ora e giorno della settimana).
 
 ### 09 · Plotly per serie storiche
-Concetti che restano: `px.line` con `x`, `y`, `title`, il grafico come oggetto `fig` con `fig.show()`, più colonne in
-un grafico, range slider e range selector su una serie lunga, `fig.write_html` per consegnare un grafico a chi non ha
-Python, `px.histogram` con `nbins`. Hands-on, cinque: cambiare colonna e titolo del primo grafico; aggiungere una
-società al confronto; cambiare i pulsanti del range selector; cambiare `nbins` dell'istogramma; esportare lo scatter in
-HTML e controllare che il file esista. Extra: un mese di carico con lo slider; il grafico del carico in HTML; la
-distribuzione della potenza.
+Il notebook è breve, 25 minuti: Plotly serve soprattutto come terreno per leggere il codice che Copilot scrive nel
+capstone. Concetti che restano: `px.line` con `x`, `y`, `title`, il grafico come oggetto `fig` con `fig.show()`, più
+colonne in un grafico, `fig.write_html`; slider, istogramma e scatter si vedono una volta, in una sola sezione, senza
+Hands-on. Hands-on, tre: cambiare colonna e titolo del primo grafico; aggiungere una società al confronto; esportare lo
+scatter in HTML. Extra: un mese di carico con lo slider; il grafico del carico in HTML; la distribuzione della potenza.
 
 ### 10 · Agenti per il coding
 Concetti che restano: formulare un prompt con il contesto, leggere il codice prima di eseguirlo, riconoscere le quattro
@@ -114,5 +113,6 @@ cose (decoratore, type hint, blocco main, costante). Hands-on: i due attuali res
 attuali (il parametro inventato; leggere prima di lanciare).
 
 ### 11 · Capstone e Approfondimenti
-Il capstone resta a passi guidati, senza Hands-on. Gli Approfondimenti tengono i loro esercizi, con la sola etichetta
+Il capstone resta a passi guidati, senza Hands-on; il suo step 7 è aperto e si fa con Copilot, con richieste a
+scelta sui dati già pronti. Gli Approfondimenti tengono i loro esercizi, con la sola etichetta
 nuova.

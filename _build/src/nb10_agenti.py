@@ -16,7 +16,7 @@ def costruisci() -> Notebook:
             "dare al modello il contesto giusto e controllare la risposta con un numero noto",
             "leggere uno script scritto da un agente prima di lanciarlo",
         ],
-        tempo={"base": 45, "avanzata": 45},
+        tempo={"base": 35, "avanzata": 35},
         dati=["impianti_fv.csv", "letture_pod_2025.csv"],
     )
 
@@ -174,17 +174,16 @@ def costruisci() -> Notebook:
         df["kwp"].sum()
     """)
 
-    # ------------------------------------------------------------------ 4
-    nb.sezione("Le tre regole", intro="""
-        Nel lavoro con un agente conviene tenere tre abitudini. La prima è eseguire subito il codice ricevuto e
-        confrontare il risultato con un numero che conosciamo già, come la somma dei kWp o il numero di righe
-        del file. La seconda è chiedere una spiegazione prima della correzione: quando qualcosa non funziona,
-        incolliamo il traceback intero e chiediamo che cosa significa, e solo dopo chiediamo di sistemarlo. La
-        terza è procedere a piccoli passi, con una richiesta per volta; in modalità Agent le modifiche arrivano
-        come differenze da tenere o annullare blocco per blocco, con i pulsanti **Keep** e **Undo**.
+    nb.md("""
+        Da questi due esempi vengono le tre abitudini che conviene tenere con un agente. La prima è eseguire subito
+        il codice ricevuto e confrontare il risultato con un numero che conosciamo già, come la somma dei kWp o il
+        numero di righe del file. La seconda è chiedere una spiegazione prima della correzione, incollando il
+        traceback intero. La terza è procedere a piccoli passi, con una richiesta per volta; in modalità Agent le
+        modifiche arrivano come differenze da tenere o annullare blocco per blocco, con i pulsanti **Keep** e
+        **Undo**. Nel capstone, nell'ultimo step, le applichiamo su richieste nostre.
     """)
 
-    # ------------------------------------------------------------------ 5
+    # ------------------------------------------------------------------ 4
     nb.sezione("Leggere il codice scritto da un agente", intro="""
         Uno script scritto da un agente si legge prima di lanciarlo, un blocco alla volta, tenendo presenti
         quattro domande. La prima riguarda la struttura, che dovrebbe essere quella consueta: gli import, le

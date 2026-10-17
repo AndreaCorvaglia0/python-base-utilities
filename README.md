@@ -55,9 +55,9 @@ sezioni Extra in fondo ai notebook non sono comprese nei tempi.
 | 3 | `07_Pandas_operazioni` · selezione, valori mancanti, groupby, merge | 65 min | 70 min |
 | 3 | `08_Pandas_date` · date, indice temporale, resample, ora legale | 50 min | 50 min |
 | 3 | `Esercitazione_3` | 60 min | 60 min |
-| 4 | `09_Plotly` · linee, confronto tra serie, slider, export HTML, istogrammi | 45 min | 45 min |
-| 4 | `10_Agenti_per_il_coding` · Copilot in VS Code, leggere il codice scritto da un agente | 45 min | 45 min |
-| 4 | `11_Capstone` · il carico del Nord e la temperatura | 100 min | 100 min |
+| 4 | `09_Plotly` · un grafico a linee, confronto tra serie, export HTML | 25 min | 25 min |
+| 4 | `10_Agenti_per_il_coding` · Copilot in VS Code, leggere il codice scritto da un agente | 35 min | 35 min |
+| 4 | `11_Capstone` · il carico del Nord e la temperatura, con lo step finale di richieste libere a Copilot | 150 min | 150 min |
 | se c'è tempo | `Approfondimenti_1` · set, while, più file CSV (Avanzata: map, filter, generatori) | 40 min | 55 min |
 | se c'è tempo | `Approfondimenti_2` · differenze tra date, fuso orario (Avanzata: shift, rolling, type hint, dataclass, decoratori) | 20 min | 40 min |
 

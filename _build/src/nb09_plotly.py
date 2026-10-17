@@ -10,13 +10,13 @@ def costruisci() -> Notebook:
         titolo="Plotly per serie storiche",
         blocco=4,
         giornata=4,
-        intento="Plotly produce grafici interattivi, che per una serie storica permettono di ingrandire un periodo, scegliere un intervallo con lo slider e confrontare più serie nello stesso grafico, e che si salvano in un file HTML da aprire nel browser.",
+        intento="Plotly produce grafici interattivi che si salvano in un file HTML; questo notebook dà il minimo che serve per leggere e ritoccare un grafico scritto da noi o da un agente, e nel capstone si usa con Copilot.",
         obiettivi=[
-            "fare grafici a linee, istogrammi e scatter con Plotly Express, confrontando più serie nello stesso grafico",
-            "navigare una serie lunga con range slider e range selector ed esportare un grafico in HTML",
-            "riconoscere dati, mapping, tracce e layout di una figura",
+            "fare un grafico a linee con Plotly Express e confrontare più serie nello stesso grafico",
+            "riconoscere dati, mapping, tracce e layout di una figura, per leggere un grafico scritto da un agente",
+            "esportare un grafico in HTML da mandare a chi non usa Python",
         ],
-        tempo={"base": 45, "avanzata": 45},
+        tempo={"base": 25, "avanzata": 25},
         dati=["load_total_north_hourly_2024.xlsx", "TexasTurbine.csv"],
     )
 
@@ -177,145 +177,57 @@ def costruisci() -> Notebook:
     )
 
     # ------------------------------------------------------------------ 6
-    nb.sezione("Range slider e range selector", intro="""
-        Le quotazioni di `stocks` hanno un valore a settimana, ma molte serie storiche sono molto più lunghe. Il
-        carico elettrico della zona Nord pubblicato da Terna, che abbiamo usato nel notebook 08, ha un valore ogni
-        quarto d'ora per tutto il 2024, cioè più di 35.000 punti, e in un grafico dell'anno intero i singoli giorni
-        non si distinguono. Per muoversi in una serie così Plotly offre due controlli sull'asse x: il **range
-        slider**, una barra sotto il grafico con cui si sceglie l'intervallo da mostrare, e il **range selector**,
-        una fila di pulsanti che saltano a intervalli predefiniti. Gli esempi ufficiali sono nella pagina sul
+    nb.sezione("Altri grafici: slider, istogramma e scatter", intro="""
+        Plotly Express ha una funzione per ogni tipo di grafico, e tutte accettano gli stessi argomenti di `px.line`,
+        a partire dal DataFrame e dal mapping delle colonne. Per questo, una volta letto un grafico a linee, si
+        legge anche il codice di un istogramma o di uno scatter scritto da un agente. Questa sezione mostra tre
+        esempi da conoscere di vista, senza fermarsi su ciascuno: nel capstone sarà Copilot a scriverli e noi a
+        controllarli. Il primo riguarda le serie lunghe. Il carico elettrico della zona Nord del notebook 08 ha
+        un valore ogni quarto d'ora per tutto il 2024, e per muoversi in un anno intero Plotly aggiunge sotto il
+        grafico un **range slider**, con cui si sceglie l'intervallo da mostrare, e sopra una fila di pulsanti,
+        il **range selector**, che saltano a intervalli predefiniti. Gli esempi ufficiali sono nella pagina sul
         [range slider](https://plotly.com/python/range-slider/).
     """)
     nb.md("""
-        Leggiamo il file come nel notebook 08. Le righe arrivano dalla più recente alla più vecchia, quindi le
-        ordiniamo per data, e togliamo i quattro quarti d'ora ripetuti nella notte di ottobre in cui si torna
-        all'ora solare, che darebbero due valori diversi per lo stesso istante.
+        Leggiamo il file come nel notebook 08, ordinando le righe per data e togliendo i quattro quarti d'ora
+        ripetuti nella notte di ottobre. I pulsanti sono una lista di dizionari, uno per pulsante, in cui `count` e
+        `step` dicono di quanto tornare indietro dalla fine dell'intervallo visibile; i due controlli si
+        aggiungono alla figura con `update_xaxes`. Oltre i mille punti Plotly Express disegna la linea con una
+        tecnica più veloce che lo slider non riproduce nella sua anteprima, e per questo passiamo
+        `render_mode="svg"`.
     """)
     nb.code("""
         carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
-        carico = carico.sort_values("Date")
-        carico = carico.drop_duplicates(subset="Date")
-        carico.head(3)
-    """)
-    nb.md("""
-        I pulsanti del range selector si descrivono con una lista di dizionari, uno per pulsante. In ogni
-        dizionario `count` e `step` dicono di quanto tornare indietro a partire dalla fine dell'intervallo
-        visibile, per esempio sette giorni o un mese, mentre `label` è l'etichetta scritta sul pulsante. Il
-        pulsante con `step="all"` riporta il grafico all'anno intero.
-    """)
-    nb.code("""
+        carico = carico.sort_values("Date").drop_duplicates(subset="Date")
+
         bottoni = [
             dict(count=7, label="1w", step="day", stepmode="backward"),
             dict(count=1, label="1m", step="month", stepmode="backward"),
             dict(step="all"),
         ]
-    """)
-    nb.md("""
-        Il grafico si costruisce con `px.line`, come quelli delle quotazioni, e i due controlli si aggiungono con
-        `update_xaxes`, il metodo che modifica l'asse x: `rangeslider_visible=True` mostra lo slider e
-        `rangeselector=dict(buttons=bottoni)` mette i pulsanti sopra il grafico. Oltre i mille punti Plotly
-        Express disegna la linea con WebGL, una tecnica più veloce che però lo slider non riproduce nella sua
-        anteprima, e per questo passiamo `render_mode="svg"`, che la disegna come nei grafici precedenti. Un
-        clic su `1w` mostra l'ultima settimana dell'anno, e trascinando la finestra evidenziata nello slider
-        l'intervallo di una settimana scorre lungo tutto il 2024.
-    """)
-    nb.code("""
-        fig_anno = px.line(
-            carico,
-            x="Date",
-            y="Total Load [MW]",
-            title="Carico Nord, 2024",
-            render_mode="svg"
-        )
+        fig_anno = px.line(carico, x="Date", y="Total Load [MW]", title="Carico Nord, 2024", render_mode="svg")
         fig_anno.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=bottoni))
         fig_anno.show()
     """)
-    nb.hands_on(
-        richiesta="""
-            Prepara in `fig_pulsanti` lo stesso grafico con tre pulsanti diversi: `1d`, che mostra un giorno solo,
-            `3m`, che mostra tre mesi, e `all`. Il resto della cella è già scritto, quindi basta completare `count`
-            e `step` nei primi due dizionari. Con il pulsante `1d` si vede la forma del carico in una sola giornata.
-        """,
-        starter="""
-            bottoni_nuovi = [
-                dict(count=..., label="1d", step=..., stepmode="backward"),
-                dict(count=..., label="3m", step=..., stepmode="backward"),
-                dict(step="all"),
-            ]
-            fig_pulsanti = px.line(carico, x="Date", y="Total Load [MW]", title="Carico Nord, 2024", render_mode="svg")
-            fig_pulsanti.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=bottoni_nuovi))
-            fig_pulsanti.show()
-        """,
-        soluzione="""
-            bottoni_nuovi = [
-                dict(count=1, label="1d", step="day", stepmode="backward"),
-                dict(count=3, label="3m", step="month", stepmode="backward"),
-                dict(step="all"),
-            ]
-            fig_pulsanti = px.line(carico, x="Date", y="Total Load [MW]", title="Carico Nord, 2024", render_mode="svg")
-            fig_pulsanti.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=bottoni_nuovi))
-            fig_pulsanti.show()
-        """,
-        verifica="""
-            passi = [(b.count, b.step) for b in fig_pulsanti.layout.xaxis.rangeselector.buttons]
-            assert passi[:2] == [(1, "day"), (3, "month")], "❌ fig_pulsanti: i primi due pulsanti sono count=1, step='day' e count=3, step='month'"
-        """,
-        prova_anche="ad aggiungere un pulsante `6m` prima di `all`.",
-    )
-
-    # ------------------------------------------------------------------ 7
-    nb.sezione("Istogramma e scatter", intro="""
-        Plotly Express ha una funzione per ogni tipo di grafico, e tutte accettano gli stessi argomenti di `px.line`,
-        a partire dal DataFrame e dal mapping delle colonne. Le proviamo sui dati orari di una turbina eolica in Texas,
-        che contengono tra l'altro la velocità del vento e la potenza prodotta. Il timestamp del file non riporta
-        l'anno, quindi lo aggiungiamo prima della conversione, e diamo alle due colonne che ci interessano nomi più brevi.
+    nb.md("""
+        Gli altri due esempi usano i dati orari di una turbina eolica in Texas, con la velocità del vento e la
+        potenza prodotta. L'istogramma divide la velocità del vento in intervalli e conta quante ore cadono in
+        ciascuno, quindi basta indicare la colonna da mettere sull'asse `x`, mentre `nbins` stabilisce il numero di
+        barre. Lo scatter disegna un punto per ogni riga e mostra la relazione tra due colonne, qui il vento e la
+        potenza: i punti descrivono la curva di potenza della turbina, che sale con il vento e poi si appiattisce.
+        Con `opacity` i punti diventano semitrasparenti e le zone in cui si accumulano risultano più scure.
     """)
     nb.code("""
         turbina = pd.read_csv("../Dati/TexasTurbine.csv")
-        # il timestamp non ha l'anno: lo aggiungiamo noi
         turbina["timestamp"] = pd.to_datetime("2023 " + turbina["Time stamp"], format="%Y %b %d, %I:%M %p")
         turbina = turbina.rename(columns={"System power generated | (kW)": "potenza_kw", "Wind speed | (m/s)": "vento_ms"})
-        turbina.head(3)
-    """)
-    nb.md("""
-        L'istogramma divide la velocità del vento in intervalli e conta quante ore cadono in ciascuno. Per questo
-        basta indicare la colonna da mettere sull'asse `x`, perché l'altezza delle barre è il conteggio, mentre il
-        parametro `nbins` stabilisce il numero di barre.
-    """)
-    nb.code("""
-        fig = px.histogram(turbina, x="vento_ms", nbins=30, title="Distribuzione del vento")
-        fig.show()
-    """)
-    nb.hands_on(
-        richiesta="""
-            Ripeti in `fig_10` l'istogramma del vento con 10 barre invece di 30, cambiando soltanto `nbins`. Le barre
-            diventano più larghe e ciascuna conta le ore di un intervallo di velocità più ampio.
-        """,
-        starter="""
-            fig_10 = px.histogram(turbina, x="vento_ms", nbins=..., title="Distribuzione del vento")
-            fig_10.show()
-        """,
-        soluzione="""
-            fig_10 = px.histogram(turbina, x="vento_ms", nbins=10, title="Distribuzione del vento")
-            fig_10.show()
-        """,
-        verifica="""
-            assert fig_10.data[0].nbinsx == 10, "❌ fig_10: passa nbins=10 a px.histogram"
-        """,
-        prova_anche="con `nbins=100`.",
-    )
-    nb.md("""
-        Lo scatter disegna un punto per ogni riga e mostra la relazione tra due colonne, in questo caso il vento
-        sull'asse x e la potenza sull'asse y. L'insieme dei punti descrive la curva di potenza della turbina, che sale
-        rapidamente con il vento e poi si appiattisce quando la turbina raggiunge la sua potenza massima. Con
-        `opacity` i punti diventano semitrasparenti, e le zone in cui si accumulano risultano più scure.
-    """)
-    nb.code("""
+
+        px.histogram(turbina, x="vento_ms", nbins=30, title="Distribuzione del vento").show()
         fig = px.scatter(turbina, x="vento_ms", y="potenza_kw", opacity=0.3, title="Vento e potenza")
         fig.show()
     """)
 
-    # ------------------------------------------------------------------ 8
+    # ------------------------------------------------------------------ 7
     nb.sezione("Esportare in HTML", intro="""
         Un grafico Plotly si può salvare in un file HTML, che si apre con un doppio clic in qualsiasi browser e
         conserva zoom, legenda, slider e pulsanti, quindi è il modo più semplice per mandare un grafico interattivo
@@ -359,8 +271,8 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ Extra
     nb.sezione("Extra", intro="""
         Gli esercizi di questa sezione ripassano i punti principali del notebook e sono pensati per essere svolti a
-        casa, con calma, e durante le ore di corso li saltiamo. I primi due usano il DataFrame `carico` della
-        sezione sul range slider, mentre il terzo usa il DataFrame `turbina` della sezione sull'istogramma.
+        casa, con calma, e durante le ore di corso li saltiamo. I primi due usano il DataFrame `carico` e il terzo
+        il DataFrame `turbina`, entrambi letti nella sezione sugli altri grafici.
     """)
     nb.esercizio(
         titolo="Un mese di carico con lo slider",

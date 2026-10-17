@@ -37,7 +37,7 @@ def costruisci() -> Notebook:
             "costruire la serie giornaliera e i profili medi per ora e per giorno della settimana",
             "unire il carico con la temperatura di Open-Meteo e leggere la relazione tra i due",
         ],
-        tempo={"base": 100, "avanzata": 100},
+        tempo={"base": 150, "avanzata": 150},
         dati=["load_total_north_hourly_2024.xlsx", "load_total_north_hourly_2025.xlsx", "fallback/meteo_milano_2024_2025.json"],
         etichetta_esercizio="Step",
         prefisso_esercizi="",
@@ -53,10 +53,14 @@ def costruisci() -> Notebook:
     nb.md("""
         Accanto al carico integriamo la **temperatura** di Milano, ottenuta tramite API da
         [Open-Meteo](https://open-meteo.com). L'obiettivo è descrivere come il carico del Nord dipende dall'ora
-        del giorno, dal giorno della settimana e dalla temperatura. Il lavoro è diviso in sei step, ciascuno con
-        una consegna, una cella da completare e una verifica. Copilot si può usare per i titoli e le etichette
-        dei grafici, mentre il codice degli step lo scriviamo noi, perché lo scopo del capstone è mettere in
-        pratica quello che abbiamo visto nei notebook precedenti.
+        del giorno, dal giorno della settimana e dalla temperatura.
+    """)
+    nb.md("""
+        Il lavoro è diviso in sette step. Nei primi sei, ciascuno con una consegna, una cella da completare e una
+        verifica, il codice lo scriviamo noi, perché lo scopo è mettere in pratica quello che abbiamo visto nei
+        notebook precedenti, e Copilot serve al massimo per i titoli e le etichette dei grafici. Il settimo step è
+        aperto: sui dati ormai pronti chiediamo a Copilot grafici e tabelle che ci interessano e controlliamo
+        quello che scrive, con le tre abitudini del notebook 10.
     """)
 
     # ------------------------------------------------------------------ 1
@@ -677,5 +681,68 @@ def costruisci() -> Notebook:
            al Nord pesa di più il caldo, con i massimi a luglio. I valori esatti dipendono dalla fonte della
            temperatura.
     """, titolo="Le cinque frasi"), solo_soluzioni=True))
+
+    # ------------------------------------------------------------------ 7
+    nb.sezione("Esplorare con Copilot", intro="""
+        I dati sono pronti: `df` con il carico quartorario pulito, `df_completo` con carico e temperatura,
+        `giornaliero` con le medie per giorno. Da qui in avanti il codice lo scrive Copilot, in modalità Ask o
+        Agent, e noi facciamo il lavoro che resta a chi legge: descrivere bene i dati nel prompt, eseguire quello
+        che arriva, confrontare un numero con uno che conosciamo già e chiedere una spiegazione quando qualcosa
+        non torna. Un prompt che funziona nomina il DataFrame, le colonne con il loro tipo e il risultato
+        atteso, per esempio: "Ho un DataFrame pandas `giornaliero` con le colonne `Date` (datetime),
+        `Total Load [MW]` e `Temperature_C` (float). Scrivi il codice per un grafico Plotly a linee del carico
+        con un range slider, titolo 'Carico medio giornaliero, zona Nord'".
+    """)
+    nb.esercizio(
+        titolo="Richieste libere a Copilot",
+        scenario="""
+            Scegli una o più richieste tra quelle elencate, oppure una tua, e portala a termine con Copilot: il
+            risultato è un grafico o una tabella che risponde alla domanda e che hai controllato almeno su un
+            numero. Non c'è un'unica soluzione, quindi lo step non ha verifica; la cella `soluzione` mostra il
+            codice che Copilot ha prodotto per la prima richiesta, da confrontare con il tuo.
+        """,
+        richiesta="""
+            1. Il carico medio giornaliero del 2024 e del 2025 nello stesso grafico, una linea per anno, con il
+               giorno dell'anno sulle x, per vedere se i due anni si somigliano.
+            2. Il profilo orario medio di gennaio e quello di luglio, due linee in un grafico, per vedere quando
+               il picco si sposta.
+            3. Una tabella con il carico medio per mese e la temperatura media per mese, ordinata dal mese più
+               caldo al più freddo.
+            4. Il grafico dello step 6 salvato in un file HTML da mandare a un collega, con `include_plotlyjs="cdn"`.
+            5. Per chi vuole: una funzione `profilo_orario(df_completo, mese)` che restituisce la potenza media
+               per ora del giorno di un mese a scelta, con una docstring, provata su due mesi.
+
+            Per ogni richiesta: scrivi il prompt con i nomi delle colonne, incolla il codice, eseguilo, controlla
+            un numero (le righe, un massimo, una somma) e, se qualcosa non torna, incolla il traceback e chiedi
+            prima una spiegazione.
+        """,
+        suggerimenti=[
+            """
+                Se il codice proposto usa una colonna che non esiste, il prompt non la descriveva abbastanza:
+                aggiungi `df_completo.head()` incollato nel prompt e riprova. Se il grafico è vuoto, controlla che
+                il DataFrame passato sia quello giusto e che `Date` sia una colonna, non l'indice.
+            """,
+        ],
+        starter="""
+            # Incolla qui sotto il codice proposto da Copilot per la richiesta scelta, poi eseguilo e controllalo.
+            ...
+        """,
+        soluzione="""
+            # Prompt: "Ho un DataFrame pandas `giornaliero` con le colonne Date (datetime), Total Load [MW] e
+            #          Temperature_C (float), un valore per giorno del 2024 e del 2025. Scrivi il codice per un
+            #          grafico Plotly Express a linee con il carico medio giornaliero, una linea per anno,
+            #          giorno dell'anno sulle x. Titolo 'Carico medio giornaliero, 2024 e 2025'."
+            confronto = giornaliero.copy()
+            confronto["anno"] = confronto["Date"].dt.year.astype(str)
+            confronto["giorno_anno"] = confronto["Date"].dt.dayofyear
+            fig = px.line(confronto, x="giorno_anno", y="Total Load [MW]", color="anno",
+                          title="Carico medio giornaliero, 2024 e 2025")
+            fig.show()
+
+            # Controllo: due linee, una per anno, e 366 + 365 punti in tutto
+            print(confronto["anno"].unique(), len(confronto))  # Output: ['2024' '2025'] 731
+        """,
+        verifica=None,
+    )
     return nb
 
