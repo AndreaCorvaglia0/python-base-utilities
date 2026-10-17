@@ -47,7 +47,6 @@ La tabella elenca i notebook nell'ordine in cui si svolgono, con il tempo previs
 | 1 | `05_Oggetti_ed_errori` · oggetti, metodi, documentazione, traceback | 40 min | 35 min |
 | 1 | `06_Pandas_e_import_dati` · Series, DataFrame, CSV, Excel, SQL (Avanzata: API) | 55 min | 75 min |
 | 1 | `Esercitazione_2` | 60 min | 60 min |
-| tra le due | `Homework` · una settimana nell'ufficio Analisi Consumi | 30 min | 30 min |
 | 2 | `07_Pandas_operazioni` · selezione, valori mancanti, groupby, merge | 70 min | 75 min |
 | 2 | `08_Pandas_date` · date, indice temporale, resample, ora legale | 55 min | 55 min |
 | 2 | `09_Plotly` · linee, confronto tra serie, istogrammi | 30 min | 25 min |
@@ -57,10 +56,12 @@ La tabella elenca i notebook nell'ordine in cui si svolgono, con il tempo previs
 | se c'è tempo | `Approfondimenti_1` · set, while, più file CSV (Avanzata: map, filter, generatori) | 40 min | 55 min |
 | se c'è tempo | `Approfondimenti_2` · differenze tra date, fuso orario, slider, export HTML (Avanzata: shift, rolling, type hint, dataclass, decoratori) | 40 min | 60 min |
 
-Ogni notebook si chiude con due o tre esercizi, a volte con un quarto segnato come facoltativo, che si svolge se resta
-tempo oppure a casa. Le tre Esercitazioni chiudono i blocchi del programma con alcune domande e qualche esercizio in
-più, mentre i due Approfondimenti raccolgono il materiale che resta fuori dal percorso principale e si aprono solo
-quando la classe è in anticipo. Sotto ogni esercizio si trova una cella con la chiamata `verifica("7.1")`, che
+Dentro ogni notebook, subito dopo gli esempi, ci sono alcuni Hands-on: piccoli esercizi da uno a tre minuti in cui si
+cambia qualcosa nel codice appena visto. In fondo a ogni notebook una sezione Extra raccoglie due o tre esercizi brevi
+da fare a casa, che in aula si saltano. Le tre Esercitazioni chiudono i primi tre moduli con un'ora di lavoro
+strutturato, con domande di riepilogo, cinque esercizi con suggerimenti nascosti e la soluzione di ogni esercizio a
+richiesta, mentre i due Approfondimenti raccolgono il materiale che resta fuori dal percorso principale e si aprono
+solo quando la classe è in anticipo. Sotto ogni esercizio si trova una cella con la chiamata `verifica("7.1")`, che
 controlla il risultato e stampa ✅ se è corretto, oppure una riga che indica che cosa non torna. Le soluzioni di tutti
 gli esercizi sono nelle cartelle `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 
@@ -68,9 +69,10 @@ gli esercizi sono nelle cartelle `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
 
 | Cartella | Contenuto |
 |---|---|
-| `Aula_Base/`, `Aula_Avanzata/` | i notebook del corso, le tre Esercitazioni, l'Homework e i due Approfondimenti; `corso.py` è il modulo con i controlli degli esercizi |
+| `Aula_Base/`, `Aula_Avanzata/` | i notebook del corso, le tre Esercitazioni e i due Approfondimenti; `corso.py` è il modulo con i controlli degli esercizi |
 | `Soluzioni_Base/`, `Soluzioni_Avanzata/` | gli stessi notebook con gli esercizi risolti |
 | `Extra/` | le parti che il docente mostra dal vivo: VS Code, ambiente e script, Ruff, Data Wrangler, wrapper delle API |
+| `Riserva/` | l'Homework, un notebook di mezz'ora per le due aule, tenuto come riserva per una classe molto veloce |
 | `Dati/` | i dati usati nel corso: carico Terna, turbina eolica, prezzi, più i file di esempio (vedi `Dati/README.md`) |
 | `Schede/` | quattro schede di una pagina: leggere il codice, Excel → pandas, uv e script, gli errori più comuni; i notebook 01, 05, 06 e 07 rimandano alla loro |
 | `Slides/` | la presentazione del corso |
@@ -84,6 +86,6 @@ suggerisce dove tagliare se si è in ritardo.
 Ogni notebook si apre con il tempo previsto, i dati che utilizza e tre obiettivi di apprendimento, e si chiude con i
 collegamenti al notebook precedente e al successivo. Nel testo, le note e gli approfondimenti compaiono come
 citazioni rientrate, e gli approfondimenti si possono saltare senza perdere il filo. I riquadri colorati sono tre: il
-riquadro verde segnala un **Esercizio** o un **Prova tu**, cioè un momento in cui si scrive codice; il riquadro
+riquadro verde segnala un **Esercizio** o un **Hands-on**, cioè un momento in cui si scrive codice; il riquadro
 azzurro contiene la **Soluzione** e compare solo nelle cartelle delle soluzioni; il riquadro rosso, **Attenzione**,
 segnala un errore che capita spesso.

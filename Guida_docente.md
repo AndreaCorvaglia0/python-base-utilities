@@ -49,14 +49,12 @@ Giornata 1 (Blocchi 1 e 2)
 | 06 Pandas: Series, DataFrame e import dei dati (+ demo wrapper in Avanzata) | 55 | 75 + 10 |
 | Esercitazione 2 | 20 | 20 |
 | Demo ambiente e script | 5 | 10 |
-| Presentazione dell'Homework | 5 | 5 |
 | **Totale** | **340** | **360** |
 
 Giornata 2 (Blocchi 3 e 4)
 
 | | Base | Avanzata |
 |---|---|---|
-| Correzione dell'Homework | 15 | 15 |
 | 07 Pandas: operazioni sui DataFrame | 70 | 75 |
 | Demo Data Wrangler | 15 | 15 |
 | 08 Pandas: le date | 55 | 55 |
@@ -107,12 +105,12 @@ saltano sono queste:
 - 10: la prova guidata si fa con un prompt solo.
 - Capstone: gli step 1-4 sono il minimo; 5 e 6 si possono fare insieme sullo schermo del docente.
 
-## Homework
+## Hands-on, Extra e Homework
 
-L'homework richiede circa mezz'ora e si trova in `Aula_*/Homework.ipynb`, con le soluzioni in `Soluzioni_*/Homework.ipynb`.
-Ripercorre i temi principali dei primi due moduli con quattro passi e due facoltativi, nello stesso formato delle
-esercitazioni. Si presenta in cinque minuti alla fine del modulo 2 e si corregge insieme all'inizio del modulo 3, in
-dieci o quindici minuti.
+Dentro i notebook gli Hands-on sono i momenti in cui i corsisti toccano il codice appena visto: si lasciano fare, uno
+o due minuti ciascuno, senza correzione collettiva. La sezione Extra in fondo a ogni notebook si salta in aula e si
+indica come lavoro per casa. L'Homework non è più un'attività prevista: resta in `Riserva/Base/` e `Riserva/Avanzata/`
+(notebook e soluzioni), da distribuire solo a una classe molto più veloce del previsto.
 
 ## Per chi modifica il materiale
 
