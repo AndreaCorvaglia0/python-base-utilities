@@ -116,6 +116,34 @@ def costruisci() -> Notebook:
         `help(round)` o `help(sum)`. La docstring si può leggere anche direttamente, come attributo
         della funzione, con `area_rettangolo.__doc__`.
     """)
+    nb.hands_on(
+        richiesta="""
+            Al posto dei `...` scrivi una docstring di una riga che dica che cosa restituisce `costo_totale`,
+            ed esegui la cella, che la legge con `help()`. L'output mostra la firma
+            `costo_totale(prezzo, pezzi)` e, sotto, la tua frase.
+        """,
+        starter="""
+            def costo_totale(prezzo, pezzi):
+                ...
+                return prezzo * pezzi
+
+
+            help(costo_totale)
+        """,
+        soluzione="""
+            def costo_totale(prezzo, pezzi):
+                \"\"\"Costo di più pezzi dello stesso prodotto, dato il prezzo di uno.\"\"\"
+                return prezzo * pezzi
+
+
+            help(costo_totale)
+        """,
+        verifica="""
+            assert costo_totale.__doc__, "❌ manca la docstring: una stringa tra tre virgolette subito sotto il def"
+            assert costo_totale(2.5, 4) == 10.0, "❌ il calcolo non va cambiato: costo_totale(2.5, 4) restituisce 10.0"
+        """,
+        prova_anche="`help(len)`, che mostra la docstring di una funzione di Python.",
+    )
 
     # ------------------------------------------------------------------ 4
     nb.sezione("PEP 8", intro="""
@@ -159,9 +187,39 @@ def costruisci() -> Notebook:
         dopo il `def` vengono da PEP 8, che le usa per separare la definizione di una funzione dal
         codice che la utilizza.
     """)
+    nb.hands_on(
+        richiesta="""
+            Riscrivi seguendo PEP 8 le due righe in cima alla cella, con la lista in `temperature`, la media
+            in `media` e gli spazi al posto giusto. La media vale `12.0`, come `M`.
+        """,
+        starter="""
+            T=[12,15 ,9]
+            M=sum(T)/len(T)
 
-    # ------------------------------------------------------------------ Esercizi
-    nb.sezione("Esercizi")
+            temperature = ...
+            media = ...
+            print(M, media)
+        """,
+        soluzione="""
+            T=[12,15 ,9]
+            M=sum(T)/len(T)
+
+            temperature = [12, 15, 9]
+            media = sum(temperature) / len(temperature)
+            print(M, media)  # Output: 12.0 12.0
+        """,
+        verifica="""
+            assert temperature == [12, 15, 9], "❌ temperature: gli stessi tre valori di T"
+            assert media == M, "❌ media deve dare lo stesso risultato di M"
+        """,
+    )
+
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", """
+        Questa sezione raccoglie due esercizi brevi sui punti principali del notebook, pensati per il
+        ripasso a casa, e durante la lezione la saltiamo. Ogni esercizio lavora sul codice scritto nella
+        propria cella, quindi si può svolgere anche senza aver eseguito il resto del notebook.
+    """)
     nb.esercizio(
         titolo="Rinominare e documentare una funzione",
         scenario="""

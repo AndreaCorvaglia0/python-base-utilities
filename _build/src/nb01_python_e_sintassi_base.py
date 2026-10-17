@@ -78,6 +78,32 @@ def costruisci() -> Notebook:
         print(type(z))  # Output: <class 'str'>
     """)
     nb.code("x")
+    nb.hands_on(
+        richiesta="""
+            Crea la variabile `prodotto` con il testo `"pane"`, la variabile `pezzi` con il numero intero 2
+            e la variabile `prezzo` con il numero 1.80, poi stampa il tipo di `prezzo` con `type()`. La riga
+            stampata è `<class 'float'>`.
+        """,
+        starter="""
+            prodotto = ...
+            pezzi = ...
+            prezzo = ...
+
+            print(...)
+        """,
+        soluzione="""
+            prodotto = "pane"
+            pezzi = 2
+            prezzo = 1.80
+
+            print(type(prezzo))  # Output: <class 'float'>
+        """,
+        verifica="""
+            assert prodotto == "pane", "❌ prodotto deve contenere il testo pane, tra virgolette"
+            assert type(pezzi) is int and type(prezzo) is float, "❌ pezzi va scritto senza virgola, prezzo con il punto decimale"
+        """,
+        prova_anche="`type(prodotto)`, che restituisce `<class 'str'>`.",
+    )
 
     nb.sottosezione("Importare librerie", intro="""
         Python ha un vasto ecosistema di librerie e framework, e per usare una libreria bisogna prima
@@ -165,6 +191,27 @@ def costruisci() -> Notebook:
         print(a ** b)  # Output: 25
         print(c ** b)  # Output: 12.25
     """)
+    nb.hands_on(
+        richiesta="""
+            Calcola in `quoziente` la divisione intera di 23 per 4 e in `resto` il resto della stessa
+            divisione. Il risultato è 5 per il quoziente e 3 per il resto.
+        """,
+        starter="""
+            quoziente = ...
+            resto = ...
+            print(quoziente, resto)
+        """,
+        soluzione="""
+            quoziente = 23 // 4
+            resto = 23 % 4
+            print(quoziente, resto)  # Output: 5 3
+        """,
+        verifica="""
+            assert quoziente == 5, "❌ quoziente: la divisione intera si scrive con //"
+            assert resto == 3, "❌ resto: il resto della divisione si ottiene con %"
+        """,
+        prova_anche="calcola `23 / 4`, che con la divisione normale restituisce `5.75`.",
+    )
 
     nb.sottosezione("Funzioni matematiche", intro="""
         Le funzioni matematiche più avanzate, come la radice quadrata, i logaritmi e le funzioni
@@ -195,6 +242,24 @@ def costruisci() -> Notebook:
         # Seno di un angolo (in radianti)
         print(math.sin(math.pi / 2))  # Output: 1.0
     """)
+    nb.hands_on(
+        richiesta="""
+            Calcola in `radice` la radice quadrata di 81 con la funzione `sqrt` del modulo `math`, scritta
+            con il prefisso `math.` come nella cella sopra. Il risultato è `9.0`.
+        """,
+        starter="""
+            radice = ...
+            print(radice)
+        """,
+        soluzione="""
+            radice = math.sqrt(81)
+            print(radice)  # Output: 9.0
+        """,
+        verifica="""
+            assert radice == 9.0, "❌ radice: math.sqrt(81)"
+        """,
+        prova_anche="stampa `math.pi`, che contiene il valore di π.",
+    )
 
     # ------------------------------------------------------------------ 5
     nb.sezione("Manipolazione di stringhe", intro="""
@@ -250,110 +315,47 @@ def costruisci() -> Notebook:
         saluto = f'Ciao, mi chiamo {nome} e ho {anni} anni'
         print(saluto)  # Output: Ciao, mi chiamo Mario e ho 30 anni
     """)
+    nb.hands_on(
+        richiesta="""
+            Con le variabili `destinazione` e `binario` della cella qui sotto, salva in `annuncio` una f-string
+            che dia `Il treno per Torino parte dal binario 5`. Il nome della città e il numero del binario
+            vanno inseriti con le graffe, senza scriverli a mano nel testo.
+        """,
+        starter="""
+            destinazione = "Torino"
+            binario = 5
+
+            annuncio = ...
+            print(annuncio)
+        """,
+        soluzione="""
+            destinazione = "Torino"
+            binario = 5
+
+            annuncio = f"Il treno per {destinazione} parte dal binario {binario}"
+            print(annuncio)  # Output: Il treno per Torino parte dal binario 5
+        """,
+        verifica="""
+            assert annuncio == "Il treno per Torino parte dal binario 5", "❌ annuncio: controlla il testo e le due variabili tra graffe"
+        """,
+        prova_anche="cambia `binario` in 7 ed esegui di nuovo la cella, e la frase si aggiorna senza toccare il testo.",
+    )
 
     nb.md("Riassunto in una pagina: [Leggere il codice: cosa è cosa](../Schede/Scheda_leggere_codice.md).")
 
-    # ------------------------------------------------------------------ 6
-    nb.sezione("Esercizi")
-    nb.esercizio(
-        titolo="Temperatura massima e minima",
-        scenario="""
-            Una stazione meteo ha registrato tre temperature nella giornata, al mattino, al pomeriggio e
-            alla sera. Vogliamo un piccolo riepilogo con la massima, la minima e l'escursione termica,
-            cioè la differenza tra le due, calcolato da Python a partire dalle tre misure, in modo che
-            domani basti cambiare i tre valori. Con i dati della cella la massima è di 25 gradi, la
-            minima di 7 e l'escursione di 18.
-        """,
-        richiesta="""
-            1. Salva in `massima` la temperatura più alta delle tre e in `minima` la più bassa.
-            2. Salva in `escursione` la differenza tra la massima e la minima.
-            3. Completa i tre `print`, che stampano il riepilogo con le f-string, una riga per valore.
-        """,
-        suggerimento=(
-            "le funzioni `max()` e `min()` accettano più numeri separati da virgola e restituiscono "
-            "rispettivamente il più grande e il più piccolo."
-        ),
-        starter="""
-            # Temperature della giornata, in gradi
-            mattina = 10
-            pomeriggio = 25
-            sera = 7
-
-            # Massima, minima ed escursione
-            massima = max(...)
-            minima = ...
-            escursione = ...
-
-            # Riepilogo
-            print(f"Massima: {massima} gradi")  # Output: Massima: 25 gradi
-            print(f"Minima: {...} gradi")       # Output: Minima: 7 gradi
-            print(...)                          # Output: Escursione: 18 gradi
-        """,
-        soluzione="""
-            # Temperature della giornata, in gradi
-            mattina = 10
-            pomeriggio = 25
-            sera = 7
-
-            # Massima, minima ed escursione
-            massima = max(mattina, pomeriggio, sera)
-            minima = min(mattina, pomeriggio, sera)
-            escursione = massima - minima
-
-            # Riepilogo
-            print(f"Massima: {massima} gradi")        # Output: Massima: 25 gradi
-            print(f"Minima: {minima} gradi")          # Output: Minima: 7 gradi
-            print(f"Escursione: {escursione} gradi")  # Output: Escursione: 18 gradi
-        """,
-        verifica="""
-            assert massima == 25, "❌ massima: la più alta delle tre temperature, con max()"
-            assert minima == 7, "❌ minima: la più bassa delle tre temperature, con min()"
-            assert escursione == 18, "❌ escursione: la massima meno la minima"
-        """,
-    )
-    nb.esercizio(
-        titolo="L'area di un'aiuola rotonda",
-        scenario="""
-            In giardino vogliamo seminare a prato un'aiuola rotonda di 5 metri di raggio, e per comprare
-            la quantità giusta di semi ci serve la sua superficie. L'area di un cerchio si ottiene
-            moltiplicando π per il quadrato del raggio, e in Python il valore di π non va scritto a mano,
-            perché il modulo `math` lo fornisce con tutte le sue cifre decimali. L'aiuola misura circa
-            78.5 metri quadrati.
-        """,
-        richiesta="""
-            1. Calcola in `area` la superficie dell'aiuola, moltiplicando π per il quadrato di `raggio`.
-            2. Stampa il risultato con una f-string, in una frase che dica quanti metri quadrati misura
-               l'aiuola.
-        """,
-        suggerimento="il valore di π si trova in `math.pi`, e il quadrato del raggio si calcola con l'operatore `**`.",
-        starter="""
-            import math
-
-            raggio = 5  # metri
-            area = ...
-
-            print(...)  # Output: L'aiuola misura 78.53981633974483 metri quadrati
-        """,
-        soluzione="""
-            import math
-
-            raggio = 5  # metri
-            area = math.pi * raggio ** 2
-
-            print(f"L'aiuola misura {area} metri quadrati")  # Output: L'aiuola misura 78.53981633974483 metri quadrati
-        """,
-        verifica="""
-            assert math.isclose(area, 78.54, rel_tol=1e-3), "❌ area: π per il raggio al quadrato"
-        """,
-    )
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", """
+        Questa sezione raccoglie due esercizi brevi sui punti principali del notebook, pensati per il
+        ripasso a casa, e durante la lezione la saltiamo. Ogni esercizio lavora sui dati scritti nella
+        propria cella, quindi si può svolgere anche senza aver eseguito il resto del notebook.
+    """)
     nb.esercizio(
         titolo="Ore e minuti",
         scenario="""
-            L'app del cinema indica la durata dei film in minuti, e il film di stasera dura 137 minuti.
-            Una durata così si legge male, e per sapere a colpo d'occhio quanto resteremo in sala la
-            vogliamo in ore e minuti. In Python bastano due operatori che abbiamo visto, la divisione
-            intera e il modulo, che funzionano allo stesso modo per qualunque durata. Il film dura 2 ore e
-            17 minuti.
+            L'app del cinema indica la durata dei film in minuti, e il film di stasera dura 137 minuti. Per
+            sapere a colpo d'occhio quanto resteremo in sala vogliamo la durata in ore e minuti, e in Python
+            bastano la divisione intera e il modulo, che funzionano allo stesso modo per qualunque durata.
+            Il film dura 2 ore e 17 minuti.
         """,
         richiesta="""
             1. Salva in `ore` il numero di ore intere, con la divisione intera `//`.
@@ -380,6 +382,50 @@ def costruisci() -> Notebook:
             assert ore == 2, "❌ ore: quante volte 60 sta in 137"
             assert minuti == 17, "❌ minuti: il resto della divisione per 60"
         """,
-        facoltativo=True,
+    )
+    nb.esercizio(
+        titolo="Il cartellino del bagaglio",
+        scenario="""
+            Sul cartellino del bagaglio vogliamo il nome del passeggero e la città di arrivo, tutto in
+            maiuscolo perché si legga bene da lontano, e il cartellino ha posto per 25 caratteri al massimo.
+            Costruendo il testo in Python a partire dalle variabili, lo stesso codice prepara il cartellino
+            di qualunque passeggero e ne controlla la lunghezza. Con i dati della cella il cartellino è
+            `MARIO ROSSI - LISBONA` e ha 21 caratteri.
+        """,
+        richiesta="""
+            1. Unisci in `cartellino` il nome, uno spazio, il cognome, il separatore `" - "` e la città, con
+               l'operatore `+`, e porta il risultato in maiuscolo con `.upper()`.
+            2. Salva in `lunghezza` il numero di caratteri di `cartellino`, per controllare che stia nei 25
+               caratteri.
+        """,
+        suggerimento=(
+            "il metodo `.upper()` si scrive dopo una stringa e ne restituisce una copia in maiuscolo, per "
+            "esempio `\"ciao\".upper()` restituisce `\"CIAO\"`; dopo un'espressione tra parentesi tonde si "
+            "applica al risultato intero. Per contare i caratteri si usa `len()`."
+        ),
+        starter="""
+            nome = "Mario"
+            cognome = "Rossi"
+            citta = "Lisbona"
+
+            cartellino = ...
+            lunghezza = ...
+
+            print(cartellino, lunghezza)  # Output: MARIO ROSSI - LISBONA 21
+        """,
+        soluzione="""
+            nome = "Mario"
+            cognome = "Rossi"
+            citta = "Lisbona"
+
+            cartellino = (nome + " " + cognome + " - " + citta).upper()
+            lunghezza = len(cartellino)
+
+            print(cartellino, lunghezza)  # Output: MARIO ROSSI - LISBONA 21
+        """,
+        verifica="""
+            assert cartellino == "MARIO ROSSI - LISBONA", "❌ cartellino: nome, cognome e città uniti con +, poi .upper()"
+            assert lunghezza == 21, "❌ lunghezza: i caratteri di cartellino, con len()"
+        """,
     )
     return nb

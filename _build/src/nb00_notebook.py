@@ -68,6 +68,33 @@ def costruisci() -> Notebook:
         c = a + b
         print(c)  # Output: 30
     """)
+    nb.hands_on(
+        richiesta="""
+            Completa la cella qui sotto in modo che stampi un saluto con il tuo nome, per esempio
+            `Ciao, sono Anna`, e poi la somma di 15 e 27, calcolata in `c` come nell'esempio sopra. Eseguita
+            con Shift + Invio, la cella stampa il saluto e, sulla riga successiva, il numero 42.
+        """,
+        starter="""
+            print("...")
+
+            a = ...
+            b = ...
+            c = a + b
+            print(c)
+        """,
+        soluzione="""
+            print("Ciao, sono Anna")
+
+            a = 15
+            b = 27
+            c = a + b
+            print(c)  # Output: 42
+        """,
+        verifica="""
+            assert c == 42, "❌ c deve valere 15 + 27, cioè 42"
+        """,
+        prova_anche="togli il `print` dall'ultima riga e lascia soltanto `c`, che il notebook mostra lo stesso perché è l'ultima riga della cella.",
+    )
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Il kernel", intro="""
@@ -102,6 +129,23 @@ def costruisci() -> Notebook:
         x = x + 1
         x
     """)
+    nb.hands_on(
+        richiesta="""
+            Nella cella qui sotto assegna alla variabile `giorni` il numero dei giorni di una settimana ed
+            eseguila. La verifica che segue è una cella diversa, e trova `giorni` perché il kernel lo tiene
+            in memoria.
+        """,
+        starter="""
+            giorni = ...
+        """,
+        soluzione="""
+            giorni = 7
+        """,
+        verifica="""
+            assert giorni == 7, "❌ giorni deve valere 7, il numero dei giorni di una settimana"
+        """,
+        prova_anche="scrivi `giorni * 4` in una cella nuova ed eseguila, e Python usa il valore di `giorni` che il kernel ha conservato.",
+    )
     nb.md("""
         Il pulsante **Restart**, in cima al notebook, riavvia il kernel. Il codice scritto nelle celle
         rimane dov'è, ma le variabili create fino a quel momento vengono perse, perché esistevano solo
@@ -160,25 +204,24 @@ def costruisci() -> Notebook:
         # Premi Esc, poi M e Shift + Invio: questa riga diventa un titolo
     """)
 
-    # ------------------------------------------------------------------ Esercizi
-    nb.sezione("Esercizi", """
-        Sotto gli esercizi che hanno un risultato da controllare trovi una cella con `verifica(...)`, da
-        eseguire dopo aver scritto il tuo codice. Se il risultato è corretto la cella stampa ✅,
-        altrimenti indica che cosa non torna.
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", """
+        Questa sezione raccoglie due esercizi brevi sui punti principali del notebook, pensati per il
+        ripasso a casa, e durante la lezione la saltiamo. Sotto l'esercizio che ha un risultato da
+        controllare c'è una cella con `verifica(...)`, che stampa ✅ se il risultato è corretto e
+        altrimenti dice che cosa non torna.
     """)
     nb.esercizio(
         titolo="Una cella Markdown e una cella di codice",
         scenario="""
-            Un notebook alterna celle di testo e celle di codice, e il testo serve a dire a chi legge che
-            cosa fa il codice che segue. Come primo esercizio costruiamo una coppia di questo tipo: una
-            cella Markdown con un titolo e una frase di spiegazione e, sotto, una cella di codice che
-            stampa un messaggio. Eseguite tutte e due, la prima mostra il titolo formattato e la seconda
-            stampa `Primo comando Python del corso!`.
+            Un notebook alterna celle di testo e celle di codice, e il testo dice a chi legge che cosa fa il
+            codice che segue. Costruiamo una coppia di questo tipo: una cella Markdown con un titolo e una
+            frase e, sotto, una cella di codice che stampa `Primo comando Python del corso!`.
         """,
         richiesta="""
-            1. Sopra la cella di codice qui sotto aggiungi una **cella Markdown** con il titolo
-               "Soluzione" e, sotto il titolo, il testo "Questa è la soluzione del primo esercizio."
-            2. Nella **cella di codice** scrivi `print("Primo comando Python del corso!")`.
+            1. Sopra la cella di codice qui sotto aggiungi una **cella Markdown** con il titolo "Soluzione" e
+               la frase "Questa è la soluzione del primo esercizio."
+            2. Nella cella di codice scrivi `print("Primo comando Python del corso!")`.
             3. Esegui le due celle con `Shift + Invio`, prima quella Markdown e poi quella di codice.
         """,
         starter="""
@@ -201,16 +244,14 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Il meteo di oggi",
         scenario="""
-            Vogliamo stampare una riga sul meteo di oggi, come `Oggi a Milano ci sono 18 gradi`, a
-            partire da due variabili, una con il nome della città e una con la temperatura. Tenere i
-            valori nelle variabili invece di scriverli dentro il testo permette di rifare la stampa per
-            un'altra città, o per domani, cambiando soltanto le due assegnazioni.
+            Vogliamo stampare una riga come `Oggi a Milano ci sono 18 gradi` a partire da due variabili, una
+            con il nome della città e una con la temperatura. Con i valori nelle variabili, per rifare la
+            stampa per un'altra città basta cambiare le due assegnazioni.
         """,
         richiesta="""
             1. Crea la variabile `citta` con il nome della tua città e la variabile `temperatura` con la
-               temperatura di oggi, scritta come numero perché è una misura.
-            2. Stampa la riga con un solo `print`, che unisce i pezzi di testo e i valori delle due
-               variabili.
+               temperatura di oggi, scritta come numero.
+            2. Stampa la riga con un solo `print`, che unisce i pezzi di testo e i valori delle due variabili.
         """,
         suggerimento=(
             "`print` accetta più valori separati da virgola e li stampa uno dopo l'altro, separati da uno "

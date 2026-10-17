@@ -74,6 +74,24 @@ def costruisci() -> Notebook:
         `start`, in questo caso cinque.
     """)
     nb.code("lista_numeri[3:8]")
+    nb.hands_on(
+        richiesta="""
+            Salva in `porzione` gli elementi di `lista_numeri` dal terzo al quinto compreso, cioè quelli con
+            indice da 2 a 4. Il risultato è `[9, 12, 15]`.
+        """,
+        starter="""
+            porzione = lista_numeri[...]
+            porzione
+        """,
+        soluzione="""
+            porzione = lista_numeri[2:5]
+            porzione  # Output: [9, 12, 15]
+        """,
+        verifica="""
+            assert porzione == [9, 12, 15], "❌ porzione: si parte dall'indice 2 e ci si ferma prima del 5"
+        """,
+        prova_anche="`lista_numeri[5:]`, che parte dal sesto elemento e arriva alla fine della lista.",
+    )
     nb.md("""
         Lo slicing accetta anche gli indici negativi. Con `[-3:]` si parte dal terzultimo elemento e,
         poiché `end` non è indicato, si arriva fino alla fine della lista, quindi si ottengono gli ultimi
@@ -144,6 +162,31 @@ def costruisci() -> Notebook:
         lunghezza = len(lista_numeri)
         print(f"La lista contiene {lunghezza} elementi.")  # Output: La lista contiene 12 elementi.
     """)
+    nb.hands_on(
+        richiesta="""
+            Aggiungi `"caffè"` in fondo alla lista `spesa` con `append()` e salva in `quanti` il numero dei
+            suoi elementi con `len()`. Il risultato è 4.
+        """,
+        starter="""
+            spesa = ["pane", "latte", "uova"]
+
+            ...
+            quanti = ...
+            print(spesa, quanti)
+        """,
+        soluzione="""
+            spesa = ["pane", "latte", "uova"]
+
+            spesa.append("caffè")
+            quanti = len(spesa)
+            print(spesa, quanti)  # Output: ['pane', 'latte', 'uova', 'caffè'] 4
+        """,
+        verifica="""
+            assert spesa == ["pane", "latte", "uova", "caffè"], "❌ spesa: il caffè va aggiunto in fondo, con append()"
+            assert quanti == 4, "❌ quanti: il numero degli elementi di spesa, con len()"
+        """,
+        prova_anche="togli `'latte'` con `remove()` e conta di nuovo gli elementi.",
+    )
 
     nb.sottosezione("Liste di liste", intro="""
         Una lista può contenere elementi di qualsiasi tipo, comprese altre liste. Le **liste di liste**
@@ -223,6 +266,24 @@ def costruisci() -> Notebook:
         notazione che per le liste usa l'indice. Se la chiave non esiste, Python segnala un `KeyError`.
     """)
     nb.code("print(dizionario['cognome'])  # Output: Rossi")
+    nb.hands_on(
+        richiesta="""
+            Leggi dal dizionario `dizionario` il valore della chiave `'nome'` e salvalo nella variabile
+            `nome`. Il risultato è `'Marco'`.
+        """,
+        starter="""
+            nome = dizionario[...]
+            print(nome)
+        """,
+        soluzione="""
+            nome = dizionario['nome']
+            print(nome)  # Output: Marco
+        """,
+        verifica="""
+            assert nome == 'Marco', "❌ nome: la chiave 'nome' va scritta tra parentesi quadre e tra apici"
+        """,
+        prova_anche="leggi la chiave `'indirizzo'`, che non esiste, e Python risponde con un `KeyError`.",
+    )
 
     nb.sottosezione("Modifica di un dizionario", intro="""
         Per aggiungere un elemento basta assegnare un valore a una chiave che non esiste ancora, e Python
@@ -244,6 +305,30 @@ def costruisci() -> Notebook:
         print(dizionario)
         # Output: {'nome': 'Marco', 'cognome': 'Rossi', 'età': 31, 'sesso': 'M'}
     """)
+    nb.hands_on(
+        richiesta="""
+            Aggiungi al dizionario `viaggio` la chiave `'mezzo'` con il valore `'treno'` e porta le notti da
+            4 a 5. Il risultato è `{'destinazione': 'Vienna', 'notti': 5, 'mezzo': 'treno'}`.
+        """,
+        starter="""
+            viaggio = {'destinazione': 'Vienna', 'notti': 4}
+
+            ...
+            ...
+            print(viaggio)
+        """,
+        soluzione="""
+            viaggio = {'destinazione': 'Vienna', 'notti': 4}
+
+            viaggio['mezzo'] = 'treno'
+            viaggio['notti'] = 5
+            print(viaggio)  # Output: {'destinazione': 'Vienna', 'notti': 5, 'mezzo': 'treno'}
+        """,
+        verifica="""
+            assert viaggio.get('mezzo') == 'treno', "❌ viaggio: manca la chiave 'mezzo' con il valore 'treno'"
+            assert viaggio['notti'] == 5, "❌ notti: assegna 5 alla chiave che esiste già"
+        """,
+    )
     nb.md("""
         Per rimuovere un elemento si usa l'istruzione `del`, seguita dal dizionario e dalla chiave tra
         parentesi quadre, e dopo questa cella la chiave `'età'` non esiste più. In alternativa si può
@@ -309,6 +394,31 @@ def costruisci() -> Notebook:
         come mostra la cella seguente, in cui il `3` ripetuto compare una volta sola.
     """)
     nb.code("set([1, 2, 3, 3])")
+    nb.hands_on(
+        richiesta="""
+            Salva in `diversi` il set dei voti della lista `voti`, in cui ogni voto compare una volta sola, e
+            in `quanti` il numero dei voti diversi. Il set contiene 6, 7, 8 e 9, quindi `quanti` vale 4.
+        """,
+        starter="""
+            voti = [7, 8, 6, 8, 7, 9, 7]
+
+            diversi = ...
+            quanti = ...
+            print(diversi, quanti)
+        """,
+        soluzione="""
+            voti = [7, 8, 6, 8, 7, 9, 7]
+
+            diversi = set(voti)
+            quanti = len(diversi)
+            print(diversi, quanti)
+        """,
+        verifica="""
+            assert diversi == {6, 7, 8, 9}, "❌ diversi: il set costruito dalla lista voti, con set()"
+            assert quanti == 4, "❌ quanti: la lunghezza del set, con len()"
+        """,
+        prova_anche="`len(voti)`, che conta anche le ripetizioni e restituisce 7.",
+    )
 
     # ------------------------------------------------------------------ 6
     nb.sezione("Quale struttura usare")
@@ -321,162 +431,110 @@ def costruisci() -> Notebook:
         permette di controllare rapidamente se un elemento è presente.
     """)
 
-    # ------------------------------------------------------------------ Esercizi
-    nb.sezione("Esercizi")
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", """
+        Questa sezione raccoglie due esercizi brevi sui punti principali del notebook, pensati per il
+        ripasso a casa, e durante la lezione la saltiamo. Ogni esercizio lavora sui dati scritti nella
+        propria cella, quindi si può svolgere anche senza aver eseguito il resto del notebook.
+    """)
     nb.esercizio(
-        titolo="Le fermate del ritorno",
+        titolo="Il carrello con i prezzi",
         scenario="""
-            Il treno che prendiamo per andare da Milano a Napoli ferma a Bologna, Firenze e Roma, e la
-            lista `andata` contiene le fermate in quest'ordine. Al ritorno le fermate sono le stesse,
-            percorse al contrario, quindi invece di riscriverle a mano le ricaviamo dalla lista
-            dell'andata con lo slicing, così se l'orario cambia basta correggere una lista sola. Il
-            ritorno è `['Napoli', 'Roma', 'Firenze', 'Bologna', 'Milano']`.
-        """,
-        richiesta="Salva in `ritorno` le fermate in ordine inverso, con uno slicing che ha passo negativo.",
-        starter="""
-            andata = ["Milano", "Bologna", "Firenze", "Roma", "Napoli"]
-
-            # scrivi il tuo codice qui
-            ritorno = andata[...]
-            print(ritorno)  # Output: ['Napoli', 'Roma', 'Firenze', 'Bologna', 'Milano']
-        """,
-        soluzione="""
-            andata = ["Milano", "Bologna", "Firenze", "Roma", "Napoli"]
-
-            ritorno = andata[::-1]
-            print(ritorno)  # Output: ['Napoli', 'Roma', 'Firenze', 'Bologna', 'Milano']
-        """,
-        verifica="""
-            assert ritorno == ["Napoli", "Roma", "Firenze", "Bologna", "Milano"], "❌ ritorno: le fermate dell'andata dall'ultima alla prima"
-            assert andata[0] == "Milano", "❌ andata non va modificata: lo slicing crea una lista nuova"
-        """,
-    )
-    nb.esercizio(
-        titolo="La squadra per il gioco",
-        scenario="""
-            A cena i dieci invitati sono seduti alternando donne e uomini, a partire da Elena, che è la
-            padrona di casa, e la lista della cella li elenca in quest'ordine. Per il gioco del dopocena
-            vogliamo la squadra delle donne senza Elena, che fa da arbitro, ricavata con uno slicing
-            invece di copiare i nomi a mano, così resta giusta anche se qualcuno cambia posto. La squadra
-            è `['Martina', 'Giulia', 'Francesca', 'Sara']`.
-        """,
-        richiesta=(
-            "Salva in `squadra` gli elementi in posizione pari a partire dalla posizione 2, cioè le donne "
-            "tranne Elena, con uno slicing."
-        ),
-        suggerimento=(
-            "lo slicing ha tre parti, `[start:end:step]`; qui servono il punto di partenza e il passo, "
-            "mentre la fine si può omettere."
-        ),
-        starter="""
-            invitati = ["Elena", "Luigi", "Martina", "Marco", "Giulia", "Simone", "Francesca", "Alessandro", "Sara", "Lorenzo"]
-
-            # scrivi il tuo codice qui
-            squadra = invitati[...]
-            print(squadra)  # Output: ['Martina', 'Giulia', 'Francesca', 'Sara']
-        """,
-        soluzione="""
-            invitati = ["Elena", "Luigi", "Martina", "Marco", "Giulia", "Simone", "Francesca", "Alessandro", "Sara", "Lorenzo"]
-
-            squadra = invitati[2::2]
-            print(squadra)  # Output: ['Martina', 'Giulia', 'Francesca', 'Sara']
-        """,
-        verifica="""
-            assert squadra == ["Martina", "Giulia", "Francesca", "Sara"], "❌ squadra: una posizione ogni due, partendo dalla 2"
-        """,
-    )
-    nb.esercizio(
-        titolo="Le capitali del G8",
-        scenario="""
-            Il dizionario `g8` associa ai paesi del G8 la loro capitale, ma mancano il Regno Unito e gli
-            Stati Uniti. Da questo dizionario vogliamo ricavarne altri due senza riscriverli: `g7`, il
-            gruppo rimasto dopo l'esclusione della Russia nel 2014, e `g10`, un gruppo ipotetico
-            allargato a Spagna, Paesi Bassi e Corea del Sud, in cui l'Italia ha spostato la capitale a
-            Bobbio. Partendo ogni volta da una copia, ciascun gruppo resta corretto anche quando modifichiamo
-            il successivo.
+            Al supermercato Marta segna nel dizionario `prezzi` quanto costa ogni prodotto che mette nel
+            carrello, così prima della cassa conosce già il totale. Il dizionario va completato, perché
+            manca il pepe nero e il prezzo del guanciale è quello della settimana scorsa. Alla fine
+            `totale` vale 20.5 e `prodotti` elenca i cinque nomi, con `'pepe nero'` per ultimo.
         """,
         richiesta="""
-            1. Aggiungi a `g8` le coppie `'Regno Unito': 'Londra'` e `'Stati Uniti': 'Washington, D.C.'`.
-            2. In `g7`, che la cella crea come copia di `g8`, togli la Russia con il metodo `pop`, in
-               modo che `g8` resti intatto.
-            3. Aggiungi a `g10`, che è una copia di `g7`, i tre paesi nuovi, con le capitali `'Madrid'`,
-               `'Amsterdam'` e `'Seoul'`.
-            4. Aggiorna in `g10` il valore della chiave `'Italia'`, che diventa `'Bobbio'`.
-
-            Il metodo `copy()` crea una copia indipendente del dizionario, mentre `pop(chiave)` rimuove
-            la chiave indicata insieme al suo valore. Alla fine `g8` contiene ancora otto paesi, Russia
-            compresa, `g7` ne contiene sette e `g10` dieci.
+            1. Aggiungi il pepe nero, con la chiave `"pepe nero"` e il prezzo di 2.15 euro, e correggi il
+               prezzo del guanciale, che è di 7.90 euro.
+            2. Calcola in `totale` la somma dei prezzi con `sum(prezzi.values())`; la funzione `sum()`
+               restituisce la somma degli elementi che riceve.
+            3. Salva in `prodotti` la lista dei nomi dei prodotti, cioè delle chiavi del dizionario.
         """,
+        suggerimento=(
+            "una chiave nuova e una chiave esistente si assegnano con la stessa sintassi, "
+            "`prezzi[chiave] = valore`; nel primo caso Python crea la coppia, nel secondo sostituisce il "
+            "valore. Le chiavi si ottengono con `list(prezzi.keys())`."
+        ),
         starter="""
-            g8 = {
-                'Canada': 'Ottawa',
-                'Francia': 'Parigi',
-                'Germania': 'Berlino',
-                'Italia': 'Roma',
-                'Giappone': 'Tokyo',
-                'Russia': 'Mosca'
-            }
+            prezzi = {"spaghetti": 2.58, "guanciale": 8.90, "uova": 3.49, "pecorino": 4.38}
 
-            # 1. aggiungi i paesi mancanti
-            g8[...] = 'Londra'
-            g8...
-            print(g8)
-
-            # 2. togli la Russia (la copia lascia intatto l'originale)
-            g7 = g8.copy()
-            g7.pop...
-            print(g7)
-
-            # 3. aggiungi i nuovi paesi
-            g10 = g7.copy()
-            g10['Spagna'] = 'Madrid'
-            g10... = 'Amsterdam'
-            ... = 'Seoul'
-
-            # 4. cambia la capitale dell'Italia
             ...
-            print(g10)
+            ...
+            totale = ...
+            prodotti = ...
 
-            lista_paesi = list(g10.keys())
-            print(lista_paesi)
+            print(totale)
+            print(prodotti)
         """,
         soluzione="""
-            g8 = {
-                'Canada': 'Ottawa',
-                'Francia': 'Parigi',
-                'Germania': 'Berlino',
-                'Italia': 'Roma',
-                'Giappone': 'Tokyo',
-                'Russia': 'Mosca'
-            }
+            prezzi = {"spaghetti": 2.58, "guanciale": 8.90, "uova": 3.49, "pecorino": 4.38}
 
-            # 1. aggiungi i paesi mancanti
-            g8['Regno Unito'] = 'Londra'
-            g8['Stati Uniti'] = 'Washington, D.C.'
-            print(g8)
+            prezzi["pepe nero"] = 2.15
+            prezzi["guanciale"] = 7.90
+            totale = sum(prezzi.values())
+            prodotti = list(prezzi.keys())
 
-            # 2. togli la Russia (la copia lascia intatto l'originale)
-            g7 = g8.copy()
-            g7.pop('Russia')
-            print(g7)
-
-            # 3. aggiungi i nuovi paesi
-            g10 = g7.copy()
-            g10['Spagna'] = 'Madrid'
-            g10['Paesi Bassi'] = 'Amsterdam'
-            g10['Corea del Sud'] = 'Seoul'
-
-            # 4. cambia la capitale dell'Italia
-            g10['Italia'] = 'Bobbio'
-            print(g10)
-
-            lista_paesi = list(g10.keys())
-            print(lista_paesi)
+            print(totale)    # Output: 20.5
+            print(prodotti)  # Output: ['spaghetti', 'guanciale', 'uova', 'pecorino', 'pepe nero']
         """,
         verifica="""
-            assert g8['Regno Unito'] == 'Londra' and g8['Stati Uniti'] == 'Washington, D.C.', "❌ g8: mancano Regno Unito o Stati Uniti"
-            assert 'Russia' not in g7 and 'Russia' in g8, "❌ g7: la Russia va tolta dalla copia g7, non da g8"
-            assert g10['Paesi Bassi'] == 'Amsterdam' and g10['Corea del Sud'] == 'Seoul' and g10['Italia'] == 'Bobbio', "❌ g10: controlla i paesi nuovi e la capitale dell'Italia"
+            assert prezzi.get("pepe nero") == 2.15 and prezzi["guanciale"] == 7.90, "❌ prezzi: aggiungi il pepe nero e correggi il prezzo del guanciale"
+            assert round(totale, 2) == 20.5, "❌ totale: somma i valori del dizionario aggiornato con sum(prezzi.values())"
+            assert prodotti == ["spaghetti", "guanciale", "uova", "pecorino", "pepe nero"], "❌ prodotti: usa list(prezzi.keys())"
+        """,
+    )
+    nb.esercizio(
+        titolo="Due liste, un carrello",
+        scenario="""
+            Marta e Luca hanno scritto ciascuno la propria lista della spesa, e alcuni prodotti compaiono in
+            entrambe. Vogliamo un unico carrello in cui ogni prodotto compaia una volta sola, senza cercare
+            i doppioni a occhio, e l'indirizzo di Marta in una tupla, perché è un gruppo di valori che non
+            cambia. Alla fine `carrello` contiene sei prodotti e `civico` vale 14.
+        """,
+        richiesta="""
+            1. Unisci le due liste in `tutti` con l'operatore `+`, che tra due liste funziona come tra due
+               stringhe e produce una lista nuova con gli elementi della prima seguiti da quelli della
+               seconda.
+            2. Salva in `carrello` il set ottenuto da `tutti` e in `quanti` il numero dei suoi prodotti.
+            3. Crea la tupla `indirizzo` con `"via Garibaldi"`, `14` e `"Bologna"` e salva in `civico` il
+               suo secondo elemento, letto con l'indice.
+        """,
+        suggerimento=(
+            "l'unione delle due liste conserva i doppioni, ed è il passaggio a set che li elimina. Il "
+            "secondo elemento della tupla ha indice 1, perché gli indici partono da zero."
+        ),
+        starter="""
+            lista_marta = ["spaghetti", "guanciale", "uova", "vino"]
+            lista_luca = ["vino", "pecorino", "pane", "uova"]
+
+            tutti = ...
+            carrello = ...
+            quanti = ...
+
+            indirizzo = ...
+            civico = ...
+
+            print(quanti, civico)
+        """,
+        soluzione="""
+            lista_marta = ["spaghetti", "guanciale", "uova", "vino"]
+            lista_luca = ["vino", "pecorino", "pane", "uova"]
+
+            tutti = lista_marta + lista_luca
+            carrello = set(tutti)
+            quanti = len(carrello)
+
+            indirizzo = ("via Garibaldi", 14, "Bologna")
+            civico = indirizzo[1]
+
+            print(quanti, civico)  # Output: 6 14
+        """,
+        verifica="""
+            assert tutti == lista_marta + lista_luca, "❌ tutti: le due liste unite con +"
+            assert carrello == {"spaghetti", "guanciale", "uova", "vino", "pecorino", "pane"} and quanti == 6, "❌ carrello: set(tutti) elimina i doppioni, quanti è la sua lunghezza"
+            assert isinstance(indirizzo, tuple) and civico == 14, "❌ indirizzo deve essere una tupla e civico il suo elemento di indice 1"
         """,
     )
     return nb

@@ -63,28 +63,22 @@ assert isinstance(citta, str) and citta.strip(), "❌ citta deve essere un testo
 assert isinstance(temperatura, (int, float)), "❌ temperatura deve essere un numero, senza virgolette"
 '''),
     '1.1': ('Esercizio 1.1', r'''
-assert massima == 25, "❌ massima: la più alta delle tre temperature, con max()"
-assert minima == 7, "❌ minima: la più bassa delle tre temperature, con min()"
-assert escursione == 18, "❌ escursione: la massima meno la minima"
-'''),
-    '1.2': ('Esercizio 1.2', r'''
-assert math.isclose(area, 78.54, rel_tol=1e-3), "❌ area: π per il raggio al quadrato"
-'''),
-    '1.3': ('Esercizio 1.3', r'''
 assert ore == 2, "❌ ore: quante volte 60 sta in 137"
 assert minuti == 17, "❌ minuti: il resto della divisione per 60"
 '''),
+    '1.2': ('Esercizio 1.2', r'''
+assert cartellino == "MARIO ROSSI - LISBONA", "❌ cartellino: nome, cognome e città uniti con +, poi .upper()"
+assert lunghezza == 21, "❌ lunghezza: i caratteri di cartellino, con len()"
+'''),
     '2.1': ('Esercizio 2.1', r'''
-assert ritorno == ["Napoli", "Roma", "Firenze", "Bologna", "Milano"], "❌ ritorno: le fermate dell'andata dall'ultima alla prima"
-assert andata[0] == "Milano", "❌ andata non va modificata: lo slicing crea una lista nuova"
+assert prezzi.get("pepe nero") == 2.15 and prezzi["guanciale"] == 7.90, "❌ prezzi: aggiungi il pepe nero e correggi il prezzo del guanciale"
+assert round(totale, 2) == 20.5, "❌ totale: somma i valori del dizionario aggiornato con sum(prezzi.values())"
+assert prodotti == ["spaghetti", "guanciale", "uova", "pecorino", "pepe nero"], "❌ prodotti: usa list(prezzi.keys())"
 '''),
     '2.2': ('Esercizio 2.2', r'''
-assert squadra == ["Martina", "Giulia", "Francesca", "Sara"], "❌ squadra: una posizione ogni due, partendo dalla 2"
-'''),
-    '2.3': ('Esercizio 2.3', r'''
-assert g8['Regno Unito'] == 'Londra' and g8['Stati Uniti'] == 'Washington, D.C.', "❌ g8: mancano Regno Unito o Stati Uniti"
-assert 'Russia' not in g7 and 'Russia' in g8, "❌ g7: la Russia va tolta dalla copia g7, non da g8"
-assert g10['Paesi Bassi'] == 'Amsterdam' and g10['Corea del Sud'] == 'Seoul' and g10['Italia'] == 'Bobbio', "❌ g10: controlla i paesi nuovi e la capitale dell'Italia"
+assert tutti == lista_marta + lista_luca, "❌ tutti: le due liste unite con +"
+assert carrello == {"spaghetti", "guanciale", "uova", "vino", "pecorino", "pane"} and quanti == 6, "❌ carrello: set(tutti) elimina i doppioni, quanti è la sua lunghezza"
+assert isinstance(indirizzo, tuple) and civico == 14, "❌ indirizzo deve essere una tupla e civico il suo elemento di indice 1"
 '''),
     '3.1': ('Esercizio 3.1', r'''
 assert prezzo_scontato.__doc__, "❌ manca la docstring sotto il def"
