@@ -30,7 +30,7 @@ def costruisci() -> Notebook:
         giornata=1,
         intento="Un'ora di domande ed esercizi sui notebook 00-03, legati dalla preparazione di una cena per otto persone.",
         obiettivi=[
-            "calcolare quantità e prezzi con gli operatori aritmetici e comporre un testo con le f-string",
+            "usare variabili, tipi e operatori e comporre un testo con le f-string",
             "modificare liste e dizionari e selezionarne una parte",
             "combinare set e tuple e riscrivere una cella seguendo PEP 8",
         ],
@@ -102,33 +102,30 @@ def costruisci() -> Notebook:
     # E1.1 ---------------------------------------------------------------
     esercizio_due_aule(
         nb,
-        titolo="Le quantità per otto",
+        titolo="Gli invitati",
         scenario="""
-            La ricetta di Marta è scritta per quattro persone e chiede 320 g di spaghetti, 200 g di guanciale, 4 uova
-            e 100 g di pecorino. A cena saranno in otto, quindi tutte le quantità vanno moltiplicate per lo stesso
-            fattore.
+            La ricetta di Marta è scritta per quattro persone e a cena saranno in otto. Nella cella ci sono già le
+            due variabili con questi numeri, e da qui partono i primi conti e il primo messaggio.
         """,
         base=dict(
             richiesta="""
-                1. Completa la riga di `fattore`, che è il rapporto tra il numero di invitati e il numero di persone
-                   per cui è scritta la ricetta.
-                2. Calcola le quantità di guanciale e di pecorino, in grammi, moltiplicando le dosi della ricetta per
-                   `fattore`, come fa già la riga di `pasta_g`.
-                3. Le uova si contano a pezzi interi, quindi calcola `uova` con la funzione `round()`, che con un solo
-                   argomento arrotonda all'intero più vicino e restituisce un `int`.
+                1. Salva in `fattore` il risultato della divisione tra `invitati` e `persone_ricetta`.
+                2. Salva in `tipo_invitati` il tipo della variabile `invitati` e in `tipo_fattore` quello di `fattore`,
+                   con la funzione `type()`.
+                3. Componi con l'operatore `+` il testo `annuncio`, che deve valere `"Siamo in 8"`, unendo il testo fisso
+                   alla variabile `invitati` convertita in stringa con `str()`.
 
-                Alla fine `fattore` vale 2.0, `pasta_g` vale 640.0, `guanciale_g` 400.0, `pecorino_g` 200.0 e
-                `uova` vale 8.
+                Alla fine `fattore` vale 2.0, `tipo_invitati` è `int`, `tipo_fattore` è `float` e `annuncio` vale
+                `"Siamo in 8"`.
             """,
             suggerimenti=[
                 """
-                    Il fattore dice quante volte il numero degli invitati contiene il numero di persone della
-                    ricetta, e si ottiene con una divisione. Ogni nuova quantità è la dose della ricetta moltiplicata
-                    per il fattore.
+                    La divisione con `/` restituisce sempre un numero con la virgola, anche quando il risultato è
+                    intero. Un testo e un numero non si uniscono con `+` finché il numero non diventa un testo.
                 """,
                 """
-                    Il fattore si calcola con `invitati / persone_ricetta`, il pecorino con `100 * fattore` e le uova
-                    con `round(4 * fattore)`.
+                    Servono `invitati / persone_ricetta`, `type(invitati)`, `type(fattore)` e
+                    `"Siamo in " + str(invitati)`.
                 """,
             ],
             starter="""
@@ -136,75 +133,72 @@ def costruisci() -> Notebook:
                 invitati = 8
 
                 fattore = invitati / ...
-                pasta_g = 320 * fattore
-                guanciale_g = 200 * ...
-                pecorino_g = ...
-                uova = round(...)
+                tipo_invitati = type(...)
+                tipo_fattore = ...
+                annuncio = "Siamo in " + ...
 
-                print(fattore, pasta_g, guanciale_g, pecorino_g, uova)
+                print(fattore, tipo_invitati, tipo_fattore)
+                print(annuncio)
             """,
             soluzione="""
                 persone_ricetta = 4
                 invitati = 8
 
                 fattore = invitati / persone_ricetta
-                pasta_g = 320 * fattore
-                guanciale_g = 200 * fattore
-                pecorino_g = 100 * fattore
-                uova = round(4 * fattore)
+                tipo_invitati = type(invitati)
+                tipo_fattore = type(fattore)
+                annuncio = "Siamo in " + str(invitati)
 
-                print(fattore, pasta_g, guanciale_g, pecorino_g, uova)
+                print(fattore, tipo_invitati, tipo_fattore)
+                print(annuncio)
             """,
             verifica="""
-                assert fattore == 2, "❌ fattore: dividi invitati per persone_ricetta"
-                assert pasta_g == 640 and guanciale_g == 400 and pecorino_g == 200, "❌ Controlla le quantità: ogni dose della ricetta va moltiplicata per fattore"
-                assert uova == 8 and isinstance(uova, int), "❌ uova deve valere 8 ed essere un intero: usa round()"
+                assert fattore == 2.0, "❌ fattore: dividi invitati per persone_ricetta con /"
+                assert tipo_invitati is int and tipo_fattore is float, "❌ tipo_invitati e tipo_fattore: usa type() sulle due variabili"
+                assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
             """,
         ),
         avanzata=dict(
             richiesta="""
-                1. Calcola in `fattore` il rapporto tra il numero di invitati e il numero di persone della ricetta.
-                2. Calcola in `pasta_g`, `guanciale_g` e `pecorino_g` le quantità in grammi per otto persone e in
-                   `uova` il numero di uova, che deve essere un intero; la funzione `round()` con un solo argomento
-                   restituisce l'intero più vicino.
-                3. Calcola in `costo_pasta` quanto costano gli spaghetti, sapendo che il prezzo è di 2.40 euro al
-                   chilo, e arrotonda il risultato al centesimo con `round(valore, 2)`.
+                1. Salva in `fattore` il risultato della divisione tra `invitati` e `persone_ricetta`, e in
+                   `tipo_fattore` il suo tipo, con la funzione `type()`.
+                2. Componi con l'operatore `+` il testo `annuncio`, che deve valere `"Siamo in 8"`, convertendo
+                   `invitati` in stringa con `str()`.
+                3. Salva in `pasta_g` i grammi di spaghetti per otto persone, cioè 320 moltiplicato per `fattore`,
+                   convertiti in numero intero con `int()`.
 
-                Alla fine `fattore` vale 2.0, `pasta_g` 640.0, `guanciale_g` 400.0, `pecorino_g` 200.0, `uova` 8 e
-                `costo_pasta` 1.54.
+                Alla fine `fattore` vale 2.0, `tipo_fattore` è `float`, `annuncio` vale `"Siamo in 8"` e `pasta_g`
+                vale 640, come intero.
             """,
             suggerimenti=[
                 """
-                    Gli spaghetti sono in grammi e il prezzo è al chilo, quindi prima di moltiplicare per il prezzo
-                    conviene dividere `pasta_g` per 1000.
+                    `int()` toglie la parte decimale di un numero con la virgola, mentre `str()` trasforma un numero
+                    nel testo che serve per unirlo a un'altra stringa con `+`.
                 """,
             ],
             starter="""
                 persone_ricetta = 4
                 invitati = 8
-                prezzo_pasta_kg = 2.40
 
-                # da calcolare: fattore, pasta_g, guanciale_g, pecorino_g, uova, costo_pasta
+                # da creare: fattore, tipo_fattore, annuncio, pasta_g
             """,
             soluzione="""
                 persone_ricetta = 4
                 invitati = 8
-                prezzo_pasta_kg = 2.40
 
                 fattore = invitati / persone_ricetta
-                pasta_g = 320 * fattore
-                guanciale_g = 200 * fattore
-                pecorino_g = 100 * fattore
-                uova = round(4 * fattore)
-                costo_pasta = round(pasta_g / 1000 * prezzo_pasta_kg, 2)
+                tipo_fattore = type(fattore)
+                annuncio = "Siamo in " + str(invitati)
+                pasta_g = int(320 * fattore)
 
-                print(fattore, pasta_g, guanciale_g, pecorino_g, uova)
-                print(costo_pasta)
+                print(fattore, tipo_fattore)
+                print(annuncio)
+                print(pasta_g)
             """,
             verifica="""
-                assert fattore == 2 and pasta_g == 640 and guanciale_g == 400 and pecorino_g == 200, "❌ Controlla fattore e quantità: ogni dose va moltiplicata per invitati / persone_ricetta"
-                assert uova == 8 and isinstance(uova, int), "❌ uova deve valere 8 ed essere un intero: usa round()"
-                assert costo_pasta == 1.54, "❌ costo_pasta: porta i grammi in chili, moltiplica per il prezzo e arrotonda con round(..., 2)"
+                assert fattore == 2.0 and tipo_fattore is float, "❌ fattore è invitati / persone_ricetta e tipo_fattore è type(fattore)"
+                assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
+                assert pasta_g == 640 and isinstance(pasta_g, int), "❌ pasta_g: 320 * fattore convertito con int()"
             """,
         ),
     )

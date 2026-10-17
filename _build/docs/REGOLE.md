@@ -21,6 +21,16 @@ Si legge insieme a REQUISITI.md (le richieste del docente) e al REGOLE.md (forma
   facoltativo; ogni esercizio ha una `verifica=` con 1-3 assert (nel notebook: `verifica("7.1")`).
 - Un esercizio per concetto nel corso: le f-string hanno un solo esercizio (01).
 
+## Esercizi: la difficoltà sta in Python
+- Un esercizio allena quello che si è appena visto, uno a uno con la teoria, a livello basilare. La difficoltà è tutta
+  in Python: nessun calcolo da impostare, nessuna nozione di matematica oltre le quattro operazioni, nessuna
+  conversione di unità, nessun ragionamento articolato sullo scenario. Se il corsista deve pensare al problema prima
+  che al codice, l'esercizio è sbagliato.
+- I numeri e le operazioni entrano di passaggio dentro esercizi sulle strutture dati, sulle stringhe o sui dati:
+  una somma, una divisione, un arrotondamento, non un conto da impostare.
+- Ogni esercizio, pur semplice, è pensato per toccare più punti della teoria (per esempio un dizionario, un suo
+  metodo e una funzione di Python), in modo che rifare l'esercizio significhi ripassare la lezione.
+
 ## Dominio
 - Esempi e esercizi semplici in scenari comuni (spesa, viaggi, voti, ricette, sport, meteo, biblioteca, negozio, musica).
 - Energia/utility solo con dati veri (Terna, TexasTurbine, U.S. Electricity Prices, Open-Meteo, sensori Lombardia) e nei

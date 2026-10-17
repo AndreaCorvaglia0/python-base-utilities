@@ -56,6 +56,11 @@ spiegato nei notebook precedenti o in quello stesso, altrimenti va introdotto ne
 esercizi per notebook sono due o tre, più uno facoltativo al massimo; i Prova tu al massimo due. Il materiale che
 non sta nel percorso principale va in `Approfondimenti_1` o `_2`, non in sezioni facoltative dentro i notebook.
 
+La difficoltà di un esercizio sta in Python e in nulla altro: niente calcoli da impostare, niente matematica oltre
+le quattro operazioni, niente conversioni di unità o ragionamenti sullo scenario. Numeri e operazioni entrano di
+passaggio dentro esercizi su strutture dati, stringhe o dati, e ogni esercizio applica uno a uno la teoria appena
+vista toccando più punti insieme.
+
 Gli esempi dei notebook di sintassi (00-05) stanno in scenari comuni, come spesa, viaggi, voti o meteo; i dati
 del settore energetico compaiono da pandas in poi, con i dataset veri o quelli inventati già presenti in `Dati/`.
 Il gergo tecnico resta in inglese dove si usa in inglese (notebook, kernel, DataFrame, slicing, encoding).

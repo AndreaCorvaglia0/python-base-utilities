@@ -195,9 +195,9 @@ assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html no
 assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\"cdn\""
 '''),
     'E1.1': ('Esercizio E1.1', r'''
-assert fattore == 2, "❌ fattore: dividi invitati per persone_ricetta"
-assert pasta_g == 640 and guanciale_g == 400 and pecorino_g == 200, "❌ Controlla le quantità: ogni dose della ricetta va moltiplicata per fattore"
-assert uova == 8 and isinstance(uova, int), "❌ uova deve valere 8 ed essere un intero: usa round()"
+assert fattore == 2.0, "❌ fattore: dividi invitati per persone_ricetta con /"
+assert tipo_invitati is int and tipo_fattore is float, "❌ tipo_invitati e tipo_fattore: usa type() sulle due variabili"
+assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
 assert piatto_titolo == "Spaghetti alla carbonara", "❌ piatto_titolo: usa piatto.capitalize()"
@@ -361,7 +361,7 @@ assert giornaliero["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.mont
 
 # Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.
 SOLUZIONI = {
-    'E1.1': ('Esercizio E1.1', 'cGVyc29uZV9yaWNldHRhID0gNAppbnZpdGF0aSA9IDgKCmZhdHRvcmUgPSBpbnZpdGF0aSAvIHBlcnNvbmVfcmljZXR0YQpwYXN0YV9nID0gMzIwICogZmF0dG9yZQpndWFuY2lhbGVfZyA9IDIwMCAqIGZhdHRvcmUKcGVjb3Jpbm9fZyA9IDEwMCAqIGZhdHRvcmUKdW92YSA9IHJvdW5kKDQgKiBmYXR0b3JlKQoKcHJpbnQoZmF0dG9yZSwgcGFzdGFfZywgZ3VhbmNpYWxlX2csIHBlY29yaW5vX2csIHVvdmEp'),
+    'E1.1': ('Esercizio E1.1', 'cGVyc29uZV9yaWNldHRhID0gNAppbnZpdGF0aSA9IDgKCmZhdHRvcmUgPSBpbnZpdGF0aSAvIHBlcnNvbmVfcmljZXR0YQp0aXBvX2ludml0YXRpID0gdHlwZShpbnZpdGF0aSkKdGlwb19mYXR0b3JlID0gdHlwZShmYXR0b3JlKQphbm51bmNpbyA9ICJTaWFtbyBpbiAiICsgc3RyKGludml0YXRpKQoKcHJpbnQoZmF0dG9yZSwgdGlwb19pbnZpdGF0aSwgdGlwb19mYXR0b3JlKQpwcmludChhbm51bmNpbyk='),
     'E1.2': ('Esercizio E1.2', 'Z2lvcm5vID0gInNhYmF0byIKb3JhID0gIjIwOjMwIgpwYWRyb25hX2RpX2Nhc2EgPSAiTWFydGEiCmludml0YXRpID0gOApwaWF0dG8gPSAic3BhZ2hldHRpIGFsbGEgY2FyYm9uYXJhIgoKcGlhdHRvX3RpdG9sbyA9IHBpYXR0by5jYXBpdGFsaXplKCkKbWVzc2FnZ2lvID0gZiJDZW5hIGRhIHtwYWRyb25hX2RpX2Nhc2F9IHtnaW9ybm99IGFsbGUge29yYX06IHNpYW1vIGluIHtpbnZpdGF0aX0gZSBwcmVwYXJpYW1vIHtwaWF0dG9fdGl0b2xvfS4iCmx1bmdoZXp6YSA9IGxlbihwaWF0dG9fdGl0b2xvKQoKcHJpbnQobWVzc2FnZ2lvKQpwcmludChsdW5naGV6emEp'),
     'E1.3': ('Esercizio E1.3', 'c3Blc2EgPSBbInNwYWdoZXR0aSIsICJ1b3ZhIiwgInBlY29yaW5vIiwgInBhbmUiLCAidmlubyJdCgpzcGVzYS5hcHBlbmQoImd1YW5jaWFsZSIpCnNwZXNhLnJlbW92ZSgicGFuZSIpCnByaW1pX3RyZSA9IHNwZXNhWzozXQpxdWFudGkgPSBsZW4oc3Blc2EpCnNwZXNhLnNvcnQoKQoKcHJpbnQocHJpbWlfdHJlKQpwcmludChxdWFudGkpCnByaW50KHNwZXNhKQ=='),
     'E1.4': ('Esercizio E1.4', 'cHJlenppID0geyJzcGFnaGV0dGkiOiAyLjU4LCAiZ3VhbmNpYWxlIjogOC45MCwgInVvdmEiOiAzLjQ5LCAicGVjb3Jpbm8iOiA0LjM4fQoKcHJlenppWyJwZXBlIG5lcm8iXSA9IDIuMTUKcHJlenppWyJndWFuY2lhbGUiXSA9IDcuOTAKdG90YWxlID0gc3VtKHByZXp6aS52YWx1ZXMoKSkKcHJvZG90dGkgPSBsaXN0KHByZXp6aS5rZXlzKCkpCgpwcmludChwcmV6emkpCnByaW50KHRvdGFsZSkKcHJpbnQocHJvZG90dGkp'),

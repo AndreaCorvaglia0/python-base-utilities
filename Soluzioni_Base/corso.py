@@ -195,9 +195,9 @@ assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html no
 assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\"cdn\""
 '''),
     'E1.1': ('Esercizio E1.1', r'''
-assert fattore == 2, "❌ fattore: dividi invitati per persone_ricetta"
-assert pasta_g == 640 and guanciale_g == 400 and pecorino_g == 200, "❌ Controlla le quantità: ogni dose della ricetta va moltiplicata per fattore"
-assert uova == 8 and isinstance(uova, int), "❌ uova deve valere 8 ed essere un intero: usa round()"
+assert fattore == 2.0, "❌ fattore: dividi invitati per persone_ricetta con /"
+assert tipo_invitati is int and tipo_fattore is float, "❌ tipo_invitati e tipo_fattore: usa type() sulle due variabili"
+assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
 assert piatto_titolo == "Spaghetti alla carbonara", "❌ piatto_titolo: usa piatto.capitalize()"

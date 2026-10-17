@@ -198,9 +198,9 @@ assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'o
 assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
 '''),
     'E1.1': ('Esercizio E1.1', r'''
-assert fattore == 2 and pasta_g == 640 and guanciale_g == 400 and pecorino_g == 200, "❌ Controlla fattore e quantità: ogni dose va moltiplicata per invitati / persone_ricetta"
-assert uova == 8 and isinstance(uova, int), "❌ uova deve valere 8 ed essere un intero: usa round()"
-assert costo_pasta == 1.54, "❌ costo_pasta: porta i grammi in chili, moltiplica per il prezzo e arrotonda con round(..., 2)"
+assert fattore == 2.0 and tipo_fattore is float, "❌ fattore è invitati / persone_ricetta e tipo_fattore è type(fattore)"
+assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
+assert pasta_g == 640 and isinstance(pasta_g, int), "❌ pasta_g: 320 * fattore convertito con int()"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
 assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 24, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len())"

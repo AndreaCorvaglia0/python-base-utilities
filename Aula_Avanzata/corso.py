@@ -198,9 +198,9 @@ assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'o
 assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
 '''),
     'E1.1': ('Esercizio E1.1', r'''
-assert fattore == 2 and pasta_g == 640 and guanciale_g == 400 and pecorino_g == 200, "❌ Controlla fattore e quantità: ogni dose va moltiplicata per invitati / persone_ricetta"
-assert uova == 8 and isinstance(uova, int), "❌ uova deve valere 8 ed essere un intero: usa round()"
-assert costo_pasta == 1.54, "❌ costo_pasta: porta i grammi in chili, moltiplica per il prezzo e arrotonda con round(..., 2)"
+assert fattore == 2.0 and tipo_fattore is float, "❌ fattore è invitati / persone_ricetta e tipo_fattore è type(fattore)"
+assert annuncio == "Siamo in 8", "❌ annuncio: unisci il testo e str(invitati) con +"
+assert pasta_g == 640 and isinstance(pasta_g, int), "❌ pasta_g: 320 * fattore convertito con int()"
 '''),
     'E1.2': ('Esercizio E1.2', r'''
 assert piatto_titolo == "Spaghetti alla carbonara" and lunghezza == 24, "❌ Controlla piatto_titolo (piatto.capitalize()) e lunghezza (len())"
@@ -369,7 +369,7 @@ assert giornaliero["mese"].nunique() == 12, "❌ mese: i dodici mesi, da dt.mont
 
 # Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.
 SOLUZIONI = {
-    'E1.1': ('Esercizio E1.1', 'cGVyc29uZV9yaWNldHRhID0gNAppbnZpdGF0aSA9IDgKcHJlenpvX3Bhc3RhX2tnID0gMi40MAoKZmF0dG9yZSA9IGludml0YXRpIC8gcGVyc29uZV9yaWNldHRhCnBhc3RhX2cgPSAzMjAgKiBmYXR0b3JlCmd1YW5jaWFsZV9nID0gMjAwICogZmF0dG9yZQpwZWNvcmlub19nID0gMTAwICogZmF0dG9yZQp1b3ZhID0gcm91bmQoNCAqIGZhdHRvcmUpCmNvc3RvX3Bhc3RhID0gcm91bmQocGFzdGFfZyAvIDEwMDAgKiBwcmV6em9fcGFzdGFfa2csIDIpCgpwcmludChmYXR0b3JlLCBwYXN0YV9nLCBndWFuY2lhbGVfZywgcGVjb3Jpbm9fZywgdW92YSkKcHJpbnQoY29zdG9fcGFzdGEp'),
+    'E1.1': ('Esercizio E1.1', 'cGVyc29uZV9yaWNldHRhID0gNAppbnZpdGF0aSA9IDgKCmZhdHRvcmUgPSBpbnZpdGF0aSAvIHBlcnNvbmVfcmljZXR0YQp0aXBvX2ZhdHRvcmUgPSB0eXBlKGZhdHRvcmUpCmFubnVuY2lvID0gIlNpYW1vIGluICIgKyBzdHIoaW52aXRhdGkpCnBhc3RhX2cgPSBpbnQoMzIwICogZmF0dG9yZSkKCnByaW50KGZhdHRvcmUsIHRpcG9fZmF0dG9yZSkKcHJpbnQoYW5udW5jaW8pCnByaW50KHBhc3RhX2cp'),
     'E1.2': ('Esercizio E1.2', 'Z2lvcm5vID0gInNhYmF0byIKb3JhID0gIjIwOjMwIgpwYWRyb25hX2RpX2Nhc2EgPSAiTWFydGEiCmludml0YXRpID0gOApwaWF0dG8gPSAic3BhZ2hldHRpIGFsbGEgY2FyYm9uYXJhIgpzcGVzYSA9IDIwLjUwCgpwaWF0dG9fdGl0b2xvID0gcGlhdHRvLmNhcGl0YWxpemUoKQpsdW5naGV6emEgPSBsZW4ocGlhdHRvX3RpdG9sbykKcXVvdGEgPSBzcGVzYSAvIGludml0YXRpCm1lc3NhZ2dpbyA9ICgKICAgIGYiQ2VuYSBkYSB7cGFkcm9uYV9kaV9jYXNhfSB7Z2lvcm5vfSBhbGxlIHtvcmF9OiBzaWFtbyBpbiB7aW52aXRhdGl9LCAiCiAgICBmInByZXBhcmlhbW8ge3BpYXR0b190aXRvbG99IGUgbGEgc3Blc2Egw6ggZGkge3F1b3RhOi4yZn0gZXVybyBhIHRlc3RhLiIKKQoKcHJpbnQobWVzc2FnZ2lvKQpwcmludChsdW5naGV6emEp'),
     'E1.3': ('Esercizio E1.3', 'c3Blc2EgPSBbInNwYWdoZXR0aSIsICJ1b3ZhIiwgInBlY29yaW5vIiwgInBhbmUiLCAidmlubyJdCgpzcGVzYS5hcHBlbmQoImd1YW5jaWFsZSIpCnNwZXNhLnJlbW92ZSgicGFuZSIpCnNwZXNhLmluc2VydCgxLCAicGVwZSBuZXJvIikKcHJpbWlfdHJlID0gc3Blc2FbOjNdCnF1YW50aSA9IGxlbihzcGVzYSkKc3Blc2Euc29ydCgpCgpwcmludChwcmltaV90cmUpCnByaW50KHF1YW50aSkKcHJpbnQoc3Blc2Ep'),
     'E1.4': ('Esercizio E1.4', 'cHJlenppID0geyJzcGFnaGV0dGkiOiAyLjU4LCAiZ3VhbmNpYWxlIjogOC45MCwgInVvdmEiOiAzLjQ5LCAicGVjb3Jpbm8iOiA0LjM4fQppbnZpdGF0aSA9IDgKCnByZXp6aVsicGVwZSBuZXJvIl0gPSAyLjE1CnByZXp6aVsiZ3VhbmNpYWxlIl0gPSA3LjkwCnRvdGFsZSA9IHN1bShwcmV6emkudmFsdWVzKCkpCnByb2RvdHRpID0gbGlzdChwcmV6emkua2V5cygpKQpxdW90YSA9IHJvdW5kKHRvdGFsZSAvIGludml0YXRpLCAyKQoKcHJpbnQodG90YWxlLCBxdW90YSkKcHJpbnQocHJvZG90dGkp'),
