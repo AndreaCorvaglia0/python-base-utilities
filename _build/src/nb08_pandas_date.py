@@ -407,23 +407,24 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 10
     nb.sezione("Esercizi", intro="""
-        Gli esercizi usano `carico`, il DataFrame di Terna già ordinato e senza duplicati. La colonna
-        `Total Load [MW]` contiene la potenza media di ogni quarto d'ora, e per passare all'energia bisogna tenere
-        conto della durata dell'intervallo. Un quarto d'ora a 100 MW corrisponde a 25 MWh, quindi l'energia di un
-        periodo si ottiene sommando i valori e dividendo il risultato per 4.
+        Gli esercizi usano `carico`, il DataFrame di Terna del 2024 già ordinato e senza duplicati, in cui la
+        colonna `Date` è di tipo `datetime` e la colonna `Total Load [MW]` contiene la potenza media richiesta
+        nella zona Nord in ogni quarto d'ora. Le righe sono 35.132, una per ogni quarto d'ora dell'anno tranne
+        i quattro che mancano il giorno del passaggio all'ora legale.
     """)
     nb.esercizio(
         titolo="Il carico giornaliero",
         scenario="""
-            A partire dal carico quartorario vogliamo calcolare l'energia consumata nella zona Nord in ciascun giorno
-            del 2024 e trovare il giorno in cui il consumo è stato più alto.
+            Con 96 valori al giorno è difficile confrontare un giorno del 2024 con l'altro, quindi vogliamo il
+            carico medio di ogni giorno nella zona Nord e il giorno in cui è stato più alto. Con `Date` come
+            indice, `resample` raggruppa per giorno tutti i quarti d'ora dell'anno con una sola istruzione. Il
+            risultato è una Series di 366 valori, uno per ogni giorno dell'anno bisestile, e il giorno più
+            carico è il 17 luglio, con una media di circa 26.869 MW.
         """,
         richiesta="""
-            1. Metti in `serie` la colonna `Total Load [MW]` di `carico`, dopo aver impostato `Date` come indice con `set_index`.
-            2. Calcola in `giornaliero` l'energia di ogni giorno in MWh, raggruppando per giorno con `resample("D")`, sommando con `sum()` e dividendo il risultato per 4.
-            3. Metti in `giorno_max` il giorno con l'energia più alta, che si ottiene con `idxmax()`.
-
-            Il risultato `giornaliero` è una Series con 366 valori, uno per ogni giorno dell'anno bisestile.
+            1. Metti in `serie` la colonna `Total Load [MW]` di `carico`, dopo aver impostato `Date` come indice con `set_index`, perché `resample` raggruppa secondo l'indice.
+            2. Calcola in `giornaliero` il carico medio di ogni giorno, raggruppando per giorno con `resample("D")` e calcolando la media con `mean()`.
+            3. Metti in `giorno_max` il giorno con la media più alta, che si ottiene con `idxmax()`.
         """,
         starter="""
             serie = ...
@@ -435,7 +436,7 @@ def costruisci() -> Notebook:
         """,
         soluzione="""
             serie = carico.set_index("Date")["Total Load [MW]"]
-            giornaliero = serie.resample("D").sum() / 4
+            giornaliero = serie.resample("D").mean()
             giorno_max = giornaliero.idxmax()
 
             print(len(giornaliero))  # Output: 366
@@ -443,16 +444,23 @@ def costruisci() -> Notebook:
         """,
         verifica="""
             assert len(giornaliero) == 366, "❌ giornaliero: un valore per ogni giorno del 2024, con resample('D')"
-            assert round(giornaliero.max()) == 644863, "❌ giornaliero: somma dei quarti d'ora del giorno, divisa per 4"
+            assert round(giornaliero.max()) == 26869, "❌ giornaliero: la media dei quarti d'ora di ogni giorno, con mean()"
             assert giorno_max == pd.Timestamp("2024-07-17"), "❌ giorno_max: usa giornaliero.idxmax()"
         """,
-        suggerimento="conviene selezionare la colonna prima di chiamare `resample`, in modo che la colonna di testo `Bidding Zone` resti fuori dalla somma.",
+        suggerimento="conviene selezionare la colonna prima di chiamare `resample`, in modo che la colonna di testo `Bidding Zone` resti fuori dalla media.",
     )
     nb.esercizio(
         titolo="Ora e giorno della settimana",
-        scenario="Vogliamo sapere in quale ora del giorno il carico medio della zona Nord è più alto e in quale giorno della settimana è più basso.",
+        scenario="""
+            Chi pianifica gli interventi sulla rete vuole sapere a che ora del giorno il carico della zona Nord è
+            più alto, in media sul 2024, e quale giorno della settimana è il più leggero, quello in cui conviene
+            programmare la manutenzione. In pandas basta
+            ricavare dalla colonna `Date` l'ora e il giorno della settimana e raggruppare il carico su ciascuno,
+            e lo stesso codice funziona su un mese come su dieci anni di dati. Il picco medio cade alle 11 e il
+            giorno più leggero è la domenica, che per pandas è il giorno 6.
+        """,
         richiesta="""
-            1. Aggiungi a `carico` le colonne `ora` e `giorno_settimana`, ricavate da `Date` con `.dt.hour` e `.dt.dayofweek`, in cui il lunedì vale 0.
+            1. Aggiungi a `carico` le colonne `ora` e `giorno_settimana`, ricavate da `Date` con `.dt.hour` e `.dt.dayofweek`, in cui il lunedì vale 0: sono le due chiavi su cui raggrupperai.
             2. Calcola in `per_ora` il carico medio per ora con `groupby`, e metti in `ora_di_punta` l'ora con la media più alta.
             3. Calcola in `per_giorno` il carico medio per giorno della settimana, e metti in `giorno_minimo` il giorno con la media più bassa.
         """,

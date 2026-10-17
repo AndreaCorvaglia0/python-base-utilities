@@ -122,8 +122,8 @@ assert round(totale_kwh, 1) == 134507.7, "❌ totale_kwh: controlla decimal=\",\
 '''),
     '6.2': ('Esercizio 6.2', r'''
 assert list(fogli.keys()) == ["Gennaio", "Febbraio"], "❌ fogli: il file deve avere i fogli Gennaio e Febbraio"
-assert len(vendite) == 6 and list(vendite.index) == list(range(6)), "❌ vendite: 6 righe con indice da 0 a 5 (ignore_index=True)"
-assert vendite["pezzi"].sum() == 500, "❌ vendite: il totale dei pezzi è 500"
+assert len(consumi) == 6 and list(consumi.index) == list(range(6)), "❌ consumi: 6 righe con indice da 0 a 5 (ignore_index=True)"
+assert round(consumi["kwh"].sum(), 1) == 14149.2, "❌ consumi: il totale dei kwh è 14149.2"
 '''),
     '6.3': ('Esercizio 6.3', r'''
 assert len(letture_pod) == 31, "❌ letture_pod: servono le 31 righe del solo POD IT001E10000000"
@@ -154,7 +154,7 @@ assert round(prezzo_tx, 2) == 8.86, "❌ Filtra su all sectors prima della media
 '''),
     '8.1': ('Esercizio 8.1', r'''
 assert len(giornaliero) == 366, "❌ giornaliero: un valore per ogni giorno del 2024, con resample('D')"
-assert round(giornaliero.max()) == 644863, "❌ giornaliero: somma dei quarti d'ora del giorno, divisa per 4"
+assert round(giornaliero.max()) == 26869, "❌ giornaliero: la media dei quarti d'ora di ogni giorno, con mean()"
 assert giorno_max == pd.Timestamp("2024-07-17"), "❌ giorno_max: usa giornaliero.idxmax()"
 '''),
     '8.2': ('Esercizio 8.2', r'''
@@ -352,7 +352,7 @@ assert len(df) == 70168 and df["Date"].is_unique, "❌ df: 70.168 righe, una per
 assert len(buchi) == 2, "❌ buchi: 2 righe, le 3:00 delle due ultime domeniche di marzo"
 '''),
     'Step 4': ('Step 4', r'''
-assert len(df_giornaliero) == 731 and df_giornaliero["Energia [MWh]"].between(250_000, 700_000).all(), "❌ df_giornaliero: 731 giorni, con l'energia tra 250.000 e 700.000 MWh (somma dei quartorari divisa per 4)"
+assert len(df_giornaliero) == 731 and df_giornaliero["Total Load [MW]"].between(10_000, 30_000).all(), "❌ df_giornaliero: 731 giorni, con il carico medio tra 10.000 e 30.000 MW (resample('D').mean())"
 assert profilo_orario.shape == (24, 2), "❌ profilo_orario: 24 righe (le ore) e 2 colonne, hour e Total Load [MW]"
 assert len(profilo_settimanale) == 7 and profilo_settimanale["Total Load [MW]"].idxmin() == 6, "❌ profilo_settimanale: 7 righe, con la domenica (6) come giorno più leggero"
 '''),

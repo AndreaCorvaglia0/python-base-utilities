@@ -63,26 +63,21 @@ def costruisci() -> Notebook:
     nb.sezione("Caricamento dei dati e unione")
     step(
         nb, titolo="Caricamento dei dati e unione",
-        scenario="In questo step costruiamo una singola serie storica continua a partire dai dati grezzi.",
+        scenario="""
+            Terna pubblica il carico della zona Nord in un file Excel per anno, e per studiare il 2024 e il 2025
+            insieme ci serve un'unica tabella che li copra entrambi. Con pandas leggiamo i due file e li mettiamo
+            uno sotto l'altro, e prima di andare avanti controlliamo che cosa contiene la tabella: quante righe,
+            da che data a che data, se mancano valori e quante righe ci sono per giorno, perché il nome dei file
+            dice `hourly` e conviene verificarlo. Il risultato è un DataFrame di 70.176 righe e 4 colonne, senza
+            valori mancanti.
+        """,
         richiesta="""
             1. Leggi i due file Excel presenti nella cartella `../Dati/` in `df_2024` e `df_2025`:
                `load_total_north_hourly_2024.xlsx` e `load_total_north_hourly_2025.xlsx`.
             2. Unisci i due dataset **per righe** in `df`, mantenendo lo stesso schema di colonne, in modo da
                ottenere una serie unica che copra l'intero periodo 2024-2025.
-            3. Controlla la dimensione del dataset, la prima e l'ultima data, il numero medio di righe per giorno
-               e i valori mancanti per colonna. Il nome del file contiene `hourly`, quindi verifica con il numero
-               di righe per giorno se la frequenza dei dati è effettivamente oraria.
-        """,
-        richiesta_avanzata="""
-            1. Leggi i due file Excel presenti nella cartella `../Dati/` in `df_2024` e `df_2025`:
-               `load_total_north_hourly_2024.xlsx` e `load_total_north_hourly_2025.xlsx`.
-            2. Unisci i due dataset **per righe** in `df`, mantenendo lo stesso schema di colonne, in modo da
-               ottenere una serie unica che copra l'intero periodo 2024-2025.
-            3. Controlla la dimensione del dataset, la prima e l'ultima data, il numero medio di righe per giorno,
-               da salvare in `righe_giorno`, e i valori mancanti per colonna. Il nome del file contiene `hourly`,
-               quindi verifica con il numero di righe per giorno se la frequenza dei dati è effettivamente oraria.
-
-            Il risultato è un DataFrame di 70.176 righe e 4 colonne, senza valori mancanti.
+            3. Controlla la dimensione del dataset, la prima e l'ultima data e i valori mancanti per colonna, e
+               salva in `righe_giorno` il numero medio di righe per giorno, che con dati orari sarebbe 24.
         """,
         suggerimento="`df[\"Date\"].dt.date.nunique()` conta i giorni diversi.",
         starter_base="""
@@ -132,27 +127,31 @@ def costruisci() -> Notebook:
     )
     nb.md("""
         Il conto dà 96 righe al giorno, quindi i dati sono quartorari, con un valore ogni 15 minuti, anche se il
-        nome del file dice `hourly`. Ne terremo conto più avanti, quando dalla potenza in MW passeremo
-        all'energia in MWh, perché ogni valore copre un quarto d'ora.
+        nome del file dice `hourly`. Ne terremo conto nello step 3, perché il passo normale tra un timestamp e
+        il successivo è quindi di 15 minuti.
     """)
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Colonna temporale e prima visualizzazione")
     step(
         nb, titolo="Preparazione della colonna temporale e prima visualizzazione",
-        scenario="In questo step rendiamo la colonna data utilizzabile come variabile temporale e facciamo una prima ispezione visiva della serie.",
+        scenario="""
+            Per le analisi dei prossimi step vogliamo una serie con le date in ordine e una sola colonna di
+            valori, `Total Load [MW]`. Il file contiene anche la previsione di Terna, che ci serve solo come
+            controllo: in un grafico Plotly le due curve devono sovrapporsi quasi ovunque, e se lo fanno possiamo
+            togliere la previsione e la colonna della zona, che vale sempre `North`. Alla fine `df` ha le due
+            colonne `Date` e `Total Load [MW]`, e la sua prima riga è il primo quarto d'ora del 2024.
+        """,
         richiesta="""
-            1. Controlla con `df.dtypes` che la colonna `Date` sia già di tipo `datetime`; se fosse letta come
-               testo, la si converte con `pd.to_datetime`.
+            1. Controlla con `df.dtypes` che la colonna `Date` sia già di tipo `datetime`, perché con il testo
+               l'ordinamento e il grafico non seguirebbero il tempo; se fosse letta come testo, la si converte
+               con `pd.to_datetime`.
             2. Ordina il dataset per data, perché ogni file comincia con l'ultimo quarto d'ora dell'anno, e
-               reimposta l'indice per avere un ordinamento pulito.
+               reimposta l'indice in modo che la riga 0 sia il primo quarto d'ora.
             3. Importa Plotly e visualizza **entrambe** le serie nel tempo: `Total Load [MW]` e
                `Forecast Total Load [MW]`.
             4. Dopo aver verificato che le due curve siano coerenti, elimina le colonne che non useremo:
                `Forecast Total Load [MW]` e `Bidding Zone`.
-
-            Al termine di questo step deve rimanere una serie storica con una colonna temporale in formato
-            `datetime` e una sola colonna di valori, `Total Load [MW]`.
         """,
         suggerimento="`reset_index(drop=True)` rifà l'indice a partire da 0 senza conservare il vecchio come colonna, mentre `df.drop(columns=[...])` toglie le colonne indicate.",
         starter_base="""
@@ -229,14 +228,21 @@ def costruisci() -> Notebook:
         """)
     step(
         nb, titolo="Pulizia dei duplicati dell'ora legale",
-        scenario="In questo step lasciamo una riga per timestamp e contiamo i quarti d'ora che mancano.",
+        scenario="""
+            Nei prossimi step calcoliamo delle medie, in cui un quarto d'ora ripetuto peserebbe due volte,
+            quindi vogliamo una riga per ogni quarto d'ora e sapere quali quarti d'ora mancano. Invece di
+            scorrere 70.000 righe a occhio, con pandas guardiamo il passo tra un timestamp e il successivo, che
+            rivela subito i quarti d'ora ripetuti a ottobre e quelli saltati a marzo. Alla fine restano 70.168 righe, una per
+            timestamp, e due buchi, alle 3:00 delle due ultime domeniche di marzo.
+        """,
         richiesta="""
-            1. Calcola in `passi` la differenza tra ogni timestamp e il precedente con `diff()`, conta con
-               `value_counts()` quante volte compare ogni valore e chiediti quale sia il passo normale e a che
-               cosa corrispondano gli altri due valori.
+            1. Calcola in `passi` la differenza tra ogni timestamp e il precedente con `diff()` e conta con
+               `value_counts()` quante volte compare ogni valore: oltre al passo normale di 15 minuti ne
+               compaiono altri due, uno per ciascun cambio d'ora.
             2. Metti in `duplicati` tutte le copie delle righe con un timestamp ripetuto, usando
                `duplicated(keep=False)`, e guarda in quali giorni e a quali ore cadono.
-            3. Ordina per `Date`, togli i duplicati con `drop_duplicates(subset="Date")` e reimposta l'indice.
+            3. Ordina per `Date`, togli i duplicati con `drop_duplicates(subset="Date")` e reimposta l'indice,
+               che dopo la rimozione delle righe avrebbe dei salti.
             4. Metti in `buchi` le righe che arrivano dopo un salto più lungo di 15 minuti e guarda in quali
                giorni cadono.
         """,
@@ -294,55 +300,56 @@ def costruisci() -> Notebook:
     step(
         nb, titolo="Aggregazioni temporali e profili medi",
         scenario="""
-            In questo step analizziamo la serie quartoraria cambiando punto di vista sul tempo. Costruiamo una
-            serie giornaliera e osserviamo i pattern medi legati all'ora del giorno e al giorno della settimana.
+            Settantamila quarti d'ora sono troppi per leggere l'andamento del carico, quindi guardiamo la serie
+            da tre punti di vista: il carico medio di ogni giorno, che mostra le stagioni e le festività, il
+            profilo di una giornata media, ora per ora, e quello di una settimana media, giorno per giorno. Con
+            `resample` e `groupby` pandas li calcola tutti dallo stesso DataFrame, e tre grafici Plotly li
+            mostrano. I numeri che leggi nei grafici servono per le frasi finali dello step 6.
         """,
         richiesta="""
-            **Serie giornaliera (somma)**
+            **Serie giornaliera (media)**
 
-            1. Parti dal DataFrame quartorario `df`.
-            2. Imposta la colonna `Date` come indice temporale in `df_indicizzato`.
-            3. Aggrega per giorno usando `resample("D")` e calcola la **somma** del carico.
-            4. Riporta `Date` come colonna e salva il risultato in `df_giornaliero`. Aggiungi poi la colonna
-               `Energia [MWh]`, pari alla somma divisa per 4, perché un quarto d'ora a una potenza di P MW
-               corrisponde a P/4 MWh.
-            5. Visualizza la serie giornaliera con Plotly.
+            1. Partendo dal DataFrame quartorario `df`, imposta la colonna `Date` come indice temporale in
+               `df_indicizzato`, perché `resample` raggruppa secondo l'indice.
+            2. Aggrega per giorno usando `resample("D")` e calcola la **media** del carico.
+            3. Riporta `Date` come colonna, da usare sull'asse x del grafico, e salva il risultato in
+               `df_giornaliero`.
+            4. Visualizza la serie giornaliera con Plotly.
 
             **Profilo medio giornaliero (media per ora del giorno)**
 
-            6. Torna alla serie quartoraria `df`, estrai l'**ora del giorno** dalla colonna `Date` e salvala in
+            5. Torna alla serie quartoraria `df`, estrai l'**ora del giorno** dalla colonna `Date` e salvala in
                una nuova colonna `hour`.
-            7. Raggruppa per `hour` e calcola la **media** del carico in `profilo_orario`.
-            8. Visualizza il profilo medio giornaliero con Plotly.
+            6. Raggruppa per `hour` e calcola la **media** del carico in `profilo_orario`.
+            7. Visualizza il profilo medio giornaliero con Plotly.
 
             **Profilo medio settimanale (media per giorno della settimana)**
 
-            9. Sempre partendo da `df`, estrai il **giorno della settimana** dalla colonna `Date` e salvalo in
+            8. Sempre partendo da `df`, estrai il **giorno della settimana** dalla colonna `Date` e salvalo in
                una nuova colonna `weekday`, con la convenzione `0 = lunedì, …, 6 = domenica`.
-            10. Raggruppa per `weekday` e calcola la **media** del carico in `profilo_settimanale`.
-            11. Visualizza il profilo medio settimanale con Plotly.
+            9. Raggruppa per `weekday` e calcola la **media** del carico in `profilo_settimanale`.
+            10. Visualizza il profilo medio settimanale con Plotly, con i nomi dei giorni sull'asse x.
 
-            Osserva infine i tre grafici e annota in quali periodi l'energia giornaliera scende, a che ore il
-            carico è più alto e di quanto cala nel weekend, perché questi numeri serviranno nello step 6.
+            Osserva infine i tre grafici e annota in quali periodi il carico medio giornaliero scende, a che
+            ore il carico è più alto e di quanto cala nel weekend, perché questi numeri serviranno nello step 6.
         """,
         suggerimento="`dt.hour` e `dt.dayofweek` estraggono ora e giorno della settimana; `reset_index()` dopo `groupby` riporta la chiave come colonna.",
         starter_base="""
-            # serie giornaliera (punti 1-5)
+            # serie giornaliera (punti 1-4)
             df_indicizzato = df.set_index("Date")
-            df_giornaliero = df_indicizzato["Total Load [MW]"].resample(...).sum()
+            df_giornaliero = df_indicizzato["Total Load [MW]"].resample(...).mean()
             df_giornaliero = df_giornaliero.reset_index()
-            df_giornaliero["Energia [MWh]"] = ...
-            fig = px.line(df_giornaliero, x="Date", y=..., title="Energia giornaliera, zona Nord")
+            fig = px.line(df_giornaliero, x="Date", y=..., title="Carico medio giornaliero, zona Nord")
             fig.show()
 
-            # profilo medio giornaliero (punti 6-8)
+            # profilo medio giornaliero (punti 5-7)
             df["hour"] = df["Date"].dt.hour
             profilo_orario = df.groupby(...)["Total Load [MW]"].mean().reset_index()
             fig = px.line(profilo_orario, x=..., y=..., markers=True, title="Profilo medio giornaliero del carico")
             fig.update_xaxes(dtick=1)
             fig.show()
 
-            # profilo medio settimanale (punti 9-11)
+            # profilo medio settimanale (punti 8-10)
             df["weekday"] = ...
             profilo_settimanale = ...
             profilo_settimanale["giorno"] = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"]
@@ -362,10 +369,10 @@ def costruisci() -> Notebook:
         """,
         soluzione="""
             df_indicizzato = df.set_index("Date")
-            df_giornaliero = df_indicizzato["Total Load [MW]"].resample("D").sum()
+            df_giornaliero = df_indicizzato["Total Load [MW]"].resample("D").mean()
             df_giornaliero = df_giornaliero.reset_index()
-            df_giornaliero["Energia [MWh]"] = df_giornaliero["Total Load [MW]"] / 4
-            fig = px.line(df_giornaliero, x="Date", y="Energia [MWh]", title="Energia giornaliera, zona Nord")
+            fig = px.line(df_giornaliero, x="Date", y="Total Load [MW]", title="Carico medio giornaliero, zona Nord",
+                          labels={"Total Load [MW]": "carico medio [MW]"})
             fig.show()
 
             df["hour"] = df["Date"].dt.hour
@@ -385,11 +392,11 @@ def costruisci() -> Notebook:
             fig.show()
         """,
         verifica="""
-            assert len(df_giornaliero) == 731 and df_giornaliero["Energia [MWh]"].between(250_000, 700_000).all(), "❌ df_giornaliero: 731 giorni, con l'energia tra 250.000 e 700.000 MWh (somma dei quartorari divisa per 4)"
+            assert len(df_giornaliero) == 731 and df_giornaliero["Total Load [MW]"].between(10_000, 30_000).all(), "❌ df_giornaliero: 731 giorni, con il carico medio tra 10.000 e 30.000 MW (resample('D').mean())"
             assert profilo_orario.shape == (24, 2), "❌ profilo_orario: 24 righe (le ore) e 2 colonne, hour e Total Load [MW]"
             assert len(profilo_settimanale) == 7 and profilo_settimanale["Total Load [MW]"].idxmin() == 6, "❌ profilo_settimanale: 7 righe, con la domenica (6) come giorno più leggero"
         """,
-        perche="L'energia giornaliera si ottiene sommando i valori quartorari e dividendo per 4, e non moltiplicando per 24 la potenza media del giorno. Nei due giorni di marzo con un'ora in meno, infatti, il prodotto per 24 conterebbe anche un'ora che non c'è stata.",
+        perche="La media giornaliera si calcola sui quarti d'ora che ogni giorno contiene, quindi anche i due giorni di marzo con un'ora in meno hanno un valore confrontabile con quello degli altri giorni. Lo stesso vale per i profili, in cui `groupby` fa la media di tutti i quarti d'ora con la stessa ora o lo stesso giorno della settimana.",
     )
 
     # ------------------------------------------------------------------ 5
@@ -432,13 +439,16 @@ def costruisci() -> Notebook:
         """)
 
     scenario_5 = """
-        In questo step integriamo il dato di temperatura con il dato di carico. Per prima cosa va risolta la
-        differente granularità, perché la temperatura è oraria mentre il carico è quartorario; la temperatura va
-        quindi portata da un valore ogni ora a un valore ogni 15 minuti.
+        Per studiare come il carico dipende dalla temperatura vogliamo una sola tabella, `df_completo`, con il
+        carico e la temperatura di Milano in ogni quarto d'ora del 2024 e del 2025. Open-Meteo fornisce la
+        temperatura con un valore ogni ora, mentre il carico ne ha uno ogni 15 minuti, quindi prima dell'unione
+        portiamo la temperatura a frequenza quartoraria stimando i valori intermedi. Alla fine `df_completo`
+        ha le stesse righe di `df` e nessuna temperatura mancante.
     """
     passi_comuni = """
-        3. Converti `time` in datetime, rinomina le colonne in `Date` e `Temperature_C`, imposta `Date` come
-           indice e ordinalo con `sort_index()`.
+        3. Converti `time` in datetime e rinomina le colonne in `Date` e `Temperature_C`, in modo che la
+           colonna delle date abbia lo stesso nome che ha nel carico; imposta poi `Date` come indice, che
+           `resample` usa per raggruppare, e ordinalo con `sort_index()`.
         4. Porta la temperatura a frequenza quartoraria con `resample("15min")` seguito da
            `interpolate(method="linear")`, così da poterla unire al carico, poi riporta `Date` come colonna e
            salva il risultato in `meteo_15`.
@@ -446,7 +456,8 @@ def costruisci() -> Notebook:
            `df_completo`.
         6. Dopo il merge gli ultimi quarti d'ora del 2025 restano senza temperatura; riempili con `ffill()`,
            che ripete l'ultimo valore disponibile.
-        7. Visualizza la temperatura nel tempo con `px.line()`.
+        7. Visualizza la temperatura nel tempo con `px.line()`, per controllare che la serie copra i due anni
+           senza buchi e che segua le stagioni.
     """
     soluzione_5_comune = """
         meteo = pd.DataFrame(orario)
@@ -476,7 +487,7 @@ def costruisci() -> Notebook:
         scenario=scenario_5,
         richiesta=nb_d("""
             1. Ricava dal carico `data_inizio` e `data_fine`, cioè il primo e l'ultimo giorno, scritti come testo
-               nel formato `AAAA-MM-GG` con `.min()`, `.max()` e `.strftime("%Y-%m-%d")`.
+               nel formato `AAAA-MM-GG` che l'API si aspetta, con `.min()`, `.max()` e `.strftime("%Y-%m-%d")`.
             2. Chiama `scarica_temperatura(data_inizio, data_fine)` e trasforma il risultato in `meteo` con
                `pd.DataFrame`.
         """, passi_comuni),
@@ -530,7 +541,8 @@ def costruisci() -> Notebook:
                45.4642 e longitudine 9.19, dal primo all'ultimo giorno del carico. L'indirizzo è
                `https://archive-api.open-meteo.com/v1/archive` e i parametri sono `latitude`, `longitude`,
                `start_date` ed `end_date`, con le date come testo `AAAA-MM-GG`, più `hourly="temperature_2m"` e
-               `timezone="Europe/Rome"`. Salva in `orario` la chiave `hourly` della risposta.
+               `timezone="Europe/Rome"`, che dà le ore in ora locale come quelle del carico. Salva in `orario`
+               la chiave `hourly` della risposta.
             2. Nella cella che segue quella dei dati di riserva, trasforma `orario` in `meteo` con
                `pd.DataFrame`.
         """, passi_comuni),
@@ -585,11 +597,17 @@ def costruisci() -> Notebook:
     nb.sezione("Carico e temperatura")
     step(
         nb, titolo="Carico e temperatura",
-        scenario="In questo step costruiamo uno scatter con un punto per giorno, la temperatura media sulle x, il carico medio sulle y e un colore diverso per ogni mese. Dalla forma della nuvola di punti si legge come il carico dipende dalla temperatura.",
+        scenario="""
+            Per chiudere l'analisi vogliamo vedere in un solo grafico come il carico del Nord dipende dalla
+            temperatura: uno scatter con un punto per giorno, la temperatura media sulle x, il carico medio
+            sulle y e un colore per ogni mese. Dalla forma della nuvola si legge a quale temperatura il carico
+            è più basso e quanto sale con il freddo e con il caldo. Con questo grafico e con i numeri degli step
+            precedenti completi poi le cinque frasi che riassumono il lavoro.
+        """,
         richiesta="""
             1. Calcola in `giornaliero` le medie giornaliere di `df_completo`, impostando `Date` come indice,
-               selezionando le colonne `Total Load [MW]` e `Temperature_C`, applicando `resample("D").mean()` e
-               riportando infine `Date` come colonna con `reset_index()`.
+               selezionando le colonne `Total Load [MW]` e `Temperature_C`, le sole che ha senso mediare,
+               applicando `resample("D").mean()` e riportando infine `Date` come colonna con `reset_index()`.
             2. Aggiungi la colonna `mese` con il nome del mese, ricavato con `dt.month_name()`, in modo che lo
                scatter abbia un colore per ogni mese invece di una scala continua.
             3. Disegna lo scatter con `px.scatter`, con la temperatura sulle x, il carico sulle y e
@@ -640,7 +658,7 @@ def costruisci() -> Notebook:
         **Il carico del Nord, 2024-2025**
 
         1. I dati sono ...: ... righe pulite, ... doppioni di ottobre tolti, ... quarti d'ora di marzo mancanti.
-        2. L'energia giornaliera va da circa ... a circa ... MWh; i giorni più leggeri sono ...
+        2. Il carico medio giornaliero va da circa ... a circa ... MW; i giorni più leggeri sono ...
         3. Nella giornata media il carico è minimo alle ... e massimo alle ...
         4. La domenica il carico medio sta intorno a ... MW, un giorno feriale intorno a ... MW.
         5. Il carico è più basso intorno a ... °C e sale con il freddo e con il caldo; pesa di più ...
@@ -650,7 +668,7 @@ def costruisci() -> Notebook:
     nb.celle.append(Cella("md", box_html("soluzione", """
         1. I dati sono quartorari, non orari: 70.168 righe pulite, 8 doppioni di ottobre tolti (4 per anno),
            8 quarti d'ora di marzo mancanti, che restano un buco.
-        2. L'energia giornaliera va da circa 280.000 MWh (1° gennaio 2024) a circa 645.000 MWh (luglio); i
+        2. Il carico medio giornaliero va da circa 11.700 MW (1° gennaio 2024) a circa 26.900 MW (luglio); i
            giorni più leggeri sono le feste, le domeniche e agosto.
         3. Nella giornata media il carico è minimo alle 3 (circa 14.300 MW) e massimo tra le 9 e le 11
            (circa 23.500 MW), con un secondo rialzo verso le 19.

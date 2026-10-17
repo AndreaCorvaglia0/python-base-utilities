@@ -208,15 +208,15 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Un mese di carico",
         scenario="""
-            Il file di Terna contiene il carico della zona Nord nel 2024, con un valore ogni quarto d'ora. Su un anno
-            intero le oscillazioni dei singoli giorni si confondono, quindi vogliamo guardare da vicino il solo mese
-            di gennaio.
+            Nel grafico del carico della zona Nord sull'intero 2024 le oscillazioni dei singoli giorni si
+            confondono, quindi vogliamo un grafico del solo mese di gennaio, con il titolo `Carico Nord, gennaio
+            2024` che dice a chi lo apre che cosa sta guardando. Con una maschera sul mese e `px.line` il grafico
+            si costruisce in due righe, e per vedere febbraio basta cambiare un numero. Nella linea si
+            riconoscono i cicli giornalieri e il calo dei fine settimana.
         """,
         richiesta="""
             1. Tieni in `gennaio` le sole righe di `carico` relative a gennaio 2024, usando una maschera sul mese della colonna `Date`.
             2. Costruisci `fig_carico` con `px.line`, mettendo `Date` sull'asse x e `Total Load [MW]` sull'asse y, con il titolo `Carico Nord, gennaio 2024`.
-
-            Il grafico che ottieni contiene una sola linea, in cui si riconoscono i cicli giornalieri e il calo dei fine settimana.
         """,
         starter="""
             carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
@@ -246,14 +246,13 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="La distribuzione della potenza",
         scenario="""
-            Vogliamo sapere per quante ore la turbina texana produce poco e per quante lavora vicino alla sua potenza
-            massima, attorno ai 3000 kW.
+            Vogliamo sapere per quante ore dell'anno la turbina texana produce poco e per quante lavora vicino
+            alla sua potenza massima, attorno ai 3000 kW. Un istogramma della potenza risponde con un grafico
+            solo, perché conta le ore che cadono in ogni intervallo, e in Plotly il numero esatto di ciascuna
+            barra si legge passandoci sopra con il mouse. La barra più alta è quella vicino a 0 kW, segno che
+            per molte ore la turbina produce poco o nulla.
         """,
-        richiesta="""
-            Costruisci in `fig_potenza` l'istogramma della colonna `potenza_kw` di `turbina`, con 30 barre e il
-            titolo `Distribuzione della potenza`. Nel grafico la barra più alta è quella vicino a 0 kW, segno che per
-            molte ore la turbina produce poco o nulla.
-        """,
+        richiesta="Costruisci in `fig_potenza` l'istogramma della colonna `potenza_kw` di `turbina`, con 30 barre come l'istogramma del vento e il titolo `Distribuzione della potenza`.",
         starter="""
             fig_potenza = px.histogram(...)
             fig_potenza.show()

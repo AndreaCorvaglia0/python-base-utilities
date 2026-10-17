@@ -524,15 +524,17 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Lettura di un CSV italiano",
         scenario="""
-            Per un primo controllo delle letture dei POD ci servono soltanto tre colonne del file, cioè il
-            codice del POD, la fascia e i kWh, e il consumo complessivo di tutte le righe.
+            Un collega ha sommato a mano, in Excel, i consumi del 2025 dei sei POD del file
+            `letture_pod_2025.csv`, e vogliamo controllare il suo totale. Per il controllo bastano il codice del
+            POD, la fascia e i kWh, quindi leggiamo con pandas solo queste tre colonne e sommiamo i kWh di
+            tutte le righe; quando arriverà il file del 2026 basterà cambiarne il nome nella cella. La tabella
+            ha 216 righe e 3 colonne, e il totale è di circa 134507.7 kWh.
         """,
         richiesta="""
-            1. Leggi `../Dati/letture_pod_2025.csv` nel DataFrame `letture_kwh`, tenendo solo le colonne
-               `pod`, `fascia` e `kwh`.
-            2. Calcola la somma della colonna `kwh` e salvala in `totale_kwh`.
-
-            Il DataFrame risultante ha 216 righe e 3 colonne, e il totale è di circa 134507.7 kWh.
+            1. Leggi `../Dati/letture_pod_2025.csv` nel DataFrame `letture_kwh` con i parametri del CSV
+               italiano, tenendo solo le colonne `pod`, `fascia` e `kwh`.
+            2. Calcola la somma della colonna `kwh` e salvala in `totale_kwh`, il numero da confrontare con
+               quello del collega.
         """,
         suggerimento="i parametri che servono sono `sep`, `decimal`, `encoding` e `usecols`, e la somma di una colonna si calcola con `.sum()`.",
         starter="""
@@ -561,62 +563,80 @@ def costruisci() -> Notebook:
         """,
     )
     nb.esercizio(
-        titolo="Due fogli Excel in una tabella",
+        titolo="Un file Excel con un foglio per mese",
         scenario="""
-            Un negozio tiene le vendite di gennaio e di febbraio in due fogli dello stesso file Excel e vuole
-            analizzarle in un'unica tabella.
+            L'ufficio fatturazione vuole i consumi di gennaio e febbraio di tre POD in un file Excel, con un
+            foglio per mese, perché è il formato che apre e controlla ogni mese. Con pandas scriviamo i due
+            fogli nel file e, prima di mandarlo, lo rileggiamo tutto in una volta e mettiamo i fogli uno sotto
+            l'altro, per controllare che contenga tutti i dati. La tabella riletta ha 6 righe, con l'indice da
+            0 a 5, e un totale di 14149.2 kWh, lo stesso dei due DataFrame di partenza.
         """,
         richiesta="""
-            1. Scrivi i DataFrame `gennaio` e `febbraio` nel file `vendite.xlsx`, rispettivamente nei fogli
-               `Gennaio` e `Febbraio`.
-            2. Leggi tutti i fogli del file nel dizionario `fogli`.
-            3. Concatena i fogli nel DataFrame `vendite`, con un indice che va da 0 a 5.
-
-            Il risultato è un DataFrame di 6 righe con le colonne `prodotto` e `pezzi`.
+            1. Scrivi i DataFrame `gennaio` e `febbraio` nel file `consumi.xlsx`, rispettivamente nei fogli
+               `Gennaio` e `Febbraio`, come li vuole la fatturazione.
+            2. Leggi tutti i fogli del file nel dizionario `fogli`, in modo da controllare anche i loro nomi.
+            3. Concatena i fogli nel DataFrame `consumi`, con un indice che va da 0 a 5. La cella stampa poi il
+               totale dei kWh della tabella riletta, da confrontare con quello di partenza.
         """,
         suggerimento="il file si scrive con `pd.ExcelWriter`, tutti i fogli si leggono con `sheet_name=None` e con `pd.concat(..., ignore_index=True)` l'indice riparte da 0.",
         starter="""
-            gennaio = pd.DataFrame({"prodotto": ["pane", "latte", "caffè"], "pezzi": [120, 80, 45]})
-            febbraio = pd.DataFrame({"prodotto": ["pane", "latte", "caffè"], "pezzi": [110, 95, 50]})
+            gennaio = pd.DataFrame({
+                "pod": ["IT001E12345678", "IT001E23456789", "IT001E34567890"],
+                "kwh": [2724.7, 1890.4, 2751.4],
+            })
+            febbraio = pd.DataFrame({
+                "pod": ["IT001E12345678", "IT001E23456789", "IT001E34567890"],
+                "kwh": [2531.2, 1597.6, 2653.9],
+            })
 
-            with pd.ExcelWriter("vendite.xlsx") as writer:
+            with pd.ExcelWriter("consumi.xlsx") as writer:
                 ...
 
             fogli = ...
-            vendite = ...
-            vendite
+            consumi = ...
+            print(round(consumi["kwh"].sum(), 1))
+            consumi
         """,
         soluzione="""
-            gennaio = pd.DataFrame({"prodotto": ["pane", "latte", "caffè"], "pezzi": [120, 80, 45]})
-            febbraio = pd.DataFrame({"prodotto": ["pane", "latte", "caffè"], "pezzi": [110, 95, 50]})
+            gennaio = pd.DataFrame({
+                "pod": ["IT001E12345678", "IT001E23456789", "IT001E34567890"],
+                "kwh": [2724.7, 1890.4, 2751.4],
+            })
+            febbraio = pd.DataFrame({
+                "pod": ["IT001E12345678", "IT001E23456789", "IT001E34567890"],
+                "kwh": [2531.2, 1597.6, 2653.9],
+            })
 
-            with pd.ExcelWriter("vendite.xlsx") as writer:
+            with pd.ExcelWriter("consumi.xlsx") as writer:
                 gennaio.to_excel(writer, sheet_name="Gennaio", index=False)
                 febbraio.to_excel(writer, sheet_name="Febbraio", index=False)
 
-            fogli = pd.read_excel("vendite.xlsx", sheet_name=None)
-            vendite = pd.concat(fogli.values(), ignore_index=True)
-            vendite
+            fogli = pd.read_excel("consumi.xlsx", sheet_name=None)
+            consumi = pd.concat(fogli.values(), ignore_index=True)
+            print(round(consumi["kwh"].sum(), 1))
+            consumi
         """,
         verifica="""
             assert list(fogli.keys()) == ["Gennaio", "Febbraio"], "❌ fogli: il file deve avere i fogli Gennaio e Febbraio"
-            assert len(vendite) == 6 and list(vendite.index) == list(range(6)), "❌ vendite: 6 righe con indice da 0 a 5 (ignore_index=True)"
-            assert vendite["pezzi"].sum() == 500, "❌ vendite: il totale dei pezzi è 500"
+            assert len(consumi) == 6 and list(consumi.index) == list(range(6)), "❌ consumi: 6 righe con indice da 0 a 5 (ignore_index=True)"
+            assert round(consumi["kwh"].sum(), 1) == 14149.2, "❌ consumi: il totale dei kwh è 14149.2"
         """,
     )
     nb.esercizio(
         titolo="Le letture di un POD dal database",
         scenario="""
-            Un POD è il codice che identifica un punto di prelievo dell'energia elettrica. Dal database
-            `utility.db` ci servono le letture giornaliere di marzo di un solo POD.
+            Un cliente chiede quanto ha consumato a marzo il suo punto di prelievo, il POD `IT001E10000000`.
+            Le letture giornaliere stanno nella tabella `letture` di `utility.db`, insieme a quelle di altri 29
+            POD, quindi invece di leggere tutta la tabella chiediamo al database, con una query, le sole righe
+            di quel POD, e in pandas ne sommiamo i kWh. Le righe sono 31, una per giorno, e il totale è di
+            7785.6 kWh.
         """,
         richiesta="""
             1. Apri la connessione a `../Dati/utility.db`.
             2. Con una query, leggi dalla tabella `letture` solo le righe del POD `IT001E10000000` e salvale
                nel DataFrame `letture_pod`.
-            3. Salva in `totale_marzo` la somma della colonna `kwh`, poi chiudi la connessione.
-
-            Il DataFrame ha 31 righe, una per giorno, e il totale è di 7785.6 kWh.
+            3. Salva in `totale_marzo` la somma della colonna `kwh`, il numero da dare al cliente, poi chiudi
+               la connessione.
         """,
         suggerimento="dentro la query i valori di testo vanno tra apici singoli, come in `WHERE pod = '...'`.",
         starter="""
@@ -643,8 +663,11 @@ def costruisci() -> Notebook:
         nb.esercizio(
             titolo="La certificazione energetica degli edifici in Lombardia",
             scenario="""
-                Regione Lombardia pubblica sul proprio portale di open data i certificati energetici degli
-                edifici. Per questo esercizio serve la connessione alla rete, perché non c'è un file di
+                Regione Lombardia pubblica sul portale di open data i certificati energetici degli edifici, con
+                la classe energetica e le emissioni di CO2 di ciascuno. Vogliamo sapere quanta CO2 emette in
+                media un edificio di ogni classe in provincia di Milano, e con `requests` e pandas prendiamo i
+                dati direttamente dal portale, senza scaricare file a mano. Il risultato è una Series con una
+                riga per classe, da A4 a G. Per questo esercizio serve la rete, perché non c'è un file di
                 riserva.
             """,
             richiesta="""
@@ -653,9 +676,6 @@ def costruisci() -> Notebook:
                 2. Tieni solo gli edifici della provincia di Milano nel DataFrame `milano`.
                 3. Calcola le emissioni medie di CO2 per ciascuna classe energetica e salvale in
                    `co2_per_classe`.
-
-                Il risultato è una Series con una riga per classe energetica (A4, A3, ..., G) e le emissioni
-                medie di CO2 di ciascuna.
             """,
             suggerimento="""
                 conviene guardare prima `certificati.columns` e i valori di una colonna con `unique()`. I numeri

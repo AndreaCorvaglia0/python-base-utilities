@@ -485,13 +485,12 @@ def costruisci() -> Notebook:
 
     nb.esercizio(
         titolo="Gli ascolti di un utente",
-        scenario="",
-        richiesta="""
-            Trova tutte le canzoni ascoltate dall'utente con `UserID` 103. Per farlo, filtra `ascolti` in modo
-            da tenere solo le righe in cui `UserID` vale 103 e salva il risultato in `ascolti_utente_103`.
-
-            Il risultato è una sola riga, con `Song A` di `Artist X` e 4 ascolti.
+        scenario="""
+            L'utente 103 ha chiesto all'assistenza quali canzoni risultano nella sua cronologia e quante volte
+            le ha ascoltate. Per rispondergli vogliamo tutte le righe di `ascolti` che lo riguardano, e con una
+            maschera booleana pandas le trova allo stesso modo in una tabella di sei righe o di sei milioni. Il risultato è una sola riga, con `Song A` di `Artist X` e 4 ascolti.
         """,
+        richiesta="Costruisci in `cond` la maschera delle righe in cui `UserID` vale 103 e salva in `ascolti_utente_103` le righe di `ascolti` che la rispettano.",
         suggerimento="costruisci una maschera booleana con il confronto `==` e usala per filtrare il DataFrame.",
         starter="""
             cond = ...
@@ -512,14 +511,13 @@ def costruisci() -> Notebook:
 
     nb.esercizio(
         titolo="Totale di ascolti per canzone",
-        scenario="",
-        richiesta="""
-            Calcola il totale degli ascolti di ogni canzone, raggruppando le righe per `Song` e sommando i
-            valori di `Plays`, e salva il risultato in `ascolti_per_canzone`.
-
-            Il risultato è una Series con quattro valori: 19 per Song A, 7 per Song B, 1 per Song C e 2 per
-            Song D.
+        scenario="""
+            La redazione prepara la classifica della settimana e vuole il totale degli ascolti di ogni canzone,
+            sommando quelli di tutti gli utenti. Con `groupby` pandas raccoglie le righe della stessa canzone e
+            ne somma gli ascolti in una sola istruzione, che resta uguale quando le canzoni diventano migliaia.
+            Il risultato è una Series con 19 ascolti per Song A, 7 per Song B, 1 per Song C e 2 per Song D.
         """,
+        richiesta="Raggruppa `ascolti` per `Song`, somma la colonna `Plays` e salva il risultato in `ascolti_per_canzone`.",
         suggerimento="serve `groupby()` seguito da `sum()`.",
         starter="""
             ascolti_per_canzone = ascolti.groupby("...")["..."].sum()
@@ -537,13 +535,17 @@ def costruisci() -> Notebook:
 
     nb.esercizio(
         titolo="L'artista più ascoltato",
-        scenario="",
+        scenario="""
+            Nella newsletter del mese la piattaforma pubblica la classifica degli artisti, dal più ascoltato al
+            meno ascoltato, e in apertura il nome del primo. Vogliamo ottenere entrambi da `ascolti` con
+            pandas, raggruppando per artista, sommando gli ascolti e ordinando i totali, in modo che il mese
+            prossimo basti rieseguire la cella sui dati nuovi. In testa alla classifica c'è `Artist X`, con 19
+            ascolti.
+        """,
         richiesta="""
-            Identifica l'artista più ascoltato. Raggruppa le righe per `Artist`, somma `Plays` e ordina i
-            totali in modo decrescente, salvando il risultato in `ascolti_per_artista`; poi salva in
-            `artista_top` il nome dell'artista con il totale più alto.
-
-            Il risultato è una Series con un totale per artista, e il primo valore, il più alto, è 19.
+            1. Raggruppa le righe per `Artist`, somma `Plays` e ordina i totali in modo decrescente, come
+               nella classifica, salvando il risultato in `ascolti_per_artista`.
+            2. Salva in `artista_top` il nome dell'artista con il totale più alto, quello da mettere in apertura.
         """,
         suggerimento="combina `groupby()`, `sum()` e `sort_values()`, mentre `idxmax()` restituisce l'etichetta del valore massimo.",
         starter="""
@@ -566,18 +568,21 @@ def costruisci() -> Notebook:
         titolo="Prezzo medio dell'elettricità per stato",
         facoltativo=True,
         scenario="""
-            Il file `U.S. Electricity Prices.csv` contiene il prezzo medio mensile dell'elettricità negli
-            Stati Uniti, in centesimi di dollaro per kWh, per stato e per settore, dal 2001 al 2024.
+            Il file `U.S. Electricity Prices.csv` riporta il prezzo medio mensile dell'elettricità negli Stati
+            Uniti, in centesimi di dollaro per kWh, per stato e per settore, dal 2001 al 2024. Vogliamo una
+            tabella di quattro righe con il prezzo medio del periodo di California, Texas, New York e Florida,
+            ciascuno con la sua sigla, e pandas la costruisce con un filtro, un `groupby` e un `merge` invece
+            di cercare a mano i quattro stati tra migliaia di righe. Il prezzo medio del Texas è di circa 8,86
+            centesimi per kWh.
         """,
         richiesta="""
             1. Partendo da `prezzi`, che la cella legge dal file, tieni in `tutti_settori` solo le righe in
-               cui `sectorName` vale `"all sectors"`.
+               cui `sectorName` vale `"all sectors"`, cioè il prezzo complessivo di ogni stato.
             2. Calcola il prezzo medio (`price`) di ogni stato (`stateDescription`) e salvalo in
-               `prezzo_medio`, usando `reset_index()` per riavere lo stato come colonna.
+               `prezzo_medio`, usando `reset_index()` per riavere lo stato come colonna, come in `stati`.
             3. Unisci `stati`, già definito nella cella, e `prezzo_medio` con un inner join sulla colonna
-               `stateDescription`, e salva il risultato nel DataFrame `prezzi_stati`.
-
-            Il risultato ha quattro righe, e il prezzo medio del Texas è di circa 8,86 centesimi per kWh.
+               `stateDescription`, che tiene i soli quattro stati e aggiunge a ciascuno la sigla, e salva il
+               risultato nel DataFrame `prezzi_stati`.
         """,
         suggerimento="conviene guardare prima le colonne e i loro valori con `prezzi.head()`.",
         starter="""

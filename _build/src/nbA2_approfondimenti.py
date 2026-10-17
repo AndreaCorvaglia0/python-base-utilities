@@ -370,15 +370,15 @@ def costruisci() -> Notebook:
         titolo="Il range slider sul carico di gennaio",
         aula="base",
         scenario="""
-            Il grafico di gennaio contiene quasi 3000 quarti d'ora, troppi per distinguere i singoli giorni
-            a colpo d'occhio. Con un range slider e due pulsanti possiamo passare rapidamente dalla vista di
-            una settimana a quella del mese intero.
+            Il grafico di gennaio contiene quasi 3000 quarti d'ora, troppi per distinguere i singoli giorni a
+            colpo d'occhio. Vogliamo che chi lo apre possa scorrere il mese con un range slider sotto l'asse x
+            e passare con due pulsanti, sopra il grafico, dalla vista di una settimana a quella del mese intero,
+            senza toccare il codice. Bastano due argomenti di `update_xaxes`, e quando il codice è corretto lo
+            slider e i pulsanti compaiono nel grafico.
         """,
         richiesta="""
             1. Attiva il range slider sotto l'asse x di `fig_carico`.
             2. Aggiungi un range selector con due pulsanti: il primo, con etichetta `1w`, torna indietro di una settimana (`count=7`, `step="day"`), mentre il secondo, `all`, mostra tutto il mese.
-
-            Se il codice è corretto, sotto il grafico compare lo slider e sopra compaiono i due pulsanti.
         """,
         suggerimento="su una figura creata con `px` lo slider si attiva con `fig_carico.update_xaxes(rangeslider_visible=True)`, e il range selector si aggiunge nella stessa chiamata con `rangeselector=dict(buttons=...)`.",
         starter="""
@@ -406,14 +406,13 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Il grafico del carico in HTML",
         scenario="""
-            Dobbiamo mandare il grafico del carico di gennaio, `fig_carico`, a un collega che non ha Python
-            installato ma vuole comunque poterlo esplorare con lo zoom.
+            Un collega che non ha Python installato vuole esplorare con lo zoom il grafico del carico di
+            gennaio, `fig_carico`. Plotly salva la figura in un file HTML che si apre con un doppio clic in
+            qualunque browser e resta interattivo, e con l'opzione `include_plotlyjs="cdn"` il file pesa meno
+            di 1 MB e si può mandare per email. Prima di spedirlo conviene aprirlo dalla cartella del notebook
+            e controllare che lo zoom funzioni.
         """,
-        richiesta="""
-            Salva `fig_carico` nel file `carico_gennaio.html` con `include_plotlyjs="cdn"`, poi aprilo con un
-            doppio clic dalla cartella del notebook. Il file che ottieni è leggero, sotto 1 MB, e nel browser
-            il grafico resta interattivo.
-        """,
+        richiesta="Salva `fig_carico` nel file `carico_gennaio.html` con `include_plotlyjs=\"cdn\"`.",
         starter="""
             fig_carico.write_html(...)
         """,
@@ -432,11 +431,13 @@ def costruisci() -> Notebook:
             titolo="La media mobile su 24 ore",
             scenario="""
                 Il carico quartorario oscilla molto tra il giorno e la notte, e queste oscillazioni nascondono
-                l'andamento nel corso dell'anno. Una media mobile su 24 ore copre sempre un giorno intero, quindi
-                elimina il ciclo giornaliero e lascia vedere l'andamento di fondo.
+                l'andamento nel corso dell'anno. Vogliamo una media mobile su 24 ore, cioè su 96 quarti d'ora
+                consecutivi, che copre sempre un giorno intero e quindi elimina il ciclo giornaliero, e il momento
+                in cui raggiunge il valore più alto. Con `rolling` pandas la calcola su tutto l'anno in una riga,
+                e il massimo, circa 27.189 MW, cade il 19 luglio 2024 alle 15:30.
             """,
             richiesta="""
-                1. Calcola in `media_24h` la media mobile su 24 ore di `Total Load [MW]`, con `Date` come indice.
+                1. Calcola in `media_24h` la media mobile su 96 valori di `Total Load [MW]`, con `Date` come indice.
                 2. Metti in `picco_24h` il timestamp in cui la media mobile è più alta.
             """,
             starter="""
@@ -457,7 +458,7 @@ def costruisci() -> Notebook:
                 assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'ora, poi mean()"
                 assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
             """,
-            suggerimento="su dati quartorari una finestra di 24 ore comprende 96 valori.",
+            suggerimento="come `power_ma_8` nella sezione su `rolling`, la media mobile si ottiene con `rolling` seguito da `mean()`, e `idxmax()` restituisce l'etichetta del valore più alto, che qui è un timestamp.",
             facoltativo=True,
         )
 

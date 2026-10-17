@@ -319,32 +319,31 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Il parametro inventato",
         scenario="""
-            Il file `letture_pod_2025.csv` è un CSV all'italiana, con il punto e virgola come separatore, la
-            virgola come separatore decimale e l'encoding latin-1. Il prompt che userai suggerisce a Copilot nomi
-            di parametri che `read_csv` non ha, e il modello tende a seguire le indicazioni della richiesta anche
-            quando sono sbagliate.
+            Vogliamo farci scrivere da Copilot la lettura di `letture_pod_2025.csv`, un CSV all'italiana, e
+            controllare la riga che propone prima di fidarci. Il prompt qui sotto suggerisce apposta nomi di
+            parametri che `read_csv` non ha, e il modello tende a seguire la richiesta anche quando è sbagliata:
+            il traceback e la documentazione ci dicono quali sono i nomi giusti. Alla fine `letture` ha 216 righe
+            e 5 colonne, con `kwh` di tipo `float64`.
+
+            ```text
+            Leggi il file ../Dati/letture_pod_2025.csv con pandas: separatore punto e virgola,
+            virgola come decimale, encoding latin-1. Usa i parametri separator, decimal_separator ed encoding.
+            ```
         """,
         richiesta="""
-            1. Dai alla chat il prompt seguente e incolla la riga che propone al posto di quella commentata
-               nella cella:
-
-               ```text
-               Leggi il file ../Dati/letture_pod_2025.csv con pandas: separatore punto e virgola,
-               virgola come decimale, encoding latin-1. Usa i parametri separator, decimal_separator ed encoding.
-               ```
-            2. Esegui la riga proposta e leggi la fine del traceback, che indica quale parametro non esiste.
-            3. Cerca con `help(pd.read_csv)` i nomi giusti dei parametri per il separatore e per il decimale.
-            4. Leggi il file in `letture` usando i parametri giusti. Il risultato è un DataFrame di 216 righe e 5
-               colonne, con la colonna `kwh` di tipo `float64`.
+            1. Dai alla chat il prompt, incolla la riga che propone al posto di quella commentata nella cella ed
+               eseguila: la fine del traceback indica quale parametro non esiste.
+            2. Cerca con `help(pd.read_csv)` i nomi giusti dei parametri per il separatore e per il decimale.
+            3. Leggi il file in `letture` usando i parametri giusti.
         """,
         starter="""
-            # 1-2. incolla qui la riga proposta da Copilot ed eseguila
+            # 1. incolla qui la riga proposta da Copilot ed eseguila
             # letture = pd.read_csv("../Dati/letture_pod_2025.csv", ...)
 
-            # 3. la documentazione
+            # 2. la documentazione
             # help(pd.read_csv)
 
-            # 4. la lettura giusta
+            # 3. la lettura giusta
             letture = ...
             letture.info()
         """,
@@ -362,9 +361,10 @@ def costruisci() -> Notebook:
     nb.esercizio(
         titolo="Leggere prima di lanciare",
         scenario='''
-            Un collega ha fatto scrivere a un agente lo script del report settimanale. Dice che gira senza
-            errori, ma il totale gli sembra strano. Lo script è riportato qui sotto, e prima di lanciarlo
-            conviene leggerlo con le quattro domande della sezione precedente.
+            Un collega ha fatto scrivere a un agente lo script del report settimanale con i kWh totali per POD.
+            Dice che gira senza errori, ma il totale gli sembra strano. Vogliamo leggere lo script, riportato qui
+            sotto, con le quattro domande della sezione precedente prima di lanciarlo, trovare il dettaglio che
+            manca nella lettura del file e ottenere il report giusto, con sei POD e 134507,7 kWh in tutto.
 
             ```python
             """Report settimanale: kWh totali per POD."""
@@ -403,12 +403,12 @@ def costruisci() -> Notebook:
             ```
         ''',
         richiesta="""
-            1. Compila il dizionario `risposte`. Alla chiave `"lavoro vero"` scrivi il nome della funzione che fa
-               il calcolo; alla chiave `"lanciato in una cella"` scrivi che cosa succede se si incolla tutto lo
-               script in una cella del notebook, scegliendo tra `"FileNotFoundError"`, `"NameError"` e
-               `"non parte niente"`.
+            1. Scrivi nel dizionario `risposte` quello che hai trovato con la seconda e la terza domanda. Alla
+               chiave `"lavoro vero"` va il nome della funzione che fa il calcolo; alla chiave
+               `"lanciato in una cella"` va che cosa succede se si incolla tutto lo script in una cella del
+               notebook, scegliendo tra `"FileNotFoundError"`, `"NameError"` e `"non parte niente"`.
             2. Trova il dettaglio che manca nella lettura del file e completa `leggi_letture`, che qui riceve
-               direttamente il percorso. Il risultato è una tabella con sei POD e un totale di 134507,7 kWh.
+               direttamente il percorso del file visto dalla cartella del notebook.
         """,
         suggerimento="controlla il tipo delle colonne con `totale.dtypes`; se `kwh` non è numerica, il problema sta nei parametri passati a `read_csv`.",
         starter="""
