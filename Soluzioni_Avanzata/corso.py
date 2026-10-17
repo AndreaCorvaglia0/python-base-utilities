@@ -220,41 +220,29 @@ assert quanti == 8 and capitale_italia == 'Roma', "❌ quanti è len(g8) e capit
 assert paesi[0] == 'Canada' and paesi[-1] == 'Stati Uniti', "❌ paesi: sorted(g8.keys())"
 '''),
     'E2.1': ('Esercizio E2.1', r'''
-assert sopra_soglia == [64.0, 51.2, 120.0, 89.9, 72.6] and quante == 5, "❌ sopra_soglia: tieni le 5 spese maggiori di 50"
-assert round(totale_sopra, 2) == 397.7, "❌ totale_sopra: somma solo le spese sopra la soglia, dentro l'if"
-assert round(totale, 2) == 578.8, "❌ totale: somma tutta la lista con sum(spese)"
+assert inverti_stringa("Python") == "nohtyP", "❌ inverti_stringa('Python') deve restituire 'nohtyP'"
+assert inverti_stringa.__doc__, "❌ Manca la docstring sotto il def"
+assert uguale is True, "❌ uguale: confronta inverti_stringa('radar') con 'radar' usando =="
 '''),
     'E2.2': ('Esercizio E2.2', r'''
-assert prezzo_scontato.__doc__, "❌ Manca la docstring sotto il def"
-assert normale == 44.91 and promozione == 34.93, "❌ normale vale 44.91 e promozione 34.93"
-assert intero == 35 and prezzo_scontato(80) == 72.0, "❌ intero: con arrotonda=0 il prezzo è 35.0"
+assert paesi_capitale_pari(g10) == ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna'], "❌ Controlla la condizione: len(capitale) % 2 == 0"
+assert paesi_pari == paesi_capitale_pari(g10) and quanti == 6, "❌ paesi_pari è il risultato su g10 e quanti è len(paesi_pari)"
 '''),
     'E2.3': ('Esercizio E2.3', r'''
+assert trova_palindrome(['ciao', 'anna', 'radar', 'gatto', 'osso', 'madam']) == ['anna', 'radar', 'osso', 'madam'], "❌ Le palindrome della lista sono anna, radar, osso e madam"
+assert con_maiuscole == ['Anna', 'Otto'], "❌ con_maiuscole: confronta parola.lower() con parola.lower()[::-1] e restituisci la parola originale"
+'''),
+    'E2.4': ('Esercizio E2.4', r'''
 assert list(letture.columns) == ["pod", "fascia", "kwh"], "❌ Con usecols leggi solo pod, fascia e kwh"
 assert letture["kwh"].dtype == "float64" and righe == 216, "❌ kwh deve essere numerica e le righe 216"
 assert round(totale_kwh, 1) == 134507.7, "❌ totale_kwh: somma la colonna kwh"
 '''),
-    'E2.4': ('Esercizio E2.4', r'''
-assert righe_consumi == 72 and righe_listino == 3, "❌ Il foglio Consumi ha 72 righe e il Listino 3"
-assert prezzo_f1 == 0.21, "❌ prezzo_f1: il prezzo della fascia F1 è 0.21"
-assert nomi_fogli == ["Consumi", "Listino", "Anagrafica"], "❌ nomi_fogli: leggi tutti i fogli con sheet_name=None"
-'''),
     'E2.5': ('Esercizio E2.5', r'''
-assert n_letture == 930 and list(letture_db.columns) == ["pod", "data", "kwh"], "❌ letture_db: leggi tutta la tabella letture"
-assert round(kwh_marzo, 1) == 69880.1, "❌ kwh_marzo: somma la colonna kwh di letture_db"
+assert len(listino) == 3 and prezzo_f1 == 0.21, "❌ listino: leggi il foglio Listino; prezzo_f1 è il primo valore di eur_kwh"
+assert n_letture == 930 and round(kwh_marzo, 1) == 69880.1, "❌ letture_db: leggi tutta la tabella letture e somma la colonna kwh"
 assert len(letture_pod) == 31 and set(letture_pod["pod"]) == {"IT001E10087109"}, "❌ letture_pod: filtra con WHERE pod = '...'"
 '''),
     'E2.6': ('Esercizio E2.6', r'''
-assert totali == {"gennaio": 161.7, "febbraio": 108.7, "marzo": 187.1}, "❌ totali: una chiave per mese, con la somma delle spese di quel mese"
-assert round(totale_trimestre, 2) == 457.5, "❌ totale_trimestre: somma i valori di totali"
-'''),
-    'E2.7': ('Esercizio E2.7', r'''
-import os
-assert os.path.exists("riepilogo_fascia.xlsx"), "❌ Non trovo riepilogo_fascia.xlsx nella cartella del notebook"
-assert len(f3) == 72 and len(riletto) == len(f3), "❌ Il file deve avere le 72 righe della fascia F3"
-assert list(riletto.columns) == ["pod", "cliente", "data", "fascia", "kwh"], "❌ Colonne diverse dal CSV: hai usato index=False?"
-'''),
-    'E2.8': ('Esercizio E2.8', r'''
 assert len(sensori_mi) > 0, "❌ sensori_mi è vuoto: hai chiamato sensori(\"MI\") o letto il file di riserva?"
 assert {"idsensore", "tipologia", "provincia"} <= set(sensori_mi.columns), "❌ Mancano le colonne dell'anagrafica"
 assert set(sensori_mi["provincia"]) == {"MI"}, "❌ sensori_mi deve contenere solo la provincia MI"

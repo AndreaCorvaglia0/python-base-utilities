@@ -213,39 +213,23 @@ assert g8.get('Regno Unito') == 'Londra' and g8.get('Stati Uniti') == 'Washingto
 assert len(g8) == 8, "❌ Alla fine il dizionario ha otto paesi"
 '''),
     'E2.1': ('Esercizio E2.1', r'''
-assert sopra_soglia == [64.0, 51.2, 120.0, 89.9, 72.6], "❌ sopra_soglia: tieni le spese maggiori di 50, nell'ordine della lista"
-assert quante == 5, "❌ Le spese sopra i 50 euro sono 5: la spesa di 50.0 non conta"
-assert round(totale, 2) == 578.8, "❌ totale: somma tutta la lista con sum(spese)"
+assert inverti_stringa("Python") == "nohtyP", "❌ inverti_stringa('Python') deve restituire 'nohtyP': usa stringa[::-1]"
 '''),
     'E2.2': ('Esercizio E2.2', r'''
-assert prezzo_scontato.__doc__, "❌ Manca la docstring sotto il def"
-assert normale == 44.91 and prezzo_scontato(80) == 72.0, "❌ Con lo sconto predefinito 49.90 diventa 44.91"
-assert promozione == 34.93, "❌ promozione: con sconto=30 il prezzo è 34.93"
+assert paesi_capitale_pari(g10) == ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna'], "❌ Controlla la condizione: len(capitale) % 2 == 0"
 '''),
     'E2.3': ('Esercizio E2.3', r'''
+assert trova_palindrome(['ciao', 'anna', 'radar', 'gatto', 'osso', 'madam']) == ['anna', 'radar', 'osso', 'madam'], "❌ Le palindrome della lista sono anna, radar, osso e madam"
+'''),
+    'E2.4': ('Esercizio E2.4', r'''
 assert letture["kwh"].dtype == "float64", "❌ kwh non è numerica: manca decimal=','"
 assert righe == 216, "❌ Il file ha 216 righe: contale con len(letture)"
 assert round(totale_kwh, 1) == 134507.7, "❌ totale_kwh: somma la colonna kwh"
 '''),
-    'E2.4': ('Esercizio E2.4', r'''
-assert righe_consumi == 72 and list(consumi.columns) == ["pod", "mese", "F1", "F2", "F3"], "❌ consumi: leggi il foglio Consumi"
-assert righe_listino == 3, "❌ Il listino ha 3 righe, una per fascia"
-assert prezzo_f1 == 0.21, "❌ prezzo_f1: è il primo valore della colonna eur_kwh del listino"
-'''),
     'E2.5': ('Esercizio E2.5', r'''
-assert list(letture_db.columns) == ["pod", "data", "kwh"], "❌ Leggi tutta la tabella letture con SELECT *"
-assert n_letture == 930, "❌ La tabella letture ha 930 righe"
+assert len(listino) == 3 and prezzo_f1 == 0.21, "❌ listino: leggi il foglio Listino; prezzo_f1 è il primo valore di eur_kwh"
+assert n_letture == 930 and list(letture_db.columns) == ["pod", "data", "kwh"], "❌ letture_db: leggi tutta la tabella letture con SELECT *"
 assert round(kwh_marzo, 1) == 69880.1, "❌ kwh_marzo: somma la colonna kwh di letture_db"
-'''),
-    'E2.6': ('Esercizio E2.6', r'''
-assert totali == {"gennaio": 161.7, "febbraio": 108.7, "marzo": 187.1}, "❌ totali: una chiave per mese, con la somma delle spese di quel mese"
-assert round(totale_trimestre, 2) == 457.5, "❌ totale_trimestre: somma i valori di totali"
-'''),
-    'E2.7': ('Esercizio E2.7', r'''
-import os
-assert os.path.exists("riepilogo_fascia.xlsx"), "❌ Non trovo riepilogo_fascia.xlsx nella cartella del notebook"
-assert len(f3) == 72 and len(riletto) == len(f3), "❌ Il file deve avere le 72 righe della fascia F3"
-assert list(riletto.columns) == ["pod", "cliente", "data", "fascia", "kwh"], "❌ Colonne diverse dal CSV: hai usato index=False?"
 '''),
     'E3.1': ('Esercizio E3.1', r'''
 assert {"potenza_kw", "vento_ms", "direzione", "pressione", "temperatura"} <= set(turbina.columns), "❌ turbina: controlla i nomi nel dizionario nomi"
