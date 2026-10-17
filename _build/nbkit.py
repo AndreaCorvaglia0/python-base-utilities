@@ -476,7 +476,8 @@ class Notebook:
         elif self.num.startswith("E"):
             chiusura = f"---\n\n**Fine dell'{self.titolo.lower()}.**"
         else:
-            chiusura = f"---\n\n**Fine del notebook {self.num}.**"
+            numero = f" {self.num}" if self.num[0].isdigit() else ""   # "S" e simili: notebook senza numero
+            chiusura = f"---\n\n**Fine del notebook{numero}.**"
         link = [l for l in (self._link_precedente(aula), None if self.extra else self._link_prossimo(aula)) if l]
         if link:
             chiusura += " " + " &nbsp;·&nbsp; ".join(link)

@@ -102,9 +102,11 @@ attuali sul carico Terna (giornaliero; ora e giorno della settimana).
 
 ### 09 · Plotly per serie storiche
 Concetti che restano: `px.line` con `x`, `y`, `title`, il grafico come oggetto `fig` con `fig.show()`, più colonne in
-un grafico, `px.histogram` con `nbins`. Hands-on, tre: i due attuali (cambiare la società e il periodo; aggiungere una
-società) ridotti al solo cambio di colonna e di titolo; dopo "Istogramma e scatter" cambiare `nbins`. Extra: i due
-esercizi attuali (un mese di carico; distribuzione della potenza).
+un grafico, range slider e range selector su una serie lunga, `fig.write_html` per consegnare un grafico a chi non ha
+Python, `px.histogram` con `nbins`. Hands-on, cinque: cambiare colonna e titolo del primo grafico; aggiungere una
+società al confronto; cambiare i pulsanti del range selector; cambiare `nbins` dell'istogramma; esportare lo scatter in
+HTML e controllare che il file esista. Extra: un mese di carico con lo slider; il grafico del carico in HTML; la
+distribuzione della potenza.
 
 ### 10 · Agenti per il coding
 Concetti che restano: formulare un prompt con il contesto, leggere il codice prima di eseguirlo, riconoscere le quattro

@@ -137,10 +137,16 @@ assert ora_di_punta == 11, "❌ ora_di_punta: idxmax() della media per ora"
 assert giorno_minimo == 6, "❌ giorno_minimo: idxmin() della media per giorno della settimana (6 = domenica)"
 '''),
     '9.1': ('Esercizio 9.1', r'''
-assert len(fig_carico.data) == 1 and fig_carico.data[0].mode == "lines", "❌ Serve una linea sola: px.line con y='Total Load [MW]'"
+assert len(fig_carico.data) == 1 and len(fig_carico.data[0].x) == 2976, "❌ Serve una linea sola con le 2976 righe di gennaio: maschera su carico['Date'].dt.month"
 assert fig_carico.layout.title.text == "Carico Nord, gennaio 2024", "❌ Il titolo deve essere 'Carico Nord, gennaio 2024'"
+assert fig_carico.layout.xaxis.rangeslider.visible and len(fig_carico.layout.xaxis.rangeselector.buttons) == 2, "❌ Servono lo slider e due pulsanti: rangeslider_visible=True e rangeselector=dict(buttons=bottoni_carico)"
 '''),
     '9.2': ('Esercizio 9.2', r'''
+import os
+assert os.path.exists("carico_gennaio.html"), "❌ Il file carico_gennaio.html non c'è: controlla il nome in write_html"
+assert os.path.getsize("carico_gennaio.html") < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\"cdn\""
+'''),
+    '9.3': ('Esercizio 9.3', r'''
 assert len(fig_potenza.data) == 1 and fig_potenza.data[0].type == "histogram", "❌ Serve un solo istogramma: px.histogram, senza color"
 assert fig_potenza.layout.title.text == "Distribuzione della potenza", "❌ Il titolo deve essere 'Distribuzione della potenza'"
 '''),
@@ -164,14 +170,8 @@ assert mesi == 7, "❌ mesi: servono 7 mesi, il settimo porta a 1050 euro"
 assert risparmio == 1050, "❌ risparmio: 150 euro per 7 mesi fanno 1050"
 '''),
     'A2.1': ('Esercizio A2.1', r'''
-assert fig_carico.layout.xaxis.rangeslider.visible, "❌ Manca il range slider: update_xaxes(rangeslider_visible=True)"
-assert len(fig_carico.layout.xaxis.rangeselector.buttons) == 2, "❌ Il range selector deve avere due pulsanti, 1w e all"
-assert fig_carico.layout.xaxis.rangeselector.buttons[0].count == 7, "❌ Il primo pulsante va indietro di 7 giorni: count=7, step='day'"
-'''),
-    'A2.2': ('Esercizio A2.2', r'''
-from pathlib import Path
-assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html non c'è: controlla il nome in write_html"
-assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\"cdn\""
+assert len(salti) == 1, "❌ salti: deve restare una riga sola, quella con distanze > pd.Timedelta('15min')"
+assert salti["Date"].iloc[0] == pd.Timestamp("2024-03-31 03:00"), "❌ salti: la riga attesa è quella delle 3:00 del 31 marzo"
 '''),
     'E1.1': ('Esercizio E1.1', r'''
 assert valore_massimo == 25 and valore_minimo == 7, "❌ valore_massimo e valore_minimo: usa max() e min() sui tre numeri"

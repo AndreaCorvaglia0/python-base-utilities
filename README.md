@@ -59,7 +59,7 @@ sezioni Extra in fondo ai notebook non sono comprese nei tempi.
 | 4 | `10_Agenti_per_il_coding` · Copilot in VS Code, leggere il codice scritto da un agente | 45 min | 45 min |
 | 4 | `11_Capstone` · il carico del Nord e la temperatura | 100 min | 100 min |
 | se c'è tempo | `Approfondimenti_1` · set, while, più file CSV (Avanzata: map, filter, generatori) | 40 min | 55 min |
-| se c'è tempo | `Approfondimenti_2` · differenze tra date, fuso orario (Avanzata: shift, rolling, type hint, dataclass, decoratori) | 30 min | 50 min |
+| se c'è tempo | `Approfondimenti_2` · differenze tra date, fuso orario (Avanzata: shift, rolling, type hint, dataclass, decoratori) | 20 min | 40 min |
 
 Dentro ogni notebook, subito dopo gli esempi, ci sono alcuni Hands-on: piccoli esercizi da uno a tre minuti in cui si
 cambia qualcosa nel codice appena visto. In fondo a ogni notebook una sezione Extra raccoglie due o tre esercizi brevi

@@ -10,13 +10,13 @@ def costruisci() -> Notebook:
         titolo="Plotly per serie storiche",
         blocco=4,
         giornata=4,
-        intento="Plotly produce grafici interattivi, che per una serie storica permettono di ingrandire un periodo, selezionare un intervallo e confrontare più serie nello stesso grafico.",
+        intento="Plotly produce grafici interattivi, che per una serie storica permettono di ingrandire un periodo, scegliere un intervallo con lo slider e confrontare più serie nello stesso grafico, e che si salvano in un file HTML da aprire nel browser.",
         obiettivi=[
-            "fare grafici a linee, istogrammi e scatter con Plotly Express",
-            "confrontare più serie nello stesso grafico, partendo da dati wide-form",
+            "fare grafici a linee, istogrammi e scatter con Plotly Express, confrontando più serie nello stesso grafico",
+            "navigare una serie lunga con range slider e range selector ed esportare un grafico in HTML",
             "riconoscere dati, mapping, tracce e layout di una figura",
         ],
-        tempo={"base": 30, "avanzata": 25},
+        tempo={"base": 45, "avanzata": 45},
         dati=["load_total_north_hourly_2024.xlsx", "TexasTurbine.csv"],
     )
 
@@ -177,6 +177,93 @@ def costruisci() -> Notebook:
     )
 
     # ------------------------------------------------------------------ 6
+    nb.sezione("Range slider e range selector", intro="""
+        Le quotazioni di `stocks` hanno un valore a settimana, ma molte serie storiche sono molto più lunghe. Il
+        carico elettrico della zona Nord pubblicato da Terna, che abbiamo usato nel notebook 08, ha un valore ogni
+        quarto d'ora per tutto il 2024, cioè più di 35.000 punti, e in un grafico dell'anno intero i singoli giorni
+        non si distinguono. Per muoversi in una serie così Plotly offre due controlli sull'asse x: il **range
+        slider**, una barra sotto il grafico con cui si sceglie l'intervallo da mostrare, e il **range selector**,
+        una fila di pulsanti che saltano a intervalli predefiniti. Gli esempi ufficiali sono nella pagina sul
+        [range slider](https://plotly.com/python/range-slider/).
+    """)
+    nb.md("""
+        Leggiamo il file come nel notebook 08. Le righe arrivano dalla più recente alla più vecchia, quindi le
+        ordiniamo per data, e togliamo i quattro quarti d'ora ripetuti nella notte di ottobre in cui si torna
+        all'ora solare, che darebbero due valori diversi per lo stesso istante.
+    """)
+    nb.code("""
+        carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
+        carico = carico.sort_values("Date")
+        carico = carico.drop_duplicates(subset="Date")
+        carico.head(3)
+    """)
+    nb.md("""
+        I pulsanti del range selector si descrivono con una lista di dizionari, uno per pulsante. In ogni
+        dizionario `count` e `step` dicono di quanto tornare indietro a partire dalla fine dell'intervallo
+        visibile, per esempio sette giorni o un mese, mentre `label` è l'etichetta scritta sul pulsante. Il
+        pulsante con `step="all"` riporta il grafico all'anno intero.
+    """)
+    nb.code("""
+        bottoni = [
+            dict(count=7, label="1w", step="day", stepmode="backward"),
+            dict(count=1, label="1m", step="month", stepmode="backward"),
+            dict(step="all"),
+        ]
+    """)
+    nb.md("""
+        Il grafico si costruisce con `px.line`, come quelli delle quotazioni, e i due controlli si aggiungono con
+        `update_xaxes`, il metodo che modifica l'asse x: `rangeslider_visible=True` mostra lo slider e
+        `rangeselector=dict(buttons=bottoni)` mette i pulsanti sopra il grafico. Oltre i mille punti Plotly
+        Express disegna la linea con WebGL, una tecnica più veloce che però lo slider non riproduce nella sua
+        anteprima, e per questo passiamo `render_mode="svg"`, che la disegna come nei grafici precedenti. Un
+        clic su `1w` mostra l'ultima settimana dell'anno, e trascinando la finestra evidenziata nello slider
+        l'intervallo di una settimana scorre lungo tutto il 2024.
+    """)
+    nb.code("""
+        fig_anno = px.line(
+            carico,
+            x="Date",
+            y="Total Load [MW]",
+            title="Carico Nord, 2024",
+            render_mode="svg"
+        )
+        fig_anno.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=bottoni))
+        fig_anno.show()
+    """)
+    nb.hands_on(
+        richiesta="""
+            Prepara in `fig_pulsanti` lo stesso grafico con tre pulsanti diversi: `1d`, che mostra un giorno solo,
+            `3m`, che mostra tre mesi, e `all`. Il resto della cella è già scritto, quindi basta completare `count`
+            e `step` nei primi due dizionari. Con il pulsante `1d` si vede la forma del carico in una sola giornata.
+        """,
+        starter="""
+            bottoni_nuovi = [
+                dict(count=..., label="1d", step=..., stepmode="backward"),
+                dict(count=..., label="3m", step=..., stepmode="backward"),
+                dict(step="all"),
+            ]
+            fig_pulsanti = px.line(carico, x="Date", y="Total Load [MW]", title="Carico Nord, 2024", render_mode="svg")
+            fig_pulsanti.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=bottoni_nuovi))
+            fig_pulsanti.show()
+        """,
+        soluzione="""
+            bottoni_nuovi = [
+                dict(count=1, label="1d", step="day", stepmode="backward"),
+                dict(count=3, label="3m", step="month", stepmode="backward"),
+                dict(step="all"),
+            ]
+            fig_pulsanti = px.line(carico, x="Date", y="Total Load [MW]", title="Carico Nord, 2024", render_mode="svg")
+            fig_pulsanti.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=bottoni_nuovi))
+            fig_pulsanti.show()
+        """,
+        verifica="""
+            passi = [(b.count, b.step) for b in fig_pulsanti.layout.xaxis.rangeselector.buttons]
+            assert passi[:2] == [(1, "day"), (3, "month")], "❌ fig_pulsanti: i primi due pulsanti sono count=1, step='day' e count=3, step='month'"
+        """,
+        prova_anche="ad aggiungere un pulsante `6m` prima di `all`.",
+    )
+
+    # ------------------------------------------------------------------ 7
     nb.sezione("Istogramma e scatter", intro="""
         Plotly Express ha una funzione per ogni tipo di grafico, e tutte accettano gli stessi argomenti di `px.line`,
         a partire dal DataFrame e dal mapping delle colonne. Le proviamo sui dati orari di una turbina eolica in Texas,
@@ -228,49 +315,120 @@ def costruisci() -> Notebook:
         fig.show()
     """)
 
+    # ------------------------------------------------------------------ 8
+    nb.sezione("Esportare in HTML", intro="""
+        Un grafico Plotly si può salvare in un file HTML, che si apre con un doppio clic in qualsiasi browser e
+        conserva zoom, legenda, slider e pulsanti, quindi è il modo più semplice per mandare un grafico interattivo
+        a chi non usa Python. Il metodo `write_html` scrive il file nella cartella del notebook. Con
+        `include_plotlyjs="cdn"` il file contiene soltanto i dati e la descrizione del grafico, mentre la libreria
+        Plotly viene scaricata da internet al momento dell'apertura; in questo modo il file del carico pesa circa
+        1,4 MB invece di 6, ma per vederlo serve una connessione. I dettagli sono nella
+        [documentazione](https://plotly.com/python/interactive-html-export/).
+    """)
+    nb.code("""
+        fig_anno.write_html("carico_nord_2024.html", include_plotlyjs="cdn")
+    """)
+    nb.md("""
+        Per controllare che il file sia stato scritto usiamo `os.path.exists`, come nel notebook 06 per i file di
+        dati. Il file `carico_nord_2024.html` si trova accanto al notebook, e aprendolo nel browser ritroviamo lo
+        stesso grafico, con lo slider e i pulsanti.
+    """)
+    nb.code("""
+        import os
+
+        os.path.exists("carico_nord_2024.html")  # Output: True
+    """)
+    nb.hands_on(
+        richiesta="""
+            Salva nel file `vento_potenza.html`, sempre con `include_plotlyjs="cdn"`, lo scatter del vento e della
+            potenza, che dopo la sezione precedente è ancora nella variabile `fig`. Se apri il file nel browser e
+            passi il mouse su un punto, compaiono il vento e la potenza di quell'ora.
+        """,
+        starter="""
+            fig.write_html(...)
+        """,
+        soluzione="""
+            fig.write_html("vento_potenza.html", include_plotlyjs="cdn")
+        """,
+        verifica="""
+            import os
+            assert os.path.exists("vento_potenza.html"), "❌ Il file vento_potenza.html non c'è: controlla il nome in fig.write_html"
+        """,
+    )
+
     # ------------------------------------------------------------------ Extra
     nb.sezione("Extra", intro="""
         Gli esercizi di questa sezione ripassano i punti principali del notebook e sono pensati per essere svolti a
-        casa, con calma, e durante le ore di corso li saltiamo. Il primo legge i dati di Terna nella propria cella, mentre il
-        secondo usa il DataFrame `turbina` della sezione precedente.
+        casa, con calma, e durante le ore di corso li saltiamo. I primi due usano il DataFrame `carico` della
+        sezione sul range slider, mentre il terzo usa il DataFrame `turbina` della sezione sull'istogramma.
     """)
     nb.esercizio(
-        titolo="Un mese di carico",
+        titolo="Un mese di carico con lo slider",
         scenario="""
-            Nel grafico del carico della zona Nord sull'intero 2024 le oscillazioni dei singoli giorni si
-            confondono, quindi vogliamo un grafico del solo mese di gennaio, con il titolo `Carico Nord, gennaio
-            2024` che dice a chi lo apre che cosa sta guardando. Con una maschera sul mese e `px.line` il grafico
-            si costruisce in due righe, e per vedere febbraio basta cambiare un numero. Nella linea si
-            riconoscono i cicli giornalieri e il calo dei fine settimana.
+            Nel grafico del carico sull'intero 2024 i singoli giorni si distinguono solo ingrandendo, quindi
+            vogliamo un grafico del solo mese di gennaio, con il titolo `Carico Nord, gennaio 2024`, il range
+            slider sotto l'asse x e due pulsanti, `1w` per una settimana e `all` per il mese intero. Con una
+            maschera sul mese, `px.line` e `update_xaxes` il grafico si costruisce in poche righe, e per vedere
+            febbraio basta cambiare un numero. Nella linea si riconoscono i cicli giornalieri e il calo dei fine
+            settimana.
         """,
         richiesta="""
-            1. Tieni in `gennaio` le sole righe di `carico` relative a gennaio 2024, usando una maschera sul mese della colonna `Date`.
-            2. Costruisci `fig_carico` con `px.line`, mettendo `Date` sull'asse x e `Total Load [MW]` sull'asse y, con il titolo `Carico Nord, gennaio 2024`.
+            1. Tieni in `gennaio` le sole righe di `carico` relative a gennaio, usando una maschera sul mese della colonna `Date`.
+            2. Costruisci `fig_carico` con `px.line`, con `Date` sull'asse x, `Total Load [MW]` sull'asse y, il titolo `Carico Nord, gennaio 2024` e `render_mode="svg"` come nel grafico dell'anno.
+            3. Aggiungi con `update_xaxes` lo slider e i due pulsanti, il primo con `count=7` e `step="day"`.
         """,
+        suggerimento="il mese di una colonna di date si legge con `.dt.month`, come nel notebook 08, e lo slider e i pulsanti si aggiungono con gli stessi due argomenti di `update_xaxes` usati per `fig_anno`.",
         starter="""
-            carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
-            carico = carico.sort_values("Date")
-
             mask_gennaio = ...
             gennaio = carico[mask_gennaio]
 
+            bottoni_carico = [
+                ...,
+                dict(step="all"),
+            ]
             fig_carico = px.line(...)
+            fig_carico.update_xaxes(...)
             fig_carico.show()
         """,
         soluzione="""
-            carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
-            carico = carico.sort_values("Date")
-
             mask_gennaio = carico["Date"].dt.month == 1
             gennaio = carico[mask_gennaio]
 
-            fig_carico = px.line(gennaio, x="Date", y="Total Load [MW]", title="Carico Nord, gennaio 2024")
+            bottoni_carico = [
+                dict(count=7, label="1w", step="day", stepmode="backward"),
+                dict(step="all"),
+            ]
+            fig_carico = px.line(gennaio, x="Date", y="Total Load [MW]", title="Carico Nord, gennaio 2024", render_mode="svg")
+            fig_carico.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=bottoni_carico))
             fig_carico.show()
         """,
         verifica="""
-            assert len(fig_carico.data) == 1 and fig_carico.data[0].mode == "lines", "❌ Serve una linea sola: px.line con y='Total Load [MW]'"
+            assert len(fig_carico.data) == 1 and len(fig_carico.data[0].x) == 2976, "❌ Serve una linea sola con le 2976 righe di gennaio: maschera su carico['Date'].dt.month"
             assert fig_carico.layout.title.text == "Carico Nord, gennaio 2024", "❌ Il titolo deve essere 'Carico Nord, gennaio 2024'"
+            assert fig_carico.layout.xaxis.rangeslider.visible and len(fig_carico.layout.xaxis.rangeselector.buttons) == 2, "❌ Servono lo slider e due pulsanti: rangeslider_visible=True e rangeselector=dict(buttons=bottoni_carico)"
         """,
+    )
+    nb.esercizio(
+        titolo="Il grafico del carico in HTML",
+        scenario="""
+            Un collega che non ha Python installato vuole esplorare con lo zoom e con lo slider il grafico di
+            gennaio, `fig_carico`. Salvato con `write_html` nel file `carico_gennaio.html`, il grafico si apre
+            con un doppio clic in qualunque browser e resta interattivo, e con l'opzione `include_plotlyjs="cdn"`
+            pesa poco più di 100 kB, quindi si può mandare per email.
+        """,
+        richiesta="Salva `fig_carico` nel file `carico_gennaio.html` con `include_plotlyjs=\"cdn\"`, poi aprilo dalla cartella del notebook e controlla che lo zoom funzioni.",
+        starter="""
+            fig_carico.write_html(...)
+        """,
+        soluzione="""
+            fig_carico.write_html("carico_gennaio.html", include_plotlyjs="cdn")
+        """,
+        verifica="""
+            import os
+            assert os.path.exists("carico_gennaio.html"), "❌ Il file carico_gennaio.html non c'è: controlla il nome in write_html"
+            assert os.path.getsize("carico_gennaio.html") < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\\"cdn\\""
+        """,
+        perche="Senza `include_plotlyjs=\"cdn\"` il file contiene al suo interno l'intera libreria Plotly, che pesa qualche megabyte, e in compenso si apre anche senza connessione. Con l'opzione `cdn` il file contiene solo i dati e la descrizione del grafico, e la libreria viene scaricata all'apertura.",
     )
     nb.esercizio(
         titolo="La distribuzione della potenza",

@@ -1,4 +1,4 @@
-"""A2 · Approfondimenti 2: il materiale della seconda giornata da fare se la classe è avanti."""
+"""A2 · Approfondimenti 2: date (differenze e fuso orario) e, per l'Avanzata, shift, rolling e il codice degli agenti."""
 
 from nbkit import Notebook
 
@@ -13,20 +13,20 @@ def costruisci() -> Notebook:
         blocco=4,
         giornata=4,
         fuori_programma=True,
-        intento="Raccoglie gli argomenti della seconda giornata che restano fuori quando il tempo manca; si affronta in classe se si è in anticipo sul programma, oppure a casa.",
+        intento="Raccoglie gli argomenti sulle date che restano fuori dal notebook 08 e, nella versione Avanzata, `shift`, `rolling` e i costrutti che si incontrano nel codice scritto da un agente; si affronta in classe se si è in anticipo sul programma, oppure a casa.",
         obiettivi={
             "base": [
-                "misurare durate con `Timedelta` e dare un fuso orario alle date con `tz_localize` e `tz_convert`",
-                "navigare una serie lunga con range slider e range selector",
-                "esportare un grafico interattivo in HTML",
+                "misurare la distanza tra due date e la durata di una serie con `Timedelta`",
+                "dare un fuso orario a date che non ne hanno con `tz_localize`",
+                "convertire le date in un altro fuso con `tz_convert` e selezionare un intervallo su un indice con fuso",
             ],
             "avanzata": [
-                "misurare durate con `Timedelta`, gestire il fuso orario e costruire lag e medie mobili con `shift` e `rolling`",
-                "navigare una serie con range slider e range selector ed esportare il grafico in HTML",
+                "misurare durate con `Timedelta` e gestire il fuso orario con `tz_localize` e `tz_convert`",
+                "costruire lag e medie mobili con `shift` e `rolling`",
                 "riconoscere type hint, `@dataclass`, decoratori, generatori e `**kwargs`",
             ],
         },
-        tempo={"base": 40, "avanzata": 60},
+        tempo={"base": 20, "avanzata": 40},
         dati={
             "base": ["load_total_north_hourly_2024.xlsx"],
             "avanzata": ["load_total_north_hourly_2024.xlsx", "impianti_fv.csv"],
@@ -45,7 +45,6 @@ def costruisci() -> Notebook:
         np.random.seed(42)
         import pandas as pd
         import plotly.express as px
-        import plotly.graph_objects as go
     """)
     nb.code("""
         intervallo = pd.date_range("2025-03-01 00:00", periods=3 * 24 * 4, freq="15min")
@@ -164,88 +163,7 @@ def costruisci() -> Notebook:
             fig.show()
         """)
 
-    # ------------------------------------------------------------------ 4
-    nb.sezione("Range slider e range selector", intro="""
-        Per navigare una serie storica lunga Plotly offre due controlli sull'asse x: il **range slider**,
-        una barra sotto il grafico con cui si sceglie l'intervallo da mostrare, e il **range selector**, una
-        fila di pulsanti che saltano a intervalli predefiniti. Per usarli passiamo a `graph_objects` e
-        seguiamo lo schema degli [esempi ufficiali](https://plotly.com/python/range-slider/), nel quale
-        prima si costruiscono le tracce e poi si aggiunge il controllo nel `layout`.
-    """)
-    nb.md("""
-        Come dati usiamo `px.data.stocks()`, lo stesso dataset del notebook 09. Contiene una colonna con la
-        data, `date`, e una colonna per ciascuna azienda con il prezzo dell'azione indicizzato, cioè diviso
-        per il valore iniziale, in modo che tutte le serie partano da 1. La colonna `date` è memorizzata come
-        testo, quindi la convertiamo subito in datetime.
-    """)
-    nb.code("""
-        df = px.data.stocks().copy()
-        df["date"] = pd.to_datetime(df["date"])
-        df.head()
-    """)
-    nb.md("""
-        Con `go.Figure()` creiamo una figura vuota e con `add_trace` aggiungiamo una linea per ciascuna
-        delle tre aziende scelte. Il nome della colonna diventa il nome della traccia, che compare nella
-        legenda.
-    """)
-    nb.code("""
-        aziende = ["AAPL", "AMZN", "MSFT"]
-
-        fig = go.Figure()
-        for c in aziende:
-            fig.add_trace(go.Scatter(x=list(df["date"]), y=list(df[c]), name=c))
-    """)
-    nb.md("""
-        I pulsanti del range selector si descrivono con una lista di dizionari. Ogni pulsante indica, con
-        `count` e `step`, di quanto tornare indietro rispetto all'ultima data, e con `label` l'etichetta da
-        mostrare; il pulsante con `step="all"` riporta il grafico all'intervallo completo. Nell'esempio
-        definiamo quattro pulsanti: un mese, sei mesi, un anno e l'intero periodo.
-    """)
-    nb.code("""
-        bottoni = [
-            dict(count=1, label="1m", step="month", stepmode="backward"),
-            dict(count=6, label="6m", step="month", stepmode="backward"),
-            dict(count=1, label="1y", step="year", stepmode="backward"),
-            dict(step="all"),
-        ]
-    """)
-    nb.md("""
-        Infine passiamo i pulsanti a `update_layout`, dentro la configurazione dell'asse x, e rendiamo
-        visibile lo slider con `rangeslider=dict(visible=True)`. Nel grafico i pulsanti compaiono sopra
-        l'area del disegno e lo slider sotto l'asse; trascinando i bordi dello slider si sceglie un
-        intervallo qualsiasi.
-    """)
-    nb.code("""
-        # range slider + range selector (schema ufficiale)
-        fig.update_layout(
-            title_text="Stocks (indicizzato), range slider",
-            height=400,
-            width=700,
-            xaxis=dict(
-                rangeselector=dict(buttons=bottoni, bgcolor="lightgray", font=dict(size=10)),
-                rangeslider=dict(visible=True),
-                type="date",
-            ),
-            margin=dict(t=80, b=80),
-        )
-        fig.show()
-    """)
-
-    # ------------------------------------------------------------------ 5
-    nb.sezione("Esportare in HTML", intro="""
-        Per condividere un grafico interattivo con chi non usa Jupyter, la strada più semplice è salvarlo
-        come file HTML, che si apre con qualsiasi browser e conserva zoom, legenda e controlli. Il metodo
-        `write_html` scrive il file nella cartella del notebook; con `include_plotlyjs="cdn"` il file resta
-        leggero, perché la libreria Plotly viene scaricata da internet al momento dell'apertura. I dettagli
-        sono nella [documentazione](https://plotly.com/python/interactive-html-export/).
-    """)
-    nb.code("""
-        # salva l'ultima figura (fig) in HTML, nella cartella del notebook: si apre con un browser
-        # con include_plotlyjs="cdn" la libreria Plotly si scarica all'apertura: file leggero, ma serve la rete
-        fig.write_html("plot_time_series.html", include_plotlyjs="cdn")
-    """)
-
-    # ------------------------------------------------------------------ 6 (A)
+    # ------------------------------------------------------------------ 4 (A)
     with nb.solo("avanzata"):
         nb.sezione("Leggere il codice di un agente: type hint, dataclass, decoratori, generatori, kwargs", intro="""
             Gli script scritti da un agente, come quello che abbiamo letto nel notebook 10, usano spesso
@@ -352,79 +270,46 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ Esercizi
     nb.sezione("Esercizi", intro="""
-        Gli esercizi usano due oggetti dei notebook precedenti. Il primo è `carico`, il carico Terna della
-        zona Nord nel 2024, ordinato per data e senza i duplicati dovuti all'ora legale come nel notebook 08;
-        il secondo è `fig_carico`, il grafico di gennaio costruito nell'esercizio 9.1. La cella seguente li
-        ricostruisce entrambi.
+        Questa sezione usa `carico`, il carico Terna della zona Nord nel 2024, ordinato per data e senza i
+        duplicati dovuti al ritorno all'ora solare, come nel notebook 08. La cella seguente lo ricostruisce.
     """)
     nb.code("""
         carico = pd.read_excel("../Dati/load_total_north_hourly_2024.xlsx")
         carico = carico.sort_values("Date")
         carico = carico.drop_duplicates(subset="Date")
-
-        gennaio = carico[carico["Date"].dt.month == 1]
-        fig_carico = px.line(gennaio, x="Date", y="Total Load [MW]", title="Carico Nord, gennaio 2024")
-        fig_carico.show()
+        carico.head(3)
     """)
     nb.esercizio(
-        titolo="Il range slider sul carico di gennaio",
-        aula="base",
+        titolo="L'ora che manca a marzo",
         scenario="""
-            Il grafico di gennaio contiene quasi 3000 quarti d'ora, troppi per distinguere i singoli giorni a
-            colpo d'occhio. Vogliamo che chi lo apre possa scorrere il mese con un range slider sotto l'asse x
-            e passare con due pulsanti, sopra il grafico, dalla vista di una settimana a quella del mese intero,
-            senza toccare il codice. Bastano due argomenti di `update_xaxes`, e quando il codice è corretto lo
-            slider e i pulsanti compaiono nel grafico.
+            Nel notebook 08 abbiamo visto che a ottobre, quando si torna all'ora solare, nel carico compaiono
+            quattro quarti d'ora ripetuti. A marzo succede il contrario, perché con il passaggio all'ora legale
+            un'ora non esiste e nei dati mancano quattro quarti d'ora. Vogliamo trovare
+            il punto della serie in cui due righe consecutive distano più di 15 minuti: con `diff()` sulla colonna
+            `Date` e una maschera il risultato è una riga sola, quella delle 3:00 del 31 marzo 2024, che arriva
+            un'ora e un quarto dopo la precedente.
         """,
         richiesta="""
-            1. Attiva il range slider sotto l'asse x di `fig_carico`.
-            2. Aggiungi un range selector con due pulsanti: il primo, con etichetta `1w`, torna indietro di una settimana (`count=7`, `step="day"`), mentre il secondo, `all`, mostra tutto il mese.
+            1. Calcola in `distanze` la differenza tra ogni valore di `carico["Date"]` e il precedente, con `diff()`.
+            2. Tieni in `salti` le righe di `carico` in cui `distanze` è maggiore di 15 minuti.
         """,
-        suggerimento="su una figura creata con `px` lo slider si attiva con `fig_carico.update_xaxes(rangeslider_visible=True)`, e il range selector si aggiunge nella stessa chiamata con `rangeselector=dict(buttons=...)`.",
+        suggerimento="una durata fissa si scrive con `pd.Timedelta(\"15min\")` e si confronta con `>` come un numero, quindi `distanze > pd.Timedelta(\"15min\")` è una maschera che si usa tra parentesi quadre su `carico`.",
         starter="""
-            bottoni_carico = [
-                ...,
-                dict(step="all"),
-            ]
-            fig_carico.update_xaxes(...)
-            fig_carico.show()
+            distanze = ...
+            salti = ...
+
+            salti
         """,
         soluzione="""
-            bottoni_carico = [
-                dict(count=7, label="1w", step="day", stepmode="backward"),
-                dict(step="all"),
-            ]
-            fig_carico.update_xaxes(rangeslider_visible=True, rangeselector=dict(buttons=bottoni_carico))
-            fig_carico.show()
+            distanze = carico["Date"].diff()
+            salti = carico[distanze > pd.Timedelta("15min")]
+
+            salti
         """,
         verifica="""
-            assert fig_carico.layout.xaxis.rangeslider.visible, "❌ Manca il range slider: update_xaxes(rangeslider_visible=True)"
-            assert len(fig_carico.layout.xaxis.rangeselector.buttons) == 2, "❌ Il range selector deve avere due pulsanti, 1w e all"
-            assert fig_carico.layout.xaxis.rangeselector.buttons[0].count == 7, "❌ Il primo pulsante va indietro di 7 giorni: count=7, step='day'"
+            assert len(salti) == 1, "❌ salti: deve restare una riga sola, quella con distanze > pd.Timedelta('15min')"
+            assert salti["Date"].iloc[0] == pd.Timestamp("2024-03-31 03:00"), "❌ salti: la riga attesa è quella delle 3:00 del 31 marzo"
         """,
-    )
-    nb.esercizio(
-        titolo="Il grafico del carico in HTML",
-        scenario="""
-            Un collega che non ha Python installato vuole esplorare con lo zoom il grafico del carico di
-            gennaio, `fig_carico`. Plotly salva la figura in un file HTML che si apre con un doppio clic in
-            qualunque browser e resta interattivo, e con l'opzione `include_plotlyjs="cdn"` il file pesa meno
-            di 1 MB e si può mandare per email. Prima di spedirlo conviene aprirlo dalla cartella del notebook
-            e controllare che lo zoom funzioni.
-        """,
-        richiesta="Salva `fig_carico` nel file `carico_gennaio.html` con `include_plotlyjs=\"cdn\"`.",
-        starter="""
-            fig_carico.write_html(...)
-        """,
-        soluzione="""
-            fig_carico.write_html("carico_gennaio.html", include_plotlyjs="cdn")
-        """,
-        verifica="""
-            from pathlib import Path
-            assert Path("carico_gennaio.html").exists(), "❌ Il file carico_gennaio.html non c'è: controlla il nome in write_html"
-            assert Path("carico_gennaio.html").stat().st_size < 1_000_000, "❌ Il file è troppo grande: manca include_plotlyjs=\\"cdn\\""
-        """,
-        perche="Senza `include_plotlyjs=\"cdn\"` il file contiene al suo interno l'intera libreria Plotly, che pesa qualche megabyte, e in compenso si apre anche senza connessione. Con l'opzione `cdn` il file contiene solo i dati e la descrizione del grafico, e la libreria viene scaricata all'apertura.",
     )
     with nb.solo("avanzata"):
         nb.esercizio(
