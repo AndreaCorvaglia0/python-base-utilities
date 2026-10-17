@@ -91,19 +91,17 @@ assert buono == 5, "❌ buono: i 5 euro in una variabile"
 assert round(totale, 2) == round(t, 2), "❌ totale deve dare lo stesso risultato di t"
 '''),
     '4.1': ('Esercizio 4.1', r'''
-assert inverti_stringa("Python") == "nohtyP", "❌ inverti_stringa('Python') deve restituire 'nohtyP'"
+assert sopra_soglia == ["alimentari", "ristoranti", "regali"], "❌ sopra_soglia: le tre categorie con più di 100 euro"
+assert round(totale, 1) == 805.8, "❌ totale: la somma di tutti i valori del dizionario"
 '''),
     '4.2': ('Esercizio 4.2', r'''
-atteso = ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna']
-assert paesi_capitale_pari(g10) == atteso, "❌ controlla la condizione: len(capitale) deve essere pari"
-'''),
-    '4.3': ('Esercizio 4.3', r'''
-assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ le palindrome della lista sono anna, radar, osso e madam"
+assert costo(100) == 25.0, "❌ costo(100) deve dare 25.0: la tariffa predefinita è 0.25"
+assert costo(100, tariffa=0.19) == 19.0, "❌ costo(100, tariffa=0.19) deve dare 19.0: usa la tariffa ricevuta"
+assert costo_abbonato == 7.98, "❌ costo_abbonato: 42 minuti a 0.19 euro al minuto"
 '''),
     '5.1': ('Esercizio 5.1', r'''
-assert round(totale, 2) == 7.5, "❌ totale: la lista si chiama prezzi"
 assert anni_alla_pensione == 46, "❌ anni_alla_pensione: eta è un testo, convertilo con int()"
-assert capitale == "Roma" and citta[-1] == "Napoli", "❌ capitale o citta: la chiave è Italia con la maiuscola; una lista si allunga con append"
+assert len(citta) == 4 and citta[-1] == "Napoli", "❌ citta: una lista si allunga con append"
 '''),
     '5.2': ('Esercizio 5.2', r'''
 assert risposte["obbligatorio"] == "iterable", "❌ obbligatorio: il nome del parametro che nella firma non ha ="
@@ -111,17 +109,12 @@ assert risposte["default_reverse"] is False, "❌ default_reverse: il valore dop
 assert dal_piu_alto == [30, 28, 25, 18], "❌ dal_piu_alto: passa reverse=True per nome"
 '''),
     '6.1': ('Esercizio 6.1', r'''
-assert list(letture_kwh.columns) == ["pod", "fascia", "kwh"], "❌ letture_kwh: servono solo pod, fascia e kwh (usecols)"
-assert round(totale_kwh, 1) == 134507.7, "❌ totale_kwh: controlla decimal=\",\""
+assert letture.shape == (248, 3), "❌ letture: 248 righe e 3 colonne, controlla sep"
+assert letture["kwh"].dtype == "float64", "❌ letture: kwh deve essere numerica, controlla decimal"
 '''),
     '6.2': ('Esercizio 6.2', r'''
-assert list(fogli.keys()) == ["Gennaio", "Febbraio"], "❌ fogli: il file deve avere i fogli Gennaio e Febbraio"
-assert len(consumi) == 6 and list(consumi.index) == list(range(6)), "❌ consumi: 6 righe con indice da 0 a 5 (ignore_index=True)"
-assert round(consumi["kwh"].sum(), 1) == 14149.2, "❌ consumi: il totale dei kwh è 14149.2"
-'''),
-    '6.3': ('Esercizio 6.3', r'''
-assert len(letture_pod) == 31, "❌ letture_pod: servono le 31 righe del solo POD IT001E10000000"
-assert round(totale_marzo, 1) == 7785.6, "❌ totale_marzo: somma la colonna kwh"
+assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
+assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, presa dalla tabella pod con il WHERE"
 '''),
     '7.1': ('Esercizio 7.1', r'''
 assert prime_tre["kwh"].tolist() == [5785.2, 1434.9, 1396.3], "❌ prime_tre: ordina per kwh con ascending=False e tieni le prime tre righe"
@@ -242,34 +235,6 @@ assert df_15min["date"].nunique() == 3, "❌ date: usa df_15min.index.date"
 assert df_15min["is_weekend"].sum() == 192, "❌ is_weekend: df_15min.index.dayofweek >= 5"
 assert len(media_oraria) == 72 and round(media_oraria.iloc[0], 3) == 230.925, "❌ media_oraria: df_15min[\"power_kw\"].resample(\"h\").mean()"
 assert round(somma_oraria.iloc[0], 1) == 923.7, "❌ somma_oraria: come media_oraria, con sum() al posto di mean()"
-'''),
-    'Passo 1': ('Passo 1', r'''
-assert cliente == "Panificio Rè", "❌ cliente: il valore della chiave 'cliente'"
-assert kwh == 1654.2, "❌ kwh: il valore della chiave 'kwh_febbraio'"
-assert round(costo, 2) == 347.38, "❌ costo: consumo per prezzo"
-'''),
-    'Passo 2': ('Passo 2', r'''
-assert ore_forno == [9.5, 11.2, 10.8, 9.9, 8.4], "❌ ore_forno: dalle 4 alle 8 comprese"
-assert quota_forno == 57.0, "❌ quota_forno: kwh_forno diviso totale_giorno, per 100, arrotondato a un decimale"
-assert picco == 11.2, "❌ picco: la lettura più alta, con max()"
-'''),
-    'Passo 3': ('Passo 3', r'''
-assert sorted(sopra_soglia) == ["IT001E31047092", "IT001E31048128", "IT001E31049306"], "❌ sopra_soglia: i tre POD con più di 2000 kWh"
-assert round(totale_kwh, 1) == 16244.1, "❌ totale_kwh: la somma di tutti i valori del dizionario"
-'''),
-    'Passo 4': ('Passo 4', r'''
-assert costo(1000) == 210.0, "❌ costo(1000) deve dare 210.0: il prezzo di default è 0.21"
-assert costo(1000, prezzo=0.19) == 190.0, "❌ costo(1000, prezzo=0.19) deve dare 190.0: usa il prezzo ricevuto"
-assert costo_serra == 556.92, "❌ costo_serra: 3276.0 kWh a 0.17 euro/kWh"
-'''),
-    'Passo 5': ('Passo 5', r'''
-assert letture["kwh"].dtype == "float64", "❌ letture: kwh deve essere numerica, controlla sep e decimal"
-assert list(anomale["pod"]) == ["IT001E31047092"], "❌ anomale: una riga sola, quella dell'officina, con kwh > 500"
-assert list(pd.read_csv("letture_anomale.csv").columns) == ["pod", "data", "kwh"], "❌ letture_anomale.csv: salva senza l'indice, con index=False"
-'''),
-    'Passo 6': ('Passo 6', r'''
-assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
-assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, presa dalla tabella pod con il WHERE"
 '''),
     'Step 1': ('Step 1', r'''
 assert df.shape == (70176, 4), "❌ df: 70.176 righe e 4 colonne, i due anni uno sotto l'altro"

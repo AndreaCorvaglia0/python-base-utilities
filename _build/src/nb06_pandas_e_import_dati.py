@@ -7,7 +7,12 @@ DATI_BASE = [
     "letture_pod_2025.csv",
     "load_total_north_hourly_2024.xlsx",
     "utility.db",
+    "homework/letture_marzo.csv",
+    "homework/clienti.xlsx",
+    "homework/anagrafica.db",
 ]
+EXCEL = "../Dati/homework/clienti.xlsx"
+DB = "../Dati/homework/anagrafica.db"
 
 
 def costruisci() -> Notebook:
@@ -116,6 +121,30 @@ def costruisci() -> Notebook:
         df = pd.DataFrame(dati, index=["id_1", "id_2", "id_3"])
         df
     """)
+    nb.hands_on(
+        aula="base",
+        richiesta="""
+            Salva in `prime_due` le prime due righe di `df`, con il metodo `head()` visto nel notebook 05, e in
+            `forma` il suo attributo `shape`. Poiché `df` ha tre righe e tre colonne, `forma` deve valere `(3, 3)`.
+        """,
+        starter="""
+            prime_due = ...
+            forma = ...
+            print(forma)
+            prime_due
+        """,
+        soluzione="""
+            prime_due = df.head(2)
+            forma = df.shape
+            print(forma)
+            prime_due
+        """,
+        verifica="""
+            assert list(prime_due.index) == ["id_1", "id_2"], "❌ prime_due: le prime due righe si ottengono con df.head(2)"
+            assert forma == (3, 3), "❌ forma: shape è un attributo, quindi si scrive senza parentesi"
+        """,
+        prova_anche="con `head(1)`.",
+    )
 
     # ------------------------------------------------------------------ 3
     nb.sezione("File e cartelle con os", intro="""
@@ -142,19 +171,25 @@ def costruisci() -> Notebook:
     """)
     nb.code("os.getcwd()")
     nb.code('os.path.exists("../Dati/TexasTurbine.csv")')
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
-            Stampa l'elenco dei file contenuti nella cartella `Dati`, passando a `os.listdir()` il percorso
-            relativo della cartella. Nell'elenco devono comparire, tra gli altri, `TexasTurbine.csv` e
+            Salva in `file_dati` l'elenco dei file contenuti nella cartella `Dati`, passando a `os.listdir()` il
+            percorso relativo della cartella. Nell'elenco devono comparire, tra gli altri, `TexasTurbine.csv` e
             `utility.db`.
         """,
         starter="""
             # suggerimento: specifica il percorso della cartella in listdir()
-            ...
+            file_dati = ...
+            for file in file_dati:
+                print(file)
         """,
         soluzione="""
-            for file in os.listdir("../Dati"):
+            file_dati = os.listdir("../Dati")
+            for file in file_dati:
                 print(file)
+        """,
+        verifica="""
+            assert "TexasTurbine.csv" in file_dati and "utility.db" in file_dati, "❌ file_dati: il percorso relativo della cartella è \\"../Dati\\""
         """,
     )
 
@@ -211,6 +246,29 @@ def costruisci() -> Notebook:
         file UTF-8 che contiene lettere accentate non darebbe alcun errore, ma produrrebbe caratteri
         sbagliati senza segnalarlo.
     """)
+    nb.hands_on(
+        richiesta="""
+            Rileggi `letture_pod_2025.csv` con gli stessi tre parametri e aggiungi `usecols`, in modo da tenere
+            soltanto le colonne `cliente`, `fascia` e `kwh`. Il DataFrame `letture_ridotte` deve avere 216 righe e
+            3 colonne.
+        """,
+        starter="""
+            letture_ridotte = pd.read_csv(
+                "../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1", usecols=...
+            )
+            letture_ridotte.head()
+        """,
+        soluzione="""
+            letture_ridotte = pd.read_csv(
+                "../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1", usecols=["cliente", "fascia", "kwh"]
+            )
+            letture_ridotte.head()
+        """,
+        verifica="""
+            assert list(letture_ridotte.columns) == ["cliente", "fascia", "kwh"], "❌ letture_ridotte: usecols riceve la lista delle tre colonne"
+            assert letture_ridotte.shape == (216, 3), "❌ letture_ridotte: le righe sono 216, come nel file"
+        """,
+    )
 
     # ------------------------------------------------------------------ 5
     nb.sezione("File Excel", intro="""
@@ -261,6 +319,23 @@ def costruisci() -> Notebook:
         df_foglio1 = pd.read_excel("dati.xlsx", sheet_name="Foglio1")
         df_foglio1.dtypes
     """)
+    nb.hands_on(
+        richiesta="""
+            Leggi in `df_foglio2` il secondo foglio di `dati.xlsx`, indicandone il nome con `sheet_name`. La
+            colonna `Nome` deve contenere David, Eva e Frank.
+        """,
+        starter="""
+            df_foglio2 = pd.read_excel("dati.xlsx", sheet_name=...)
+            df_foglio2
+        """,
+        soluzione="""
+            df_foglio2 = pd.read_excel("dati.xlsx", sheet_name="Foglio2")
+            df_foglio2
+        """,
+        verifica="""
+            assert list(df_foglio2["Nome"]) == ["David", "Eva", "Frank"], "❌ df_foglio2: il secondo foglio si chiama \\"Foglio2\\""
+        """,
+    )
     nb.md("""
         Con `sheet_name=None` pandas legge tutti i fogli in una volta e restituisce un dizionario, in cui la
         chiave è il nome del foglio e il valore è il DataFrame corrispondente. Le chiavi del dizionario ci
@@ -312,6 +387,24 @@ def costruisci() -> Notebook:
         nell'esempio teniamo i POD con una potenza di almeno 30 kW.
     """)
     nb.code('pd.read_sql("SELECT * FROM pod WHERE potenza_kw >= 30", con)')
+    nb.hands_on(
+        richiesta="""
+            Cambia la condizione del `WHERE` in modo da leggere in `pod_piccoli` i POD con una potenza inferiore a
+            10 kW. Le righe sono 9, tutte con 3 o 6 kW.
+        """,
+        starter="""
+            pod_piccoli = pd.read_sql("SELECT * FROM pod WHERE ...", con)
+            pod_piccoli
+        """,
+        soluzione="""
+            pod_piccoli = pd.read_sql("SELECT * FROM pod WHERE potenza_kw < 10", con)
+            pod_piccoli
+        """,
+        verifica="""
+            assert len(pod_piccoli) == 9, "❌ pod_piccoli: la condizione è potenza_kw < 10"
+        """,
+        prova_anche="con `potenza_kw = 50`, che dà 5 righe.",
+    )
     nb.md("""
         Al termine del lavoro la connessione si chiude con il metodo `close()`, che libera il file del
         database. Dopo la chiusura, per eseguire altre query occorre aprire una nuova connessione con
@@ -405,6 +498,37 @@ def costruisci() -> Notebook:
             dati = response.json()
             dati[:4]
         """, rete=True)
+        nb.hands_on(
+            rete=True,
+            richiesta="""
+                Ripeti la richiesta cambiando i due parametri, in modo da ricevere in `dati_bg` i sensori di
+                temperatura della provincia di Bergamo, che il portale indica con `BG`. Ogni elemento della
+                risposta deve avere `"BG"` alla chiave `"provincia"`.
+            """,
+            starter="""
+                parametri_bg = {
+                    "provincia": ...,
+                    "tipologia": ...,
+                }
+                response = requests.get(url, params=parametri_bg, timeout=30)
+                dati_bg = response.json()
+                dati_bg[:4]
+            """,
+            soluzione="""
+                parametri_bg = {
+                    "provincia": "BG",
+                    "tipologia": "Temperatura",
+                }
+                response = requests.get(url, params=parametri_bg, timeout=30)
+                dati_bg = response.json()
+                dati_bg[:4]
+            """,
+            verifica="""
+                assert len(dati_bg) > 0 and all(d["provincia"] == "BG" for d in dati_bg), "❌ dati_bg: il parametro provincia vale \\"BG\\""
+                assert all(d["tipologia"] == "Temperatura" for d in dati_bg), "❌ dati_bg: il parametro tipologia vale \\"Temperatura\\""
+            """,
+            prova_anche='con la tipologia `"Precipitazione"`.',
+        )
         nb.sottosezione("L'anagrafica dei sensori", intro="""
             Recuperiamo adesso l'anagrafica completa dei sensori. Il portale riconosce alcuni parametri
             speciali, che iniziano con `$`; tra questi `$limit` indica quante righe vogliamo ricevere, e senza
@@ -519,145 +643,189 @@ def costruisci() -> Notebook:
 
     nb.md("Riassunto in una pagina: [Da Excel a pandas](../Schede/Scheda_Excel_pandas.md).")
 
-    # ------------------------------------------------------------------ 8
-    nb.sezione("Esercizi")
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", intro="""
+        Questa sezione raccoglie esercizi brevi sui punti principali del notebook, cioè la lettura di un CSV
+        italiano, di un foglio Excel e di una tabella SQL, da fare a casa per ripassare. Durante la lezione la
+        saltiamo, e ogni esercizio ha la sua verifica, che conferma il risultato o dice che cosa controllare.
+    """)
     nb.esercizio(
-        titolo="Lettura di un CSV italiano",
+        titolo="Il file del distributore",
         scenario="""
-            Un collega ha sommato a mano, in Excel, i consumi del 2025 dei sei POD del file
-            `letture_pod_2025.csv`, e vogliamo controllare il suo totale. Per il controllo bastano il codice del
-            POD, la fascia e i kWh, quindi leggiamo con pandas solo queste tre colonne e sommiamo i kWh di
-            tutte le righe; quando arriverà il file del 2026 basterà cambiarne il nome nella cella. La tabella
-            ha 216 righe e 3 colonne, e il totale è di circa 134507.7 kWh.
+            Lavoriamo nell'ufficio consumi di una piccola società di vendita di energia, e il distributore ci manda
+            il CSV con le letture giornaliere di marzo degli otto POD dei nostri clienti, scritto all'italiana con
+            il punto e virgola tra le colonne e la virgola nei decimali. Un'officina di Lecco segnala una bolletta
+            di marzo tripla del solito, quindi leggiamo il file con pandas e controlliamo con `info()` e
+            `describe()` che i consumi siano arrivati come numeri e quale sia la lettura più alta. La tabella ha 248
+            righe e tre colonne, `kwh` è di tipo `float64` e il massimo è di 1530.3 kWh, molto sopra i 250 kWh di
+            una giornata normale.
         """,
         richiesta="""
-            1. Leggi `../Dati/letture_pod_2025.csv` nel DataFrame `letture_kwh` con i parametri del CSV
-               italiano, tenendo solo le colonne `pod`, `fascia` e `kwh`.
-            2. Calcola la somma della colonna `kwh` e salvala in `totale_kwh`, il numero da confrontare con
-               quello del collega.
+            1. Leggi `../Dati/homework/letture_marzo.csv` in `letture`, indicando a `read_csv` il separatore delle
+               colonne e quello dei decimali.
+            2. Le istruzioni già scritte sotto la lettura mostrano i tipi delle colonne con `info()`, le prime righe
+               con `head()` e le statistiche con `describe()`. Controlla che `kwh` sia `float64`, perché un numero
+               letto come testo non si può sommare né confrontare con altri numeri, e leggi il massimo nella riga
+               `max` di `describe()`.
         """,
-        suggerimento="i parametri che servono sono `sep`, `decimal`, `encoding` e `usecols`, e la somma di una colonna si calcola con `.sum()`.",
+        suggerimenti=[
+            """
+                Un CSV salvato da Excel in italiano usa un separatore di colonne e un separatore decimale diversi
+                da quelli standard, e `read_csv` ha un parametro per ciascuno.
+            """,
+            """
+                Servono `sep=";"` e `decimal=","`; se `kwh` risulta letta come testo, di solito manca il
+                `decimal`.
+            """,
+        ],
         starter="""
-            letture_kwh = pd.read_csv("../Dati/letture_pod_2025.csv", ...)
-            totale_kwh = ...
-            totale_kwh
+            letture = pd.read_csv("../Dati/homework/letture_marzo.csv", ...)
+            letture.info()
+            print(letture.head())
+            print(letture.describe())
         """,
         soluzione="""
-            letture_kwh = pd.read_csv(
-                "../Dati/letture_pod_2025.csv",
-                sep=";",
-                decimal=",",
-                encoding="latin-1",
-                usecols=["pod", "fascia", "kwh"],
-            )
-            totale_kwh = letture_kwh["kwh"].sum()
-            totale_kwh
+            letture = pd.read_csv("../Dati/homework/letture_marzo.csv", sep=";", decimal=",")
+            letture.info()
+            print(letture.head())
+            print(letture.describe())
         """,
         verifica="""
-            assert list(letture_kwh.columns) == ["pod", "fascia", "kwh"], "❌ letture_kwh: servono solo pod, fascia e kwh (usecols)"
-            assert round(totale_kwh, 1) == 134507.7, "❌ totale_kwh: controlla decimal=\\",\\""
+            assert letture.shape == (248, 3), "❌ letture: 248 righe e 3 colonne, controlla sep"
+            assert letture["kwh"].dtype == "float64", "❌ letture: kwh deve essere numerica, controlla decimal"
         """,
         perche="""
-            Il parametro `usecols` limita la lettura alle tre colonne richieste. Senza `decimal=","` la
-            colonna `kwh` resterebbe testo, e la somma non darebbe un numero.
+            `info()` mostra subito se `kwh` è stata letta come numero, perché in quel caso il suo tipo è `float64`.
+            Questo file si legge senza indicare `encoding`, a differenza di `letture_pod_2025.csv`, e il massimo
+            di 1530.3 kWh, lontano dalla media di circa 77 kWh, è la lettura da segnalare al distributore.
+        """,
+    )
+
+    scenario_sabato = """
+        Siamo di reperibilità nel fine settimana e l'Officina Meccanica Fumagalli, che contesta la bolletta, chiede
+        la potenza del suo contatore e i prezzi per fascia che le applichiamo. Il gestionale è spento, ma la potenza
+        sta nella tabella `pod` del database dell'anagrafica e i prezzi nel foglio Listino dell'Excel dei clienti, e
+        con pandas leggiamo da lì soltanto quello che serve, in poche righe che tornano utili alla prossima
+        reperibilità. Il contatore dell'officina ha 30 kW e i prezzi sono di 0.21, 0.19 e 0.17 euro/kWh nelle
+        fasce F1, F2 e F3.
+    """
+    nb.esercizio(
+        aula="base",
+        titolo="La reperibilità",
+        scenario=scenario_sabato,
+        richiesta=f"""
+            1. Leggi in `listino` il foglio `Listino` di `{EXCEL}`, indicandolo con `sheet_name`, perché senza
+               questo parametro `read_excel` legge il primo foglio, che è l'anagrafica dei clienti.
+            2. Apri `{DB}` con `sqlite3.connect` e leggi con `pd.read_sql` in `officina` la sola riga dell'officina
+               della tabella `pod`, con un `WHERE` sulla colonna `cliente`. La riga `con.close()`, già scritta
+               nella cella, chiude poi la connessione, che a quel punto non serve più.
+        """,
+        suggerimenti=[
+            """
+                Con `read_excel` il foglio si sceglie con `sheet_name`; con il database si apre la connessione, si
+                legge con `read_sql` e si chiude la connessione.
+            """,
+            "In SQL il testo va tra apici singoli: `WHERE cliente = 'Officina Meccanica Fumagalli'`.",
+        ],
+        starter=f"""
+            import sqlite3
+
+            listino = pd.read_excel("{EXCEL}", sheet_name=...)
+
+            con = sqlite3.connect("{DB}")
+            officina = pd.read_sql("...", con)
+            con.close()
+
+            print(listino)
+            officina
+        """,
+        soluzione=f"""
+            import sqlite3
+
+            listino = pd.read_excel("{EXCEL}", sheet_name="Listino")
+
+            con = sqlite3.connect("{DB}")
+            officina = pd.read_sql("SELECT * FROM pod WHERE cliente = 'Officina Meccanica Fumagalli'", con)
+            con.close()
+
+            print(listino)
+            officina
+        """,
+        verifica="""
+            assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
+            assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, presa dalla tabella pod con il WHERE"
+        """,
+        perche="""
+            Il filtro con `WHERE` viene eseguito dal database, che restituisce a pandas soltanto la riga richiesta.
+            Con una tabella di otto righe la differenza non si nota, ma su tabelle grandi evita di caricare in
+            memoria dati che non servono.
         """,
     )
     nb.esercizio(
-        titolo="Un file Excel con un foglio per mese",
-        scenario="""
-            L'ufficio fatturazione vuole i consumi di gennaio e febbraio di tre POD in un file Excel, con un
-            foglio per mese, perché è il formato che apre e controlla ogni mese. Con pandas scriviamo i due
-            fogli nel file e, prima di mandarlo, lo rileggiamo tutto in una volta e mettiamo i fogli uno sotto
-            l'altro, per controllare che contenga tutti i dati. La tabella riletta ha 6 righe, con l'indice da
-            0 a 5, e un totale di 14149.2 kWh, lo stesso dei due DataFrame di partenza.
+        aula="avanzata",
+        titolo="La reperibilità",
+        scenario=scenario_sabato,
+        richiesta=f"""
+            1. Leggi in `listino` il foglio `Listino` di `{EXCEL}`, scelto con `sheet_name`, perché il primo foglio
+               del file è l'anagrafica dei clienti.
+            2. Scrivi la funzione `leggi_tabella(nome)`, che apre `{DB}` con `sqlite3.connect`, legge tutta la
+               tabella `nome` con `pd.read_sql`, chiude la connessione e restituisce il DataFrame, in modo che alla
+               prossima reperibilità basti una riga per leggere una tabella senza lasciare aperta la connessione.
+               Usala per mettere in `potenze` la tabella `pod`.
+            3. In `officina` metti la sola riga dell'Officina Meccanica Fumagalli, filtrando `potenze` con una
+               condizione sulla colonna `cliente`, come abbiamo fatto con i sensori di Milano.
         """,
-        richiesta="""
-            1. Scrivi i DataFrame `gennaio` e `febbraio` nel file `consumi.xlsx`, rispettivamente nei fogli
-               `Gennaio` e `Febbraio`, come li vuole la fatturazione.
-            2. Leggi tutti i fogli del file nel dizionario `fogli`, in modo da controllare anche i loro nomi.
-            3. Concatena i fogli nel DataFrame `consumi`, con un indice che va da 0 a 5. La cella stampa poi il
-               totale dei kWh della tabella riletta, da confrontare con quello di partenza.
-        """,
-        suggerimento="il file si scrive con `pd.ExcelWriter`, tutti i fogli si leggono con `sheet_name=None` e con `pd.concat(..., ignore_index=True)` l'indice riparte da 0.",
-        starter="""
-            gennaio = pd.DataFrame({
-                "pod": ["IT001E12345678", "IT001E23456789", "IT001E34567890"],
-                "kwh": [2724.7, 1890.4, 2751.4],
-            })
-            febbraio = pd.DataFrame({
-                "pod": ["IT001E12345678", "IT001E23456789", "IT001E34567890"],
-                "kwh": [2531.2, 1597.6, 2653.9],
-            })
+        suggerimenti=[
+            """
+                La funzione racchiude i tre passi del database, apertura, lettura e chiusura, e il nome ricevuto
+                entra nella query con una f-string: `f"SELECT * FROM {nome}"`.
+            """,
+        ],
+        starter=f"""
+            import sqlite3
 
-            with pd.ExcelWriter("consumi.xlsx") as writer:
+
+            def leggi_tabella(nome):
                 ...
 
-            fogli = ...
-            consumi = ...
-            print(round(consumi["kwh"].sum(), 1))
-            consumi
-        """,
-        soluzione="""
-            gennaio = pd.DataFrame({
-                "pod": ["IT001E12345678", "IT001E23456789", "IT001E34567890"],
-                "kwh": [2724.7, 1890.4, 2751.4],
-            })
-            febbraio = pd.DataFrame({
-                "pod": ["IT001E12345678", "IT001E23456789", "IT001E34567890"],
-                "kwh": [2531.2, 1597.6, 2653.9],
-            })
 
-            with pd.ExcelWriter("consumi.xlsx") as writer:
-                gennaio.to_excel(writer, sheet_name="Gennaio", index=False)
-                febbraio.to_excel(writer, sheet_name="Febbraio", index=False)
+            listino = pd.read_excel("{EXCEL}", sheet_name=...)
+            potenze = leggi_tabella("pod")
+            officina = ...
 
-            fogli = pd.read_excel("consumi.xlsx", sheet_name=None)
-            consumi = pd.concat(fogli.values(), ignore_index=True)
-            print(round(consumi["kwh"].sum(), 1))
-            consumi
+            print(listino)
+            officina
         """,
+        soluzione=f'''
+            import sqlite3
+
+
+            def leggi_tabella(nome):
+                """Legge tutta la tabella `nome` da anagrafica.db e la restituisce come DataFrame."""
+                con = sqlite3.connect("{DB}")
+                df = pd.read_sql(f"SELECT * FROM {{nome}}", con)
+                con.close()
+                return df
+
+
+            listino = pd.read_excel("{EXCEL}", sheet_name="Listino")
+            potenze = leggi_tabella("pod")
+            officina = potenze[potenze["cliente"] == "Officina Meccanica Fumagalli"]
+
+            print(listino)
+            officina
+        ''',
         verifica="""
-            assert list(fogli.keys()) == ["Gennaio", "Febbraio"], "❌ fogli: il file deve avere i fogli Gennaio e Febbraio"
-            assert len(consumi) == 6 and list(consumi.index) == list(range(6)), "❌ consumi: 6 righe con indice da 0 a 5 (ignore_index=True)"
-            assert round(consumi["kwh"].sum(), 1) == 14149.2, "❌ consumi: il totale dei kwh è 14149.2"
+            assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
+            assert leggi_tabella("pod").shape == (8, 3), "❌ leggi_tabella: deve restituire tutta la tabella, 8 righe e 3 colonne"
+            assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, quella dell'Officina Meccanica Fumagalli"
         """,
-    )
-    nb.esercizio(
-        titolo="Le letture di un POD dal database",
-        scenario="""
-            Un cliente chiede quanto ha consumato a marzo il suo punto di prelievo, il POD `IT001E10000000`.
-            Le letture giornaliere stanno nella tabella `letture` di `utility.db`, insieme a quelle di altri 29
-            POD, quindi invece di leggere tutta la tabella chiediamo al database, con una query, le sole righe
-            di quel POD, e in pandas ne sommiamo i kWh. Le righe sono 31, una per giorno, e il totale è di
-            7785.6 kWh.
+        perche="""
+            La funzione raccoglie in un solo punto l'apertura della connessione, la lettura e la chiusura, così ogni
+            chiamata chiude la connessione che ha aperto e nessuna resta aperta per dimenticanza. Il filtro
+            sull'officina si applica invece in pandas, con la stessa forma usata per i sensori di Milano, perché la
+            tabella è già in memoria.
         """,
-        richiesta="""
-            1. Apri la connessione a `../Dati/utility.db`.
-            2. Con una query, leggi dalla tabella `letture` solo le righe del POD `IT001E10000000` e salvale
-               nel DataFrame `letture_pod`.
-            3. Salva in `totale_marzo` la somma della colonna `kwh`, il numero da dare al cliente, poi chiudi
-               la connessione.
-        """,
-        suggerimento="dentro la query i valori di testo vanno tra apici singoli, come in `WHERE pod = '...'`.",
-        starter="""
-            con = ...
-            letture_pod = pd.read_sql(..., con)
-            totale_marzo = ...
-            con.close()
-            totale_marzo
-        """,
-        soluzione="""
-            con = sqlite3.connect("../Dati/utility.db")
-            letture_pod = pd.read_sql("SELECT * FROM letture WHERE pod = 'IT001E10000000'", con)
-            totale_marzo = letture_pod["kwh"].sum()
-            con.close()
-            totale_marzo
-        """,
-        verifica="""
-            assert len(letture_pod) == 31, "❌ letture_pod: servono le 31 righe del solo POD IT001E10000000"
-            assert round(totale_marzo, 1) == 7785.6, "❌ totale_marzo: somma la colonna kwh"
-        """,
-        facoltativo=True,
     )
     with nb.solo("avanzata"):
         nb.esercizio(
@@ -667,8 +835,8 @@ def costruisci() -> Notebook:
                 la classe energetica e le emissioni di CO2 di ciascuno. Vogliamo sapere quanta CO2 emette in
                 media un edificio di ogni classe in provincia di Milano, e con `requests` e pandas prendiamo i
                 dati direttamente dal portale, senza scaricare file a mano. Il risultato è una Series con una
-                riga per classe, da A4 a G. Per questo esercizio serve la rete, perché non c'è un file di
-                riserva.
+                riga per ciascuna classe presente nei dati, dalle più efficienti, come A+, fino alla G. Per
+                questo esercizio serve la rete, perché non c'è un file di riserva.
             """,
             richiesta="""
                 1. Recupera i dati dall'endpoint `https://www.dati.lombardia.it/resource/rsg3-xhvk.json` e
@@ -697,16 +865,16 @@ def costruisci() -> Notebook:
                 response.raise_for_status()
                 certificati = pd.DataFrame(response.json())
 
-                milano = certificati[certificati["provincia"] == "MILANO"].copy()
+                milano = certificati[certificati["provincia"] == "MI"].copy()
                 milano["emissioni_di_co2"] = pd.to_numeric(milano["emissioni_di_co2"], errors="coerce")
                 co2_per_classe = milano.groupby("classe_energetica")["emissioni_di_co2"].mean()
                 co2_per_classe
             """,
             perche="""
                 Prima di scrivere il filtro conviene controllare i nomi delle colonne con `certificati.columns`
-                e i valori della provincia con `unique()`, perché il portale scrive la provincia per esteso e
-                in maiuscolo. Se il portale cambiasse questi nomi, basterebbe adattare la maschera e il
-                `groupby`.
+                e i valori della provincia con `unique()`, perché il portale indica la provincia con la sigla,
+                `MI`, mentre il comune è scritto per esteso e in maiuscolo. Se il portale cambiasse questi
+                nomi, basterebbe adattare la maschera e il `groupby`.
             """,
             verifica="""
                 assert 0 < len(milano) < len(certificati), "❌ milano deve avere solo le righe della provincia di Milano"

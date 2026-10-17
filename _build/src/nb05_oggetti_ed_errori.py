@@ -154,25 +154,34 @@ def costruisci() -> Notebook:
         | `funzione(...)`, senza punto davanti | funzione di Python | `len(df)` |
         | `oggetto[...]` | selezione con le quadre | `df["Età"]` |
     """)
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
-            Nella cella qui sotto ci sono cinque espressioni, una per riga. Per ciascuna scrivi nel
-            commento, dopo la freccia, che cosa rappresenta, usando i nomi della seconda colonna della
-            tabella.
+            Nel dizionario qui sotto ogni chiave è un'espressione: scrivi come valore, tra virgolette, che cosa
+            rappresenta, usando i nomi della seconda colonna della tabella. Per esempio, a `pd.read_csv(...)`
+            corrisponderebbe `"funzione di una libreria"`.
         """,
         starter="""
-            # turbina.head(3)        -> ...
-            # turbina.shape          -> ...
-            # pd.Series([1, 2, 3])   -> ...
-            # round(27.6)            -> ...
-            # len(turbina)           -> ...
+            ruoli = {
+                "turbina.head(3)": ...,
+                "turbina.shape": ...,
+                "pd.Series([1, 2, 3])": ...,
+                "round(27.6)": ...,
+                "len(turbina)": ...,
+            }
         """,
         soluzione="""
-            # turbina.head(3)        -> metodo
-            # turbina.shape          -> attributo
-            # pd.Series([1, 2, 3])   -> classe
-            # round(27.6)            -> funzione di Python
-            # len(turbina)           -> funzione di Python
+            ruoli = {
+                "turbina.head(3)": "metodo",
+                "turbina.shape": "attributo",
+                "pd.Series([1, 2, 3])": "classe",
+                "round(27.6)": "funzione di Python",
+                "len(turbina)": "funzione di Python",
+            }
+        """,
+        verifica="""
+            testo = {k: str(v).lower() for k, v in ruoli.items()}
+            assert "metodo" in testo["turbina.head(3)"] and "attributo" in testo["turbina.shape"], "❌ head(3) ha le parentesi ed è un metodo, shape non le ha ed è un attributo"
+            assert "classe" in testo["pd.Series([1, 2, 3])"] and "funzione" in testo["round(27.6)"] and "funzione" in testo["len(turbina)"], "❌ Series ha la maiuscola ed è una classe, round e len sono funzioni di Python"
         """,
     )
     with nb.solo("avanzata"):
@@ -213,6 +222,27 @@ def costruisci() -> Notebook:
         arrotondato all'intero, senza decimali.
     """)
     nb.code("round(27.567), round(27.567, ndigits=1)   # Output: (28, 27.6)")
+    nb.hands_on(
+        richiesta="""
+            Le ciliegie costano 7.4567 euro al chilo, e sul cartellino il prezzo va scritto al centesimo. Salva in
+            `prezzo_cartellino` il prezzo arrotondato a due decimali, passando a `round` il secondo argomento per
+            nome: il risultato è 7.46.
+        """,
+        starter="""
+            prezzo_kg = 7.4567
+            prezzo_cartellino = round(prezzo_kg, ...)
+            prezzo_cartellino
+        """,
+        soluzione="""
+            prezzo_kg = 7.4567
+            prezzo_cartellino = round(prezzo_kg, ndigits=2)
+            prezzo_cartellino
+        """,
+        verifica="""
+            assert prezzo_cartellino == 7.46, "❌ prezzo_cartellino: passa ndigits=2 a round"
+        """,
+        prova_anche="con `ndigits=0`, che dà 7.0.",
+    )
     nb.md("""
         Nelle firme si trovano spesso anche i type hint, che indicano il tipo dei parametri e del
         risultato. Il tipo atteso di un parametro si scrive dopo i due punti che seguono il suo nome,
@@ -268,6 +298,25 @@ def costruisci() -> Notebook:
         citta = ["Roma", "Milano", "Torino"]
         print(cita)
     """, errore=True)
+    nb.hands_on(
+        richiesta="""
+            La cella qui sotto si ferma con un `NameError`: leggi nell'ultima riga del traceback quale nome Python
+            non conosce e correggilo. Dopo la correzione `totale` vale 43.9, la somma delle spese della settimana.
+        """,
+        starter="""
+            spese_settimana = [12.5, 8.0, 23.4]
+            totale = sum(spese_settimna)
+            totale
+        """,
+        soluzione="""
+            spese_settimana = [12.5, 8.0, 23.4]
+            totale = sum(spese_settimana)
+            totale
+        """,
+        verifica="""
+            assert round(totale, 2) == 43.9, "❌ totale: il nome della lista è spese_settimana"
+        """,
+    )
     nb.sottosezione("TypeError", intro="""
         Un `TypeError` segnala un'operazione tra valori di tipo incompatibile. Nell'esempio proviamo a
         unire con `+` un testo e un numero, che Python non sa sommare; per correggere la riga si
@@ -337,16 +386,20 @@ def costruisci() -> Notebook:
 
     nb.md("Riassunto in una pagina: [Gli errori più comuni](../Schede/Scheda_errori.md).")
 
-    # ------------------------------------------------------------------ Esercizi
-    nb.sezione("Esercizi")
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", intro="""
+        Questa sezione raccoglie due esercizi brevi sui punti principali del notebook, la lettura di un traceback
+        e la lettura della firma di una funzione, da fare a casa per ripassare. Durante la lezione la saltiamo, e
+        ogni esercizio ha la sua verifica, che conferma il risultato o dice che cosa controllare.
+    """)
     nb.esercizio(
-        titolo="Quattro celle da sistemare",
+        titolo="Due celle da sistemare",
         scenario="""
-            Le quattro celle qui sotto fanno piccoli conti di tutti i giorni, come il totale di una spesa o
-            gli anni che mancano alla pensione, e ciascuna si ferma con un errore diverso tra quelli visti
-            in questo notebook. Vogliamo farle funzionare seguendo il traceback, che dice che cosa non va
-            e in quale riga, senza cambiare quello che le celle calcolano. Alla fine `totale` vale 7.5,
-            `anni_alla_pensione` vale 46, `capitale` vale `'Roma'` e `citta` contiene quattro città.
+            Le due celle qui sotto fanno piccoli conti di tutti i giorni, gli anni che mancano alla pensione e
+            l'elenco delle città di un viaggio, e ciascuna si ferma con un errore diverso tra quelli visti in
+            questo notebook. Vogliamo farle funzionare seguendo il traceback, che dice che cosa non va e in
+            quale riga, senza cambiare quello che le celle calcolano. Alla fine `anni_alla_pensione` vale 46 e
+            `citta` contiene quattro città, l'ultima delle quali è Napoli.
         """,
         richiesta="""
             1. Esegui le celle una dopo l'altra e, per ciascuna, leggi l'ultima riga del traceback, che dice
@@ -356,40 +409,22 @@ def costruisci() -> Notebook:
         """,
         suggerimento="ogni cella contiene un solo errore, quindi dopo averla corretta conviene rieseguirla e controllare l'output prima di passare alla successiva.",
         starter="""
-            prezzi = [2.5, 1.2, 3.8]
-            totale = sum(prezzo)
-            totale
+            eta = "24"
+            anni_alla_pensione = 70 - eta
+            anni_alla_pensione
         """,
         soluzione="""
-            prezzi = [2.5, 1.2, 3.8]
-            totale = sum(prezzi)
-            totale
+            eta = "24"
+            anni_alla_pensione = 70 - int(eta)
+            anni_alla_pensione
         """,
         perche="""
-            Le quattro celle danno quattro errori diversi: un `NameError` per il nome sbagliato della
-            lista, un `TypeError` per la sottrazione tra un numero e un testo, un `KeyError` per la
-            chiave scritta in minuscolo e un `AttributeError` per il metodo `add`, che le liste non
-            hanno. In tutti i casi la correzione sta nella riga indicata dalla freccia.
+            Le due celle danno due errori diversi: un `TypeError` per la sottrazione tra un numero e un
+            testo, che si corregge convertendo il testo con `int()`, e un `AttributeError` per il metodo
+            `add`, che le liste non hanno, perché quello che aggiunge un elemento in fondo si chiama
+            `append`. In tutti e due i casi la correzione sta nella riga indicata dalla freccia.
         """,
     )
-    _altra_cella_rotta(nb, starter="""
-        eta = "24"
-        anni_alla_pensione = 70 - eta
-        anni_alla_pensione
-    """, soluzione="""
-        eta = "24"
-        anni_alla_pensione = 70 - int(eta)
-        anni_alla_pensione
-    """)
-    _altra_cella_rotta(nb, starter="""
-        capitali = {"Italia": "Roma", "Francia": "Parigi", "Spagna": "Madrid"}
-        capitale = capitali["italia"]
-        capitale
-    """, soluzione="""
-        capitali = {"Italia": "Roma", "Francia": "Parigi", "Spagna": "Madrid"}
-        capitale = capitali["Italia"]
-        capitale
-    """)
     _altra_cella_rotta(nb, starter="""
         citta = ["Roma", "Milano", "Torino"]
         citta.add("Napoli")
@@ -400,9 +435,8 @@ def costruisci() -> Notebook:
         citta
     """)
     _verifica_finale(nb, """
-        assert round(totale, 2) == 7.5, "❌ totale: la lista si chiama prezzi"
         assert anni_alla_pensione == 46, "❌ anni_alla_pensione: eta è un testo, convertilo con int()"
-        assert capitale == "Roma" and citta[-1] == "Napoli", "❌ capitale o citta: la chiave è Italia con la maiuscola; una lista si allunga con append"
+        assert len(citta) == 4 and citta[-1] == "Napoli", "❌ citta: una lista si allunga con append"
     """)
 
     nb.esercizio(

@@ -91,19 +91,17 @@ assert buono == 5, "❌ buono: i 5 euro in una variabile"
 assert round(totale, 2) == round(t, 2), "❌ totale deve dare lo stesso risultato di t"
 '''),
     '4.1': ('Esercizio 4.1', r'''
-assert inverti_stringa("Python") == "nohtyP", "❌ inverti_stringa('Python') deve restituire 'nohtyP'"
+assert sopra_soglia == ["alimentari", "ristoranti", "regali"], "❌ sopra_soglia: le tre categorie con più di 100 euro"
+assert round(totale, 1) == 805.8, "❌ totale: la somma di tutti i valori del dizionario"
 '''),
     '4.2': ('Esercizio 4.2', r'''
-atteso = ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna']
-assert paesi_capitale_pari(g10) == atteso, "❌ controlla la condizione: len(capitale) deve essere pari"
-'''),
-    '4.3': ('Esercizio 4.3', r'''
-assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ le palindrome della lista sono anna, radar, osso e madam"
+assert costo(100) == 25.0, "❌ costo(100) deve dare 25.0: la tariffa predefinita è 0.25 e lo sblocco 0"
+assert costo(100, tariffa=0.19, sblocco=1) == 20.0, "❌ costo(100, tariffa=0.19, sblocco=1) deve dare 20.0"
+assert costo_elettrica == 9.75, "❌ costo_elettrica: 35 minuti alla tariffa predefinita, più 1 euro"
 '''),
     '5.1': ('Esercizio 5.1', r'''
-assert round(totale, 2) == 7.5, "❌ totale: la lista si chiama prezzi"
 assert anni_alla_pensione == 46, "❌ anni_alla_pensione: eta è un testo, convertilo con int()"
-assert capitale == "Roma" and citta[-1] == "Napoli", "❌ capitale o citta: la chiave è Italia con la maiuscola; una lista si allunga con append"
+assert len(citta) == 4 and citta[-1] == "Napoli", "❌ citta: una lista si allunga con append"
 '''),
     '5.2': ('Esercizio 5.2', r'''
 assert risposte["obbligatorio"] == "iterable", "❌ obbligatorio: il nome del parametro che nella firma non ha ="
@@ -111,19 +109,15 @@ assert risposte["default_reverse"] is False, "❌ default_reverse: il valore dop
 assert dal_piu_alto == [30, 28, 25, 18], "❌ dal_piu_alto: passa reverse=True per nome"
 '''),
     '6.1': ('Esercizio 6.1', r'''
-assert list(letture_kwh.columns) == ["pod", "fascia", "kwh"], "❌ letture_kwh: servono solo pod, fascia e kwh (usecols)"
-assert round(totale_kwh, 1) == 134507.7, "❌ totale_kwh: controlla decimal=\",\""
+assert letture.shape == (248, 3), "❌ letture: 248 righe e 3 colonne, controlla sep"
+assert letture["kwh"].dtype == "float64", "❌ letture: kwh deve essere numerica, controlla decimal"
 '''),
     '6.2': ('Esercizio 6.2', r'''
-assert list(fogli.keys()) == ["Gennaio", "Febbraio"], "❌ fogli: il file deve avere i fogli Gennaio e Febbraio"
-assert len(consumi) == 6 and list(consumi.index) == list(range(6)), "❌ consumi: 6 righe con indice da 0 a 5 (ignore_index=True)"
-assert round(consumi["kwh"].sum(), 1) == 14149.2, "❌ consumi: il totale dei kwh è 14149.2"
+assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
+assert leggi_tabella("pod").shape == (8, 3), "❌ leggi_tabella: deve restituire tutta la tabella, 8 righe e 3 colonne"
+assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, quella dell'Officina Meccanica Fumagalli"
 '''),
     '6.3': ('Esercizio 6.3', r'''
-assert len(letture_pod) == 31, "❌ letture_pod: servono le 31 righe del solo POD IT001E10000000"
-assert round(totale_marzo, 1) == 7785.6, "❌ totale_marzo: somma la colonna kwh"
-'''),
-    '6.4': ('Esercizio 6.4', r'''
 assert 0 < len(milano) < len(certificati), "❌ milano deve avere solo le righe della provincia di Milano"
 assert len(co2_per_classe) > 1 and co2_per_classe.index.is_unique, "❌ co2_per_classe: una riga per classe energetica, con la media"
 '''),
@@ -258,35 +252,6 @@ assert intervalli[pd.Timedelta("15min")] == 252 and intervalli[pd.Timedelta("30m
 assert df_15min["date"].nunique() == 3 and df_15min["is_weekend"].sum() == 192, "❌ date e is_weekend: leggile da df_15min.index"
 assert len(media_oraria) == 72 and round(somma_oraria.iloc[0], 1) == 923.7, "❌ media_oraria e somma_oraria: resample(\"h\") con mean() e sum()"
 assert media_mobile.isna().sum() == 7 and round(media_mobile.iloc[7], 1) == 237.9, "❌ media_mobile: df_15min[\"power_kw\"].rolling(8).mean()"
-'''),
-    'Passo 1': ('Passo 1', r'''
-assert cliente == "Panificio Rè", "❌ cliente: il valore della chiave 'cliente'"
-assert kwh == 1654.2, "❌ kwh: il valore della chiave 'kwh_febbraio'"
-assert round(costo, 2) == 347.38, "❌ costo: consumo per prezzo"
-'''),
-    'Passo 2': ('Passo 2', r'''
-assert ore_forno == [9.5, 11.2, 10.8, 9.9, 8.4], "❌ ore_forno: dalle 4 alle 8 comprese"
-assert quota_forno == 57.0, "❌ quota_forno: kwh_forno diviso totale_giorno, per 100, arrotondato a un decimale"
-assert picco == 11.2, "❌ picco: la lettura più alta, con max()"
-'''),
-    'Passo 3': ('Passo 3', r'''
-assert sorted(sopra_soglia) == ["IT001E31047092", "IT001E31048128", "IT001E31049306"], "❌ sopra_soglia: i tre POD con più di 2000 kWh"
-assert round(totale_kwh, 1) == 16244.1, "❌ totale_kwh: la somma di tutti i valori del dizionario"
-'''),
-    'Passo 4': ('Passo 4', r'''
-assert costo(1000) == 210.0, "❌ costo(1000) deve dare 210.0: il prezzo di default è 0.21 e la quota fissa 0"
-assert costo(1000, prezzo=0.19, quota_fissa=8) == 198.0, "❌ costo(1000, prezzo=0.19, quota_fissa=8) deve dare 198.0"
-assert costo_bar == 152.92, "❌ costo_bar: 690.1 kWh al prezzo di default, più 8 euro"
-'''),
-    'Passo 5': ('Passo 5', r'''
-assert letture["kwh"].dtype == "float64", "❌ letture: kwh deve essere numerica, controlla sep e decimal"
-assert list(anomale["pod"]) == ["IT001E31047092"], "❌ anomale: una riga sola, quella dell'officina, con kwh > 500"
-assert list(pd.read_csv("letture_anomale.csv").columns) == ["pod", "data", "kwh"], "❌ letture_anomale.csv: salva senza l'indice, con index=False"
-'''),
-    'Passo 6': ('Passo 6', r'''
-assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio Listino? Controlla sheet_name"
-assert leggi_tabella("pod").shape == (8, 3), "❌ leggi_tabella: deve restituire tutta la tabella, 8 righe e 3 colonne"
-assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, quella dell'Officina Meccanica Fumagalli"
 '''),
     'Step 1': ('Step 1', r'''
 assert df.shape == (70176, 4), "❌ df: 70.176 righe e 4 colonne, i due anni uno sotto l'altro"

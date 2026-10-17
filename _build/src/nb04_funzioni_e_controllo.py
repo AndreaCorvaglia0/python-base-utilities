@@ -1,13 +1,6 @@
 """04 · Funzioni e controllo del flusso (dal notebook 03 del docente)."""
 
-import textwrap
-
 from nbkit import Notebook
-
-
-def unisci(*pezzi: str) -> str:
-    """Unisce più blocchi di codice in una cella, con una riga vuota tra l'uno e l'altro."""
-    return "\n\n".join(textwrap.dedent(p).strip() for p in pezzi)
 
 
 def costruisci() -> Notebook:
@@ -128,6 +121,33 @@ def costruisci() -> Notebook:
         else:
             print("Almeno una delle due condizioni non è soddisfatta")
     """)
+    nb.hands_on(
+        richiesta="""
+            Il biglietto del museo è ridotto per chi ha meno di 26 anni oppure almeno 65: completa la condizione
+            con `or` e il ramo `else`, che assegna `"intero"`. Con `eta = 70` la variabile `biglietto` deve valere
+            `"ridotto"`.
+        """,
+        starter="""
+            eta = 70
+            if eta < 26 or ...:
+                biglietto = "ridotto"
+            else:
+                biglietto = ...
+            print(biglietto)
+        """,
+        soluzione="""
+            eta = 70
+            if eta < 26 or eta >= 65:
+                biglietto = "ridotto"
+            else:
+                biglietto = "intero"
+            print(biglietto)
+        """,
+        verifica="""
+            assert biglietto == "ridotto", "❌ con 70 anni il biglietto è ridotto: la seconda condizione è eta >= 65"
+        """,
+        prova_anche='con `eta = 40`, che deve dare `"intero"`.',
+    )
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Cicli su serie di dati", intro="""
@@ -156,6 +176,36 @@ def costruisci() -> Notebook:
             else:
                 print(f"Il numero {num} è dispari.")
     """)
+    nb.hands_on(
+        richiesta="""
+            Il ciclo qui sotto conta i voti maggiori di 25, aumentando di uno la variabile `sopra_25` ogni volta
+            che la condizione dell'`if` è vera. Completa la condizione: i voti sopra il 25 sono tre.
+        """,
+        starter="""
+            voti = [18, 24, 30, 27, 21, 28]
+            sopra_25 = 0
+
+            for voto in voti:
+                if ...:
+                    sopra_25 = sopra_25 + 1
+
+            print(sopra_25)
+        """,
+        soluzione="""
+            voti = [18, 24, 30, 27, 21, 28]
+            sopra_25 = 0
+
+            for voto in voti:
+                if voto > 25:
+                    sopra_25 = sopra_25 + 1
+
+            print(sopra_25)
+        """,
+        verifica="""
+            assert sopra_25 == 3, "❌ sopra_25: i voti maggiori di 25 sono 30, 27 e 28"
+        """,
+        prova_anche="con i voti maggiori o uguali a 24, che sono quattro.",
+    )
     nb.md("""
         Per iterare solo su una parte degli elementi si applica lo slicing alla lista prima del ciclo.
         Nell'esempio qui sotto `lista[1::2]` prende un elemento ogni due a partire dal secondo, quindi il
@@ -189,6 +239,34 @@ def costruisci() -> Notebook:
         for k, v in dizionario.items():
             print(k, ' : ', v)
     """)
+    nb.hands_on(
+        richiesta="""
+            Completa il ciclo `for` sulle coppie del dizionario `prezzi`, con le variabili `prodotto` e `prezzo`,
+            in modo che a ogni passo aggiunga a `righe` una stringa come `"pane: 2.5 euro"`. Alla fine `righe`
+            contiene tre stringhe, una per prodotto.
+        """,
+        starter="""
+            prezzi = {"pane": 2.5, "latte": 1.2, "caffè": 3.8}
+            righe = []
+
+            for ... in ...:
+                righe.append(f"{prodotto}: {prezzo} euro")
+
+            print(righe)
+        """,
+        soluzione="""
+            prezzi = {"pane": 2.5, "latte": 1.2, "caffè": 3.8}
+            righe = []
+
+            for prodotto, prezzo in prezzi.items():
+                righe.append(f"{prodotto}: {prezzo} euro")
+
+            print(righe)
+        """,
+        verifica="""
+            assert righe == ["pane: 2.5 euro", "latte: 1.2 euro", "caffè: 3.8 euro"], "❌ righe: il ciclo va su prezzi.items(), con prodotto e prezzo"
+        """,
+    )
     nb.md("""
         La funzione `enumerate()` permette di iterare su una lista mantenendo il conteggio degli elementi.
         A ogni passo il ciclo riceve una coppia formata dal numero d'ordine e dall'elemento, e con
@@ -313,6 +391,31 @@ def costruisci() -> Notebook:
 
         conta_giorni_di_sole(giorni, lista_meteo=lista_meteo, annuncio=True)
     """)
+    nb.hands_on(
+        richiesta="""
+            Chiama `conta_giorni_di_sole` sulle due liste della cella qui sotto, la prima volta senza indicare
+            `annuncio` e la seconda con `annuncio=True`, e salva i risultati in `senza_annuncio` e `con_annuncio`.
+            Solo la seconda chiamata stampa i messaggi, e tutte e due restituiscono `['venerdì', 'sabato']`.
+        """,
+        starter="""
+            giorni = ['giovedì', 'venerdì', 'sabato', 'domenica']
+            lista_meteo = ['pioggia', 'sole', 'sole', 'nuvole']
+
+            senza_annuncio = ...
+            con_annuncio = ...
+        """,
+        soluzione="""
+            giorni = ['giovedì', 'venerdì', 'sabato', 'domenica']
+            lista_meteo = ['pioggia', 'sole', 'sole', 'nuvole']
+
+            senza_annuncio = conta_giorni_di_sole(giorni, lista_meteo)
+            con_annuncio = conta_giorni_di_sole(giorni, lista_meteo, annuncio=True)
+        """,
+        verifica="""
+            assert senza_annuncio == ['venerdì', 'sabato'], "❌ senza_annuncio: chiama la funzione con le due liste, senza annuncio"
+            assert con_annuncio == ['venerdì', 'sabato'], "❌ con_annuncio: la stessa chiamata con annuncio=True"
+        """,
+    )
 
     # ------------------------------------------------------------------ 5 (A)
     with nb.solo("avanzata"):
@@ -337,6 +440,37 @@ def costruisci() -> Notebook:
             lista_quadrati = [x ** 2 for x in range(1, 11)]
             print(lista_quadrati)
         """)
+        nb.hands_on(
+            richiesta="""
+                Il ciclo nella cella qui sotto costruisce con `append()` la lista delle lunghezze delle parole.
+                Riscrivilo come list comprehension in una riga sola, assegnata a `lunghezze_compatte`, che deve
+                valere `[4, 7, 4]` come la lista del ciclo.
+            """,
+            starter="""
+                parole = ["sole", "pioggia", "neve"]
+
+                lunghezze = []
+                for parola in parole:
+                    lunghezze.append(len(parola))
+
+                lunghezze_compatte = [...]
+                print(lunghezze, lunghezze_compatte)
+            """,
+            soluzione="""
+                parole = ["sole", "pioggia", "neve"]
+
+                lunghezze = []
+                for parola in parole:
+                    lunghezze.append(len(parola))
+
+                lunghezze_compatte = [len(parola) for parola in parole]
+                print(lunghezze, lunghezze_compatte)
+            """,
+            verifica="""
+                assert lunghezze_compatte == [4, 7, 4], "❌ lunghezze_compatte: [len(parola) for parola in parole]"
+            """,
+            prova_anche='con la parola `"grandine"` aggiunta alla lista `parole`.',
+        )
         nb.md("""
             Una list comprehension può contenere anche una condizione, scritta in fondo con `if`, per
             tenere solo alcuni elementi: `[x for x in lista if x % 2 == 0]`, per esempio, contiene soltanto
@@ -345,149 +479,232 @@ def costruisci() -> Notebook:
             `for` esplicito è di solito più chiaro.
         """)
 
-    # ------------------------------------------------------------------ Esercizi
-    nb.sezione("Esercizi")
-    nb.esercizio(
-        titolo="Stringa invertita",
-        scenario="""
-            Nei giochi di enigmistica capita spesso di leggere una parola al contrario, dall'ultima lettera
-            alla prima. Vogliamo una funzione `inverti_stringa` che lo faccia per qualunque parola le
-            passiamo, così non serve riscrivere l'operazione ogni volta e la stessa idea torna utile
-            nell'esercizio sulle parole palindrome. Per esempio, `inverti_stringa('Python')` restituisce
-            `'nohtyP'`.
-        """,
-        richiesta="",
-        suggerimento="puoi pensare alla stringa come a una **lista** di caratteri.",
-        starter="""
-            def inverti_stringa(stringa):
-                return ...
-        """,
-        soluzione="""
-            def inverti_stringa(stringa):
-                return stringa[::-1]
-        """,
-        verifica="""
-            assert inverti_stringa("Python") == "nohtyP", "❌ inverti_stringa('Python') deve restituire 'nohtyP'"
-        """,
-    )
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", intro="""
+        Questa sezione raccoglie due esercizi brevi sui punti principali del notebook, i cicli con una condizione
+        e le funzioni con un valore predefinito, da fare a casa per ripassare. Durante la lezione la saltiamo, e
+        ogni esercizio ha la sua verifica, che conferma il risultato o dice che cosa controllare.
+    """)
 
-    g10 = """
-        g10 = {
-            'Canada': 'Ottawa',
-            'Francia': 'Parigi',
-            'Germania': 'Berlino',
-            'Italia': 'Roma',
-            'Giappone': 'Tokyo',
-            'Regno Unito': 'Londra',
-            'Stati Uniti': 'Washington',
-            'Spagna': 'Madrid',
-            'Paesi Bassi': 'Amsterdam',
-            'Corea del Sud': 'Seoul'
+    # 4.1 · ciclo con if su .items() (comprehension in Avanzata)
+    scenario_1 = """
+        A fine febbraio vogliamo sapere in quali categorie abbiamo speso più di 100 euro e quanto abbiamo speso in
+        tutto il mese. Le spese stanno in un dizionario con la categoria come chiave, e conviene scorrerlo con il
+        codice invece di cercare a occhio, perché la stessa cella funziona con otto categorie come con ottanta e,
+        se cambiamo il limite, basta modificare un numero. Le categorie sopra i 100 euro sono tre, alimentari,
+        ristoranti e regali, su 805.8 euro di spese totali.
+    """
+    starter_1 = """
+        spese_febbraio = {
+            "alimentari": 312.4,
+            "trasporti": 86.5,
+            "ristoranti": 145.0,
+            "abbigliamento": 59.9,
+            "sport": 40.0,
+            "libri": 23.7,
+            "farmacia": 18.3,
+            "regali": 120.0,
         }
-    """
-    nb.esercizio(
-        titolo="Paesi con capitale di lunghezza pari",
-        scenario="""
-            Per un quiz sulle capitali dividiamo i paesi tra due squadre, i Pari e i Dispari, e ai Pari
-            toccano quelli la cui capitale ha un numero pari di lettere. Vogliamo una funzione
-            `paesi_capitale_pari` che ricavi questo elenco da un dizionario di paesi e capitali, così la
-            regola si applica a qualunque dizionario senza contare le lettere a mano. Con `g10`, definito
-            nella cella sotto la funzione, l'elenco comincia con `'Canada'`, perché Ottawa ha sei lettere.
-        """,
-        richiesta="""
-            1. Crea la lista vuota `risultato`, che raccoglierà i paesi dei Pari.
-            2. Percorri il dizionario con un ciclo `for` su `.items()`, che a ogni passo fornisce il paese
-               e la sua capitale.
-            3. Se il numero di lettere della capitale, che si ottiene con `len()`, è pari, aggiungi il
-               paese a `risultato` con `append()`.
-            4. Alla fine del ciclo restituisci `risultato`.
+        soglia = 100
 
-            Con `g10` la funzione restituisce `['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti',
-            'Spagna']`.
-        """,
-        suggerimento="un numero è pari quando il resto della sua divisione per 2 è zero, cioè quando `numero % 2 == 0`.",
-        starter=unisci("""
-            def paesi_capitale_pari(dizionario):
-                risultato = ...  # inizializza una lista vuota
-                for paese, capitale in ...:  # ciclo su chiave e valore (usa .items())
-                    if ...:  # condizione: lunghezza pari del nome della capitale
-                        ...  # aggiungi a risultato il paese, visto che la condizione è rispettata
-                return risultato
-        """, g10),
-        soluzione=unisci("""
-            def paesi_capitale_pari(dizionario):
-                risultato = []
-                for paese, capitale in dizionario.items():
-                    if len(capitale) % 2 == 0:
-                        risultato.append(paese)
-                return risultato
-        """, g10),
-        verifica="""
-            atteso = ['Canada', 'Francia', 'Italia', 'Regno Unito', 'Stati Uniti', 'Spagna']
-            assert paesi_capitale_pari(g10) == atteso, "❌ controlla la condizione: len(capitale) deve essere pari"
-        """,
-    )
-
-    scenario_palindrome = """
-        Una parola palindroma si legge allo stesso modo nei due sensi, come `anna` o `radar`. Per un gioco
-        di enigmistica vogliamo una funzione `trova_palindrome` che riceva una lista di parole e
-        restituisca una lista nuova con le sole palindrome, così possiamo controllare elenchi lunghi
-        quanto vogliamo invece di esaminare le parole una per una. Con la lista della cella il risultato
-        è `['anna', 'radar', 'osso', 'madam']`.
+        sopra_soglia = ...
+        totale = ...
+        print(f"{len(sopra_soglia)} categorie sopra i {soglia} euro, su {totale:.1f} euro di spese")
     """
-    test_palindrome = """
-        # test
-        lista_parole = ['ciao', 'anna', 'radar', 'gatto', 'osso', 'madam']
-        print(trova_palindrome(lista_parole))
-    """
-    verifica_palindrome = """
-        assert trova_palindrome(lista_parole) == ['anna', 'radar', 'osso', 'madam'], "❌ le palindrome della lista sono anna, radar, osso e madam"
+    starter_1_base = starter_1.replace("""
+        sopra_soglia = ...
+        totale = ...
+        """, """
+        sopra_soglia = []
+        for categoria, spesa in ...:
+            ...
+        totale = ...
+        """)
+    verifica_1 = """
+        assert sopra_soglia == ["alimentari", "ristoranti", "regali"], "❌ sopra_soglia: le tre categorie con più di 100 euro"
+        assert round(totale, 1) == 805.8, "❌ totale: la somma di tutti i valori del dizionario"
     """
     nb.esercizio(
         aula="base",
-        titolo="Parole palindrome",
-        scenario=scenario_palindrome,
+        titolo="Le categorie sopra soglia",
+        scenario=scenario_1,
         richiesta="""
-            1. Nel ciclo, completa la condizione dell'`if`, che è vera quando la parola è uguale a sé
-               stessa letta al contrario.
-            2. Quando la condizione è vera, aggiungi la parola alla lista `palindrome` con `append()`.
+            1. Con un ciclo `for` su `spese_febbraio.items()`, che a ogni passo fornisce una categoria e la sua
+               spesa, e un `if` che confronta la spesa con `soglia`, aggiungi alla lista `sopra_soglia` le
+               categorie che la superano.
+            2. Calcola in `totale` la somma di tutte le spese del dizionario.
         """,
-        suggerimento="per leggere una parola al contrario puoi usare lo stesso procedimento dell'esercizio sulla stringa invertita.",
-        starter=unisci("""
-            def trova_palindrome(lista_parole):
-                palindrome = []
-                for parola in lista_parole:
-                    if ...:  # completa la condizione parola == parola invertita
-                        ...
-                return palindrome
-        """, test_palindrome),
-        soluzione=unisci("""
-            def trova_palindrome(lista_parole):
-                palindrome = []
-                for parola in lista_parole:
-                    if parola == parola[::-1]:
-                        palindrome.append(parola)
-                return palindrome
-        """, test_palindrome),
-        verifica=verifica_palindrome,
+        suggerimenti=[
+            """
+                Il ciclo passa su ogni coppia di categoria e spesa, e dentro il ciclo una condizione decide se
+                aggiungere la categoria alla lista; il totale non ha bisogno del ciclo.
+            """,
+            """
+                Dentro il ciclo servono `if spesa > soglia:` e poi `sopra_soglia.append(categoria)`, mentre per il
+                totale basta applicare `sum()` ai `.values()` del dizionario.
+            """,
+        ],
+        starter=starter_1_base,
+        soluzione=starter_1_base.replace("""
+        for categoria, spesa in ...:
+            ...
+        totale = ...
+        """, """
+        for categoria, spesa in spese_febbraio.items():
+            if spesa > soglia:
+                sopra_soglia.append(categoria)
+        totale = sum(spese_febbraio.values())
+        """),
+        verifica=verifica_1,
+        perche="""
+            Il ciclo scorre `.items()` perché a ogni passo servono sia la chiave sia il valore, cioè la categoria
+            da aggiungere alla lista e la spesa da confrontare con la soglia. Il totale non richiede un ciclo, dato
+            che `sum()` lavora direttamente sui valori del dizionario.
+        """,
     )
     nb.esercizio(
         aula="avanzata",
-        titolo="Parole palindrome",
-        scenario=scenario_palindrome,
-        richiesta=(
-            "La funzione tiene soltanto alcuni elementi di una lista, cioè il caso per cui è pensata la "
-            "list comprehension con un `if` in fondo, quindi il suo corpo si scrive in una riga sola, come "
-            "suggerisce la cella di partenza."
-        ),
-        starter=unisci("""
-            def trova_palindrome(lista_parole):
-                return [... for ... if ...]  # completa la condizione parola == parola invertita
-        """, test_palindrome),
-        soluzione=unisci("""
-            def trova_palindrome(lista_parole):
-                return [parola for parola in lista_parole if parola == parola[::-1]]
-        """, test_palindrome),
-        verifica=verifica_palindrome,
+        titolo="Le categorie sopra soglia",
+        scenario=scenario_1,
+        richiesta="""
+            1. Costruisci la lista `sopra_soglia` con una list comprehension su `spese_febbraio.items()`, che tiene
+               le categorie con una spesa maggiore di `soglia`.
+            2. Calcola in `totale` la somma di tutte le spese del dizionario.
+        """,
+        suggerimenti=[
+            """
+                La forma è `[categoria for categoria, spesa in ... if ...]`, con la condizione in fondo, mentre per
+                il totale basta applicare `sum()` ai `.values()` del dizionario.
+            """,
+        ],
+        starter=starter_1,
+        soluzione=starter_1.replace("""
+        sopra_soglia = ...
+        totale = ...
+        """, """
+        sopra_soglia = [categoria for categoria, spesa in spese_febbraio.items() if spesa > soglia]
+        totale = sum(spese_febbraio.values())
+        """),
+        verifica=verifica_1,
+        perche="""
+            La list comprehension esprime in una riga lo stesso ciclo con `append()` della versione estesa. Con una
+            sola condizione resta facile da leggere, mentre con più condizioni o con calcoli intermedi conviene
+            tornare al ciclo `for`.
+        """,
+    )
+
+    # 4.2 · funzione con valore predefinito e docstring (un parametro in più in Avanzata)
+    scenario_2 = """
+        Il bike sharing della città costa 0.25 euro al minuto, mentre con l'abbonamento mensile la tariffa scende
+        a 0.19 euro. Invece di rifare il conto a ogni corsa, scriviamo una funzione `costo` che riceve i minuti e
+        la tariffa, con 0.25 come valore predefinito, e restituisce l'importo arrotondato al centesimo. In questo
+        modo per una corsa normale basta passare i minuti, mentre con l'abbonamento si aggiunge la tariffa nella
+        chiamata: una corsa di 18 minuti costa 4.5 euro, una di 42 minuti in abbonamento 7.98 euro.
+    """
+    suggerimenti_2 = [
+        """
+            La funzione riceve i minuti e una tariffa con valore predefinito, calcola il prodotto, lo arrotonda e
+            lo restituisce.
+        """,
+        """
+            `return` restituisce il valore a chi chiama la funzione, mentre `print` si limita a mostrarlo; la
+            verifica ha bisogno del valore restituito.
+        """,
+    ]
+    nb.esercizio(
+        aula="base",
+        titolo="Il costo di una corsa come funzione",
+        scenario=scenario_2,
+        richiesta="""
+            1. Scrivi la funzione `costo(minuti, tariffa=0.25)`, che restituisce con `return` i minuti moltiplicati
+               per la tariffa, arrotondati a due decimali con `round()` perché l'importo è in euro e centesimi.
+            2. Sotto il `def` aggiungi una docstring di una riga, che chi riprende la funzione potrà leggere con
+               `help(costo)` per sapere che cosa calcola.
+            3. Usala per calcolare `costo_breve`, il costo di una corsa di 18 minuti alla tariffa normale, e
+               `costo_abbonato`, il costo di una corsa di 42 minuti con l'abbonamento. Nella seconda chiamata
+               scrivi `tariffa=0.19`, in modo che chi la rilegge capisca subito che quel numero è una tariffa.
+
+            Alla fine `costo_breve` vale 4.5 e `costo_abbonato` vale 7.98.
+        """,
+        suggerimenti=suggerimenti_2,
+        starter="""
+            def costo(minuti, tariffa=0.25):
+                ...
+
+
+            costo_breve = ...
+            costo_abbonato = ...
+            print(f"Corsa breve: {costo_breve} euro, corsa in abbonamento: {costo_abbonato} euro")
+        """,
+        soluzione='''
+            def costo(minuti, tariffa=0.25):
+                """Costo in euro di una corsa in bike sharing, arrotondato ai centesimi."""
+                return round(minuti * tariffa, 2)
+
+
+            costo_breve = costo(18)
+            costo_abbonato = costo(42, tariffa=0.19)
+            print(f"Corsa breve: {costo_breve} euro, corsa in abbonamento: {costo_abbonato} euro")
+        ''',
+        verifica="""
+            assert costo(100) == 25.0, "❌ costo(100) deve dare 25.0: la tariffa predefinita è 0.25"
+            assert costo(100, tariffa=0.19) == 19.0, "❌ costo(100, tariffa=0.19) deve dare 19.0: usa la tariffa ricevuta"
+            assert costo_abbonato == 7.98, "❌ costo_abbonato: 42 minuti a 0.19 euro al minuto"
+        """,
+        perche="""
+            Con la tariffa normale come valore predefinito, la maggior parte delle chiamate passa soltanto i
+            minuti, e se la tariffa cambia basta modificare la definizione della funzione. Anche l'arrotondamento
+            sta dentro la funzione, così non occorre ripeterlo a ogni chiamata.
+        """,
+    )
+    nb.esercizio(
+        aula="avanzata",
+        titolo="Il costo di una corsa come funzione",
+        scenario=scenario_2,
+        richiesta="""
+            1. Le bici elettriche hanno anche un costo di sblocco a ogni corsa, quindi scrivi la funzione
+               `costo(minuti, tariffa=0.25, sblocco=0.0)`, che restituisce con `return` i minuti per la tariffa
+               più lo sblocco, arrotondati al centesimo.
+            2. Aggiungi una docstring di una riga, che chi riprende la funzione potrà leggere con `help(costo)`.
+            3. Usala per tre corse, passando per nome gli argomenti diversi dai minuti, in modo che in ogni
+               chiamata si legga quale valore cambia: `costo_breve` per 18 minuti con i valori predefiniti,
+               `costo_abbonato` per 42 minuti a 0.19 euro al minuto e `costo_elettrica` per 35 minuti su una bici
+               elettrica, con 1 euro di sblocco.
+
+            Alla fine `costo_breve` vale 4.5, `costo_abbonato` 7.98 e `costo_elettrica` 9.75.
+        """,
+        suggerimenti=suggerimenti_2[1:],
+        starter="""
+            def costo(minuti, tariffa=0.25, sblocco=0.0):
+                ...
+
+
+            costo_breve = ...
+            costo_abbonato = ...
+            costo_elettrica = ...
+            print(f"Breve: {costo_breve} euro, abbonato: {costo_abbonato} euro, elettrica: {costo_elettrica} euro")
+        """,
+        soluzione='''
+            def costo(minuti, tariffa=0.25, sblocco=0.0):
+                """Costo in euro di una corsa in bike sharing, più lo sblocco, arrotondato ai centesimi."""
+                return round(minuti * tariffa + sblocco, 2)
+
+
+            costo_breve = costo(18)
+            costo_abbonato = costo(42, tariffa=0.19)
+            costo_elettrica = costo(35, sblocco=1)
+            print(f"Breve: {costo_breve} euro, abbonato: {costo_abbonato} euro, elettrica: {costo_elettrica} euro")
+        ''',
+        verifica="""
+            assert costo(100) == 25.0, "❌ costo(100) deve dare 25.0: la tariffa predefinita è 0.25 e lo sblocco 0"
+            assert costo(100, tariffa=0.19, sblocco=1) == 20.0, "❌ costo(100, tariffa=0.19, sblocco=1) deve dare 20.0"
+            assert costo_elettrica == 9.75, "❌ costo_elettrica: 35 minuti alla tariffa predefinita, più 1 euro"
+        """,
+        perche="""
+            Quando una funzione ha due parametri con un valore predefinito, passare gli argomenti per nome rende
+            esplicito quale dei due stiamo cambiando. Nella chiamata `costo(35, sblocco=1)`, per esempio, la
+            tariffa resta quella normale e cambia solo lo sblocco, mentre scrivendo `costo(35, 1)` l'1 finirebbe
+            nel parametro `tariffa`.
+        """,
     )
     return nb
