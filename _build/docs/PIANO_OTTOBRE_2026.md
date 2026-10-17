@@ -27,9 +27,12 @@ corsisti e 15 minuti in cui il docente mostra le soluzioni. L'esercitazione è u
 tutti, e serve da riepilogo della giornata. Il resto del blocco, tolte le due pause e l'ora di esercitazione, lascia
 circa 150 minuti di lezione, e il contenuto di ogni modulo va dimensionato su questo spazio con un margine.
 
-Gli esercizi in fondo ai notebook restano nei notebook, ma escono dal tempo d'aula: servono come pratica dopo la
-lezione e come serbatoio da cui le esercitazioni attingono. I Prova tu dentro i notebook restano in aula, perché danno
-una pratica immediata dopo ogni concetto.
+Dentro i notebook restano soltanto gli Hands-on, piccoli esercizi inline subito dopo l'esempio che riprendono, che danno
+una pratica immediata dopo ogni concetto e preparano le esercitazioni. In fondo a ogni notebook una sezione Extra
+raccoglie due o tre esercizi brevi da fare a casa, che in aula si saltano; il vecchio Homework resta come riserva fuori
+dalle cartelle dei corsisti. Le esercitazioni sono costruite sugli esercizi scritti dal docente nei notebook originali:
+la 1 interamente, le altre con esercizi aggiunti nello stesso stile. La sezione "Dove stanno gli esercizi" di
+`REGOLE.md` descrive la funzione di ciascun posto.
 
 Il modulo 4 è dedicato interamente agli agenti per il coding e al capstone con GitHub Copilot. Si apre con il notebook
 09 su Plotly, prosegue con l'introduzione a Copilot e ai concetti di base (notebook 10) e con il capstone (notebook 11),
@@ -163,7 +166,7 @@ materiale. Ogni blocco ha 240 minuti: 30 di pause, 60 di esercitazione nei modul
 
 - Costruire l'esercitazione 1 come pilota nel nuovo formato e farla provare al docente.
 - Dopo il pilota, costruire le esercitazioni 2 e 3 e il notebook su Prophet.
-- Portare l'Homework a 30 minuti nel formato delle esercitazioni (suggerimenti, soluzione per passo).
+- L'Homework resta come riserva fuori dalle cartelle `Aula_*`; il suo materiale migliore passa nelle sezioni Extra.
 - Portare `Extra/Ambiente_uv_e_script` ed `Extra/Ruff` nel percorso dell'aula Avanzata del modulo 1.
 - Spostare il notebook 09 nel modulo 4 e ricontrollare i tempi dei quattro moduli.
 - Riscrivere README, `Guida_docente.md` e slide sui quattro moduli.

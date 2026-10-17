@@ -16,10 +16,42 @@ Si legge insieme a REQUISITI.md (le richieste del docente) e al REGOLE.md (forma
 ## Volume
 - Una cella di testo: un paragrafo di 2-5 frasi (40-90 parole), uno per cella di codice che introduce. Due celle di
   testo adiacenti sullo stesso codice si fondono. Niente box Ricorda. Box ammessi con parsimonia: Attenzione (rosso,
-  raro), Esercizio/Prova tu (verde), Soluzione (azzurro); Nota e Approfondimento sono citazioni.
-- Prova tu: al massimo 2 per notebook, senza cella di verifica. Esercizi di fine notebook: 2-3, uno può essere
+  raro), Esercizio/Hands-on (verde), Soluzione (azzurro); Nota e Approfondimento sono citazioni.
+- Hands-on inline: da due a cinque per notebook, con verifica. Sezione Extra in fondo: 2-3 esercizi brevi, uno può essere
   facoltativo; ogni esercizio ha una `verifica=` con 1-3 assert (nel notebook: `verifica("7.1")`).
 - Un esercizio per concetto nel corso: le f-string hanno un solo esercizio (01).
+
+## Dove stanno gli esercizi e a cosa servono (decisioni di ottobre 2026)
+
+Il corso ha quattro posti per il codice scritto dal corsista, e ciascuno ha una funzione diversa. Un esercizio scritto
+nel posto sbagliato è sbagliato anche se è buono.
+
+- **Hands-on dentro il notebook.** Sono il primo contatto con un concetto appena mostrato: piccoli, inline, subito dopo
+  l'esempio che riprendono, e consistono nel cambiare qualcosa nel codice appena visto o nel ripetere lo stesso gesto su
+  un dato diverso (un altro indice, un'altra chiave, un altro parametro), con una verifica. Non sono un compito
+  completo e non introducono niente di nuovo: servono a mettere le mani sul codice e a fissare la memoria dei concetti
+  che torneranno nei notebook seguenti e nel leggere codice scritto da un'AI. Da due a cinque per notebook, in
+  proporzione alla lunghezza e al peso del notebook, ciascuno da uno a tre minuti. Possono chiudersi con una riga
+  facoltativa "prova anche", sempre banale. Il nome è Hands-on; "Prova tu" non si usa più.
+- **Extra in fondo al notebook.** Una sezione finale, che in aula si salta e che chi vuole fa a casa, con due o tre
+  esercizi brevi che ripassano i punti principali del notebook. Il materiale del vecchio Homework, dove è fatto bene, si
+  riusa qui. Non si contano nei tempi del notebook.
+- **Esercitazioni di fine modulo.** L'ora strutturata (45 minuti di lavoro, 15 di correzione) in cui si fa un compito
+  intero: cinque esercizi del nucleo, varianti Base e Avanzata, suggerimenti nascosti, soluzione per esercizio,
+  domande di riepilogo in apertura. Il nucleo è fatto dagli esercizi scritti dal docente nel branch `main`, adattati al
+  formato: la 1 usa i cinque esercizi dei notebook 01 e 02 originali (massimo, minimo e differenza; area del cerchio;
+  lista invertita; posizioni pari; capitali del G8) e non ha facoltativi; la 2 usa i tre esercizi sulle funzioni del
+  notebook 03 originale più esercizi di import (CSV, Excel, SQL, API per l'Avanzata) scritti nello stesso stile; la 3
+  usa i cinque esercizi pandas del notebook 04 originale (dataset degli ascolti) più quelli sulle serie temporali del
+  notebook 06 originale. Gli esercizi che il docente aveva messo dentro i notebook e che ora stanno nelle esercitazioni
+  vanno sostituiti nei notebook da Hands-on nuovi.
+- **Homework.** Non è più un'attività prevista: resta un notebook di riserva fuori dalle cartelle `Aula_*`, da usare
+  solo se una classe è molto più veloce del previsto.
+- **Capstone.** La giornata 4: passi guidati su un caso reale, con livelli diversi per le due aule e il supporto di
+  Copilot. Lì il corsista costruisce un'analisi intera e i passi sono più lunghi.
+
+Le regole di questo documento sulla difficoltà (tutta in Python), sull'apertura con il risultato e sulle richieste
+motivate valgono in tutti e quattro i posti; cambiano la lunghezza e lo scopo.
 
 ## Esercizi: la difficoltà sta in Python
 - Un esercizio allena quello che si è appena visto, uno a uno con la teoria, a livello basilare. La difficoltà è tutta
@@ -57,7 +89,7 @@ Si legge insieme a REQUISITI.md (le richieste del docente) e al REGOLE.md (forma
 - Testata piana (ottobre 2026): H1, una riga con tempo e dati, "In questo notebook impariamo a" con 3 obiettivi. Niente box,
   niente intento. Indice solo se il notebook ha almeno 50 celle. Sezioni numerate. Ultima sezione "Esercizi". Chiusura con
   link precedente/prossimo e, in piccolo, blocco · giornata · aula.
-- Colore solo per Esercizio/Prova tu (verde), Soluzione (azzurro), Attenzione (rosso, tre in tutto il corso). Nota e
+- Colore solo per Esercizio/Hands-on (verde), Soluzione (azzurro), Attenzione (rosso, tre in tutto il corso). Nota e
   Approfondimento sono citazioni (`>`). Ogni notebook punta alla sua Scheda con "Riassunto in una pagina: [...]".
 - Dimostrazioni del docente (VS Code, kernel, ambiente/uv, script, Ruff, Data Wrangler, wrapper API): NIENTE nel
   notebook. Stanno in `Extra/` e nella `Guida_docente.md`.

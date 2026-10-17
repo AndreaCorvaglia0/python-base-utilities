@@ -41,7 +41,7 @@ va un paragrafo di due a cinque frasi che dice che cosa fa lo strumento, a cosa 
 | `Extra/*.ipynb` | `_build/src/extra/*.py` | `EXTRA` |
 
 Il docstring in testa a `_build/nbkit.py` descrive l'API del sorgente: `nb.sezione`, `nb.sottosezione`, `nb.md`,
-`nb.code`, `nb.box`, `nb.prova_tu`, `nb.esercizio`, il blocco `with nb.solo("avanzata"):` per le parti della sola
+`nb.code`, `nb.box`, `nb.hands_on`, `nb.esercizio`, il blocco `with nb.solo("avanzata"):` per le parti della sola
 aula Avanzata e `aula="base"` per quelle della sola Base. La `verifica=` di un esercizio non compare nel notebook:
 il build la raccoglie nel modulo `corso.py` di ogni cartella e nel notebook resta la chiamata `verifica("7.1")`.
 
@@ -53,8 +53,11 @@ due frasi, consegna con passi che sono frasi complete, `starter` con i `...`, `s
 tre `assert` e messaggi brevi che dicono che cosa controllare (senza `print` finale: la riga ✅ la aggiunge il
 toolkit), e se serve un `suggerimento` e un `perche`. Un concetto usato nella consegna deve essere già stato
 spiegato nei notebook precedenti o in quello stesso, altrimenti va introdotto nel suggerimento con un esempio. Gli
-esercizi per notebook sono due o tre, più uno facoltativo al massimo; i Prova tu al massimo due. Il materiale che
-non sta nel percorso principale va in `Approfondimenti_1` o `_2`, non in sezioni facoltative dentro i notebook.
+posti per il codice del corsista sono quattro e hanno funzioni diverse (sezione "Dove stanno gli esercizi" di
+`REGOLE.md`): dentro il notebook solo Hands-on inline, piccoli, subito dopo l'esempio che modificano, da due a
+cinque; una sezione Extra in fondo con due o tre esercizi brevi da fare a casa; il compito intero nelle
+Esercitazioni, costruite sugli esercizi del docente del branch `main`; il Capstone nella giornata 4. Il materiale
+che non sta nel percorso principale va in `Approfondimenti_1` o `_2`, non in sezioni facoltative dentro i notebook.
 
 La difficoltà di un esercizio sta in Python e in nulla altro: niente calcoli da impostare, niente matematica oltre
 le quattro operazioni, niente conversioni di unità o ragionamenti sullo scenario. Numeri e operazioni entrano di

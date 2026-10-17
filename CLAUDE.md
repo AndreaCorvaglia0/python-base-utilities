@@ -34,7 +34,8 @@ si rilegge il notebook generato in `Aula_Base/` cella per cella, come farebbe un
 ## Cosa non si fa
 
 - Niente sezioni facoltative dentro i notebook del percorso: il materiale in più va in `Approfondimenti_1/2`.
-- Niente box Ricorda, niente "bis", niente "passo in più"; al massimo due Prova tu per notebook, 2-3 esercizi più uno
-  facoltativo, ogni esercizio con la sua `verifica=` (1-3 assert).
+- Niente box Ricorda, niente "bis", niente "passo in più". Dentro i notebook solo Hands-on inline (2-5, piccoli, con
+  `verifica=`) e una sezione Extra in fondo; i compiti interi stanno nelle Esercitazioni, costruite sugli esercizi del
+  docente (vedi "Dove stanno gli esercizi" in `_build/docs/REGOLE.md`).
 - Niente esempi nel dominio energetico nei notebook di sintassi (00-05); dati veri o i dataset inventati da pandas in poi.
 - Niente identificativi di modelli di AI nei file del repository.
