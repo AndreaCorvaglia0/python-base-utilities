@@ -27,7 +27,7 @@ def costruisci() -> Notebook:
             ],
         },
         tempo={"base": 70, "avanzata": 75},
-        dati=["U.S. Electricity Prices.csv"],
+        dati=["U.S. Electricity Prices.csv", "letture_pod_2025.csv"],
     )
 
     nb.md("""
@@ -89,6 +89,25 @@ def costruisci() -> Notebook:
         Con `loc` l'intervallo `"id_1":"id_2"` include anche l'ultima etichetta, mentre con `iloc`
         l'intervallo `0:2` esclude l'ultima posizione, come accade con le liste Python.
     """)
+    nb.hands_on(
+        richiesta="""
+            Seleziona con `loc` le righe da `id_2` a `id_3` e le colonne `Nome` e `Città`, salvando il risultato in
+            `selezione`. Il risultato è un DataFrame di due righe e due colonne, con Bob di Milano e Charlie di Torino.
+        """,
+        starter="""
+            selezione = df.loc[...]
+            selezione
+        """,
+        soluzione="""
+            selezione = df.loc["id_2":"id_3", ["Nome", "Città"]]
+            selezione
+        """,
+        verifica="""
+            assert selezione.shape == (2, 2), "❌ selezione: due righe (id_2 e id_3) e due colonne (Nome e Città)"
+            assert selezione.loc["id_3", "Città"] == "Torino", "❌ selezione: l'ultima riga è quella di Charlie, id_3"
+        """,
+        prova_anche="a ottenere la stessa tabella con `iloc`, usando le posizioni `1:3` e `[0, 2]`.",
+    )
 
     nb.sottosezione("Selezione condizionale", intro="""
         Possiamo filtrare le righe di un DataFrame con condizioni booleane. Una condizione su una colonna,
@@ -124,6 +143,25 @@ def costruisci() -> Notebook:
         # righe con età tra 23 e 26 (esclusi), solo la colonna Nome
         df.loc[(df["Età"] > 23) & (df["Età"] < 26), ["Nome"]]
     """)
+    nb.hands_on(
+        richiesta="""
+            Seleziona con `loc` il nome e la città delle persone con meno di 25 anni e salva il risultato in
+            `giovani`. Restano Alice e Charlie, che hanno 24 e 22 anni.
+        """,
+        starter="""
+            giovani = df.loc[..., ...]
+            giovani
+        """,
+        soluzione="""
+            giovani = df.loc[df["Età"] < 25, ["Nome", "Città"]]
+            giovani
+        """,
+        verifica="""
+            assert giovani["Nome"].tolist() == ["Alice", "Charlie"], "❌ giovani: la condizione è df['Età'] < 25"
+            assert list(giovani.columns) == ["Nome", "Città"], "❌ giovani: le colonne da tenere sono Nome e Città"
+        """,
+        prova_anche='con la condizione `df["Città"] == "Milano"`.',
+    )
 
     with nb.solo("avanzata"):
         nb.sottosezione("Il metodo query", intro="""
@@ -182,6 +220,24 @@ def costruisci() -> Notebook:
         df_riempito = df_mancanti.fillna(0)
         df_riempito
     """)
+    nb.hands_on(
+        richiesta="""
+            Riempi i valori mancanti di `df_mancanti` con -1 invece che con zero e salva il risultato in
+            `df_meno_uno`. Le tre celle che mancavano valgono -1 e nel DataFrame non resta nessun `NaN`.
+        """,
+        starter="""
+            df_meno_uno = ...
+            df_meno_uno
+        """,
+        soluzione="""
+            df_meno_uno = df_mancanti.fillna(-1)
+            df_meno_uno
+        """,
+        verifica="""
+            assert df_meno_uno.isnull().sum().sum() == 0, "❌ df_meno_uno: non deve restare nessun NaN"
+            assert df_meno_uno.loc[2, "A"] == -1, "❌ df_meno_uno: i valori mancanti vanno riempiti con -1"
+        """,
+    )
     nb.md("""
         Il metodo `fillna()` non modifica il DataFrame di partenza ma ne restituisce una copia, per cui
         `df_mancanti` contiene ancora i suoi valori mancanti. Per cambiare una colonna dobbiamo riassegnarla,
@@ -392,6 +448,25 @@ def costruisci() -> Notebook:
         gruppo, in cui la categoria fa da indice; nel nostro esempio la somma vale 370 per la categoria A,
         450 per la B e 300 per la C.
     """)
+    nb.hands_on(
+        richiesta="""
+            Calcola in `media_per_categoria` la media delle vendite di ogni categoria, usando `mean()` al posto di
+            `sum()`. Il risultato è una Series con circa 123,33 per la categoria A, 225 per la B e 300 per la C.
+        """,
+        starter="""
+            media_per_categoria = vendite.groupby(...)[...]...
+            media_per_categoria
+        """,
+        soluzione="""
+            media_per_categoria = vendite.groupby("Categoria")["Vendite"].mean()
+            media_per_categoria
+        """,
+        verifica="""
+            assert media_per_categoria["B"] == 225, "❌ media_per_categoria: raggruppa per Categoria e calcola mean() su Vendite"
+            assert round(media_per_categoria["A"], 2) == 123.33, "❌ media_per_categoria: la media della categoria A è circa 123,33"
+        """,
+        prova_anche="con `count()`, che conta le vendite di ogni categoria.",
+    )
     with nb.solo("avanzata"):
         nb.sottosezione("Aggregazione multipla", intro="""
             Con il metodo `.agg()` calcoliamo più statistiche in una volta sola, passando un dizionario che
@@ -445,6 +520,28 @@ def costruisci() -> Notebook:
         # left join
         pd.merge(df_sinistra, df_destra, on="ID", how="left")
     """)
+    nb.hands_on(
+        richiesta="""
+            Ripeti l'unione di `df_sinistra` e `df_destra` con `how="right"`, salva il risultato in `df_right` e
+            contane le righe con `len`. Restano le tre righe di `df_destra`, con gli ID 3, 4 e 5, e soltanto l'ID 3
+            ha un nome.
+        """,
+        starter="""
+            df_right = pd.merge(...)
+            print(len(df_right))  # Output: 3
+            df_right
+        """,
+        soluzione="""
+            df_right = pd.merge(df_sinistra, df_destra, on="ID", how="right")
+            print(len(df_right))  # Output: 3
+            df_right
+        """,
+        verifica="""
+            assert df_right["ID"].tolist() == [3, 4, 5], "❌ df_right: con how='right' restano gli ID di df_destra"
+            assert df_right["Nome"].notnull().sum() == 1, "❌ df_right: solo l'ID 3 trova un nome in df_sinistra"
+        """,
+        prova_anche='con `how="outer"`, che dà cinque righe.',
+    )
     nb.sottosezione("Concatenazione", intro="""
         La funzione `concat()` unisce DataFrame verticalmente, aggiungendo le righe del secondo sotto quelle
         del primo. Con `ignore_index=True` l'indice del risultato riparte da 0, e con `sort=False` le colonne
@@ -465,108 +562,48 @@ def costruisci() -> Notebook:
     nb.md("Riassunto in una pagina: [Da Excel a pandas](../Schede/Scheda_Excel_pandas.md).")
 
     # ------------------------------------------------------------------ 6
-    nb.sezione("Esercizi", intro="""
-        Negli esercizi che seguono lavori come data analyst per un'azienda che gestisce una piattaforma di
-        streaming musicale. I primi tre usano il DataFrame `ascolti`, definito nella cella qui sotto, che
-        registra per ogni utente la canzone, l'artista e il numero di ascolti; la cella va eseguita prima di
-        cominciare.
-    """)
-    nb.code("""
-        # DataFrame degli ascolti
-        dati_ascolti = {
-            "UserID": [101, 102, 103, 104, 105, 106],
-            "Song": ["Song A", "Song B", "Song A", "Song C", "Song B", "Song D"],
-            "Artist": ["Artist X", "Artist Y", "Artist X", "Artist Z", "Artist Y", "Artist W"],
-            "Plays": [15, 2, 4, 1, 5, 2],
-        }
-        ascolti = pd.DataFrame(dati_ascolti)
-        ascolti
+    nb.sezione("Extra", intro="""
+        Gli esercizi di questa sezione ripassano i punti principali del notebook e sono pensati per essere svolti a
+        casa, con calma, e durante le ore di corso li saltiamo. Ognuno legge i propri dati nella sua cella, quindi si
+        possono affrontare in qualsiasi ordine.
     """)
 
     nb.esercizio(
-        titolo="Gli ascolti di un utente",
+        titolo="Le letture più alte dell'anno",
         scenario="""
-            L'utente 103 ha chiesto all'assistenza quali canzoni risultano nella sua cronologia e quante volte
-            le ha ascoltate. Per rispondergli vogliamo tutte le righe di `ascolti` che lo riguardano, e con una
-            maschera booleana pandas le trova allo stesso modo in una tabella di sei righe o di sei milioni. Il risultato è una sola riga, con `Song A` di `Artist X` e 4 ascolti.
-        """,
-        richiesta="Costruisci in `cond` la maschera delle righe in cui `UserID` vale 103 e salva in `ascolti_utente_103` le righe di `ascolti` che la rispettano.",
-        suggerimento="costruisci una maschera booleana con il confronto `==` e usala per filtrare il DataFrame.",
-        starter="""
-            cond = ...
-            ascolti_utente_103 = ...
-            ascolti_utente_103
-        """,
-        soluzione="""
-            cond = ascolti["UserID"] == 103
-            ascolti_utente_103 = ascolti[cond]
-            ascolti_utente_103
-        """,
-        verifica="""
-            assert len(ascolti_utente_103) == 1, "❌ Deve restare una sola riga"
-            assert ascolti_utente_103["Song"].tolist() == ["Song A"], "❌ La canzone dell'utente 103 è Song A"
-            assert ascolti_utente_103["Plays"].tolist() == [4], "❌ Gli ascolti dell'utente 103 sono 4"
-        """,
-    )
-
-    nb.esercizio(
-        titolo="Totale di ascolti per canzone",
-        scenario="""
-            La redazione prepara la classifica della settimana e vuole il totale degli ascolti di ogni canzone,
-            sommando quelli di tutti gli utenti. Con `groupby` pandas raccoglie le righe della stessa canzone e
-            ne somma gli ascolti in una sola istruzione, che resta uguale quando le canzoni diventano migliaia.
-            Il risultato è una Series con 19 ascolti per Song A, 7 per Song B, 1 per Song C e 2 per Song D.
-        """,
-        richiesta="Raggruppa `ascolti` per `Song`, somma la colonna `Plays` e salva il risultato in `ascolti_per_canzone`.",
-        suggerimento="serve `groupby()` seguito da `sum()`.",
-        starter="""
-            ascolti_per_canzone = ascolti.groupby("...")["..."].sum()
-            ascolti_per_canzone
-        """,
-        soluzione="""
-            ascolti_per_canzone = ascolti.groupby("Song")["Plays"].sum()
-            ascolti_per_canzone
-        """,
-        verifica="""
-            atteso = {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}
-            assert ascolti_per_canzone.to_dict() == atteso, "❌ Raggruppa per Song e somma Plays"
-        """,
-    )
-
-    nb.esercizio(
-        titolo="L'artista più ascoltato",
-        scenario="""
-            Nella newsletter del mese la piattaforma pubblica la classifica degli artisti, dal più ascoltato al
-            meno ascoltato, e in apertura il nome del primo. Vogliamo ottenere entrambi da `ascolti` con
-            pandas, raggruppando per artista, sommando gli ascolti e ordinando i totali, in modo che il mese
-            prossimo basti rieseguire la cella sui dati nuovi. In testa alla classifica c'è `Artist X`, con 19
-            ascolti.
+            Prima di emettere le bollette vogliamo controllare le tre letture mensili più alte del file
+            `letture_pod_2025.csv`, perché è lì che di solito si nasconde un errore di lettura. Con `sort_values`
+            pandas ordina tutte le 216 righe del file con una sola istruzione, e `head(3)` ne tiene le prime tre. In
+            testa c'è la lettura di luglio del Panificio Rè, 5785,2 kWh in fascia F1, molto più alta delle due che
+            seguono, entrambe dello Studio Dentistico Colombo e attorno ai 1400 kWh.
         """,
         richiesta="""
-            1. Raggruppa le righe per `Artist`, somma `Plays` e ordina i totali in modo decrescente, come
-               nella classifica, salvando il risultato in `ascolti_per_artista`.
-            2. Salva in `artista_top` il nome dell'artista con il totale più alto, quello da mettere in apertura.
+            1. Leggi il file in `letture` con i parametri del CSV italiano visti nel notebook 06, cioè `sep=";"`,
+               `decimal=","` ed `encoding="latin-1"`.
+            2. Ordina le righe per `kwh`, dalla lettura più alta alla più bassa, e salva il risultato in `ordinate`.
+            3. Salva in `prime_tre` le prime tre righe di `ordinate`, quelle da controllare.
         """,
-        suggerimento="combina `groupby()`, `sum()` e `sort_values()`, mentre `idxmax()` restituisce l'etichetta del valore massimo.",
+        suggerimento="l'ordine decrescente si ottiene passando a `sort_values` l'argomento `ascending=False`.",
         starter="""
-            ascolti_per_artista = ascolti.groupby(...)[...].sum().sort_values(ascending=False)
-            artista_top = ascolti_per_artista.idxmax()
-            artista_top
+            letture = pd.read_csv("../Dati/letture_pod_2025.csv", ...)
+            ordinate = ...
+            prime_tre = ...
+            prime_tre
         """,
         soluzione="""
-            ascolti_per_artista = ascolti.groupby("Artist")["Plays"].sum().sort_values(ascending=False)
-            artista_top = ascolti_per_artista.idxmax()
-            artista_top
+            letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", encoding="latin-1")
+            ordinate = letture.sort_values("kwh", ascending=False)
+            prime_tre = ordinate.head(3)
+            prime_tre
         """,
         verifica="""
-            assert ascolti_per_artista.iloc[0] == 19, "❌ Il primo totale, in ordine decrescente, è 19"
-            assert artista_top == "Artist X", "❌ L'artista più ascoltato è un altro"
+            assert prime_tre["kwh"].tolist() == [5785.2, 1434.9, 1396.3], "❌ prime_tre: ordina per kwh con ascending=False e tieni le prime tre righe"
+            assert prime_tre.iloc[0]["cliente"] == "Panificio Rè", "❌ prime_tre: la prima riga è la lettura di luglio del Panificio Rè"
         """,
     )
 
     nb.esercizio(
         titolo="Prezzo medio dell'elettricità per stato",
-        facoltativo=True,
         scenario="""
             Il file `U.S. Electricity Prices.csv` riporta il prezzo medio mensile dell'elettricità negli Stati
             Uniti, in centesimi di dollaro per kWh, per stato e per settore, dal 2001 al 2024. Vogliamo una

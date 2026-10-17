@@ -82,25 +82,29 @@ def costruisci() -> Notebook:
         )
         fig.show()
     """)
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
-            Assegna ad `azienda` un'altra colonna del dataset, per esempio `AAPL`, `AMZN` o `MSFT`. Poi limita il
-            grafico agli ultimi 12 mesi, filtrando `df` con una maschera sulla colonna `date` prima di passarlo a
-            `px.line`. Poiché il dataset finisce alla fine del 2019, basta tenere le date a partire dal `2019-01-01`,
-            e il grafico che ottieni comincia a gennaio 2019.
+            Disegna in `fig_aapl` la linea della colonna `AAPL` con il titolo `Apple (indicizzato)`, cambiando il
+            valore di `azienda` e il titolo nella chiamata a `px.line`. Il grafico ha una sola linea, che come tutte le
+            serie del dataset parte da 1 alla prima data.
         """,
         starter="""
             azienda = ...
-            mask_12_mesi = ...
-            fig_12_mesi = px.line(...)
-            fig_12_mesi.show()
+
+            fig_aapl = px.line(df, x="date", y=azienda, title=...)
+            fig_aapl.show()
         """,
         soluzione="""
             azienda = "AAPL"
-            mask_12_mesi = df["date"] >= "2019-01-01"
-            fig_12_mesi = px.line(df[mask_12_mesi], x="date", y=azienda, title=f"{azienda} (indicizzato), ultimi 12 mesi")
-            fig_12_mesi.show()
+
+            fig_aapl = px.line(df, x="date", y=azienda, title="Apple (indicizzato)")
+            fig_aapl.show()
         """,
+        verifica="""
+            assert fig_aapl.layout.yaxis.title.text == "AAPL", "❌ fig_aapl: azienda deve valere 'AAPL'"
+            assert fig_aapl.layout.title.text == "Apple (indicizzato)", "❌ fig_aapl: il titolo è 'Apple (indicizzato)'"
+        """,
+        prova_anche="con `MSFT` o con `NFLX`.",
     )
     with nb.solo("avanzata"):
         nb.md("""
@@ -146,27 +150,30 @@ def costruisci() -> Notebook:
         )
         fig.show()
     """)
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
-            Aggiungi o togli una società dalla lista `aziende`. Poi crea `df_indicizzato`, una copia di `df` in cui le
-            serie sono riportate a base 100 alla prima data, dividendo ogni colonna per il suo primo valore e
-            moltiplicando per 100 (`valore / valore.iloc[0] * 100`), e ripeti il grafico. Se il calcolo è corretto,
-            tutte le linee partono da 100.
+            Aggiungi `NFLX` alla lista `aziende` e disegna in `fig_4` il confronto tra le quattro società, con il
+            titolo `Confronto tra quattro società`. Nel grafico compaiono quattro linee, ciascuna con la sua voce
+            nella legenda.
         """,
         starter="""
             aziende = ["AAPL", "AMZN", "MSFT", ...]
-            df_indicizzato = df.copy()
-            df_indicizzato[aziende] = ...
-            fig_100 = px.line(...)
-            fig_100.show()
+
+            fig_4 = px.line(...)
+            fig_4.show()
         """,
         soluzione="""
             aziende = ["AAPL", "AMZN", "MSFT", "NFLX"]
-            df_indicizzato = df.copy()
-            df_indicizzato[aziende] = df[aziende] / df[aziende].iloc[0] * 100
-            fig_100 = px.line(df_indicizzato, x="date", y=aziende, title="Confronto tra serie (base 100)")
-            fig_100.show()
+
+            fig_4 = px.line(df, x="date", y=aziende, title="Confronto tra quattro società")
+            fig_4.show()
         """,
+        verifica="""
+            nomi = [traccia.name for traccia in fig_4.data]
+            assert len(nomi) == 4 and "NFLX" in nomi, "❌ fig_4: passa a y la lista aziende con NFLX in fondo"
+            assert fig_4.layout.title.text == "Confronto tra quattro società", "❌ fig_4: il titolo è 'Confronto tra quattro società'"
+        """,
+        prova_anche="a togliere `AMZN` dalla lista.",
     )
 
     # ------------------------------------------------------------------ 6
@@ -192,6 +199,24 @@ def costruisci() -> Notebook:
         fig = px.histogram(turbina, x="vento_ms", nbins=30, title="Distribuzione del vento")
         fig.show()
     """)
+    nb.hands_on(
+        richiesta="""
+            Ripeti in `fig_10` l'istogramma del vento con 10 barre invece di 30, cambiando soltanto `nbins`. Le barre
+            diventano più larghe e ciascuna conta le ore di un intervallo di velocità più ampio.
+        """,
+        starter="""
+            fig_10 = px.histogram(turbina, x="vento_ms", nbins=..., title="Distribuzione del vento")
+            fig_10.show()
+        """,
+        soluzione="""
+            fig_10 = px.histogram(turbina, x="vento_ms", nbins=10, title="Distribuzione del vento")
+            fig_10.show()
+        """,
+        verifica="""
+            assert fig_10.data[0].nbinsx == 10, "❌ fig_10: passa nbins=10 a px.histogram"
+        """,
+        prova_anche="con `nbins=100`.",
+    )
     nb.md("""
         Lo scatter disegna un punto per ogni riga e mostra la relazione tra due colonne, in questo caso il vento
         sull'asse x e la potenza sull'asse y. L'insieme dei punti descrive la curva di potenza della turbina, che sale
@@ -203,8 +228,12 @@ def costruisci() -> Notebook:
         fig.show()
     """)
 
-    # ------------------------------------------------------------------ Esercizi
-    nb.sezione("Esercizi")
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", intro="""
+        Gli esercizi di questa sezione ripassano i punti principali del notebook e sono pensati per essere svolti a
+        casa, con calma, e durante le ore di corso li saltiamo. Il primo legge i dati di Terna nella propria cella, mentre il
+        secondo usa il DataFrame `turbina` della sezione precedente.
+    """)
     nb.esercizio(
         titolo="Un mese di carico",
         scenario="""

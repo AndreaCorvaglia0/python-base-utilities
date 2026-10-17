@@ -85,23 +85,10 @@ def costruisci() -> Notebook:
     nb.box("nota", """
         In Italia il caso più comune è `giorno/mese/anno`, quindi `dayfirst=True` è spesso la scelta corretta.
         Quando il formato è noto e non cambia da una riga all'altra, conviene però indicarlo per esteso con
-        `format=...`, perché pandas non deve più dedurlo e la conversione diventa più affidabile.
+        `format`, perché pandas non deve più dedurlo e la conversione diventa più affidabile. Il formato si scrive
+        con dei codici preceduti da `%`, come `%d` per il giorno, `%m` per il mese, `%Y` per l'anno a quattro cifre,
+        `%H` per l'ora e `%M` per i minuti, e quello dei nostri timestamp è `"%d/%m/%Y %H:%M"`.
     """)
-    nb.prova_tu(
-        richiesta="""
-            Crea una nuova colonna `timestamp_2` convertendo di nuovo `timestamp_str`, ma questa volta con
-            `format="%d/%m/%Y %H:%M"`. Poi confronta le prime cinque righe con la colonna `timestamp`: le due
-            colonne devono coincidere, perché `dayfirst=True` e `format` descrivono in due modi lo stesso formato.
-        """,
-        starter="""
-            df["timestamp_2"] = pd.to_datetime(df["timestamp_str"], format=...)
-            df[["timestamp", "timestamp_2"]].head()
-        """,
-        soluzione="""
-            df["timestamp_2"] = pd.to_datetime(df["timestamp_str"], format="%d/%m/%Y %H:%M")
-            df[["timestamp", "timestamp_2"]].head()
-        """,
-    )
 
     # ------------------------------------------------------------------ 3
     nb.sezione("Formati", intro="""
@@ -133,6 +120,24 @@ def costruisci() -> Notebook:
     nb.code("""
         pd.to_datetime(ambigue, dayfirst=False, errors="raise")
     """, errore=True)
+    nb.hands_on(
+        richiesta="""
+            Converti in `istante` la stringa `"2025-03-01 12:00"`, scritta nell'ordine anno, mese e giorno, indicando
+            a `pd.to_datetime` il formato con `format`. Il risultato è il `Timestamp` del 1° marzo 2025 alle 12:00.
+        """,
+        starter="""
+            istante = pd.to_datetime("2025-03-01 12:00", format=...)
+            istante
+        """,
+        soluzione="""
+            istante = pd.to_datetime("2025-03-01 12:00", format="%Y-%m-%d %H:%M")
+            istante
+        """,
+        verifica="""
+            assert istante == pd.Timestamp(2025, 3, 1, 12, 0), "❌ istante: il formato di questa stringa è '%Y-%m-%d %H:%M'"
+        """,
+        prova_anche='con la stringa `"01.03.2025 12:00"`, adattando il formato.',
+    )
 
     # ------------------------------------------------------------------ 4
     nb.sezione("Il tempo come indice", intro=f"""
@@ -160,20 +165,24 @@ def costruisci() -> Notebook:
         # slicing per periodo (anno/mese/giorno)
         df_serie.loc["2025-03-02"].head()
     """)
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
-            Seleziona in `periodo` le righe dal `2025-03-01 12:00` al `2025-03-01 18:00` usando `.loc[...]` con
-            un intervallo tra due stringhe. Il risultato ha 22 righe, perché nelle sei ore considerate, che con gli
-            estremi inclusi corrispondono a 25 quarti d'ora, mancano tre misure.
+            Seleziona con `loc` tutte le righe del 3 marzo 2025, salvale in `terzo_giorno` e contale con `len`. Le righe
+            sono 88, cioè i 96 quarti d'ora del giorno meno gli otto che mancano.
         """,
         starter="""
-            periodo = df_serie.loc[...]
-            len(periodo)  # Output: 22
+            terzo_giorno = df_serie.loc[...]
+            len(terzo_giorno)  # Output: 88
         """,
         soluzione="""
-            periodo = df_serie.loc["2025-03-01 12:00":"2025-03-01 18:00"]
-            len(periodo)  # Output: 22
+            terzo_giorno = df_serie.loc["2025-03-03"]
+            len(terzo_giorno)  # Output: 88
         """,
+        verifica="""
+            assert len(terzo_giorno) == 88, "❌ terzo_giorno: con loc e la stringa '2025-03-03' si prende tutto il giorno"
+            assert (terzo_giorno.index.day == 3).all(), "❌ terzo_giorno: tutte le righe devono essere del 3 marzo"
+        """,
+        prova_anche='con `"2025-03"`, che seleziona l\'intero mese, cioè tutte le 270 righe del dataset.',
     )
 
     # ------------------------------------------------------------------ 5
@@ -193,28 +202,27 @@ def costruisci() -> Notebook:
 
         df_caratteristiche.head()
     """)
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
-            Aggiungi a `df_caratteristiche_es` la colonna `date`, con la sola data senza l'ora, e la colonna
-            `is_weekend`, che vale `True` il sabato e la domenica. La data si ricava da `df_caratteristiche_es.index.date`,
-            mentre per il weekend basta confrontare la colonna `dayofweek` con 5, il valore del sabato (la domenica
-            vale 6). Poiché il 1° marzo 2025 è un sabato, i primi due giorni del dataset cadono nel weekend e le
-            righe con `is_weekend` uguale a `True` sono 182.
+            Ricava in `ore` l'ora di ogni riga di `df_serie` leggendola dall'indice, e conta in `righe_12` le righe
+            in cui l'ora vale 12. Le righe sono 12, quattro quarti d'ora per ciascuno dei tre giorni, perché nessuna
+            delle misure mancanti cade in quell'ora.
         """,
         starter="""
-            df_caratteristiche_es = df_caratteristiche.copy()
-            df_caratteristiche_es["date"] = ...
-            df_caratteristiche_es["is_weekend"] = ...
-
-            df_caratteristiche_es["is_weekend"].sum()  # Output: 182
+            ore = ...
+            righe_12 = (...).sum()
+            righe_12
         """,
         soluzione="""
-            df_caratteristiche_es = df_caratteristiche.copy()
-            df_caratteristiche_es["date"] = df_caratteristiche_es.index.date
-            df_caratteristiche_es["is_weekend"] = df_caratteristiche_es["dayofweek"] >= 5
-
-            df_caratteristiche_es["is_weekend"].sum()  # Output: 182
+            ore = df_serie.index.hour
+            righe_12 = (ore == 12).sum()
+            righe_12
         """,
+        verifica="""
+            assert len(ore) == len(df_serie), "❌ ore: serve un valore per ogni riga, da df_serie.index.hour"
+            assert righe_12 == 12, "❌ righe_12: somma i True della condizione ore == 12"
+        """,
+        prova_anche="con `df_serie.index.dayofweek == 6`, che conta le righe della domenica.",
     )
 
     # ------------------------------------------------------------------ 6
@@ -352,20 +360,24 @@ def costruisci() -> Notebook:
     nb.code("""
         giornaliero
     """)
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
-            Calcola in `somma_oraria` il resampling **orario** di `power_kw` usando la somma (`sum`) al posto della
-            media, e confronta le prime righe con quelle di `orario`. Ogni valore della somma è quattro volte la media
-            corrispondente, perché in ogni ora ci sono quattro quarti d'ora.
+            Calcola in `ogni_due_ore` la media di `df_15min` su intervalli di due ore, passando a `resample` l'alias
+            `"2h"`. Il risultato ha 36 righe, una ogni due ore nei tre giorni.
         """,
         starter="""
-            somma_oraria = df_15min...
-            pd.DataFrame({"mean": orario["power_kw"], "sum": somma_oraria}).head()
+            ogni_due_ore = df_15min...
+            ogni_due_ore.head()
         """,
         soluzione="""
-            somma_oraria = df_15min["power_kw"].resample("h").sum()
-            pd.DataFrame({"mean": orario["power_kw"], "sum": somma_oraria}).head()
+            ogni_due_ore = df_15min.resample("2h").mean()
+            ogni_due_ore.head()
         """,
+        verifica="""
+            assert len(ogni_due_ore) == 36, "❌ ogni_due_ore: con resample('2h') le righe sono 36"
+            assert ogni_due_ore.index[1] == pd.Timestamp("2025-03-01 02:00"), "❌ ogni_due_ore: la seconda riga è quella delle 2:00"
+        """,
+        prova_anche='con `"6h"`, che dà quattro righe al giorno.',
     )
 
     # ------------------------------------------------------------------ 9
@@ -406,11 +418,13 @@ def costruisci() -> Notebook:
     """)
 
     # ------------------------------------------------------------------ 10
-    nb.sezione("Esercizi", intro="""
-        Gli esercizi usano `carico`, il DataFrame di Terna del 2024 già ordinato e senza duplicati, in cui la
-        colonna `Date` è di tipo `datetime` e la colonna `Total Load [MW]` contiene la potenza media richiesta
-        nella zona Nord in ogni quarto d'ora. Le righe sono 35.132, una per ogni quarto d'ora dell'anno tranne
-        i quattro che mancano il giorno del passaggio all'ora legale.
+    nb.sezione("Extra", intro="""
+        Gli esercizi di questa sezione ripassano i punti principali del notebook e sono pensati per essere svolti a
+        casa, con calma; durante le ore di corso li saltiamo. Entrambi usano `carico`, il DataFrame di Terna del
+        2024 già ordinato e senza duplicati, in cui la colonna `Date` è di tipo `datetime` e la colonna
+        `Total Load [MW]` contiene la potenza media richiesta nella zona Nord in ogni quarto d'ora. Le righe sono
+        35.132, una per ogni quarto d'ora dell'anno tranne i quattro che mancano il giorno del passaggio all'ora
+        legale.
     """)
     nb.esercizio(
         titolo="Il carico giornaliero",
@@ -454,8 +468,8 @@ def costruisci() -> Notebook:
         scenario="""
             Chi pianifica gli interventi sulla rete vuole sapere a che ora del giorno il carico della zona Nord è
             più alto, in media sul 2024, e quale giorno della settimana è il più leggero, quello in cui conviene
-            programmare la manutenzione. In pandas basta
-            ricavare dalla colonna `Date` l'ora e il giorno della settimana e raggruppare il carico su ciascuno,
+            programmare la manutenzione. In pandas basta ricavare dalla colonna `Date` l'ora e il giorno della
+            settimana e raggruppare il carico su ciascuno,
             e lo stesso codice funziona su un mese come su dieci anni di dati. Il picco medio cade alle 11 e il
             giorno più leggero è la domenica, che per pandas è il giorno 6.
         """,

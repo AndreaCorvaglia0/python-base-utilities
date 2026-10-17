@@ -107,7 +107,7 @@ def costruisci() -> Notebook:
     nb.code("""
         print(per_anno.sum(), len(df))  # Output: 40 40
     """)
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
             Dai alla chat, in modalità Ask, il prompt seguente, che descrive le colonne del DataFrame e il
             risultato che vogliamo:
@@ -140,6 +140,10 @@ def costruisci() -> Notebook:
 
             per_provincia = potenza_per_provincia(df)
             per_provincia
+        """,
+        verifica="""
+            assert list(per_provincia.columns) == ["provincia", "kwp"], "❌ per_provincia: servono le colonne provincia e kwp, con reset_index()"
+            assert per_provincia["provincia"].iloc[0] == "MI" and round(per_provincia["kwp"].sum(), 1) == 737, "❌ per_provincia: MI in testa e 737 kWp in tutto"
         """,
     )
     nb.md("""
@@ -287,7 +291,7 @@ def costruisci() -> Notebook:
         quando il file viene lanciato come script, e non la esegue quando il file viene importato da un altro
         modulo.
     """)
-    nb.prova_tu(
+    nb.hands_on(
         richiesta="""
             Le chiavi del dizionario `cosa_e` sono quattro righe dello script. Per ciascuna scrivi che cosa è,
             scegliendo tra `"decoratore"`, `"type hint"`, `"blocco main"` e `"costante"`; le spiegazioni delle
@@ -311,11 +315,20 @@ def costruisci() -> Notebook:
             }
             cosa_e
         """,
+        verifica="""
+            attese = {"@dataclass": "decoratore", "-> pd.DataFrame": "type hint",
+                      'if __name__ == "__main__":': "blocco main", "DATA_DIR": "costante"}
+            assert cosa_e == attese, "❌ cosa_e: rileggi le spiegazioni dei blocchi dello script e controlla le quattro risposte"
+        """,
     )
     nb.md("Riassunto in una pagina: [Leggere il codice: cosa è cosa](../Schede/Scheda_leggere_codice.md).")
 
-    # ------------------------------------------------------------------ Esercizi
-    nb.sezione("Esercizi")
+    # ------------------------------------------------------------------ Extra
+    nb.sezione("Extra", intro="""
+        Gli esercizi di questa sezione ripassano i punti principali del notebook e sono pensati per essere svolti a
+        casa, con calma, e durante le ore di corso li saltiamo. Il primo si svolge con la chat di Copilot, mentre
+        il secondo parte dalla lettura attenta di uno script scritto da un agente.
+    """)
     nb.esercizio(
         titolo="Il parametro inventato",
         scenario="""

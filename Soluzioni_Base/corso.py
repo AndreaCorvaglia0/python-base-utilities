@@ -124,19 +124,10 @@ assert len(letture_pod) == 31, "❌ letture_pod: servono le 31 righe del solo PO
 assert round(totale_marzo, 1) == 7785.6, "❌ totale_marzo: somma la colonna kwh"
 '''),
     '7.1': ('Esercizio 7.1', r'''
-assert len(ascolti_utente_103) == 1, "❌ Deve restare una sola riga"
-assert ascolti_utente_103["Song"].tolist() == ["Song A"], "❌ La canzone dell'utente 103 è Song A"
-assert ascolti_utente_103["Plays"].tolist() == [4], "❌ Gli ascolti dell'utente 103 sono 4"
+assert prime_tre["kwh"].tolist() == [5785.2, 1434.9, 1396.3], "❌ prime_tre: ordina per kwh con ascending=False e tieni le prime tre righe"
+assert prime_tre.iloc[0]["cliente"] == "Panificio Rè", "❌ prime_tre: la prima riga è la lettura di luglio del Panificio Rè"
 '''),
     '7.2': ('Esercizio 7.2', r'''
-atteso = {"Song A": 19, "Song B": 7, "Song C": 1, "Song D": 2}
-assert ascolti_per_canzone.to_dict() == atteso, "❌ Raggruppa per Song e somma Plays"
-'''),
-    '7.3': ('Esercizio 7.3', r'''
-assert ascolti_per_artista.iloc[0] == 19, "❌ Il primo totale, in ordine decrescente, è 19"
-assert artista_top == "Artist X", "❌ L'artista più ascoltato è un altro"
-'''),
-    '7.4': ('Esercizio 7.4', r'''
 assert len(prezzi_stati) == 4, "❌ Con l'inner join restano le quattro righe di stati"
 assert {"sigla", "price"} <= set(prezzi_stati.columns), "❌ Servono le colonne sigla e price"
 prezzo_tx = prezzi_stati.loc[prezzi_stati["sigla"] == "TX", "price"].iloc[0]
