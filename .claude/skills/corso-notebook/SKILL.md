@@ -45,7 +45,7 @@ va un paragrafo di due a cinque frasi che dice che cosa fa lo strumento, a cosa 
 | `Ambiente_script_e_Ruff` | `Aula_Avanzata/Modulo_1/Script_uv_Ruff/`, senza copia in `Soluzioni/` | `_build/src/nbS_ambiente_script_e_ruff.py` | `S` |
 | `Approfondimenti_1/2` | A1 in `Modulo_2/`; A2 in `Aula_Base/Modulo_3/` e `Aula_Avanzata/Modulo_4/`; più `Soluzioni/` | `_build/src/nbA1_…py`, `nbA2_…py` | `A1`, `A2` |
 | `Homework` | `Riserva/Base/`, `Riserva/Avanzata/` (con `Homework_Soluzioni`) | `_build/src/nbC_homework.py` | `C` |
-| notebook di riserva su uv, script e Ruff | `Riserva/` | `_build/src/nbR_…py` | `R` |
+| notebook di riserva su uv, script e Ruff | `Riserva/Avanzata/` (con `Esercizi_uv_script_Ruff_Soluzioni`) | `_build/src/nbR_…py` | `R` |
 | `Extra/*.ipynb` | `Extra/` | `_build/src/extra/*.py` | `EXTRA` |
 
 Il resto delle cartelle delle aule non è generato ma copiato da `_build/statici.py` a ogni build, quindi anche lì si
@@ -59,9 +59,11 @@ modifica l'originale:
 | `Aula_Avanzata/Modulo_1/Script_uv_Ruff/demo/`, `esercizio/` | `_build/src/script_uv_ruff/demo/`, `esercizio/` |
 | `Aula_Avanzata/Soluzioni/Script_uv_Ruff/demo/`, `esercizio/` | `_build/src/script_uv_ruff/soluzioni/demo/`, `soluzioni/esercizio/` |
 
-Il corsista riceve solo la propria cartella `Aula_X`, che deve funzionare da sola (dati, schede, `pyproject.toml`,
-`uv.lock`, README). Il primo livello è `Modulo_1` … `Modulo_4`; i percorsi verso dati e schede partono dalla radice
-dell'aula, quindi da `Modulo_N/` e da `Soluzioni/` si scrive `../Dati/` e da `Modulo_1/Script_uv_Ruff/` `../../Dati/`.
+Il corsista riceve soltanto la cartella della sua aula, `Aula_Base` o `Aula_Avanzata`, che deve funzionare da sola,
+perché contiene i dati, le schede, il README e i file del progetto uv (`pyproject.toml`, `uv.lock` e
+`.python-version`). Al primo livello stanno le cartelle `Modulo_1` … `Modulo_4`, e i percorsi verso i dati e le schede
+partono dalla radice dell'aula, quindi da `Modulo_N/` e da `Soluzioni/` si scrive `../Dati/` e da
+`Modulo_1/Script_uv_Ruff/` si scrive `../../Dati/`.
 La cartella in cui finisce un notebook la decide la sua voce in `nbkit.PROGRAMMA` (`modulo`, `cartella`, `soluzioni`),
 e il `blocco` del sorgente, che può essere un dizionario per aula, deve coincidere; il materiale di riserva ha
 `riserva=True`. I dettagli, con le cose da aggiornare quando si aggiunge un file di dati o si cambia la demo, sono nella
@@ -85,8 +87,9 @@ posti per il codice del corsista sono quattro e hanno funzioni diverse (sezione 
 per notebook e solo dove servono e sono rilevanti, con un massimo di cinque; una sezione Extra in fondo con due o tre
 esercizi brevi da fare a casa; il compito intero nelle Esercitazioni, costruite sugli esercizi del docente del branch
 `main`; il Capstone nella giornata 4. Il notebook di spiegazione `Ambiente_script_e_Ruff` non ha né Hands-on né
-Extra, perché la sua pratica è l'Esercitazione 1 dell'Avanzata. Il materiale che non sta nel percorso principale va in
-`Approfondimenti_1` o `_2`, non in sezioni facoltative dentro i notebook.
+Extra, perché la sua pratica è l'Esercitazione 1 dell'Avanzata, e non li ha nemmeno il capstone, che procede a passi
+guidati. Il materiale che non sta nel percorso principale va in `Approfondimenti_1` o `_2`, non in sezioni facoltative
+dentro i notebook.
 
 La difficoltà di un esercizio sta in Python e in nulla altro: niente calcoli da impostare, niente matematica oltre
 le quattro operazioni, niente conversioni di unità o ragionamenti sullo scenario. Numeri e operazioni entrano di
@@ -112,44 +115,49 @@ in `_build/docs/PIANO_OTTOBRE_2026.md`.
 ## 3b. Le esercitazioni
 
 Le esercitazioni di fine modulo hanno un formato proprio, descritto in `_build/docs/PIANO_OTTOBRE_2026.md`: un'ora,
-di cui 45 minuti di lavoro e 15 di correzione; cinque esercizi del nucleo in difficoltà crescente, eventuali esercizi
-facoltativi e una sfida aperta senza verifica; un filo narrativo semplice (vita quotidiana nel modulo 1, dati del
-corso da pandas in poi); ogni esercizio indipendente dagli altri. Il toolkit offre `Notebook(...,
+di cui 45 minuti di lavoro e 15 di correzione; cinque o sei esercizi del nucleo in difficoltà crescente, eventuali
+esercizi facoltativi e una sfida aperta senza verifica; un filo narrativo semplice (vita quotidiana nel modulo 1, dati
+del corso da pandas in poi); ogni esercizio indipendente dagli altri. Il toolkit offre `Notebook(...,
 soluzioni_a_richiesta=True)` per la cella `soluzione("E1.3")` sotto ogni esercizio, `suggerimenti=[...]` per gli
 aiuti nascosti (due livelli in Base, al massimo uno in Avanzata) e `nb.domanda(...)` per le domande di riepilogo
 iniziali, che sono quattro o cinque, dirette e con risposta breve: un autocontrollo di concetti, non quesiti sottili.
 Le due aule nascono dallo stesso sorgente con un helper che chiama `nb.esercizio` due volte, come `step()` nel
-capstone: la Base ha lo starter guidato e due suggerimenti, l'Avanzata lo starter quasi vuoto e un passo in più.
-Prima di un passo complesso o appena visto va un breve paragrafo di richiamo teorico, in prosa.
+capstone: la Base ha lo starter guidato e due suggerimenti, l'Avanzata lo starter quasi vuoto e talvolta una
+richiesta in più. Prima di un passo complesso o appena visto va un breve paragrafo di richiamo teorico, in prosa.
 
-L'Esercitazione 1 dell'Avanzata fa eccezione: l'ora è l'esercizio sullo script, in cui il corsista rifà la demo del
-notebook `Ambiente_script_e_Ruff` nella cartella `Script_uv_Ruff/esercizio/`, con i comandi nel terminale e i passi
-guidati nel notebook, più alcuni passi facoltativi elementari (un `print` in punti diversi, `__name__`, `uv sync`). Gli
-esercizi classici restano in fondo allo stesso notebook, facoltativi, da fare a casa. Il percorso
-`Script_uv_Ruff/esercizio/` vale sia da `Modulo_1/` sia da `Soluzioni/`, dove porta allo stato finale; HANDS_ON.md
-descrive l'esercitazione per intero.
+L'Esercitazione 1 dell'Avanzata fa eccezione: l'ora è l'esercizio sullo script, in cui il corsista rifà la
+dimostrazione del notebook `Ambiente_script_e_Ruff` nella cartella `Script_uv_Ruff/esercizio/`, con i comandi nel
+terminale e i passi guidati nel notebook, più alcuni passi facoltativi elementari (un `print` in punti diversi,
+`__name__`, `uv sync`). Gli esercizi classici restano in fondo allo stesso notebook, facoltativi, da fare a casa.
+Il percorso `Script_uv_Ruff/esercizio/` vale sia da `Modulo_1/` sia da `Soluzioni/`, dove porta allo stato finale;
+HANDS_ON.md descrive l'esercitazione per intero.
 
 ## 4. Ricostruire e controllare
 
-    uv run python _build/controlla.py 07 E2      # build + soluzioni eseguite + Run All studente, solo quei notebook
-    uv run python _build/controlla.py S E1       # il notebook su uv, script e Ruff e l'Esercitazione 1
-    uv run python _build/controlla.py            # tutto il corso
-    uv run python _build/esporta.py              # build completo e zip per i corsisti in dist/
+    uv run python _build/controlla.py 07 E2              # build + soluzioni eseguite + Run All studente, solo questi
+    uv run python _build/controlla.py S E1               # il notebook su uv, script e Ruff e l'Esercitazione 1
+    uv run python _build/controlla.py                    # tutto il corso
+    uv run python _build/esporta.py                      # build completo e zip per i corsisti in dist/
+    uv run python _build/esporta.py --moduli 3 4         # aggiornamento dei soli moduli 3 e 4
+    uv run python _build/esporta.py avanzata --riserva   # la riserva di un'aula
 
 Il comando deve chiudersi con `build: OK`, `cartelle delle aule: OK` e con tutti i notebook OK. Il build segnala le
 celle fuori stile: una cella etichetta è un errore, le frasi telegrafiche e l'"Output atteso:" secco sono avvisi, e si
 risolvono riscrivendo il testo; anche un percorso `"Dati/...` senza il prefisso verso la radice dell'aula è un errore.
 Qualunque notebook si indichi, `controlla.py` verifica anche le cartelle delle aule: che le copie dei dati e dei file
-del progetto coincidano con gli originali, che `_build/aula/uv.lock` sia aggiornato e che Ruff dia sulla demo e sull'esercizio le segnalazioni previste
-all'inizio e nessuna alla fine. Un build completo, senza numeri, toglie dalle aule i notebook che nessun sorgente
-produce più. Il build rimette i file della demo e dell'esercizio come all'inizio ma non tocca `.venv`, quindi dopo
-averli provati si cancella `.venv` in quelle cartelle, altrimenti le librerie installate durante la prova ci sono
-ancora e gli errori da cui parte la demo non compaiono. Le celle che chiamano un'API hanno il tag `rete` e durante la validazione vengono saltate, quindi vanno
-lette con attenzione a mano.
+del progetto coincidano con gli originali, che `_build/aula/uv.lock` sia aggiornato e che Ruff dia sugli script della
+dimostrazione e dell'esercizio le segnalazioni previste all'inizio e nessuna alla fine. Un build completo, senza
+numeri, toglie dalle aule i notebook che nessun sorgente produce più. Il build rimette le cartelle della dimostrazione
+e dell'esercizio esattamente come gli originali e toglie anche `.venv`, `uv.lock`, le cache e i file Excel lasciati da
+una prova, quindi dopo una prova basta un build per ripartire dall'inizio. Le celle che chiamano un'API hanno il tag
+`rete` e durante la validazione vengono saltate, quindi vanno lette con attenzione a mano.
 
 Per consegnare il materiale ai corsisti si lancia `_build/esporta.py`, che ricostruisce tutto e prepara
 `dist/Aula_Base.zip` e `dist/Aula_Avanzata.zip` con i soli file che git traccia o non ignora: `.venv`, le cache e i
-file prodotti eseguendo i notebook restano fuori.
+file prodotti eseguendo i notebook restano fuori. Con `--moduli 3 4` prepara l'aggiornamento dei soli moduli 3 e 4
+(`dist/Aula_X_moduli_3_4.zip`, senza `Modulo_1`, `Modulo_2`, `pyproject.toml` e `uv.lock`), e con `<aula> --riserva`
+lo zip della riserva di un'aula, da estrarre dentro la cartella dell'aula; come si consegnano è scritto in `REGOLE.md`,
+sezione "Come si mantiene".
 
 ## 5. Rileggere
 

@@ -48,7 +48,9 @@ si rilegge il notebook generato in `Aula_Base/Modulo_N/` cella per cella, come f
 
 ## Cosa non si fa
 
-- Niente sezioni facoltative dentro i notebook del percorso: il materiale in più va in `Approfondimenti_1/2`.
+- Niente sezioni facoltative dentro i notebook del percorso: il materiale in più va in `Approfondimenti_1/2`. Le
+  sole eccezioni sono la sezione Extra in fondo ai notebook e, nell'Esercitazione 1 dell'Avanzata, la parte con gli
+  esercizi classici da fare a casa.
 - Niente box Ricorda, niente "bis", niente "passo in più". Dentro i notebook solo Hands-on inline (da due a tre, solo
   dove servono e sono rilevanti, cinque al massimo; piccoli, con `verifica=`) e una sezione Extra in fondo; i compiti
   interi stanno nelle Esercitazioni, costruite sugli esercizi del docente (vedi "Dove stanno gli esercizi" in

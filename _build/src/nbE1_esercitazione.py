@@ -1,6 +1,6 @@
 """E1 · Esercitazione 1: un'ora di domande ed esercizi sul blocco 1 (notebook 00-03), sugli esercizi originali del docente.
 
-Nell'aula Avanzata l'ora è dedicata allo script: i corsisti rifanno la demo del docente nella cartella
+Nell'aula Avanzata l'ora è dedicata allo script: i corsisti rifanno la dimostrazione nella cartella
 `Modulo_1/Script_uv_Ruff/esercizio/`, guidati passo per passo, e gli esercizi sui notebook 00-03 restano in fondo al
 notebook, facoltativi, da fare a casa. La versione Base non cambia.
 """
@@ -21,17 +21,19 @@ def unisci(*parti: str) -> str:
 
 def esercizio_due_aule(nb: Notebook, titolo: str, scenario: str, base: dict, avanzata: dict,
                        facoltativo: bool = False) -> None:
-    """Lo stesso esercizio per le due aule: titolo e scenario in comune, il resto può cambiare.
+    """Lo stesso esercizio per le due aule: il titolo in comune, il resto può cambiare.
 
     `base` e `avanzata` contengono richiesta, starter, soluzione, verifica e suggerimenti; le chiavi che mancano
-    in `avanzata` si prendono da `base`.
+    in `avanzata` si prendono da `base`. `scenario` vale per tutte e due le aule, a meno che `avanzata` non abbia
+    uno `scenario` suo: serve quando la variante Avanzata chiede risultati in più, che lo scenario deve annunciare.
     """
     nb.esercizio(titolo=titolo, scenario=scenario, facoltativo=facoltativo, aula="base", **base)
-    nb.esercizio(titolo=titolo, scenario=scenario, facoltativo=facoltativo, aula="avanzata", **{**base, **avanzata})
+    nb.esercizio(titolo=titolo, facoltativo=facoltativo, aula="avanzata", **{**base, "scenario": scenario, **avanzata})
 
 
-# Le verifiche dei passi leggono i file del progetto: dalla cartella del notebook, ESERCIZIO porta allo stato di
-# partenza in Modulo_1/ e allo stato finale in Soluzioni/.
+# Le verifiche degli esercizi sullo script leggono i file del progetto: dalla cartella del notebook, ESERCIZIO porta
+# allo stato di partenza in Modulo_1/ e allo stato finale in Soluzioni/. Ogni verifica deve passare sullo stato
+# finale e, dove il passo cambia i file, fallire su quello di partenza.
 LEGGI_PROGETTO = f"""
     import tomllib
     from pathlib import Path
@@ -43,39 +45,40 @@ LEGGI_PROGETTO = f"""
 def parte_script(nb: Notebook) -> None:
     """Avanzata: l'apertura dell'ora, le domande sul notebook Ambiente_script_e_Ruff e i passi dello script."""
     nb.md("""
-        In questa esercitazione rifai, passo per passo, la demo che abbiamo appena seguito sul conto della spesa,
-        lavorando nella cartella `Script_uv_Ruff/esercizio`. La cartella contiene un piccolo progetto già scritto,
+        In questa esercitazione rifai, passo per passo, la dimostrazione che abbiamo appena seguito sul conto della
+        spesa, lavorando nella cartella `Script_uv_Ruff/esercizio`. La cartella contiene un piccolo progetto già scritto,
         con lo script `main.py` che usa le funzioni del file `meteo.py`, e il lavoro consiste nel costruirgli un
         ambiente, una libreria alla volta, e nel mettere in ordine il codice con Ruff. Hai 45 minuti, poi guardiamo
         insieme il risultato. La seconda parte del notebook raccoglie gli esercizi sui notebook 00-03 ed è
         facoltativa, da fare a casa.
     """)
     nb.md("""
-        Questa è la copia con le soluzioni: la cartella `Script_uv_Ruff/esercizio` che le sta accanto contiene già
-        il progetto finito, con le librerie aggiunte e il codice in ordine, e le celle dei passi riportano i valori
-        che il terminale stampa. Per rifare l'esercizio da capo si lavora nella cartella `esercizio` del modulo 1.
+        Questo notebook è la copia con le soluzioni. La cartella `Script_uv_Ruff/esercizio` che gli sta accanto,
+        dentro `Soluzioni/`, contiene il progetto com'è alla fine, con le librerie scritte in `pyproject.toml` e il
+        codice in ordine, e le celle degli esercizi riportano i valori che il terminale stampa. Per rifare
+        l'esercizio si lavora nella cartella `Modulo_1/Script_uv_Ruff/esercizio`.
     """, solo_soluzioni=True)
     nb.md("""
         Tutti i comandi si scrivono nel terminale di VS Code, aperto nella cartella `esercizio`. Il modo più
         semplice per aprirlo è un clic con il tasto destro sulla cartella, nel pannello Explorer, e poi la voce
-        **Open in Integrated Terminal**; in alternativa, da un terminale aperto nella cartella principale
-        dell'aula, si entra nella cartella con `cd Modulo_1/Script_uv_Ruff/esercizio`. Gli script si lanciano
-        sempre con `uv run`, e non con il pulsante **Run Python File** di VS Code, che usa il Python del corso,
-        dove pandas è già installato, e quindi non farebbe comparire gli errori da cui parte l'esercizio.
+        **Open in Integrated Terminal**; in alternativa, da un terminale aperto nella cartella del corso, si entra
+        nella cartella con `cd Modulo_1/Script_uv_Ruff/esercizio`. Gli script si lanciano sempre con `uv run`,
+        e non con il pulsante **Run Python File** di VS Code, che usa il Python del corso, dove pandas è già
+        installato, e quindi non farebbe comparire gli errori da cui parte l'esercizio.
     """)
 
     # ------------------------------------------------------------------ 1. Domande sul notebook della lezione
     nb.sezione("Domande", intro="""
         Le quattro domande che seguono riprendono i concetti del notebook *Ambiente, script e Ruff* che servono
-        nei passi dell'esercizio, e richiedono pochi minuti. Per ciascuna conviene prevedere la risposta a mente e
+        negli esercizi sullo script, e richiedono pochi minuti. Per ciascuna conviene prevedere la risposta a mente e
         solo dopo aprirla con un clic.
     """)
     nb.domanda(
         "In quale file sono elencate le librerie di cui ha bisogno un progetto gestito con uv?",
         """
             In `pyproject.toml`, nella lista `dependencies` della sezione `[project]`. Il file `uv.lock`, che uv
-            scrive da solo, registra invece le versioni esatte di tutto quello che è installato, comprese le
-            librerie da cui dipendono quelle della lista.
+            scrive da solo, registra invece le versioni esatte di tutte le librerie del progetto, comprese quelle
+            da cui dipendono le librerie della lista.
         """,
     )
     nb.domanda(
@@ -89,57 +92,70 @@ def parte_script(nb: Notebook) -> None:
         "Che differenza c'è tra un formatter e un linter, e con quali comandi Ruff svolge i due compiti?",
         """
             Il formatter rimette in forma il codice, sistemando spazi, righe vuote e a capo senza cambiare quello
-            che il programma fa, mentre il linter segnala i problemi che non riguardano la forma, come un import
-            inutilizzato o una variabile mai usata. Ruff svolge entrambi i compiti: `ruff format` rimette in
+            che il programma fa, mentre il linter legge il codice senza eseguirlo e segnala gli errori probabili,
+            come un import inutilizzato o una variabile mai usata, e i problemi di stile che il formatter non
+            sistema da solo, come una riga troppo lunga. Ruff svolge entrambi i compiti: `ruff format` rimette in
             forma il codice e `ruff check` lo controlla.
         """,
     )
     nb.domanda(
-        "Lo script `main.py` dell'esercizio contiene la riga `from meteo import media`, anche se `meteo` non è "
-        "una libreria installata. Perché la riga funziona?",
+        "Lo script `main.py` dell'esercizio contiene la riga `from meteo import media, massima`, anche se `meteo` "
+        "non è una libreria installata. Perché la riga funziona?",
         """
             Perché il file `meteo.py` sta nella stessa cartella di `main.py`, e Python cerca i moduli da importare
-            prima nella cartella dello script lanciato e solo dopo tra i moduli di Python e le librerie installate
-            in `.venv`. Un file `.py` del progetto si importa quindi come una libreria, con il nome del file senza
-            l'estensione.
+            prima nella cartella dello script lanciato e solo dopo tra i moduli della libreria standard e le
+            librerie installate in `.venv`. Un file `.py` del progetto si importa quindi come una libreria, con il
+            nome del file senza l'estensione.
         """,
     )
 
     # ------------------------------------------------------------------ 2. I passi dello script
     nb.sezione("Lo script delle temperature", intro="""
-        La cartella `esercizio` ha la stessa struttura della demo: un `pyproject.toml` con la lista delle librerie
-        ancora vuota, il file `.python-version` con la versione di Python, il file `meteo.py` con tre funzioni
-        sulle temperature e lo script `main.py`, che le importa, stampa la temperatura massima e quella media
-        della settimana e salva una tabella in Excel. I cinque passi seguono l'ordine della demo e vanno fatti in
-        sequenza, perché ognuno parte dalla cartella come l'ha lasciata il precedente.
+        La cartella `esercizio` ha la stessa struttura della cartella `demo`: un `pyproject.toml` con la lista
+        delle librerie ancora vuota, il file `.python-version` con la versione di Python, il file `meteo.py` con
+        tre funzioni sulle temperature e lo script `main.py`, che le importa, stampa la temperatura massima e
+        quella media della settimana e salva una tabella in Excel. I cinque esercizi seguono l'ordine della
+        dimostrazione e vanno fatti in sequenza, perché ognuno parte dalla cartella come l'ha lasciata il
+        precedente.
     """)
     nb.md("""
-        Ogni passo comincia dicendo che cosa vogliamo ottenere e perché, e il blocco Passo per passo, che si apre
-        con un clic, elenca i comandi da lanciare; sotto c'è un suggerimento, anche lui nascosto. Il lavoro si fa
-        nel terminale e nei file della cartella, mentre nella cella del passo si copia quello che il terminale ha
-        stampato. La verifica controlla quei valori e legge i file del progetto, per confermare che i comandi
-        hanno fatto il loro lavoro, e la cella `soluzione` mostra i comandi e i valori attesi di quel passo.
+        Ogni esercizio comincia dicendo che cosa vogliamo ottenere e perché, e il blocco Passo per passo, che si
+        apre con un clic, elenca i comandi da lanciare; sotto c'è un suggerimento, nascosto anch'esso. Il lavoro si
+        fa nel terminale e nei file della cartella, mentre nella cella dell'esercizio si copia quello che il
+        terminale ha stampato. La verifica controlla quei valori e, negli esercizi che cambiano i file del
+        progetto, legge anche quei file, per confermare che i comandi abbiano avuto effetto. La cella `soluzione`
+        mostra i comandi e i valori attesi di quell'esercizio.
     """)
     nb.md("""
-        Prima di ogni `uv add` conviene controllare che il terminale sia nella cartella `esercizio`, il cui
-        percorso compare all'inizio della riga di comando. Lanciato dalla cartella principale dell'aula, il
-        comando modificherebbe il `pyproject.toml` del corso invece di quello dell'esercizio. Un avviso che nomina
-        `VIRTUAL_ENV` indica invece soltanto che il terminale ha attivato l'ambiente del corso, e si può ignorare,
-        perché uv usa comunque l'ambiente della cartella in cui viene lanciato.
+        Prima di ogni comando conviene controllare che il terminale sia nella cartella `esercizio`, il cui
+        percorso compare all'inizio della riga di comando. Lanciato dalla cartella del corso, `uv add` lavorerebbe
+        sul progetto del corso, che ha già pandas e openpyxl, quindi non installerebbe nulla e
+        `esercizio/pyproject.toml` resterebbe con la lista vuota. Anche Ruff, lanciato da lì, metterebbe in ordine
+        i file di `esercizio` prima del tempo, e gli esercizi su Ruff non troverebbero più i quattro problemi da
+        cui partono.
+    """)
+    nb.md("""
+        Un avviso che nomina `VIRTUAL_ENV` indica soltanto che il terminale ha attivato l'ambiente del corso, e si
+        può ignorare, perché uv usa comunque l'ambiente della cartella in cui viene lanciato. Se vuoi
+        ricominciare l'esercizio da capo, cancella la cartella `esercizio` ed estraila di nuovo dallo zip del
+        corso, perché estraendola sopra quella vecchia resterebbero al loro posto `.venv`, `uv.lock` e gli altri
+        file creati dai comandi.
     """)
 
     # E1.1 ---------------------------------------------------------------
     nb.esercizio(
         titolo="Il primo lancio dello script",
         scenario="""
-            Come nella demo, partiamo da un progetto che non dichiara nessuna libreria e lanciamo lo script per
-            farci dire da Python che cosa manca, in modo che l'ambiente contenga soltanto le librerie che servono.
-            Al primo `uv run main.py` uv crea l'ambiente del progetto in una cartella nuova, e lo script si ferma
-            subito con un `ModuleNotFoundError`, il cui messaggio nomina la libreria mancante.
+            Come nella dimostrazione, partiamo da un progetto che non dichiara nessuna libreria e lanciamo lo script
+            per farci dire da Python che cosa manca, in modo che l'ambiente contenga soltanto le librerie che
+            servono. Al primo `uv run main.py` uv crea l'ambiente del progetto in una cartella nuova e scrive il
+            file `uv.lock`, che per ora contiene soltanto il progetto. Lo script si ferma subito con un
+            `ModuleNotFoundError`, il cui messaggio nomina la libreria mancante.
         """,
         richiesta="""
             1. Apri `esercizio/pyproject.toml` in VS Code e controlla che la voce `dependencies` sia una lista vuota.
-            2. Nel terminale aperto nella cartella `esercizio` lancia `uv run main.py`.
+            2. Nel terminale aperto nella cartella `esercizio` lancia `uv run main.py`, poi guarda nel pannello
+               Explorer la cartella `.venv` e il file `uv.lock`, comparsi accanto agli script.
             3. Scrivi in `cartella_creata` il nome della cartella che uv dice di aver creato e in
                `libreria_mancante` il nome della libreria che compare nell'ultima riga dell'errore.
         """,
@@ -163,7 +179,10 @@ def parte_script(nb: Notebook) -> None:
             cartella_creata = ".venv"
             libreria_mancante = "pandas"
         """,
-        verifica="""
+        verifica=f"""
+            from pathlib import Path
+
+            assert Path("{ESERCIZIO}/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: lancia uv run main.py nel terminale aperto in quella cartella"
             assert cartella_creata.strip().rstrip("/") == ".venv", "❌ cartella_creata: il nome nella riga Creating virtual environment at"
             assert libreria_mancante.strip() == "pandas", "❌ libreria_mancante: il nome tra apici nell'ultima riga dell'errore"
         """,
@@ -182,8 +201,9 @@ def parte_script(nb: Notebook) -> None:
         richiesta="""
             1. Lancia `uv add pandas` e guarda l'elenco delle librerie installate, dove oltre a pandas compaiono
                quelle da cui pandas dipende, come numpy.
-            2. Apri `pyproject.toml` e controlla la voce `dependencies`, poi apri il file `uv.lock`, comparso
-               accanto, e cerca la riga `name = "pandas"`.
+            2. Apri `pyproject.toml` e controlla la voce `dependencies`. Poi apri `uv.lock`, che uv ha creato al
+               primo `uv run` con il solo progetto, e cerca la riga `name = "pandas"`, che `uv add` ha aggiunto
+               insieme a quelle delle librerie da cui pandas dipende.
             3. Lancia di nuovo `uv run main.py` e scrivi in `seconda_libreria` il nome della libreria che manca
                adesso.
         """,
@@ -258,9 +278,10 @@ def parte_script(nb: Notebook) -> None:
         titolo="Ruff trova i problemi",
         scenario="""
             Lo script funziona, ma il codice di `meteo.py` e di `main.py` è scritto in modo disordinato e contiene
-            qualche avanzo. Vogliamo aggiungere Ruff al progetto come strumento di sviluppo, lasciare che il
-            formatter sistemi la forma e poi leggere che cosa segnala il linter. Dopo `ruff format` il comando
-            `ruff check` trova quattro problemi, due in ciascun file.
+            qualche riga che non serve, come un import inutilizzato e una variabile mai usata. Vogliamo aggiungere
+            Ruff al progetto come strumento di sviluppo, lasciare che il formatter sistemi la forma e poi leggere
+            che cosa segnala il linter. Dopo `ruff format` il comando `ruff check` trova quattro problemi, due in
+            ciascun file.
         """,
         richiesta="""
             1. Lancia `uv add --dev ruff`, che mette Ruff nel gruppo `dev` di `pyproject.toml`, tra gli strumenti
@@ -290,9 +311,11 @@ def parte_script(nb: Notebook) -> None:
             # F841 Local variable `giorni` is assigned to but never used --> meteo.py
             avvisi = ["I001", "E501", "F401", "F841"]
         """,
-        verifica=unisci(LEGGI_PROGETTO, """
-            sviluppo = progetto.get("dependency-groups", {}).get("dev", [])
+        verifica=unisci(LEGGI_PROGETTO, f"""
+            sviluppo = progetto.get("dependency-groups", {{}}).get("dev", [])
+            meteo = Path("{ESERCIZIO}/meteo.py").read_text(encoding="utf-8")
             assert any(voce.startswith("ruff") for voce in sviluppo), "❌ ruff non è nel gruppo dev di esercizio/pyproject.toml: lancia uv add --dev ruff"
+            assert "sum(temperature) / len(temperature)" in meteo, "❌ meteo.py non è ancora in forma: lancia uv run ruff format nella cartella esercizio"
             assert sorted(avvisi) == ["E501", "F401", "F841", "I001"], "❌ avvisi: i quattro codici stampati da uv run ruff check, come stringhe"
         """),
     )
@@ -347,18 +370,20 @@ def parte_script(nb: Notebook) -> None:
 
             cartella = Path("{ESERCIZIO}")
             meteo = (cartella / "meteo.py").read_text(encoding="utf-8")
-            righe_lunghe = [r for r in (cartella / "main.py").read_text(encoding="utf-8").splitlines() if len(r) > 100]
-            assert esito_finale.strip() == "All checks passed!", "❌ esito_finale: la riga stampata da uv run ruff check quando non trova problemi"
+            main = (cartella / "main.py").read_text(encoding="utf-8")
+            assert "import pandas as pd\\n\\nfrom meteo import" in main, "❌ main.py: gli import non sono ancora in ordine, lancia uv run ruff check --fix"
             assert "import math" not in meteo and "giorni =" not in meteo and "giorni=" not in meteo, "❌ meteo.py contiene ancora import math o la variabile giorni"
-            assert not righe_lunghe, "❌ main.py ha ancora una riga di più di 100 caratteri"
+            assert all(len(r) <= 100 for r in main.splitlines()), "❌ main.py ha ancora una riga di più di 100 caratteri"
+            assert "\\n\\n\\n\\n" not in meteo, "❌ meteo.py ha ancora una riga vuota di troppo: lancia di nuovo uv run ruff format"
+            assert esito_finale.strip() == "All checks passed!", "❌ esito_finale: la riga stampata da uv run ruff check quando non trova problemi"
         """,
     )
 
     # Passi facoltativi ---------------------------------------------------
     nb.md("""
-        I tre passi che seguono sono facoltativi e lavorano sulla stessa cartella. Il primo aggiunge una riga allo
-        script, il secondo mostra che cosa fa Python quando importa un file e il terzo ricostruisce l'ambiente da
-        zero, per vedere che `pyproject.toml` e `uv.lock` bastano a ricrearlo identico.
+        I tre esercizi che seguono sono facoltativi e lavorano sulla stessa cartella. Il primo aggiunge una riga
+        allo script, il secondo mostra che cosa fa Python quando importa un file e il terzo ricostruisce l'ambiente
+        da zero, per vedere che `pyproject.toml` e `uv.lock` bastano a ricrearlo identico.
     """)
 
     # E1.6 ---------------------------------------------------------------
@@ -398,9 +423,10 @@ def parte_script(nb: Notebook) -> None:
         verifica=f"""
             from pathlib import Path
 
-            righe = Path("{ESERCIZIO}/main.py").read_text(encoding="utf-8").splitlines()
-            riga_import = next((r for r in righe if r.startswith("from meteo import")), "")
+            main = Path("{ESERCIZIO}/main.py").read_text(encoding="utf-8")
+            riga_import = next((r for r in main.splitlines() if r.startswith("from meteo import")), "")
             assert "minima" in riga_import, "❌ main.py: aggiungi minima alla riga from meteo import"
+            assert "minima(valori)" in main, "❌ main.py: manca il print che chiama minima(valori)"
             assert riga_minima.strip() == "Temperatura minima della settimana: 13.8 gradi", "❌ riga_minima: la riga stampata dal terminale, tale e quale"
         """,
     )
@@ -414,7 +440,8 @@ def parte_script(nb: Notebook) -> None:
             alla fine, prima di proseguire con le righe di `main.py`. La variabile speciale `__name__`, inoltre,
             ha un valore diverso a seconda che il file venga importato o lanciato direttamente con
             `uv run meteo.py`. Vogliamo vedere entrambe le cose con una riga di prova, perché spiegano come mai
-            negli script le istruzioni da eseguire si mettono sotto `if __name__ == "__main__":`.
+            negli script le istruzioni che fanno il lavoro del programma si mettono sotto
+            `if __name__ == "__main__":`.
         """,
         richiesta="""
             1. In `meteo.py`, sotto la docstring, aggiungi la riga
@@ -437,9 +464,12 @@ def parte_script(nb: Notebook) -> None:
             nome_importato = "meteo"
             nome_lanciato = "__main__"
         """,
-        verifica="""
+        verifica=f"""
+            from pathlib import Path
+
             assert nome_importato.strip() == "meteo", "❌ nome_importato: il nome stampato con uv run main.py"
             assert nome_lanciato.strip() == "__main__", "❌ nome_lanciato: il nome stampato con uv run meteo.py"
+            assert "Sto leggendo" not in Path("{ESERCIZIO}/meteo.py").read_text(encoding="utf-8"), "❌ meteo.py: togli la riga di prova con il print, come dice l'ultimo passo"
         """,
         perche="""
             Quando `main.py` lo importa, `meteo.py` ha come nome `meteo`, cioè il nome del file senza
@@ -454,7 +484,7 @@ def parte_script(nb: Notebook) -> None:
         titolo="L'ambiente ricostruito",
         facoltativo=True,
         scenario="""
-            La cartella `.venv` non si conserva e non si condivide, perché si ricrea in qualunque momento a
+            Non serve conservare né condividere la cartella `.venv`, perché si ricrea in qualunque momento a
             partire da `pyproject.toml` e `uv.lock`, con le stesse versioni di prima. Vogliamo provarlo
             cancellando l'ambiente dell'esercizio e ricostruendolo con un solo comando, senza ripetere nessun
             `uv add`.
@@ -492,7 +522,7 @@ def costruisci() -> Notebook:
         giornata=1,
         intento=(
             "Un'ora di domande ed esercizi sui notebook 00-03: numeri, stringhe, liste e dizionari. Nell'Avanzata "
-            "l'ora serve a rifare la demo dello script con uv e Ruff, e gli esercizi sui notebook 00-03 restano "
+            "l'ora serve a rifare la dimostrazione dello script con uv e Ruff, e gli esercizi sui notebook 00-03 restano "
             "facoltativi, da fare a casa."
         ),
         obiettivi={
@@ -541,8 +571,8 @@ def costruisci() -> Notebook:
         nb.sezione("Esercizi sui notebook 00-03, da fare a casa", intro="""
             Questa seconda parte è facoltativa e si fa a casa, per ripassare i numeri, le stringhe, le liste e i
             dizionari dei notebook 00-03. Comincia con quattro domande di riepilogo e prosegue con cinque esercizi
-            brevi, in difficoltà crescente, e con una sfida libera senza verifica. Gli esercizi funzionano come i
-            passi della prima parte, con il blocco Passo per passo e il suggerimento che si aprono con un clic, la
+            brevi, in difficoltà crescente, e con una sfida libera senza verifica. Gli esercizi funzionano come
+            quelli della prima parte, con il blocco Passo per passo e il suggerimento che si aprono con un clic, la
             verifica e la cella `soluzione`, ma il codice si scrive direttamente nella cella del notebook.
         """)
         nb.sottosezione("Domande", intro="""
@@ -655,14 +685,17 @@ def costruisci() -> Notebook:
             """,
         ),
         avanzata=dict(
+            scenario="""
+                Nella cella sono definite tre variabili numeriche. Vogliamo trovare il valore massimo, il valore
+                minimo, la loro differenza e la media dei tre numeri arrotondata a un decimale, e stampare i quattro
+                risultati con una f-string ciascuno. Con i valori della cella il massimo è 25, il minimo 7, la
+                differenza 18 e la media 14.0.
+            """,
             richiesta="""
                 1. Salva in `valore_massimo` e `valore_minimo` il più grande e il più piccolo dei tre numeri, con
-                   `max()` e `min()`, e in
-                   `differenza` la loro differenza.
+                   `max()` e `min()`, e in `differenza` la loro differenza.
                 2. Salva in `media` la media dei tre numeri, arrotondata a un decimale con `round()`.
                 3. Stampa i quattro risultati, uno per riga, con le f-string.
-
-                La media vale 14.0.
             """,
             suggerimenti=[
                 """
@@ -744,11 +777,16 @@ def costruisci() -> Notebook:
             """,
         ),
         avanzata=dict(
+            scenario="""
+                Vogliamo calcolare l'area e la circonferenza di un cerchio di raggio 5 e stampare l'area con due
+                decimali. L'area è π moltiplicato per il raggio al quadrato, la circonferenza è il doppio di π per il
+                raggio, e il valore di π lo fornisce il modulo `math`, con `math.pi`. La riga stampata è
+                `L'area del cerchio è: 78.54` e la circonferenza vale 31.41592653589793.
+            """,
             richiesta="""
                 1. Salva in `area` il prodotto tra `math.pi` e il raggio al quadrato.
-                2. Stampa l'area con una f-string che la mostri con due decimali, usando il formato `{area:.2f}`:
-                   la riga stampata è `L'area del cerchio è: 78.54`.
-                3. Salva in `circonferenza` il doppio di π per il raggio, cioè 31.41592653589793.
+                2. Stampa l'area con una f-string che la mostri con due decimali, usando il formato `{area:.2f}`.
+                3. Salva in `circonferenza` il doppio di π per il raggio.
             """,
             suggerimenti=[
                 """
@@ -820,12 +858,15 @@ def costruisci() -> Notebook:
             """,
         ),
         avanzata=dict(
+            scenario="""
+                Partendo dalla lista `[1, 2, 3, 4, 5]` vogliamo ricavare con lo slicing, senza riscrivere gli
+                elementi a mano, la lista letta al contrario, `[5, 4, 3, 2, 1]`, i suoi ultimi due elementi,
+                `[4, 5]`, e i suoi elementi di posizione pari, `[1, 3, 5]`.
+            """,
             richiesta="""
                 1. Salva in `lista_invertita` la lista letta al contrario, con uno slicing a passo negativo.
                 2. Salva in `ultimi_due` gli ultimi due elementi della lista di partenza, con uno slicing che usa un
-                   indice negativo, e in `ogni_due` gli elementi di posizione pari, cioè `[1, 3, 5]`.
-
-                `ultimi_due` vale `[4, 5]`.
+                   indice negativo, e in `ogni_due` gli elementi di posizione pari.
             """,
             suggerimenti=[
                 """
@@ -896,14 +937,20 @@ def costruisci() -> Notebook:
             """,
         ),
         avanzata=dict(
+            scenario="""
+                La lista della cella alterna nomi di donne e di uomini, a partire da Elena. Vogliamo selezionare con
+                uno slicing tutte le donne tranne Elena, cioè gli elementi in posizione pari esclusa la posizione 0,
+                e con un secondo slicing tutti gli uomini, che stanno nelle posizioni dispari, per poi contarli. Le
+                donne selezionate sono `['Martina', 'Giulia', 'Francesca', 'Sara']`, e gli uomini sono cinque, da
+                `'Luigi'` a `'Lorenzo'`.
+            """,
             richiesta="""
                 1. Salva in `elementi_pari` gli elementi in posizione pari escludendo la posizione 0.
-                2. Salva in `uomini` gli elementi in posizione impari, cioè `['Luigi', 'Marco', 'Simone',
-                   'Alessandro', 'Lorenzo']`, e in `quanti_uomini` quanti sono.
+                2. Salva in `uomini` gli elementi in posizione dispari e in `quanti_uomini` quanti sono.
             """,
             suggerimenti=[
                 """
-                    Le posizioni impari si prendono partendo dall'indice 1 con passo 2, e `len()` conta gli
+                    Le posizioni dispari si prendono partendo dall'indice 1 con passo 2, e `len()` conta gli
                     elementi di una lista.
                 """,
             ],
@@ -983,13 +1030,18 @@ def costruisci() -> Notebook:
             """,
         ),
         avanzata=dict(
+            scenario="""
+                Il dizionario `g8` associa ai paesi del G8 la loro capitale, ma è incompleto: mancano `'Regno Unito'`
+                con `'Londra'` e `'Stati Uniti'` con `'Washington, D.C.'`. Vogliamo aggiungere le due coppie e poi
+                leggere dal dizionario il numero dei paesi, la capitale dell'Italia e l'elenco dei paesi in ordine
+                alfabetico. Alla fine i paesi sono otto, la capitale dell'Italia è `'Roma'` e l'elenco va da
+                `'Canada'` a `'Stati Uniti'`.
+            """,
             richiesta="""
                 1. Aggiungi le coppie `'Regno Unito': 'Londra'` e `'Stati Uniti': 'Washington, D.C.'`.
                 2. Salva in `quanti` il numero di paesi e in `capitale_italia` la capitale dell'Italia, letta dal
                    dizionario con la sua chiave.
                 3. Salva in `paesi` la lista dei paesi in ordine alfabetico, usando `sorted()` sulle chiavi.
-
-                `quanti` vale 8 e `paesi` comincia con `'Canada'` e finisce con `'Stati Uniti'`.
             """,
             suggerimenti=[
                 """

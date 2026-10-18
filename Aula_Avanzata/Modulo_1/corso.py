@@ -93,6 +93,9 @@ assert buono == 5, "❌ buono: i 5 euro in una variabile"
 assert round(totale, 2) == round(t, 2), "❌ totale deve dare lo stesso risultato di t"
 '''),
     'E1.1': ('Esercizio E1.1', r'''
+from pathlib import Path
+
+assert Path("Script_uv_Ruff/esercizio/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: lancia uv run main.py nel terminale aperto in quella cartella"
 assert cartella_creata.strip().rstrip("/") == ".venv", "❌ cartella_creata: il nome nella riga Creating virtual environment at"
 assert libreria_mancante.strip() == "pandas", "❌ libreria_mancante: il nome tra apici nell'ultima riga dell'errore"
 '''),
@@ -123,7 +126,9 @@ from pathlib import Path
 progetto = tomllib.loads(Path("Script_uv_Ruff/esercizio/pyproject.toml").read_text(encoding="utf-8"))
 
 sviluppo = progetto.get("dependency-groups", {}).get("dev", [])
+meteo = Path("Script_uv_Ruff/esercizio/meteo.py").read_text(encoding="utf-8")
 assert any(voce.startswith("ruff") for voce in sviluppo), "❌ ruff non è nel gruppo dev di esercizio/pyproject.toml: lancia uv add --dev ruff"
+assert "sum(temperature) / len(temperature)" in meteo, "❌ meteo.py non è ancora in forma: lancia uv run ruff format nella cartella esercizio"
 assert sorted(avvisi) == ["E501", "F401", "F841", "I001"], "❌ avvisi: i quattro codici stampati da uv run ruff check, come stringhe"
 '''),
     'E1.5': ('Esercizio E1.5', r'''
@@ -131,22 +136,28 @@ from pathlib import Path
 
 cartella = Path("Script_uv_Ruff/esercizio")
 meteo = (cartella / "meteo.py").read_text(encoding="utf-8")
-righe_lunghe = [r for r in (cartella / "main.py").read_text(encoding="utf-8").splitlines() if len(r) > 100]
-assert esito_finale.strip() == "All checks passed!", "❌ esito_finale: la riga stampata da uv run ruff check quando non trova problemi"
+main = (cartella / "main.py").read_text(encoding="utf-8")
+assert "import pandas as pd\n\nfrom meteo import" in main, "❌ main.py: gli import non sono ancora in ordine, lancia uv run ruff check --fix"
 assert "import math" not in meteo and "giorni =" not in meteo and "giorni=" not in meteo, "❌ meteo.py contiene ancora import math o la variabile giorni"
-assert not righe_lunghe, "❌ main.py ha ancora una riga di più di 100 caratteri"
+assert all(len(r) <= 100 for r in main.splitlines()), "❌ main.py ha ancora una riga di più di 100 caratteri"
+assert "\n\n\n\n" not in meteo, "❌ meteo.py ha ancora una riga vuota di troppo: lancia di nuovo uv run ruff format"
+assert esito_finale.strip() == "All checks passed!", "❌ esito_finale: la riga stampata da uv run ruff check quando non trova problemi"
 '''),
     'E1.6': ('Esercizio E1.6', r'''
 from pathlib import Path
 
-righe = Path("Script_uv_Ruff/esercizio/main.py").read_text(encoding="utf-8").splitlines()
-riga_import = next((r for r in righe if r.startswith("from meteo import")), "")
+main = Path("Script_uv_Ruff/esercizio/main.py").read_text(encoding="utf-8")
+riga_import = next((r for r in main.splitlines() if r.startswith("from meteo import")), "")
 assert "minima" in riga_import, "❌ main.py: aggiungi minima alla riga from meteo import"
+assert "minima(valori)" in main, "❌ main.py: manca il print che chiama minima(valori)"
 assert riga_minima.strip() == "Temperatura minima della settimana: 13.8 gradi", "❌ riga_minima: la riga stampata dal terminale, tale e quale"
 '''),
     'E1.7': ('Esercizio E1.7', r'''
+from pathlib import Path
+
 assert nome_importato.strip() == "meteo", "❌ nome_importato: il nome stampato con uv run main.py"
 assert nome_lanciato.strip() == "__main__", "❌ nome_lanciato: il nome stampato con uv run meteo.py"
+assert "Sto leggendo" not in Path("Script_uv_Ruff/esercizio/meteo.py").read_text(encoding="utf-8"), "❌ meteo.py: togli la riga di prova con il print, come dice l'ultimo passo"
 '''),
     'E1.8': ('Esercizio E1.8', r'''
 assert file_versioni.strip() == "uv.lock", "❌ file_versioni: il file in cui uv registra le versioni esatte di ogni libreria"

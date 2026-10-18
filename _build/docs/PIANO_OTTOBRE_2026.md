@@ -13,7 +13,7 @@ Il corso si svolge in quattro giornate, una per modulo:
 |---|---|---|
 | 1 | martedì 20 ottobre 2026 | Modulo 1 · Setup, Python e sintassi di base |
 | 2 | mercoledì 21 ottobre 2026 | Modulo 2 · Controllo del flusso, funzioni e primi dati in pandas |
-| 3 | martedì 27 ottobre 2026 | Modulo 3 · Analisi dei dati con pandas e visualizzazione |
+| 3 | martedì 27 ottobre 2026 | Modulo 3 · Analisi dei dati con pandas |
 | 4 | mercoledì 28 ottobre 2026 | Modulo 4 · Agenti per il coding e capstone |
 
 In ogni giornata l'aula Base occupa le prime quattro ore e l'aula Avanzata le quattro successive, sullo stesso modulo.
@@ -29,10 +29,11 @@ circa 150 minuti di lezione, e il contenuto di ogni modulo va dimensionato su qu
 
 Dentro i notebook restano soltanto gli Hands-on, piccoli esercizi inline subito dopo l'esempio che riprendono, che danno
 una pratica immediata dopo ogni concetto e preparano le esercitazioni: da due a tre per notebook, solo dove servono e
-sono rilevanti, con un massimo di cinque. In fondo a ogni notebook una sezione Extra raccoglie due o tre esercizi
-brevi da fare a casa, che in aula si saltano; il vecchio Homework resta come riserva fuori dalle cartelle dei corsisti. Le esercitazioni sono costruite sugli esercizi scritti dal docente nei notebook originali:
-la 1 interamente, le altre con esercizi aggiunti nello stesso stile. La sezione "Dove stanno gli esercizi" di
-`REGOLE.md` descrive la funzione di ciascun posto.
+sono rilevanti, con un massimo di cinque. In fondo a ogni notebook, tranne il capstone e `Ambiente_script_e_Ruff`, una
+sezione Extra raccoglie due o tre esercizi brevi da fare a casa, che in aula si saltano; il vecchio Homework resta come
+riserva fuori dalle cartelle dei corsisti. Le esercitazioni sono costruite sugli esercizi scritti dal docente nei
+notebook originali: la 1 interamente, le altre con esercizi aggiunti nello stesso stile. La sezione "Dove stanno gli
+esercizi" di `REGOLE.md` descrive la funzione di ciascun posto.
 
 Il modulo 4 è dedicato interamente agli agenti per il coding e al capstone con GitHub Copilot. Si apre con il notebook
 09 su Plotly, ridotto al minimo che serve per leggere un grafico scritto da un agente, prosegue con l'introduzione a
@@ -59,9 +60,12 @@ Il corsista riceve solo la propria cartella, `Aula_Base/` o `Aula_Avanzata/`, co
 progetto `corso-python`, uguale per le due aule, con `uv.lock` e `.python-version`), il README per il corsista, le
 impostazioni di VS Code, i dati, le tre schede, i moduli da `Modulo_1` a `Modulo_4` e la cartella `Soluzioni/`, con le
 soluzioni di tutti i notebook a disposizione dal primo giorno. Il materiale del docente, cioè le dimostrazioni di
-`Extra/` e la riserva di `Riserva/`, resta nel repository. Gli zip si mandano completi prima della prima giornata; se
-i moduli 3 e 4 cambiano, se ne manda una versione aggiornata la settimana successiva. La sezione "La cartella
-dell'aula" di `REGOLE.md` descrive com'è fatta la cartella e come si mantiene.
+`Extra/` e la riserva di `Riserva/`, resta nel repository; la riserva, quando serve, si consegna con uno zip a parte,
+preparato con `esporta.py <aula> --riserva`. Gli zip si mandano completi prima della prima giornata. Se i moduli 3 e 4
+cambiano, la settimana successiva se ne manda un aggiornamento preparato con `esporta.py --moduli 3 4`, che contiene
+soltanto quei due moduli con le loro soluzioni, i dati e le schede, e quindi non sovrascrive i notebook dei moduli 1 e
+2, in cui i corsisti hanno già scritto le loro risposte. La sezione "La cartella dell'aula" di `REGOLE.md` descrive
+com'è fatta la cartella, come si mantiene e come si estraggono gli zip parziali.
 
 ## Le esercitazioni
 
@@ -148,20 +152,21 @@ apposta in disordine, si sistema con `ruff format`, con `ruff check --fix` e con
 stessi errori nello stesso ordine. Gli stati finali dei due progetti stanno in `Soluzioni/Script_uv_Ruff/`.
 
 L'Esercitazione 1 dell'Avanzata dura sempre 60 minuti, 45 di lavoro e 15 di correzione, ed è soltanto la parte sullo
-script: i corsisti rifanno la demo nella cartella `esercizio/`, guidati passo per passo dal notebook
+script: i corsisti rifanno la dimostrazione nella cartella `esercizio/`, guidati passo per passo dal notebook
 `Modulo_1/Esercitazione_1.ipynb`, con alcuni passi facoltativi che aggiungono `print` in punti diversi (la temperatura
 minima, un `print` nel file importato, il valore di `__name__`) e la ricostruzione dell'ambiente con `uv sync`. Gli
 esercizi classici dell'Esercitazione 1 restano in fondo allo stesso notebook, facoltativi, da fare a casa; la Base fa
 l'Esercitazione 1 di sempre. Esercizi in più su uv, script e Ruff, per una classe che va avanti, stanno in un notebook
-di riserva in `Riserva/`, fuori dalla cartella dei corsisti. La scheda su uv e gli script non c'è più, perché il
-notebook la sostituisce.
+di riserva in `Riserva/Avanzata/`, fuori dalla cartella dei corsisti, e quando servono si consegnano con uno zip a
+parte, preparato con `esporta.py avanzata --riserva`. La scheda su uv e gli script non c'è più, perché il notebook la
+sostituisce.
 
 ## L'homework
 
 L'homework, la settimana nell'ufficio Analisi Consumi, era pensato per la settimana tra il modulo 2 e il modulo 3.
 Con le sezioni Extra in fondo ai notebook non è più un'attività prevista: resta in `Riserva/Base/` e
-`Riserva/Avanzata/`, nel formato delle esercitazioni, da distribuire solo a una classe molto più veloce del previsto. I
-suoi passi migliori sono già riusati nelle sezioni Extra dei notebook 04 e 06.
+`Riserva/Avanzata/`, nel formato delle esercitazioni, da distribuire con `esporta.py <aula> --riserva` solo a una
+classe molto più veloce del previsto. I suoi passi migliori sono già riusati nelle sezioni Extra dei notebook 04 e 06.
 
 ## Argomenti facoltativi
 
@@ -175,7 +180,7 @@ proposta sono queste, con la scelta fatta per ciascuna.
 
 | Argomento | Proposta | Materiale di ottobre 2026 |
 |---|---|---|
-| Ambienti virtuali, uv, script `.py`, Ruff | (A) nel modulo 1 | sola Avanzata, modulo 1: notebook `Ambiente_script_e_Ruff`, demo dal vivo in `demo/`, Esercitazione 1 in `esercizio/` |
+| Ambienti virtuali, uv, script `.py`, Ruff | (A) nel modulo 1 | sola Avanzata, modulo 1: notebook `Ambiente_script_e_Ruff`, dimostrazione dal vivo in `demo/`, Esercitazione 1 in `esercizio/` |
 | `map`, `filter`, iterabili e generatori | (A) nel notebook 04 | restano facoltativi, in `Approfondimenti_1` |
 | Wrapper delle API | (A) con esercizi nel notebook 06 | esercizio facoltativo dell'Avanzata nell'Esercitazione 2 |
 | Più file CSV e tipi di dato | entrambe le aule, notebook 06 | in `Approfondimenti_1` |
@@ -196,14 +201,15 @@ notebook sono nei banner e nella `Guida_docente.md`; le sezioni Extra non sono c
 | Modulo | Lezione Base | Lezione Avanzata | Nota |
 |---|---|---|---|
 | 1 | 140 | 150 | l'Avanzata fa più in fretta 00, 01 e 02 e aggiunge `Ambiente_script_e_Ruff` (30); la sua Esercitazione 1 è l'esercizio sullo script |
-| 2 | 140 | 150 | l'Avanzata ha la sezione sulle API nel 06 |
-| 3 | 130 | 135 | compresa la demo di Data Wrangler (15) |
+| 2 | 140 | 150 | l'Avanzata ha la sezione sulle API nel 06, compresa la dimostrazione del wrapper delle API (10, dentro i 70 del 06) |
+| 3 | 130 | 135 | compresa la dimostrazione di Data Wrangler (15) |
 | 4 | 210 | 210 | 09 (25), 10 (35), capstone (150, di cui 40 per lo step 7 di richieste libere a Copilot); nessuna esercitazione |
 
-Nel modulo 1 la lezione della Base comprende la demo di VS Code (15), il 00 (25), il 01 (40), il 02 (40) e il 03
-(20). Quella dell'Avanzata comprende la demo di VS Code (15), il 00 (20), il 01 (30), il 02 (35), il 03 (20) e
-`Ambiente_script_e_Ruff` (30, circa 15 di notebook e 15 di demo dal vivo). Con le pause e l'esercitazione l'Avanzata
-occupa tutti i 240 minuti del blocco, quindi in caso di ritardo si taglia seguendo la `Guida_docente.md`.
+Nel modulo 1 la lezione della Base comprende la dimostrazione di VS Code (15), il 00 (25), il 01 (40), il 02 (40) e il
+03 (20). Quella dell'Avanzata comprende la dimostrazione di VS Code (15), il 00 (20), il 01 (30), il 02 (35), il 03
+(20) e `Ambiente_script_e_Ruff` (30, circa 15 di notebook e 15 di dimostrazione dal vivo). Con le pause e
+l'esercitazione l'Avanzata occupa tutti i 240 minuti del blocco, quindi in caso di ritardo si taglia seguendo la
+`Guida_docente.md`.
 
 ## Decisioni prese
 
@@ -215,20 +221,26 @@ occupa tutti i 240 minuti del blocco, quindi in caso di ritardo si taglia seguen
 - **Forecasting.** Si prepara un breve notebook facoltativo su Prophet per l'aula Avanzata, da usare nel modulo 4 solo
   se il capstone finisce in anticipo. Prima di scriverlo va verificato che `prophet` si installi con `uv add` sui PC
   dell'aula, perché dipende da un compilatore per i modelli statistici.
-- **Cartelle dei corsisti, script e Hands-on (18 ottobre 2026).** Il corsista riceve solo la propria cartella
-  `Aula_Base/` o `Aula_Avanzata/`, che funziona da sola e ha come primo livello `Modulo_1` … `Modulo_4`; le soluzioni
-  di tutti i notebook sono a disposizione da subito, nella cartella `Soluzioni/`, separata dai moduli. Il progetto uv
-  dei corsisti si chiama `corso-python` ed è lo stesso per le due aule. Nell'Avanzata il modulo 1 ha la sottocartella
-  `Script_uv_Ruff/` con il notebook di spiegazione, senza Hands-on né Extra, la cartella `demo/` della dimostrazione,
-  che anche i corsisti ricevono per seguirla, e la cartella `esercizio/`. L'Esercitazione 1 dell'Avanzata è
-  l'esercizio sullo script, guidato passo per passo e con alcuni passi facoltativi; gli esercizi classici
-  dell'Esercitazione 1 restano nello stesso notebook, facoltativi, da fare a casa, e la Base non cambia. Il terminale
-  di VS Code non attiva l'ambiente del corso, per evitare l'avviso `VIRTUAL_ENV` di uv nelle cartelle della demo. La
-  scheda su uv e gli script è sostituita dal notebook. Gli Hands-on, d'ora in poi, sono da due a tre per notebook,
-  solo dove servono e sono rilevanti, con un massimo di cinque; i notebook che ne hanno di più non si riducono ora.
-  Gli esercizi in più su uv, script e Ruff non diventano Hands-on: stanno in un notebook di riserva in `Riserva/`, per
-  il docente. Gli zip si mandano completi prima della prima giornata, con un eventuale aggiornamento dei moduli 3 e 4
-  la settimana successiva.
+- **Cartelle dei corsisti (18 ottobre 2026).** Il corsista riceve solo la propria cartella `Aula_Base/` o
+  `Aula_Avanzata/`, che funziona da sola e ha come primo livello `Modulo_1` … `Modulo_4`; le soluzioni di tutti i
+  notebook sono a disposizione da subito, nella cartella `Soluzioni/`, separata dai moduli. Il progetto uv dei
+  corsisti si chiama `corso-python` ed è lo stesso per le due aule.
+- **Script, uv e Ruff (18 ottobre 2026).** Nell'Avanzata il modulo 1 ha la sottocartella `Script_uv_Ruff/` con il
+  notebook di spiegazione, senza Hands-on né Extra, la cartella `demo/` della dimostrazione, che anche i corsisti
+  ricevono per seguirla, e la cartella `esercizio/`. L'Esercitazione 1 dell'Avanzata è l'esercizio sullo script,
+  guidato passo per passo e con alcuni passi facoltativi; gli esercizi classici dell'Esercitazione 1 restano nello
+  stesso notebook, facoltativi, da fare a casa, e la Base non cambia. Il terminale di VS Code non attiva l'ambiente del
+  corso, per evitare l'avviso `VIRTUAL_ENV` di uv nelle cartelle della dimostrazione e dell'esercizio. Ruff si lancia
+  soltanto da un terminale aperto in `demo/` o in `esercizio/`, e la configurazione del progetto del corso esclude i
+  notebook e i `corso.py`, così né il terminale né l'estensione di VS Code li toccano. La scheda su uv e gli script è
+  sostituita dal notebook.
+- **Hands-on (18 ottobre 2026).** Gli Hands-on, d'ora in poi, sono da due a tre per notebook, solo dove servono e sono
+  rilevanti, con un massimo di cinque; i notebook che ne hanno di più non si riducono ora. Gli esercizi in più su uv,
+  script e Ruff non diventano Hands-on.
+- **Riserva e consegne (18 ottobre 2026).** Gli esercizi in più su uv, script e Ruff stanno in `Riserva/Avanzata/` e
+  si consegnano, quando servono, con `esporta.py avanzata --riserva`. Gli zip completi si mandano prima della prima
+  giornata, e l'eventuale aggiornamento dei moduli 3 e 4, da mandare la settimana successiva, si prepara con
+  `esporta.py --moduli 3 4`.
 
 ## Ancora da fare
 
@@ -236,7 +248,6 @@ occupa tutti i 240 minuti del blocco, quindi in caso di ritardo si taglia seguen
   dell'aula.
 - La prova in VS Code sui PC dell'aula dei blocchi che si aprono con un clic, della riga rossa della verifica e del
   codice colorato di `soluzione()`.
-- La verifica che i PC dell'aula raggiungano PyPI, perché nella demo e nell'esercizio `uv add` risolve e scarica le
-  librerie dalla rete.
-- Il modo di mandare l'aggiornamento dei moduli 3 e 4 senza sovrascrivere i notebook che i corsisti hanno già
-  compilato nei moduli 1 e 2: `esporta.py` oggi prepara soltanto lo zip dell'aula intera.
+- La verifica che i PC dell'aula raggiungano PyPI, perché nella dimostrazione e nell'esercizio `uv add` risolve e
+  scarica le librerie dalla rete.
+- La prova, su un PC dell'aula, dell'aggiornamento dei moduli 3 e 4 preparato con `esporta.py --moduli 3 4`.

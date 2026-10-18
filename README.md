@@ -22,11 +22,18 @@ per le due aule, e le impostazioni di VS Code. Il suo `README.md`, generato da `
 `uv sync` e scegliere il kernel, e come risolvere i problemi più comuni. Le due cartelle sono generate dal build e non
 si modificano a mano; gli zip si preparano con un comando che ricostruisce prima tutto il corso:
 
-    uv run python _build/esporta.py              # dist/Aula_Base.zip e dist/Aula_Avanzata.zip
-    uv run python _build/esporta.py base         # una sola aula
+    uv run python _build/esporta.py                      # dist/Aula_Base.zip e dist/Aula_Avanzata.zip
+    uv run python _build/esporta.py base                 # una sola aula
+    uv run python _build/esporta.py --moduli 3 4         # aggiornamento dei soli moduli 3 e 4
+    uv run python _build/esporta.py avanzata --riserva   # il materiale di riserva di un'aula
 
 Nello zip entrano soltanto i file che Git conosce o non ignora, quindi restano fuori `.venv`, le cache e i file
-prodotti eseguendo notebook e script. La cartella dell'Avanzata, che è la più completa, è fatta così:
+prodotti eseguendo notebook e script; un file nuovo che Git non ignora entrerebbe invece nello zip, e `esporta.py` lo
+segnala con un avviso. Lo zip di aggiornamento contiene soltanto `Modulo_3`, `Modulo_4`, le loro soluzioni con
+`Soluzioni/corso.py`, `Dati/` e `Schede/`, così non tocca i notebook dei moduli 1 e 2, in cui i corsisti hanno già
+scritto; la `Guida_docente.md` descrive come mandarlo.
+
+La cartella dell'Avanzata, che è la più completa, è fatta così:
 
 ```
 Aula_Avanzata/
@@ -65,8 +72,8 @@ corsisti, sono nelle tabelle della `Guida_docente.md`.
 | 1 | `01_Python_e_sintassi_base` · variabili, numeri, stringhe, import | 40 min | 30 min |
 | 1 | `02_Tipi_di_dato` · liste, tuple, dizionari, set | 40 min | 35 min |
 | 1 | `03_Codice_leggibile` · commenti, Markdown, docstring, PEP 8 | 20 min | 20 min |
-| 1 | `Ambiente_script_e_Ruff` · uv e `.venv`, i file del progetto, notebook e script, import da un file, Ruff, con la demo dal vivo | no | 30 min |
-| 1 | `Esercitazione_1` · Base: esercizi sui notebook 00-03; Avanzata: la demo ripetuta nella cartella `esercizio/`, con gli esercizi sui notebook 00-03 facoltativi, a casa | 60 min | 60 min |
+| 1 | `Ambiente_script_e_Ruff` · uv e `.venv`, i file del progetto, notebook e script, import da un file, Ruff, con la dimostrazione dal vivo | no | 30 min |
+| 1 | `Esercitazione_1` · Base: esercizi sui notebook 00-03; Avanzata: la dimostrazione ripetuta nella cartella `esercizio/`, con gli esercizi sui notebook 00-03 facoltativi, a casa | 60 min | 60 min |
 | 2 | `04_Funzioni_e_controllo` · if, for, funzioni (Avanzata: lambda, list comprehension) | 50 min | 50 min |
 | 2 | `05_Oggetti_ed_errori` · oggetti, metodi, documentazione, traceback | 35 min | 30 min |
 | 2 | `06_Pandas_e_import_dati` · Series, DataFrame, CSV, Excel, SQL (Avanzata: API) | 55 min | 70 min |
@@ -78,23 +85,26 @@ corsisti, sono nelle tabelle della `Guida_docente.md`.
 | 4 | `10_Agenti_per_il_coding` · Copilot in VS Code, leggere il codice scritto da un agente | 35 min | 35 min |
 | 4 | `11_Capstone` · il carico del Nord e la temperatura, con lo step finale di richieste libere a Copilot | 150 min | 150 min |
 | se c'è tempo | `Approfondimenti_1` · set, while, più file CSV (Avanzata: map, filter, generatori) | 40 min | 55 min |
-| se c'è tempo | `Approfondimenti_2` · differenze tra date, fuso orario (Avanzata: shift, rolling, type hint, dataclass, decoratori) | 20 min | 40 min |
+| se c'è tempo | `Approfondimenti_2` · differenze tra date, fuso orario (Avanzata: shift, rolling, type hint, dataclass, decoratori, generatori, `**kwargs`) | 20 min | 40 min |
 
-Dentro ogni notebook, subito dopo gli esempi, ci sono alcuni Hands-on: piccoli esercizi da uno a tre minuti in cui si
-cambia qualcosa nel codice appena visto. In fondo a ogni notebook una sezione Extra raccoglie due o tre esercizi brevi
-da fare a casa, che in aula si saltano. Le tre Esercitazioni chiudono i primi tre moduli con un'ora di lavoro
-strutturato, con domande di riepilogo, cinque esercizi con suggerimenti nascosti e la soluzione di ogni esercizio a
-richiesta, mentre i due Approfondimenti raccolgono il materiale che resta fuori dal percorso principale e si aprono
-solo quando la classe è in anticipo. Sotto ogni esercizio si trova una cella con la chiamata `verifica("7.1")`, che
-controlla il risultato e stampa ✅ se è corretto, oppure una riga che indica che cosa non torna. Le soluzioni di tutti
-gli esercizi sono nella cartella `Soluzioni/` di ogni aula, a disposizione dei corsisti fin dal primo giorno.
+Nei notebook numerati da 00 a 10, subito dopo gli esempi, ci sono alcuni Hands-on: piccoli esercizi da uno a tre
+minuti in cui si cambia qualcosa nel codice appena visto. In fondo agli stessi notebook una sezione Extra raccoglie due
+o tre esercizi brevi da fare a casa, che in aula si saltano. Il capstone, che procede a passi guidati, e
+`Ambiente_script_e_Ruff`, la cui pratica è l'Esercitazione 1 dell'Avanzata, non hanno né Hands-on né Extra. Le tre
+Esercitazioni chiudono i primi tre moduli con un'ora di lavoro strutturato, con domande di riepilogo, cinque o sei
+esercizi con suggerimenti nascosti e la soluzione di ogni esercizio a richiesta; nell'Avanzata l'Esercitazione 1 è
+invece l'esercizio guidato sullo script nella cartella `esercizio/`. I due Approfondimenti raccolgono il materiale che
+resta fuori dal percorso principale e si aprono solo quando la classe è in anticipo. Sotto ogni esercizio si trova una
+cella con la chiamata `verifica("7.1")`, che controlla il risultato e stampa ✅ se è corretto, oppure una riga che
+indica che cosa non torna. Le soluzioni di tutti gli esercizi sono nella cartella `Soluzioni/` di ogni aula, a
+disposizione dei corsisti fin dal primo giorno.
 
 ## Il materiale del docente
 
 Quello che serve soltanto al docente resta nel repository e non va ai corsisti. La `Guida_docente.md` riporta i tempi
 dei quattro moduli, indica quando svolgere le dimostrazioni dal vivo, descrive come distribuire gli zip e gli
-aggiornamenti e che cosa raccontare nella parte su uv, script e Ruff dell'Avanzata, con la demo passo per passo e
-l'ora di esercitazione, e suggerisce dove tagliare se si è in ritardo.
+aggiornamenti e che cosa raccontare nella parte su uv, script e Ruff dell'Avanzata, con la dimostrazione passo per passo
+e l'ora di esercitazione, e suggerisce dove tagliare se si è in ritardo.
 
 | Cartella | Contenuto |
 |---|---|
@@ -104,7 +114,7 @@ l'ora di esercitazione, e suggerisce dove tagliare se si è in ritardo.
 | `Dati/` | gli originali dei dati del corso (vedi `Dati/README.md`), copiati nelle aule a ogni build |
 | `Schede/` | gli originali delle tre schede: leggere il codice, gli errori più comuni, da Excel a pandas |
 | `Slides/` | la presentazione del corso |
-| `_build/` | gli script che generano il materiale: in `src/` i sorgenti dei notebook e le cartelle della demo su uv e Ruff, in `aula/` il progetto uv e i README dei corsisti, in `docs/` le regole di scrittura |
+| `_build/` | gli script che generano il materiale: in `src/` i sorgenti dei notebook e le cartelle della dimostrazione su uv e Ruff, in `aula/` il progetto uv e i README dei corsisti, in `docs/` le regole di scrittura |
 | `dist/` | gli zip per i corsisti, prodotti da `_build/esporta.py` e non versionati |
 
 ## Ricostruire e controllare il materiale
@@ -120,9 +130,9 @@ questi:
     uv run python _build/esporta.py              # gli zip per i corsisti
 
 `controlla.py` deve chiudersi con zero errori e zero avvisi. A ogni giro controlla anche che le copie nelle aule
-coincidano con gli originali, che il `uv.lock` dei corsisti sia aggiornato e che Ruff dia sugli script della demo e
-dell'esercizio esattamente le segnalazioni previste. Le regole di scrittura del materiale stanno in `_build/docs/`, e
-`CLAUDE.md` riassume il ciclo di lavoro.
+coincidano con gli originali, che il `uv.lock` dei corsisti sia aggiornato e che Ruff dia sugli script della
+dimostrazione e dell'esercizio esattamente le segnalazioni previste. Le regole di scrittura del materiale stanno in
+`_build/docs/`, e `CLAUDE.md` riassume il ciclo di lavoro.
 
 ## Come sono fatti i notebook
 

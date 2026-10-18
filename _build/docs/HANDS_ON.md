@@ -18,14 +18,15 @@ come creare una cella o premere Restart, il Hands-on ha soltanto il riquadro con
 Un notebook ha da due a tre Hands-on, messi soltanto dove il gesto è sensato e il concetto è rilevante per quello che
 segue; cinque è il massimo e non un obiettivo. I conteggi dei paragrafi seguenti descrivono i notebook come sono oggi:
 quelli che hanno quattro o cinque Hands-on non si riducono per questo, ma una revisione non ne aggiunge se il gesto
-non è nuovo e utile. Il notebook di spiegazione `Ambiente_script_e_Ruff` è l'unica eccezione verso il basso e non ne
-ha nessuno.
+non è nuovo e utile. Il notebook di spiegazione `Ambiente_script_e_Ruff` e il capstone, che procede a passi guidati,
+non ne hanno.
 
 La sezione Extra chiude il notebook, si chiama "Extra", in aula si salta e chi vuole la fa a casa. Contiene due o tre
 esercizi brevi (`nb.esercizio`, con il formato "prima il risultato, poi i passi"), che ripassano i punti principali
 del notebook. Dove il vecchio Homework o i vecchi esercizi di fine notebook sono fatti bene, si riusano qui. Nei
 notebook di sintassi (00-05) gli Extra restano nel dominio quotidiano: un passo dell'Homework che serve lì si traspone
-su dati quotidiani con lo stesso codice.
+su dati quotidiani con lo stesso codice. Anche per l'Extra `Ambiente_script_e_Ruff` e il capstone fanno eccezione, e
+non ne hanno uno.
 
 Gli esercizi originali del docente che ora stanno nelle esercitazioni (01: massimo e minimo, area del cerchio; 02:
 lista invertita, posizioni pari, capitali del G8; 03: stringa invertita, capitali pari, palindrome; 04 pandas: i
@@ -74,29 +75,30 @@ Extra, per scelta. I gesti che insegna (`uv run`, `uv add`, `uv sync`, `ruff for
 terminale, dentro un progetto con il suo ambiente, e non in una cella: il kernel del notebook usa l'ambiente del
 corso, dove pandas, openpyxl e Ruff sono già installati, quindi un Hands-on nel notebook non farebbe mai comparire le
 librerie mancanti da cui parte la dimostrazione. La pratica è tutta nell'Esercitazione 1 dell'Avanzata, che segue la
-demo dal vivo e la fa rifare nella cartella `esercizio/`. Poiché non ha esercizi, la voce del notebook in
+dimostrazione dal vivo e la fa rifare nella cartella `esercizio/`. Poiché non ha esercizi, la voce del notebook in
 `PROGRAMMA` ha `soluzioni=False`: non c'è una copia in `Soluzioni/` né un `corso.py` accanto al notebook. Dei suoi 30
-minuti circa metà va alla demo nella cartella `demo/`. Concetti che restano, e che l'esercitazione riprende uno a uno: che cosa fa
-uv e a che cosa serve un ambiente virtuale; i file del progetto (`pyproject.toml`, `uv.lock`, `.python-version`,
-`.venv`); `uv add`, `uv add --dev`, `uv run` e `uv sync`; la differenza tra notebook e script; `from modulo import
-funzione` per un file del progetto come per una libreria, con `sys.path` e `__name__`; che cosa fanno un formatter e un
-linter, e i comandi di Ruff. Esercizi in più su questi temi, per una classe che va avanti, stanno nel notebook di
-riserva in `Riserva/` (sorgente `nbR_*`), fuori dalle cartelle dei corsisti.
+minuti circa metà va alla dimostrazione nella cartella `demo/`. Concetti che restano, e che l'esercitazione riprende
+uno a uno: che cosa fa uv e a che cosa serve un ambiente virtuale; i file del progetto (`pyproject.toml`, `uv.lock`,
+`.python-version`, `.venv`); `uv add`, `uv add --dev`, `uv run` e `uv sync`; la differenza tra notebook e script;
+`from modulo import funzione` per un file del progetto come per una libreria, con `sys.path` e `__name__`; che cosa
+fanno un formatter e un linter, e i comandi di Ruff. Esercizi in più su questi temi, per una classe che va avanti,
+stanno nel notebook di riserva in `Riserva/Avanzata/` (sorgente `nbR_*`), fuori dalle cartelle dei corsisti, e si
+consegnano con `esporta.py avanzata --riserva`.
 
 ### E1 · Esercitazione 1 nell'aula Avanzata
 Nell'Avanzata l'ora di esercitazione del modulo 1, 45 minuti di lavoro e 15 di correzione, è l'esercizio sullo
-script. Il corsista rifà la demo nella cartella `Modulo_1/Script_uv_Ruff/esercizio/`, che contiene un programma
-equivalente sulle temperature della settimana (`meteo.py` con le funzioni, `main.py` che le importa, stampa la massima
-e la media e salva `meteo.xlsx`) e dà gli stessi errori nello stesso ordine: prima manca pandas, poi openpyxl, e Ruff
-segnala `F401` e `F841` in `meteo.py`, `I001` ed `E501` in `main.py`. Il notebook apre con alcune domande sul notebook
-S e guida il lavoro con passi nel formato degli esercizi (obiettivo, Passo per passo, suggerimento, `soluzione` e
-una `verifica=` che controlla i valori copiati dal terminale e legge i file del progetto), ma i comandi si scrivono
-nel terminale. Qui, ed è la seconda eccezione, sono ammessi passi facoltativi in più, tutti elementari e nel
-perimetro del modulo 1: importare anche `minima` e
-stampare la minima con `:.1f`; un `print` al livello principale di `meteo.py`, che compare prima dell'output di
-`main.py` perché l'import esegue il file; `__name__` stampato da `meteo.py` lanciato con `uv run main.py` e con `uv
-run meteo.py`; cancellare `.venv` e ricostruirlo con `uv sync`. I cinque esercizi classici dell'Esercitazione 1, con
-le loro domande, restano in fondo allo stesso notebook, facoltativi, da fare a casa. Lo stato finale sta in
+script. Il corsista rifà la dimostrazione nella cartella `Modulo_1/Script_uv_Ruff/esercizio/`, che contiene un
+programma equivalente sulle temperature della settimana (`meteo.py` con le funzioni, `main.py` che le importa, stampa
+la massima e la media e salva `meteo.xlsx`) e dà gli stessi errori nello stesso ordine: prima manca pandas, poi
+openpyxl, e Ruff segnala `F401` e `F841` in `meteo.py`, `I001` ed `E501` in `main.py`. Il notebook apre con alcune
+domande sul notebook S e guida il lavoro con passi nel formato degli esercizi (obiettivo, Passo per passo,
+suggerimento, `soluzione` e una `verifica=` che controlla i valori copiati dal terminale e legge i file del
+progetto), ma i comandi si scrivono nel terminale. Qui, ed è la seconda eccezione, sono ammessi passi facoltativi in
+più, tutti elementari e nel perimetro del modulo 1: importare anche `minima` e stampare la minima con `:.1f`; un
+`print` al livello principale di `meteo.py`, che compare prima dell'output di `main.py` perché l'import esegue il
+file; `__name__` stampato da `meteo.py` lanciato con `uv run main.py` e con `uv run meteo.py`; cancellare `.venv` e
+ricostruirlo con `uv sync`. I cinque esercizi classici dell'Esercitazione 1, con le loro domande, restano in fondo
+allo stesso notebook, facoltativi, da fare a casa. Lo stato finale sta in
 `Soluzioni/Script_uv_Ruff/esercizio/`, che le soluzioni raggiungono con lo stesso percorso relativo
 `Script_uv_Ruff/esercizio/`. La Base fa l'Esercitazione 1 classica, invariata.
 
@@ -121,20 +123,22 @@ da sistemare" ridotto a due celle; "Leggere una firma" attuale.
 
 ### 06 · Pandas: Series, DataFrame e import dei dati
 Concetti che restano: `pd.read_csv` con `sep` e `decimal`, `head`/`info`/`shape`, `read_excel` con `sheet_name`,
-`sqlite3.connect` e `pd.read_sql`, per l'Avanzata `requests.get(...).json()`. Hands-on, cinque: dopo "DataFrame"
-cambiare `head(3)` in `tail(2)` e leggere `shape`; l'attuale `os.listdir` resta; dopo "Un CSV salvato da Excel in
-italiano" aggiungere `usecols`; dopo "Più fogli in un file" leggere un altro foglio; dopo "Database SQL" cambiare il
-`WHERE` della query; per l'Avanzata, dopo "Parametri di query", cambiare un parametro della richiesta (`rete`). Extra:
-il passo Venerdì dell'Homework senza la maschera (leggere il CSV italiano e controllare `info()`); il passo Sabato
-(un foglio Excel e una tabella SQL); per l'Avanzata l'attuale esercizio sulla certificazione energetica.
+`sqlite3.connect` e `pd.read_sql`, per l'Avanzata `requests.get(...).json()`. Hands-on, cinque in ciascuna aula:
+nella sola Base, dopo "DataFrame", salvare le prime due righe con `head()` e leggere `shape`; in entrambe le aule
+l'attuale `os.listdir`, poi dopo "Un CSV salvato da Excel in italiano" aggiungere `usecols`, dopo "Più fogli in un
+file" leggere un altro foglio e dopo "Database SQL" cambiare il `WHERE` della query; per l'Avanzata, al posto di
+quello sul DataFrame, dopo "Parametri di query" cambiare i due parametri della richiesta per avere i sensori di
+temperatura di Bergamo (una cella con il tag `rete`). Extra: il passo Venerdì dell'Homework senza la maschera
+(leggere il CSV italiano e controllare `info()`) e il passo Sabato (un foglio Excel e una tabella SQL).
 
 ### 07 · Pandas: operazioni sui DataFrame
 Concetti che restano: `loc`/`iloc`, maschera booleana, `fillna`/`dropna`, `groupby` con una funzione di aggregazione,
 `sort_values`, `merge` con `how`. Sono le operazioni che un agente scrive in ogni analisi. Hands-on, cinque: dopo
 "Selezione di righe e colonne" selezionare altre due colonne con `loc`; dopo "Selezione condizionale" cambiare la
 condizione della maschera; dopo "Valori mancanti" riempire con un altro valore; dopo "Groupby" raggruppare per
-un'altra colonna o con `mean` al posto di `sum`; dopo "Merge" cambiare `how` e contare le righe. Extra: l'attuale 7.4
-(prezzo medio per stato) e un esercizio breve su `sort_values` con `ascending=False` e `head(3)`.
+un'altra colonna o con `mean` al posto di `sum`; dopo "Merge" cambiare `how` e contare le righe. Extra: un esercizio
+breve su `sort_values` con `ascending=False` e `head(3)` (7.1), il prezzo medio per stato (7.2) e, per l'Avanzata,
+l'esercizio facoltativo sulla certificazione energetica degli edifici in Lombardia (7.3).
 
 ### 08 · Pandas: le date
 Concetti che restano: `pd.to_datetime` con `format`, il tempo come indice e la selezione di un periodo con `loc`, gli

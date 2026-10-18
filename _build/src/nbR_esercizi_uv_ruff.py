@@ -35,22 +35,23 @@ def costruisci() -> Notebook:
     nb.sezione("Esercizi", intro="""
         Questo notebook raccoglie sei esercizi brevi sui temi del notebook *Ambiente, script e Ruff*, che si
         trova nella cartella `Modulo_1/Script_uv_Ruff` del corso. Gli esercizi sono indipendenti e si possono
-        fare in qualunque ordine. Il quarto, e il sesto se vuoi controllare la risposta, chiedono di creare
-        un file nella cartella del corso, cioè quella che contiene `pyproject.toml` e che apriamo in VS Code,
-        e di lanciarlo dal terminale, che si apre proprio in quella cartella.
+        fare in qualunque ordine. L'esercizio R.4 chiede di creare un file nella cartella del corso, cioè
+        quella che contiene `pyproject.toml` e che apriamo in VS Code, e di lanciarlo dal terminale, che si
+        apre proprio in quella cartella. L'esercizio R.6 propone lo stesso passaggio, facoltativo, per
+        controllare la risposta con Ruff.
     """)
     nb.md("""
-        Ogni esercizio comincia dicendo che cosa vogliamo ottenere, e da lì si può arrivare al risultato da
-        soli; chi preferisce procedere per gradi apre con un clic il blocco Passo per passo. Nella cella da
+        Ogni esercizio comincia dicendo che cosa vogliamo ottenere, e da lì puoi arrivare al risultato da
+        solo; se preferisci procedere per gradi, apri con un clic il blocco Passo per passo. Nella cella da
         completare i `...` prendono il posto del codice da scrivere. Sotto ci sono la verifica, che stampa ✅
         quando il risultato è giusto e altrimenti dice che cosa controllare, e la cella `soluzione`, che mostra
-        la soluzione di quell'esercizio e di nessun altro.
+        soltanto la soluzione di quell'esercizio.
     """)
 
     # ------------------------------------------------------------------ uv e il progetto
     nb.sottosezione("uv e i file del progetto", intro="""
         I primi due esercizi riguardano il file `pyproject.toml` e i comandi con cui uv aggiunge una libreria a
-        un progetto e la porta sul PC di un collega.
+        un progetto e con cui un collega la riceve sul suo PC.
     """)
     nb.esercizio(
         titolo="Le librerie di un progetto",
@@ -58,10 +59,10 @@ def costruisci() -> Notebook:
             Un collega ti ha incollato in un messaggio il contenuto del file `pyproject.toml` del progetto con
             cui prepara ogni mese il riepilogo e il grafico delle spese di casa. Prima di scaricare il progetto
             e lanciare `uv sync` vuoi sapere quali librerie installerà e quali strumenti di sviluppo usa.
-            Invece di cercarle a occhio, trasformiamo il testo in un dizionario con `tomllib.loads`, come nel
-            notebook *Ambiente, script e Ruff*, in modo che la stessa cella funzioni con il `pyproject.toml` di
-            qualunque altro progetto. Alla fine `librerie` contiene la lista delle tre librerie del programma e
-            `strumenti` la lista con la sola voce di Ruff.
+            Invece di cercarle a occhio, conviene trasformare il testo in un dizionario con `tomllib.loads`,
+            come nel notebook *Ambiente, script e Ruff*, in modo che la stessa cella funzioni con il
+            `pyproject.toml` di qualunque altro progetto. Alla fine `librerie` contiene la lista delle tre
+            librerie del programma e `strumenti` la lista con la sola voce di Ruff.
         """,
         richiesta="""
             1. Trasforma la stringa `testo` nel dizionario `progetto` con la funzione `tomllib.loads`.
@@ -128,9 +129,10 @@ def costruisci() -> Notebook:
         titolo="La libreria che manca",
         scenario="""
             Un collega, prima di andare in ferie, ti ha lasciato un notebook che disegna alcuni grafici con
-            Plotly e altri con matplotlib, una libreria che nel progetto del corso non c'è. Vogliamo controllare
-            che Plotly sia installato, sapere con quale comando si aggiunge matplotlib e lasciare scritto al
-            collega il comando con cui, al rientro, riceverà la libreria. Alla fine `versione_plotly` contiene
+            Plotly e altri con matplotlib, una libreria che aveva installato con `pip install` e che per questo
+            nel progetto del corso non c'è. Vogliamo controllare che Plotly sia installato, sapere con quale
+            comando si aggiunge matplotlib e lasciare scritto al collega il comando con cui, al rientro,
+            riceverà la libreria. Alla fine `versione_plotly` contiene
             la versione installata di Plotly, una stringa di numeri separati da punti, e `comando_aggiungi` e
             `comando_collega` contengono i due comandi di uv, scritti come nel terminale.
         """,
@@ -245,7 +247,7 @@ def costruisci() -> Notebook:
             media della settimana con un solo comando nel terminale, senza aprire un notebook. I chilometri di
             questa settimana sono `12.5, 8.0, 15.2, 9.8, 11.5`, e lo script `bici.py`, lanciato con `uv run`,
             stampa la riga `Media della settimana: 11.4 km`. Per controllare che lo script sia stato eseguito,
-            copiamo nel notebook la riga che compare nel terminale.
+            copia nel notebook la riga che compare nel terminale.
         """,
         richiesta="""
             1. Crea in VS Code il file `bici.py` nella cartella del corso, accanto a `pyproject.toml`, che è anche
@@ -256,11 +258,15 @@ def costruisci() -> Notebook:
                un `print` con una f-string che stampa la media con una cifra decimale.
             4. Lancia lo script dal terminale con `uv run bici.py`, e controlla il file con
                `uv run ruff check bici.py`, che risponde `All checks passed!` quando non c'è nulla da segnalare.
+               Se Ruff segnala `W292`, al file manca l'a capo dopo l'ultima riga, e basta aggiungerlo e
+               salvare. Con le impostazioni di VS Code della cartella del corso l'a capo si aggiunge da solo a
+               ogni salvataggio, ma un file creato con un altro programma può non averlo.
             5. Copia la riga stampata dal terminale nella variabile `output_script` della cella qui sotto.
         """,
         suggerimento=(
-            "puoi partire dalla funzione `totale` dell'esercizio precedente e cambiare nomi, calcolo e testo; il "
-            "formato `:.1f` dentro le graffe dà una cifra decimale."
+            "puoi partire dal codice dell'esercizio precedente, con la funzione e il blocco "
+            "`if __name__ == \"__main__\":`, e cambiare nomi, calcolo e testo; il formato `:.1f` dentro le "
+            "graffe dà una cifra decimale."
         ),
         starter="""
             # il codice sta nel file bici.py; qui solo la riga copiata dal terminale
@@ -350,8 +356,9 @@ def costruisci() -> Notebook:
         scenario="""
             Un amico ha scritto lo script `meteo_report.py` qui sotto e vuole metterlo in un repository
             condiviso, dove ogni file deve passare `uv run ruff check` senza segnalazioni. Prima di lanciare Ruff
-            proviamo a fare il suo lavoro, leggendo il file e scrivendo i codici delle segnalazioni che darebbe,
-            e poi riscriviamo il codice in modo che non ne dia nessuna e stampi lo stesso testo.
+            proviamo a fare a mano il lavoro del linter, leggendo il file e scrivendo i codici delle
+            segnalazioni che darebbe, e poi riscriviamo il codice in modo che non ne dia nessuna e stampi lo
+            stesso testo.
 
             ```python
             import math
@@ -376,7 +383,10 @@ def costruisci() -> Notebook:
                segnalazioni e stampi lo stesso testo.
             3. Se vuoi controllare la tua risposta, salva il codice originale nel file `meteo_report.py` nella
                cartella del corso, accanto a `pyproject.toml`, e lancia nel terminale
-               `uv run ruff check meteo_report.py`.
+               `uv run ruff check meteo_report.py`. Un eventuale `W292` non è uno dei codici da trovare,
+               perché indica soltanto che al file manca l'a capo dopo l'ultima riga: VS Code, con le
+               impostazioni della cartella del corso, lo aggiunge a ogni salvataggio, ma un file creato con
+               un altro programma può non averlo.
         """,
         suggerimento=(
             "i codici sono nella tabella della sezione *Il linter* del notebook *Ambiente, script e Ruff*, e la "
