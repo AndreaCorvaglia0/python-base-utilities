@@ -326,7 +326,9 @@ Python: **Shift+Alt+F** rimette in forma il file aperto, le segnalazioni compaio
 chi la vuole la accende con **Format On Save** nelle impostazioni. Le impostazioni della cartella fanno invece
 aggiungere a VS Code l'a capo dopo l'ultima riga a ogni salvataggio (`files.insertFinalNewline`), perché in un file
 scritto a mano la sua mancanza è una segnalazione di Ruff, `W292`, che negli esercizi di riserva confonderebbe il
-risultato. **Shift+Alt+F** si mostra alla fine della dimostrazione, e non su `calcoli.py` prima di cominciare,
+risultato. Se su un PC è installata l'estensione Pylint o Flake8, le impostazioni della cartella la tengono spenta,
+perché segnalerebbe anche regole che il corso non usa, come la docstring mancante, con codici diversi da quelli di
+Ruff. **Shift+Alt+F** si mostra alla fine della dimostrazione, e non su `calcoli.py` prima di cominciare,
 altrimenti il passo 9 non trova più nulla da formattare.
 
 ### La dimostrazione dal vivo

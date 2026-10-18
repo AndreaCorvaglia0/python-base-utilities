@@ -2,5 +2,9 @@
     "recommendations": [
         "ms-python.python",
         "ms-toolsai.jupyter"
+    ],
+    "unwantedRecommendations": [
+        "ms-python.pylint",
+        "ms-python.flake8"
     ]
 }

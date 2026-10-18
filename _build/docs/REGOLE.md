@@ -226,7 +226,10 @@ corso attivo, infatti, uv lanciato in `demo/` o in `esercizio/` stampa l'avviso 
 project environment path .venv and will be ignored`. Nell'Avanzata Ruff è anche il formatter predefinito dei file
 Python, senza formattazione al salvataggio, e la sua estensione è tra quelle consigliate. Sempre nell'Avanzata **Run
 Python File** lancia lo script dalla sua cartella (`python.terminal.executeInFileDir`), ma con l'interprete del corso,
-che ha già pandas, e per questo nella parte su uv e Ruff gli script si lanciano soltanto con `uv run`.
+che ha già pandas, e per questo nella parte su uv e Ruff gli script si lanciano soltanto con `uv run`. In entrambe le
+aule le estensioni Pylint e Flake8, se qualcuno le ha installate, restano spente nella cartella (`pylint.enabled` e
+`flake8.enabled` a `false`, e tra le estensioni sconsigliate in `extensions.json`): il linter del corso è Ruff, e un
+secondo linter con regole sue mostrerebbe segnalazioni diverse da quelle di `uv run ruff check`.
 
 Il `pyproject.toml` del corso esclude da Ruff i notebook e i `corso.py` (`extend-exclude = ["corso.py", "*.ipynb"]`),
 quindi né il terminale né l'estensione di VS Code li modificano. Ruff si lancia comunque soltanto da un terminale aperto

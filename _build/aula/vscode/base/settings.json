@@ -4,5 +4,7 @@
     "files.exclude": {
         "**/__pycache__": true
     },
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "pylint.enabled": false,
+    "flake8.enabled": false
 }

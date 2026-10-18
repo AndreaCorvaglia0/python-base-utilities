@@ -9,5 +9,7 @@
         "editor.defaultFormatter": "charliermarsh.ruff"
     },
     "files.insertFinalNewline": true,
-    "python.terminal.executeInFileDir": true
+    "python.terminal.executeInFileDir": true,
+    "pylint.enabled": false,
+    "flake8.enabled": false
 }
