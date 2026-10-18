@@ -144,7 +144,7 @@ def costruisci() -> Notebook:
             print(biglietto)
         """,
         verifica="""
-            assert biglietto == "intero", "❌ con 40 anni il biglietto è intero: la seconda condizione è eta >= 65 e il ramo else assegna \"intero\""
+            assert biglietto == "intero", "❌ con 40 anni il biglietto è intero: la seconda condizione è eta >= 65 e il ramo else assegna 'intero'"
         """,
         prova_anche='con `eta = 70`, che deve dare `"ridotto"`.',
     )
