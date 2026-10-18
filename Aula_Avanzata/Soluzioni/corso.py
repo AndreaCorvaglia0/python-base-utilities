@@ -224,8 +224,8 @@ progetto = tomllib.loads(Path("Script_uv_Ruff/esercizio/pyproject.toml").read_te
 sviluppo = progetto.get("dependency-groups", {}).get("dev", [])
 meteo = Path("Script_uv_Ruff/esercizio/meteo.py").read_text(encoding="utf-8")
 assert any(voce.startswith("ruff") for voce in sviluppo), "❌ ruff non è nel gruppo dev di esercizio/pyproject.toml: lancia uv add --dev ruff"
-assert "sum(temperature) / len(temperature)" in meteo, "❌ meteo.py non è ancora in forma: lancia uv run ruff format nella cartella esercizio"
-assert sorted(avvisi) == ["E501", "F401", "F841", "I001"], "❌ avvisi: i quattro codici stampati da uv run ruff check, come stringhe"
+assert "sum(temperature) / len(temperature)" in meteo, "❌ meteo.py non è ancora in forma: usa Format Document (Shift+Alt+F) sul file"
+assert sorted(avvisi) == ["E501", "F401", "F841", "I001"], "❌ avvisi: i quattro codici di Ruff nel pannello Problems, come stringhe"
 '''),
     'E1.5': ('Esercizio E1.5', r'''
 from pathlib import Path
@@ -233,11 +233,11 @@ from pathlib import Path
 cartella = Path("Script_uv_Ruff/esercizio")
 meteo = (cartella / "meteo.py").read_text(encoding="utf-8")
 main = (cartella / "main.py").read_text(encoding="utf-8")
-assert "import pandas as pd\n\nfrom meteo import" in main, "❌ main.py: gli import non sono ancora in ordine, lancia uv run ruff check --fix"
+assert "import pandas as pd\n\nfrom meteo import" in main, "❌ main.py: gli import non sono ancora in ordine, usa Ruff: Fix all auto-fixable problems sul file"
 assert "import math" not in meteo and "giorni =" not in meteo and "giorni=" not in meteo, "❌ meteo.py contiene ancora import math o la variabile giorni"
 assert all(len(r) <= 100 for r in main.splitlines()), "❌ main.py ha ancora una riga di più di 100 caratteri"
-assert "\n\n\n\n" not in meteo, "❌ meteo.py ha ancora una riga vuota di troppo: lancia di nuovo uv run ruff format"
-assert esito_finale.strip() == "All checks passed!", "❌ esito_finale: la riga stampata da uv run ruff check quando non trova problemi"
+assert "\n\n\n\n" not in meteo, "❌ meteo.py ha ancora una riga vuota di troppo: usa di nuovo Shift+Alt+F e salva"
+assert segnalazioni_rimaste == 0, "❌ segnalazioni_rimaste: alla fine il pannello Problems non ha più segnalazioni di Ruff"
 '''),
     'E1.6': ('Esercizio E1.6', r'''
 from pathlib import Path

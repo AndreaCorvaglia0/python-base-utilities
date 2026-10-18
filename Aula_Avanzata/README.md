@@ -83,9 +83,10 @@ Le cartelle `demo/` ed `esercizio/`, in `Modulo_1/Script_uv_Ruff/`, all'inizio c
 `uv init --bare`, lanciato in un terminale aperto nella cartella, ciascuna diventa un progetto separato da quello del corso,
 con il suo `pyproject.toml` e, dopo il primo `uv run`, con il suo ambiente `.venv` e il suo `uv.lock`. Gli
 script che contengono si lanciano sempre con `uv run main.py` in un terminale aperto in quella cartella, che si ottiene
-con il tasto destro sulla cartella nel pannello Explorer e la voce **Open in Integrated Terminal**. Anche Ruff si
-lancia soltanto da quel terminale, perché dalla cartella del corso metterebbe in ordine anche i file di partenza delle
-due cartelle, che poi non darebbero più i problemi da cui partono la dimostrazione e l'esercitazione.
+con il tasto destro sulla cartella nel pannello Explorer e la voce **Open in Integrated Terminal**. Ruff si usa in
+VS Code, con **Shift+Alt+F**, il pannello **Problems** e **Ctrl+.**; se lo lanci dal terminale, fallo soltanto da
+quello aperto nella cartella, perché dalla cartella del corso metterebbe in ordine anche i file di partenza delle due
+cartelle, che poi non darebbero più i problemi da cui partono la dimostrazione e l'esercitazione.
 
 Per ricominciare da capo una delle due cartelle, cancellala ed estraila di nuovo dallo zip del corso. Con un doppio
 clic sullo zip, Esplora file ne mostra il contenuto: la cartella sta in `Aula_Avanzata\Modulo_1\Script_uv_Ruff\`, e

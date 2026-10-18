@@ -205,7 +205,10 @@ Dentro `Aula_*/` non si modifica nulla a mano: i notebook e i `corso.py` sono ge
   contiene soltanto i due script: il progetto nasce in aula con `uv init --bare`, che crea un progetto a sé perché il
   `pyproject.toml` dei corsisti esclude `Modulo_1/Script_uv_Ruff/*` nella sezione `[tool.uv.workspace]`. Il nuovo
   `pyproject.toml` non ha una sezione `[tool.ruff]`, quindi Ruff usa quella del corso, la cui voce `src` gli fa
-  riconoscere `calcoli.py` e `meteo.py` come file del progetto. `controlla.py` verifica che lo stato di partenza non
+  riconoscere `calcoli.py` e `meteo.py` come file del progetto. Per Ruff la strada principale, nel notebook, nella
+  dimostrazione e nell'Esercitazione 1, è VS Code (Format Document, pannello Problems, Quick Fix e Ruff: Fix all
+  auto-fixable problems); i comandi `uv run ruff ...` si danno per completezza, accanto. I comandi di uv restano nel
+  terminale di VS Code. `controlla.py` verifica che lo stato di partenza non
   contenga file di un progetto uv.
 
 `controlla.py`, a ogni giro e qualunque notebook si indichi, controlla anche le cartelle delle aule: che le copie di

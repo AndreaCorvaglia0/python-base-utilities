@@ -332,55 +332,67 @@ def costruisci() -> Notebook:
         | `I` | l'ordine degli import |
     """)
     nb.sottosezione("Le quattro segnalazioni della dimostrazione", intro="""
-        Sui due file della dimostrazione il linter dà le quattro segnalazioni della tabella. Due si correggono da
-        sole con l'opzione `--fix`, che applica soltanto le correzioni sicure, segnate con `[*]`; le altre due si
+        Sui due file della dimostrazione il linter dà le quattro segnalazioni della tabella. Due le corregge Ruff
+        da solo, con una correzione sicura che non cambia il comportamento del programma; le altre due si
         correggono a mano.
     """)
     nb.md("""
         | Codice | Messaggio | Che cosa vuol dire | Come si corregge |
         |---|---|---|---|
-        | `F401` | `` `math` imported but unused `` | un modulo importato e mai usato | `--fix` toglie l'import |
-        | `I001` | `Import block is un-sorted or un-formatted` | gli import non sono in ordine | `--fix` li riordina |
+        | `F401` | `` `math` imported but unused `` | un modulo importato e mai usato | Ruff toglie l'import |
+        | `I001` | `Import block is un-sorted or un-formatted` | gli import non sono in ordine | Ruff li riordina |
         | `F841` | `` Local variable `numero` is assigned to but never used `` | una variabile assegnata e mai letta | a mano |
         | `E501` | `Line too long (104 > 100)` | una riga oltre i 100 caratteri | a mano |
     """)
     nb.box("approfondimento", titolo="L'ordine degli import e la correzione non sicura", testo="""
-        Riordinando gli import, `--fix` li divide in gruppi: prima la libreria standard, poi le librerie
+        Riordinando gli import, Ruff li divide in gruppi: prima la libreria standard, poi le librerie
         installate e per ultimi i file del progetto. Per `F841` Ruff conosce anche una correzione non sicura, che
-        cita nell'ultima riga del suo output con l'opzione `--unsafe-fixes`, ma non la usiamo, perché toglierebbe
+        dal terminale cita nell'ultima riga del suo output con l'opzione `--unsafe-fixes`, ma non la usiamo, perché toglierebbe
         soltanto il nome `numero` e lascerebbe la chiamata `len(prezzi)`, inutile anche lei. Una variabile mai
         usata, del resto, a volte è il segno di un errore più sotto.
     """)
 
     # ------------------------------------------------------------------ 8
     nb.sezione("Ruff: formatter e linter insieme")
-    nb.sottosezione("Un programma, due comandi", intro="""
-        **Ruff** fa da formatter e da linter con due comandi distinti. Nel progetto del corso è già installato,
-        nel gruppo `dev` che abbiamo letto in `pyproject.toml`, e dal terminale si lancia con `uv run`, che usa la
-        versione installata nel progetto.
+    nb.sottosezione("Ruff in VS Code", intro="""
+        **Ruff** fa da formatter e da linter, e il modo più comodo di usarlo è dall'editor, con l'estensione
+        **Ruff** di Astral, che la cartella del corso propone tra le estensioni consigliate e imposta come formatter
+        dei file Python. L'estensione controlla ogni file Python aperto mentre lo scriviamo: le segnalazioni
+        compaiono sottolineate nel codice e nel pannello **Problems**, ciascuna con il suo codice.
     """)
     nb.md("""
-        | Comando | Ruolo | Che cosa fa |
-        |---|---|---|
-        | `uv run ruff format` | formatter | rimette in forma i file della cartella e delle sottocartelle |
-        | `uv run ruff check` | linter | elenca le segnalazioni, con file, riga e codice |
-        | `uv run ruff check --fix` | linter | applica le correzioni sicure |
+        | Che cosa | In VS Code |
+        |---|---|
+        | vedere le segnalazioni | le sottolineature nel codice e il pannello **Problems**, con **Ctrl+Shift+M** |
+        | rimettere in forma il file | **Format Document**, con **Shift+Alt+F** |
+        | correggere una segnalazione | **Ctrl+.** sulla riga sottolineata, che apre il menu **Quick Fix** |
+        | correggere tutto quello che Ruff sa correggere | **Ctrl+Shift+P**, poi **Ruff: Fix all auto-fixable problems** |
+        | rimettere in forma a ogni salvataggio | l'impostazione **Format On Save**, per chi la attiva |
     """)
-    nb.sottosezione("Dove si lanciano e in che ordine", intro="""
-        I comandi di Ruff vanno lanciati nel **terminale aperto nella cartella `demo/` o `esercizio/`**. Dalla
-        cartella del corso, infatti, Ruff lavorerebbe su tutti gli script che contiene e metterebbe in ordine anche
-        i file di partenza di quelle due cartelle, che poi non darebbero più le quattro segnalazioni.
+    nb.sottosezione("Lo stesso dal terminale", intro="""
+        Gli stessi lavori si fanno anche dal terminale, con Ruff installato nel progetto, nel gruppo `dev`, e
+        lanciato con `uv run`. I comandi vanno lanciati nel terminale aperto nella cartella `demo/` o
+        `esercizio/`, perché dalla cartella del corso Ruff lavorerebbe su tutti gli script che contiene e
+        metterebbe in ordine anche i file di partenza di quelle due cartelle.
     """)
     nb.md("""
-        Nella dimostrazione l'ordine è `format`, `check`, `check --fix`, le correzioni a mano e infine di nuovo
-        `format` e `check`, che risponde `All checks passed!`. Mettere `format` per primo serve a vedere
+        | Comando | Equivale in VS Code a |
+        |---|---|
+        | `uv run ruff format` | **Format Document**, ma su tutti i file della cartella |
+        | `uv run ruff check` | il pannello **Problems** |
+        | `uv run ruff check --fix` | **Ruff: Fix all auto-fixable problems**, su tutti i file della cartella |
+    """)
+    nb.sottosezione("In che ordine", intro="""
+        Nella dimostrazione prima rimettiamo in forma i file, poi leggiamo le segnalazioni, lasciamo a Ruff quelle
+        che sa correggere, correggiamo a mano le altre e alla fine rimettiamo in forma un'ultima volta, finché il
+        pannello Problems non ha più segnalazioni di Ruff. Mettere la formattazione per prima serve a vedere
         separatamente il lavoro dei due strumenti: con le regole scelte il linter non controlla gli spazi, quindi
         anche prima della formattazione darebbe le stesse quattro segnalazioni.
     """)
     nb.sottosezione("La configurazione", intro="""
         Ruff si configura nella sezione `[tool.ruff]` di `pyproject.toml`, che la cella seguente legge dal
         dizionario `progetto`. Il `pyproject.toml` creato da `uv init --bare` in `demo/` non ha questa sezione, quindi
-        Ruff, risalendo le cartelle come uv, usa quella del corso, e il terminale e l'estensione di VS Code danno
+        Ruff, risalendo le cartelle come uv, usa quella del corso, e l'estensione di VS Code e il terminale danno
         le stesse segnalazioni.
     """)
     nb.code("""
@@ -394,18 +406,6 @@ def costruisci() -> Notebook:
         | `extend-exclude` | i file che Ruff lascia stare: `corso.py` e i notebook del corso |
         | `src` | le cartelle in cui Ruff cerca i file dei progetti, per riconoscere `calcoli` e `meteo` |
         | `lint` → `select` | le famiglie di regole attive, `E`, `F`, `W` e `I` |
-    """)
-    nb.sottosezione("Ruff in VS Code", intro="""
-        In VS Code Ruff funziona attraverso l'estensione **Ruff** di Astral, che la cartella del corso propone tra
-        le estensioni consigliate e imposta come formatter dei file Python. Le segnalazioni compaiono come
-        sottolineature nel codice e nel pannello **Problems**.
-    """)
-    nb.md("""
-        | Gesto | Effetto |
-        |---|---|
-        | **Shift+Alt+F** (Format Document) | rimette in forma il file aperto |
-        | **Ctrl+.** su una riga sottolineata | apre il menu **Quick Fix** con le correzioni proposte |
-        | impostazione **Format On Save** | rimette in forma il file a ogni salvataggio, per chi la attiva |
     """)
     nb.box("approfondimento", titolo="Spezzare una stringa troppo lunga", testo="""
         La riga troppo lunga di `main.py` si sistema dividendo la f-string in due pezzi scritti uno dopo l'altro
@@ -471,26 +471,27 @@ def costruisci() -> Notebook:
         cartella, si risponde di no, perché i notebook restano sull'ambiente del corso.
     """)
     nb.sottosezione("Seconda parte: il codice in ordine con Ruff", intro="""
-        Con lo script funzionante aggiungiamo Ruff al progetto della dimostrazione e lo usiamo per sistemare i due
-        file.
+        Con lo script funzionante aggiungiamo Ruff al progetto della dimostrazione e lo usiamo in VS Code per
+        sistemare i due file, tenendoli aperti tutti e due.
     """)
     nb.md("""
         | Passo | Comando | Che cosa succede |
         |---|---|---|
         | 8 | `uv add --dev ruff` | Ruff entra nel gruppo `dev` del progetto |
-        | 9 | `uv run ruff format` | `2 files reformatted`: spazi e righe vuote al posto giusto |
-        | 10 | `uv run ruff check` | le quattro segnalazioni della sezione 7, due correggibili con `--fix` |
+        | 9 | **Shift+Alt+F** su `calcoli.py` e su `main.py` | spazi e righe vuote al posto giusto; la riga lunga va tra parentesi ma resta lunga |
+        | 10 | pannello **Problems** | le quattro segnalazioni della sezione 7, due delle quali Ruff sa correggere |
     """)
     nb.md("""
         Le segnalazioni si correggono prima con Ruff e poi a mano, e alla fine si controlla che non ne resti
-        nessuna.
+        nessuna. Dal terminale gli stessi passi sono `uv run ruff format`, `uv run ruff check` e
+        `uv run ruff check --fix`, e l'ultimo `uv run ruff check` risponde `All checks passed!`.
     """)
     nb.md("""
         | Passo | Comando | Che cosa succede |
         |---|---|---|
-        | 11 | `uv run ruff check --fix` | spariscono `F401` e `I001`: l'import di `math` è tolto e gli import sono in ordine |
+        | 11 | **Ruff: Fix all auto-fixable problems**, su ciascun file | spariscono `F401` e `I001`: l'import di `math` è tolto e gli import sono in ordine |
         | 12 | a mano | si cancella `numero = len(prezzi)` e si divide in due la f-string lunga |
-        | 13 | `uv run ruff format` e `uv run ruff check` | tolta la riga vuota rimasta, `All checks passed!` |
+        | 13 | **Shift+Alt+F** su `calcoli.py` | tolta la riga vuota rimasta, il pannello Problems non ha più segnalazioni di Ruff |
         | 14 | `uv run main.py` | le stesse tre righe di prima, con il codice in ordine |
     """)
     nb.box("nota", titolo="Dove si lanciano uv init e uv add", testo="""
@@ -510,8 +511,8 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 10
     nb.sezione("I comandi in breve", intro="""
-        I comandi di uv e di Ruff si scrivono nel terminale aperto sulla cartella del progetto su cui si vuole
-        lavorare, per noi `demo/` o `esercizio/`.
+        I comandi di uv si scrivono nel terminale aperto sulla cartella del progetto su cui si vuole lavorare, per
+        noi `demo/` o `esercizio/`. Ruff si usa dall'editor, e dal terminale con i comandi equivalenti.
     """)
     nb.md("""
         | Comando | Che cosa fa |
@@ -524,12 +525,11 @@ def costruisci() -> Notebook:
         | `uv init --bare` | crea nella cartella del terminale un progetto con il solo `pyproject.toml` |
     """)
     nb.md("""
-        | Comando | Che cosa fa |
-        |---|---|
-        | `uv run ruff format` | rimette in forma i file della cartella e delle sottocartelle |
-        | `uv run ruff check` | elenca le segnalazioni, con file, riga e codice |
-        | `uv run ruff check --fix` | applica le correzioni sicure, come togliere e riordinare gli import |
-        | **Shift+Alt+F** in VS Code | rimette in forma il file aperto |
-        | **Ctrl+.** su una riga sottolineata | apre le correzioni proposte da Ruff |
+        | Ruff in VS Code | Dal terminale | Che cosa fa |
+        |---|---|---|
+        | **Shift+Alt+F** (Format Document) | `uv run ruff format` | rimette in forma il codice |
+        | pannello **Problems** (**Ctrl+Shift+M**) | `uv run ruff check` | mostra le segnalazioni, con file, riga e codice |
+        | **Ruff: Fix all auto-fixable problems** | `uv run ruff check --fix` | applica le correzioni sicure |
+        | **Ctrl+.** su una riga sottolineata | | propone la correzione di quella riga |
     """)
     return nb

@@ -59,10 +59,14 @@ def parte_script(nb: Notebook) -> None:
         l'esercizio si lavora nella cartella `Modulo_1/Script_uv_Ruff/esercizio`.
     """, solo_soluzioni=True)
     nb.md("""
-        Tutti i comandi si scrivono nel terminale di VS Code, aperto nella cartella `esercizio`. Il modo più
+        I comandi di uv si scrivono nel terminale di VS Code, aperto nella cartella `esercizio`, mentre Ruff si usa
+        dall'editor, con l'estensione Ruff, e dal terminale soltanto se lo preferisci. Il modo più
         semplice per aprirlo è un clic con il tasto destro sulla cartella, nel pannello Explorer, e poi la voce
         **Open in Integrated Terminal**; in alternativa, da un terminale aperto nella cartella del corso, si entra
-        nella cartella con `cd Modulo_1/Script_uv_Ruff/esercizio`. Gli script si lanciano sempre con `uv run`,
+        nella cartella con `cd Modulo_1/Script_uv_Ruff/esercizio`.
+    """)
+    nb.md("""
+        Gli script si lanciano sempre con `uv run`,
         e non con il pulsante **Run Python File** di VS Code, che usa il Python del corso, dove pandas è già
         installato, e quindi non farebbe comparire gli errori da cui parte l'esercizio.
     """)
@@ -94,8 +98,9 @@ def parte_script(nb: Notebook) -> None:
             Il formatter rimette in forma il codice, sistemando spazi, righe vuote e a capo senza cambiare quello
             che il programma fa, mentre il linter legge il codice senza eseguirlo e segnala gli errori probabili,
             come un import inutilizzato o una variabile mai usata, e i problemi di stile che il formatter non
-            sistema da solo, come una riga troppo lunga. Ruff svolge entrambi i compiti: `ruff format` rimette in
-            forma il codice e `ruff check` lo controlla.
+            sistema da solo, come una riga troppo lunga. Ruff svolge entrambi i compiti: in VS Code con **Format
+            Document** e con le segnalazioni nel pannello **Problems**, dal terminale con `ruff format` e
+            `ruff check`.
         """,
     )
     nb.domanda(
@@ -121,8 +126,8 @@ def parte_script(nb: Notebook) -> None:
     nb.md("""
         Ogni esercizio comincia dicendo che cosa vogliamo ottenere e perché, e il blocco Passo per passo, che si
         apre con un clic, elenca i comandi da lanciare; sotto c'è un suggerimento, nascosto anch'esso. Il lavoro si
-        fa nel terminale e nei file della cartella, mentre nella cella dell'esercizio si copia quello che il
-        terminale ha stampato. La verifica controlla quei valori e, negli esercizi che cambiano i file del
+        fa nel terminale, nell'editor e nei file della cartella, mentre nella cella dell'esercizio si copia quello
+        che il terminale o il pannello Problems mostrano. La verifica controlla quei valori e, negli esercizi che cambiano i file del
         progetto, legge anche quei file, per confermare che i comandi abbiano avuto effetto. La cella `soluzione`
         mostra i comandi e i valori attesi di quell'esercizio.
     """)
@@ -294,43 +299,45 @@ def parte_script(nb: Notebook) -> None:
             Lo script funziona, ma il codice di `meteo.py` e di `main.py` è scritto in modo disordinato e contiene
             qualche riga che non serve, come un import inutilizzato e una variabile mai usata. Vogliamo aggiungere
             Ruff al progetto come strumento di sviluppo, lasciare che il formatter sistemi la forma e poi leggere
-            che cosa segnala il linter. Dopo `ruff format` il comando `ruff check` trova quattro problemi, due in
-            ciascun file.
+            che cosa segnala il linter. Lavoriamo in VS Code, con l'estensione Ruff: dopo la formattazione il
+            pannello **Problems** mostra quattro segnalazioni di Ruff, due in ciascun file.
         """,
         richiesta="""
-            1. Lancia `uv add --dev ruff`, che mette Ruff nel gruppo `dev` di `pyproject.toml`, tra gli strumenti
-               di chi scrive il codice, e non tra le librerie che servono allo script.
-            2. Lancia `uv run ruff format` e apri i due file per vedere che cosa è cambiato, per esempio gli spazi
-               attorno agli operatori e le righe vuote tra le funzioni.
-            3. Lancia `uv run ruff check` e scrivi in `avvisi` i codici dei quattro problemi, come stringhe.
+            1. Nel terminale lancia `uv add --dev ruff`, che mette Ruff nel gruppo `dev` di `pyproject.toml`, tra
+               gli strumenti di chi scrive il codice, e non tra le librerie che servono allo script.
+            2. Apri in VS Code `meteo.py` e `main.py` e, in ciascuno dei due, usa **Format Document** con
+               **Shift+Alt+F**. Guarda che cosa è cambiato, per esempio gli spazi attorno agli operatori e le righe
+               vuote tra le funzioni.
+            3. Apri il pannello **Problems** con **Ctrl+Shift+M** e scrivi in `avvisi` i codici delle quattro
+               segnalazioni di Ruff, come stringhe.
+            4. Se preferisci il terminale, gli stessi due passi sono `uv run ruff format` e `uv run ruff check`.
         """,
         suggerimenti=[
             """
-                Ogni avviso si apre con il suo codice, una lettera seguita da tre cifre come `F401`, e sotto
-                riporta il file e la riga a cui si riferisce. La riga lunga che `ruff format` ha messo tra
-                parentesi resta segnalata, perché il formatter non divide le stringhe.
+                Nel pannello Problems ogni segnalazione di Ruff finisce con il suo codice tra parentesi, come
+                `Ruff(F401)`, seguito dalla riga. La riga lunga che il formatter ha messo tra parentesi resta
+                segnalata, perché il formatter non divide le stringhe.
             """,
         ],
         starter="""
             avvisi = [...]
         """,
         soluzione="""
-            # nel terminale, nella cartella esercizio
-            #   uv add --dev ruff
-            #   uv run ruff format       2 files reformatted
-            #   uv run ruff check
-            # I001 [*] Import block is un-sorted or un-formatted         --> main.py
-            # E501 Line too long (102 > 100)                             --> main.py
-            # F401 [*] `math` imported but unused                        --> meteo.py
-            # F841 Local variable `giorni` is assigned to but never used --> meteo.py
+            # nel terminale, nella cartella esercizio:  uv add --dev ruff
+            # in VS Code: Shift+Alt+F su meteo.py e su main.py, poi il pannello Problems (Ctrl+Shift+M)
+            #   main.py   Import block is un-sorted or un-formatted           Ruff(I001)
+            #   main.py   Line too long (102 > 100)                           Ruff(E501)
+            #   meteo.py  `math` imported but unused                          Ruff(F401)
+            #   meteo.py  Local variable `giorni` is assigned to but never used  Ruff(F841)
+            # dal terminale gli stessi passi sono uv run ruff format e uv run ruff check
             avvisi = ["I001", "E501", "F401", "F841"]
         """,
         verifica=unisci(LEGGI_PROGETTO, f"""
             sviluppo = progetto.get("dependency-groups", {{}}).get("dev", [])
             meteo = Path("{ESERCIZIO}/meteo.py").read_text(encoding="utf-8")
             assert any(voce.startswith("ruff") for voce in sviluppo), "❌ ruff non è nel gruppo dev di esercizio/pyproject.toml: lancia uv add --dev ruff"
-            assert "sum(temperature) / len(temperature)" in meteo, "❌ meteo.py non è ancora in forma: lancia uv run ruff format nella cartella esercizio"
-            assert sorted(avvisi) == ["E501", "F401", "F841", "I001"], "❌ avvisi: i quattro codici stampati da uv run ruff check, come stringhe"
+            assert "sum(temperature) / len(temperature)" in meteo, "❌ meteo.py non è ancora in forma: usa Format Document (Shift+Alt+F) sul file"
+            assert sorted(avvisi) == ["E501", "F401", "F841", "I001"], "❌ avvisi: i quattro codici di Ruff nel pannello Problems, come stringhe"
         """),
     )
 
@@ -338,22 +345,26 @@ def parte_script(nb: Notebook) -> None:
     nb.esercizio(
         titolo="Il codice in ordine",
         scenario="""
-            Dei quattro avvisi, due si correggono da soli con `ruff check --fix`, che toglie l'import inutilizzato
-            e riordina gli import, mentre gli altri due richiedono una decisione nostra. Ruff non cancella la
-            variabile mai usata, perché potrebbe essere il segno di un errore da capire, e non divide la stringa
-            troppo lunga. Vogliamo arrivare al punto in cui `uv run ruff check` risponde `All checks passed!` e lo
-            script stampa le stesse righe di prima.
+            Delle quattro segnalazioni, due le corregge Ruff, che toglie l'import inutilizzato e riordina gli
+            import, mentre le altre due richiedono una decisione nostra. Ruff non cancella la variabile mai usata,
+            perché potrebbe essere il segno di un errore da capire, e non divide la stringa troppo lunga. Vogliamo
+            arrivare al punto in cui il pannello **Problems** non mostra più segnalazioni di Ruff e lo script
+            stampa le stesse righe di prima.
         """,
         richiesta="""
-            1. Lancia `uv run ruff check --fix` e guarda come sono diventati gli import di `main.py`, con prima le
-               librerie installate e poi i file del progetto, separati da una riga vuota.
+            1. In ciascuno dei due file apri la palette dei comandi con **Ctrl+Shift+P** e scegli **Ruff: Fix all
+               auto-fixable problems**; in alternativa, **Ctrl+.** su una riga sottolineata propone la correzione
+               di quella riga. Guarda come sono diventati gli import di `main.py`, con prima le librerie installate
+               e poi i file del progetto, separati da una riga vuota.
             2. In `meteo.py` cancella la riga `giorni = len(temperature)`.
             3. In `main.py` dividi il testo del `print` della media in due f-string scritte una dopo l'altra dentro
                le parentesi, in modo che nessuna riga superi i 100 caratteri.
-            4. Lancia di nuovo `uv run ruff format`, che toglie la riga vuota rimasta al posto dell'import, e poi
-               `uv run ruff check`.
-            5. Scrivi in `esito_finale` la riga stampata da `ruff check`, poi lancia `uv run main.py` e controlla
-               che lo script stampi le stesse righe di prima.
+            4. Usa di nuovo **Shift+Alt+F** su `meteo.py`, per togliere la riga vuota rimasta al posto dell'import,
+               e salva i due file.
+            5. Scrivi in `segnalazioni_rimaste` quante segnalazioni di Ruff restano nel pannello Problems, poi
+               lancia `uv run main.py` e controlla che lo script stampi le stesse righe di prima.
+            6. Dal terminale gli stessi passi sono `uv run ruff check --fix`, le correzioni a mano,
+               `uv run ruff format` e `uv run ruff check`, che alla fine risponde `All checks passed!`.
         """,
         suggerimenti=[
             """
@@ -363,21 +374,20 @@ def parte_script(nb: Notebook) -> None:
             """,
         ],
         starter="""
-            esito_finale = "..."
+            segnalazioni_rimaste = ...
         """,
         soluzione="""
-            # nel terminale, nella cartella esercizio
-            #   uv run ruff check --fix      corregge F401 e I001
+            # in VS Code, su ciascun file: Ctrl+Shift+P, Ruff: Fix all auto-fixable problems (corregge F401 e I001)
             # a mano, in meteo.py, si cancella la riga giorni = len(temperature)
             # a mano, in main.py, il print della media diventa
             #     print(
             #         f"Temperatura media della settimana: {media(valori):.1f} gradi, "
             #         f"calcolata su {len(valori)} giorni"
             #     )
-            #   uv run ruff format
-            #   uv run ruff check            All checks passed!
-            #   uv run main.py
-            esito_finale = "All checks passed!"
+            # Shift+Alt+F su meteo.py, si salvano i due file: il pannello Problems non ha più segnalazioni di Ruff
+            # dal terminale: uv run ruff check --fix, le correzioni a mano, uv run ruff format, uv run ruff check
+            #   (All checks passed!), poi uv run main.py
+            segnalazioni_rimaste = 0
         """,
         verifica=f"""
             from pathlib import Path
@@ -385,11 +395,11 @@ def parte_script(nb: Notebook) -> None:
             cartella = Path("{ESERCIZIO}")
             meteo = (cartella / "meteo.py").read_text(encoding="utf-8")
             main = (cartella / "main.py").read_text(encoding="utf-8")
-            assert "import pandas as pd\\n\\nfrom meteo import" in main, "❌ main.py: gli import non sono ancora in ordine, lancia uv run ruff check --fix"
+            assert "import pandas as pd\\n\\nfrom meteo import" in main, "❌ main.py: gli import non sono ancora in ordine, usa Ruff: Fix all auto-fixable problems sul file"
             assert "import math" not in meteo and "giorni =" not in meteo and "giorni=" not in meteo, "❌ meteo.py contiene ancora import math o la variabile giorni"
             assert all(len(r) <= 100 for r in main.splitlines()), "❌ main.py ha ancora una riga di più di 100 caratteri"
-            assert "\\n\\n\\n\\n" not in meteo, "❌ meteo.py ha ancora una riga vuota di troppo: lancia di nuovo uv run ruff format"
-            assert esito_finale.strip() == "All checks passed!", "❌ esito_finale: la riga stampata da uv run ruff check quando non trova problemi"
+            assert "\\n\\n\\n\\n" not in meteo, "❌ meteo.py ha ancora una riga vuota di troppo: usa di nuovo Shift+Alt+F e salva"
+            assert segnalazioni_rimaste == 0, "❌ segnalazioni_rimaste: alla fine il pannello Problems non ha più segnalazioni di Ruff"
         """,
     )
 
@@ -414,8 +424,8 @@ def parte_script(nb: Notebook) -> None:
             2. Sotto il `print` della massima scrivi un `print` con una f-string che chiama `minima(valori)` con il
                formato `:.1f`.
             3. Lancia `uv run main.py` e copia la nuova riga in `riga_minima`.
-            4. Lancia `uv run ruff check`; se segnala di nuovo `I001`, `uv run ruff check --fix` rimette in ordine
-               alfabetico i nomi importati.
+            4. Se il pannello Problems segnala di nuovo `I001`, **Ruff: Fix all auto-fixable problems** rimette in
+               ordine alfabetico i nomi importati.
         """,
         suggerimenti=[
             """
@@ -431,7 +441,7 @@ def parte_script(nb: Notebook) -> None:
             #   print(f"Temperatura minima della settimana: {minima(valori):.1f} gradi")
             # nel terminale, nella cartella esercizio
             #   uv run main.py
-            #   uv run ruff check            All checks passed!
+            # in VS Code, se compare di nuovo I001: Ctrl+Shift+P, Ruff: Fix all auto-fixable problems
             riga_minima = "Temperatura minima della settimana: 13.8 gradi"
         """,
         verifica=f"""
@@ -548,7 +558,7 @@ def costruisci() -> Notebook:
             "avanzata": [
                 "costruire l'ambiente di un progetto con `uv add`, aggiungendo una libreria alla volta quando manca",
                 "lanciare con `uv run` uno script che importa le sue funzioni da un altro file",
-                "rimettere in forma il codice con `ruff format` e correggere gli avvisi di `ruff check`",
+                "rimettere in forma il codice e correggere le segnalazioni con Ruff, in VS Code o dal terminale",
             ],
         },
         tempo=60,

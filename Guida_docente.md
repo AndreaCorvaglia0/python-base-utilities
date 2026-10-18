@@ -309,27 +309,27 @@ correzioni sicure e non sicure: `--fix` applica solo quelle segnate con `[*]`, m
 correzione non sicura che lascerebbe al suo posto `len(prezzi)`, nel dubbio che la chiamata serva a qualcosa, e la
 decisione giusta, cioè cancellare la riga, resta a chi ha scritto il codice.
 
-#### Ruff dal terminale e in VS Code (sezione 8)
+#### Ruff in VS Code e dal terminale (sezione 8)
 
-Ruff è un solo programma con due comandi, `ruff format` e `ruff check`, che dal terminale si lanciano con `uv run` e
-lavorano su tutti i file Python della cartella del terminale e delle sue sottocartelle, tranne quelli esclusi nella
-configurazione: nel progetto del corso la voce `extend-exclude` lascia fuori `corso.py` e i notebook, perché qui Ruff
-serve per gli script. La configurazione sta nella sezione `[tool.ruff]` di `pyproject.toml`, con righe fino a 100
-caratteri e le famiglie `E`, `F`, `W` e `I`, sia nel progetto del corso sia in quelli della dimostrazione e
-dell'esercizio. In questa parte Ruff si lancia soltanto nel terminale aperto nella cartella `demo/` o `esercizio/`:
-dalla cartella del corso metterebbe in ordine anche i file di partenza di quelle due cartelle, che poi non darebbero più
-le quattro segnalazioni da cui partono la dimostrazione e l'esercitazione.
+La strada principale è VS Code. L'estensione Ruff, che nella cartella dell'Avanzata è il formatter dei file Python,
+controlla ogni file aperto mentre lo si scrive: **Shift+Alt+F** rimette in forma il file, le segnalazioni compaiono
+sottolineate e nel pannello **Problems** (**Ctrl+Shift+M**), **Ctrl+.** su una riga sottolineata propone la
+correzione e **Ruff: Fix all auto-fixable problems**, dalla palette dei comandi, applica tutte le correzioni sicure del
+file. La configurazione è quella della sezione `[tool.ruff]` del `pyproject.toml` del corso, con righe fino a 100
+caratteri e le famiglie `E`, `F`, `W` e `I`, che vale anche per `demo/` ed `esercizio/`, perché i loro `pyproject.toml`
+non hanno una sezione `[tool.ruff]`; la voce `extend-exclude` lascia fuori `corso.py` e i notebook.
 
-In VS Code l'estensione Ruff legge la stessa configurazione e nella cartella dell'Avanzata è il formatter dei file
-Python: **Shift+Alt+F** rimette in forma il file aperto, le segnalazioni compaiono sottolineate e nel pannello
-**Problems**, e **Ctrl+.** su una riga sottolineata apre le correzioni. La formattazione al salvataggio non è attiva, e
-chi la vuole la accende con **Format On Save** nelle impostazioni. Le impostazioni della cartella fanno invece
-aggiungere a VS Code l'a capo dopo l'ultima riga a ogni salvataggio (`files.insertFinalNewline`), perché in un file
+Il terminale si presenta per completezza: `uv run ruff format`, `uv run ruff check` e `uv run ruff check --fix` fanno
+le stesse cose su tutti i file della cartella del terminale e delle sue sottocartelle. Per questo si lanciano soltanto
+nel terminale aperto in `demo/` o `esercizio/`: dalla cartella del corso metterebbero in ordine anche i file di
+partenza di quelle due cartelle, che poi non darebbero più le quattro segnalazioni da cui partono la dimostrazione e
+l'esercitazione. La formattazione al salvataggio non è attiva, e chi la vuole la accende con **Format On Save**. Le
+impostazioni della cartella fanno invece aggiungere a VS Code l'a capo dopo l'ultima riga a ogni salvataggio (`files.insertFinalNewline`), perché in un file
 scritto a mano la sua mancanza è una segnalazione di Ruff, `W292`, che negli esercizi di riserva confonderebbe il
 risultato. Se su un PC è installata l'estensione Pylint o Flake8, le impostazioni della cartella la tengono spenta,
 perché segnalerebbe anche regole che il corso non usa, come la docstring mancante, con codici diversi da quelli di
-Ruff. **Shift+Alt+F** si mostra alla fine della dimostrazione, e non su `calcoli.py` prima di cominciare,
-altrimenti il passo 9 non trova più nulla da formattare.
+Ruff. Prima del passo 9 conviene non salvare `calcoli.py` con una formattazione: il passo 9 non avrebbe più nulla da
+mostrare.
 
 ### La dimostrazione dal vivo
 
@@ -337,7 +337,7 @@ La dimostrazione si fa nella cartella `Modulo_1/Script_uv_Ruff/demo/` di una cop
 stessa che hanno i corsisti, che possono ripetere i comandi sul proprio PC. Prima di cominciare conviene ingrandire il
 carattere del terminale e tenere aperto `calcoli.py`, per vederlo cambiare, e far notare che la cartella contiene
 soltanto i due script: il progetto nasce in aula con `uv init --bare`. I numeri di versione stampati da uv possono essere più alti di
-quelli riportati qui. L'ordine dei comandi Ruff, con `format` prima di `check`, serve a mostrare separatamente il lavoro
+quelli riportati qui. L'ordine dei passi Ruff, con la formattazione prima della lettura delle segnalazioni, serve a mostrare separatamente il lavoro
 del formatter e quello del linter, ed è lo stesso che il notebook descrive nella sezione 8. Con le regole scelte il
 linter trova le stesse quattro segnalazioni prima e dopo la formattazione, con numeri di riga diversi, quindi anche
 partendo da `check --fix` il risultato finale sarebbe lo stesso.
@@ -435,48 +435,27 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
 8. Si lancia `uv add --dev ruff`, che installa Ruff e aggiunge a `pyproject.toml` la sezione `[dependency-groups]`
    con `dev = ["ruff>=0.17.1"]`, lo stesso gruppo che il progetto del corso usa per Ruff.
 
-9. Si lancia `uv run ruff format`, che risponde `2 files reformatted`. In `calcoli.py` compaiono gli spazi attorno a
-   `=` e a `/`, `sum( prezzi )` diventa `sum(prezzi)`, le due funzioni sono separate da due righe vuote e c'è una riga
-   vuota dopo la docstring. In `main.py` compare la riga vuota dopo la docstring, e il `print` lungo viene diviso su
-   tre righe, con la stringa da sola in quella centrale, ma resta oltre i 100 caratteri. L'import di `math` e la
-   variabile `numero` sono ancora lì.
+9. Con `calcoli.py` e `main.py` aperti in VS Code, si usa **Format Document** (**Shift+Alt+F**) su ciascuno dei due
+   file. In `calcoli.py` compaiono gli spazi attorno a `=` e a `/`, `sum( prezzi )` diventa `sum(prezzi)`, le due
+   funzioni sono separate da due righe vuote e c'è una riga vuota dopo la docstring. In `main.py` compare la riga vuota
+   dopo la docstring, e il `print` lungo viene diviso su tre righe, con la stringa da sola in quella centrale, ma resta
+   oltre i 100 caratteri. L'import di `math` e la variabile `numero` sono ancora lì.
 
-10. Si lancia `uv run ruff check`, che trova quattro problemi. Sotto la prima riga di ogni segnalazione Ruff mostra
-   le righe di codice coinvolte e, alla voce `help`, la correzione che propone, che qui sono sostituite da `...`:
+10. Si apre il pannello **Problems** (**Ctrl+Shift+M**), che con i due file aperti mostra le quattro segnalazioni di
+    Ruff, ciascuna con il codice tra parentesi e la riga: `math` imported but unused `Ruff(F401)` e Local variable
+    `numero` is assigned to but never used `Ruff(F841)` in `calcoli.py`, Import block is un-sorted or un-formatted
+    `Ruff(I001)` e Line too long (104 > 100) `Ruff(E501)` in `main.py`. Le stesse righe sono sottolineate nel codice, e
+    passandoci sopra con il mouse compare il messaggio. La riga lunga misura 104 caratteri perché il formatter ha messo
+    la stringa su una riga sua, rientrata di quattro spazi; prima della formattazione ne aveva 107. Se il pannello
+    mostra anche `W293` o `W292`, il file è stato modificato a mano e in fondo c'è una riga con soli spazi: il passo 9
+    l'ha già tolta, oppure la toglie il passo 13.
 
-   ```text
-   F401 [*] `math` imported but unused
-    --> calcoli.py:3:8
-   ...
-   F841 Local variable `numero` is assigned to but never used
-    --> calcoli.py:8:5
-   ...
-   I001 [*] Import block is un-sorted or un-formatted
-    --> main.py:3:1
-   ...
-   E501 Line too long (104 > 100)
-     --> main.py:11:101
-   ...
-   Found 4 errors.
-   [*] 2 fixable with `--fix` (1 unsafe fix available with `--fix --unsafe-fixes`).
-   ```
-
-   Il segno `[*]` indica le due correzioni sicure, e la correzione non sicura è quella di `F841`. La riga lunga misura
-   104 caratteri perché il formatter ha messo la stringa su una riga sua, rientrata di quattro spazi; prima della
-   formattazione la riga del `print` ne aveva 107.
-
-11. Si lancia `uv run ruff check --fix`, che ristampa le due segnalazioni rimaste, `F841` ed `E501`, e chiude con
-   queste righe:
-
-   ```text
-   Found 4 errors (2 fixed, 2 remaining).
-   1 unsafe fix available with `--fix --unsafe-fixes`.
-   ```
-
-   In `main.py` gli import diventano `import pandas as pd`, una riga vuota e
-   `from calcoli import prezzo_medio, totale`: prima le librerie installate, poi i file del progetto, e i nomi in
-   ordine alfabetico. In `calcoli.py` l'import di `math` non c'è più, e al suo posto restano righe vuote di troppo
-   dopo la docstring.
+11. Su ciascuno dei due file si apre la palette dei comandi (**Ctrl+Shift+P**) e si sceglie **Ruff: Fix all
+    auto-fixable problems**; in alternativa, **Ctrl+.** sulla riga sottolineata propone la correzione di quella sola
+    riga, e conviene mostrarlo almeno una volta. In `main.py` gli import diventano `import pandas as pd`, una riga
+    vuota e `from calcoli import prezzo_medio, totale`: prima le librerie installate, poi i file del progetto, e i nomi
+    in ordine alfabetico. In `calcoli.py` l'import di `math` non c'è più, e al suo posto resta una riga vuota di troppo
+    dopo la docstring. Restano nel pannello le due segnalazioni che Ruff non corregge da solo, `F841` ed `E501`.
 
 12. Si correggono a mano le due segnalazioni rimaste. In `calcoli.py` si cancella la riga `numero = len(prezzi)`, e in
     `main.py` si divide la f-string in due pezzi:
@@ -491,11 +470,15 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
     Python unisce due stringhe scritte una dopo l'altra in una stringa sola, quindi il testo stampato non cambia.
     Ciascun pezzo ha la sua `f` perché contiene delle graffe, e lo spazio resta alla fine del primo pezzo.
 
-13. Si lancia di nuovo `uv run ruff format`, che risponde `1 file reformatted, 1 file left unchanged` perché toglie le
-    righe vuote in più di `calcoli.py`, e poi `uv run ruff check`, che risponde `All checks passed!`. Se qualcuno
-    lancia `check` prima del secondo `format`, ottiene già `All checks passed!`, perché con le regole scelte nel
-    progetto il linter non segnala le righe vuote in più, che sistema soltanto il formatter: per questo il lavoro si
-    chiude sempre con un `format` e un `check`.
+13. Si usa di nuovo **Shift+Alt+F** su `calcoli.py`, che toglie la riga vuota in più, e si salvano i due file: il
+    pannello Problems non ha più segnalazioni di Ruff. La riga vuota in più non è una segnalazione del linter, con le
+    regole scelte, e la sistema soltanto il formatter: per questo il lavoro si chiude sempre con una formattazione.
+
+    Per completezza si mostra che dal terminale, nella cartella `demo/`, gli stessi passi sono `uv run ruff format`
+    (`2 files reformatted`), `uv run ruff check` (le quattro segnalazioni, con `Found 4 errors.` e
+    ``[*] 2 fixable with `--fix` ``), `uv run ruff check --fix`, le correzioni a mano, di nuovo `uv run ruff format` e
+    `uv run ruff check`, che alla fine risponde `All checks passed!`. Nell'output di `check` Ruff ricorda anche la
+    correzione non sicura di `F841`, che non usiamo perché lascerebbe la chiamata `len(prezzi)` al posto della riga.
 
 14. Si lancia un'ultima volta `uv run main.py`, che stampa le stesse tre righe di prima. Per chiudere si mostra il
     `pyproject.toml` finale, con `openpyxl` e `pandas` tra le dipendenze e Ruff nel gruppo `dev`, e lo si confronta
@@ -538,8 +521,8 @@ fatto il loro lavoro, e la cella `soluzione` mostra i comandi e i valori attesi.
 | E1.1 | `nome_progetto`, `cartella_creata`, `libreria_mancante` | `pyproject.toml` creato da `uv init --bare` con il nome `esercizio`, `uv.lock` nella cartella, `.venv` e `pandas` |
 | E1.2 | `seconda_libreria` | pandas tra le `dependencies` di `esercizio/pyproject.toml`, e `openpyxl` |
 | E1.3 | `riga_media` | openpyxl tra le `dependencies`, e la riga `Temperatura media della settimana: 15.0 gradi, calcolata su 5 giorni` |
-| E1.4 | `avvisi` | Ruff nel gruppo `dev`, `meteo.py` già formattato, e i codici `E501`, `F401`, `F841`, `I001` |
-| E1.5 | `esito_finale` | gli import di `main.py` in ordine, `meteo.py` senza `import math`, senza `giorni` e senza righe vuote di troppo, nessuna riga di `main.py` oltre i 100 caratteri, e `All checks passed!` |
+| E1.4 | `avvisi` | Ruff nel gruppo `dev`, `meteo.py` già formattato, e i codici `E501`, `F401`, `F841`, `I001` letti nel pannello Problems |
+| E1.5 | `segnalazioni_rimaste` | gli import di `main.py` in ordine, `meteo.py` senza `import math`, senza `giorni` e senza righe vuote di troppo, nessuna riga di `main.py` oltre i 100 caratteri, e zero segnalazioni di Ruff nel pannello Problems |
 | E1.6, facoltativo | `riga_minima` | `minima` tra i nomi importati, il `print` che chiama `minima(valori)`, e la riga `Temperatura minima della settimana: 13.8 gradi` |
 | E1.7, facoltativo | `nome_importato`, `nome_lanciato` | `meteo` e `__main__`, e la riga di prova tolta da `meteo.py` |
 | E1.8, facoltativo | `file_versioni` | `uv.lock` |
@@ -562,13 +545,13 @@ corsista sullo schermo condiviso, in quattro passaggi.
    `name =`: le librerie chieste sono pandas, openpyxl e Ruff, e le altre, cioè numpy, python-dateutil, six,
    et-xmlfile e, su Windows, tzdata, sono arrivate con loro. È il file da cui `uv sync` ricostruisce l'ambiente nel
    passo E1.8.
-2. Per circa sei minuti si riprendono i quattro codici di Ruff. `--fix` ha corretto `F401`, togliendo `import math`, e
+2. Per circa sei minuti si riprendono i quattro codici di Ruff. **Ruff: Fix all auto-fixable problems**, o `--fix` per
+   chi ha usato il terminale, ha corretto `F401`, togliendo `import math`, e
    `I001`, mettendo prima `import pandas as pd` e poi, dopo una riga vuota, `from meteo import massima, media`. A mano
    si correggono `F841`, cancellando la riga `giorni = len(temperature)`, che la correzione non sicura avrebbe ridotto a
    `len(temperature)`, ed `E501`, dividendo la f-string dopo `gradi, ` come nel `main.py` delle soluzioni.
-3. Per circa tre minuti si guarda lo stato finale. `uv run ruff format` risponde con uno o due file riformattati, a
-   seconda di come è stata scritta la divisione della riga, `uv run ruff check` risponde `All checks passed!` e
-   `uv run main.py` stampa tre righe, o quattro con la temperatura minima del passo E1.6.
+3. Per circa tre minuti si guarda lo stato finale. Il pannello Problems non ha segnalazioni di Ruff, e dal terminale
+   `uv run ruff check` risponde `All checks passed!`; `uv run main.py` stampa tre righe, o quattro con la temperatura minima del passo E1.6.
 4. Nell'ultimo minuto si citano i passi facoltativi. Il passo E1.7 dà `meteo` per il file importato e `__main__` per il
    file lanciato, che è il motivo del blocco `if __name__ == "__main__":`, e il passo E1.8 mostra che `.venv` si ricrea
    identico con `uv sync`, senza ripetere nessun `uv add`.
