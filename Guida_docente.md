@@ -435,13 +435,16 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
 8. Si lancia `uv add --dev ruff`, che installa Ruff e aggiunge a `pyproject.toml` la sezione `[dependency-groups]`
    con `dev = ["ruff>=0.17.1"]`, lo stesso gruppo che il progetto del corso usa per Ruff.
 
-9. Con `calcoli.py` e `main.py` aperti in VS Code, si usa **Format Document** (**Shift+Alt+F**) su ciascuno dei due
-   file. In `calcoli.py` compaiono gli spazi attorno a `=` e a `/`, `sum( prezzi )` diventa `sum(prezzi)`, le due
+9. Con `calcoli.py` e `main.py` aperti in VS Code, si fa clic con il tasto destro dentro ciascuno dei due file e si
+   sceglie **Format Document** (Shift+Alt+F): è il formatter. Se VS Code chiede quale formatter usare, si sceglie
+   Ruff; succede quando la cartella aperta non è `Aula_Avanzata`, le cui impostazioni lo indicano già, e allora si può
+   anche usare **Format Document With...** → **Ruff**. In `calcoli.py` compaiono gli spazi attorno a `=` e a `/`, `sum( prezzi )` diventa `sum(prezzi)`, le due
    funzioni sono separate da due righe vuote e c'è una riga vuota dopo la docstring. In `main.py` compare la riga vuota
    dopo la docstring, e il `print` lungo viene diviso su tre righe, con la stringa da sola in quella centrale, ma resta
    oltre i 100 caratteri. L'import di `math` e la variabile `numero` sono ancora lì.
 
-10. Si apre il pannello **Problems** (**Ctrl+Shift+M**), che con i due file aperti mostra le quattro segnalazioni di
+10. Si apre il pannello **Problems** dal menu **View → Problems** (Ctrl+Shift+M), oppure con un clic sul contatore
+    degli avvisi in basso a sinistra: è il linter, che con i due file aperti mostra le quattro segnalazioni di
     Ruff, ciascuna con il codice tra parentesi e la riga: `math` imported but unused `Ruff(F401)` e Local variable
     `numero` is assigned to but never used `Ruff(F841)` in `calcoli.py`, Import block is un-sorted or un-formatted
     `Ruff(I001)` e Line too long (104 > 100) `Ruff(E501)` in `main.py`. Le stesse righe sono sottolineate nel codice, e
@@ -450,9 +453,11 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
     mostra anche `W293` o `W292`, il file è stato modificato a mano e in fondo c'è una riga con soli spazi: il passo 9
     l'ha già tolta, oppure la toglie il passo 13.
 
-11. Su ciascuno dei due file si apre la palette dei comandi (**Ctrl+Shift+P**) e si sceglie **Ruff: Fix all
-    auto-fixable problems**; in alternativa, **Ctrl+.** sulla riga sottolineata propone la correzione di quella sola
-    riga, e conviene mostrarlo almeno una volta. In `main.py` gli import diventano `import pandas as pd`, una riga
+11. Su ciascuno dei due file si fa clic con il tasto destro e si sceglie **Source Action...** → **Ruff: Fix all
+    auto-fixable problems**; in alternativa, **Quick Fix...**, che compare passando con il mouse sulla riga sottolineata
+    (oppure la lampadina a sinistra, o Ctrl+.), propone la correzione di quella sola riga, e conviene mostrarlo almeno
+    una volta. Su E501 il Quick Fix propone soltanto **Disable E501 for this line**, che aggiunge `# noqa: E501` e tace
+    la segnalazione senza accorciare la riga: è la risposta da dare se un corsista lo trova da solo. In `main.py` gli import diventano `import pandas as pd`, una riga
     vuota e `from calcoli import prezzo_medio, totale`: prima le librerie installate, poi i file del progetto, e i nomi
     in ordine alfabetico. In `calcoli.py` l'import di `math` non c'è più, e al suo posto resta una riga vuota di troppo
     dopo la docstring. Restano nel pannello le due segnalazioni che Ruff non corregge da solo, `F841` ed `E501`.
@@ -470,7 +475,7 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
     Python unisce due stringhe scritte una dopo l'altra in una stringa sola, quindi il testo stampato non cambia.
     Ciascun pezzo ha la sua `f` perché contiene delle graffe, e lo spazio resta alla fine del primo pezzo.
 
-13. Si usa di nuovo **Shift+Alt+F** su `calcoli.py`, che toglie la riga vuota in più, e si salvano i due file: il
+13. Si usa di nuovo **Format Document** su `calcoli.py`, che toglie la riga vuota in più, e si salvano i due file: il
     pannello Problems non ha più segnalazioni di Ruff. La riga vuota in più non è una segnalazione del linter, con le
     regole scelte, e la sistema soltanto il formatter: per questo il lavoro si chiude sempre con una formattazione.
 

@@ -361,13 +361,12 @@ def costruisci() -> Notebook:
         compaiono sottolineate nel codice e nel pannello **Problems**, ciascuna con il suo codice.
     """)
     nb.md("""
-        | Che cosa | In VS Code |
-        |---|---|
-        | vedere le segnalazioni | le sottolineature nel codice e il pannello **Problems**, con **Ctrl+Shift+M** |
-        | rimettere in forma il file | **Format Document**, con **Shift+Alt+F** |
-        | correggere una segnalazione | **Ctrl+.** sulla riga sottolineata, che apre il menu **Quick Fix** |
-        | correggere tutto quello che Ruff sa correggere | **Ctrl+Shift+P**, poi **Ruff: Fix all auto-fixable problems** |
-        | rimettere in forma a ogni salvataggio | l'impostazione **Format On Save**, per chi la attiva |
+        | Che cosa | Con il mouse | Scorciatoia |
+        |---|---|---|
+        | rimettere in forma il file | tasto destro nel file → **Format Document** | Shift+Alt+F |
+        | vedere le segnalazioni | menu **View → Problems**, o il contatore degli avvisi in basso a sinistra | Ctrl+Shift+M |
+        | correggere una segnalazione | mouse sulla riga sottolineata → **Quick Fix...**, o la lampadina a sinistra | Ctrl+. |
+        | correggere tutto quello che Ruff sa correggere | tasto destro nel file → **Source Action...** → **Ruff: Fix all auto-fixable problems** | |
     """)
     nb.sottosezione("Lo stesso dal terminale", intro="""
         Gli stessi lavori si fanno anche dal terminale, con Ruff installato nel progetto, nel gruppo `dev`, e
@@ -478,20 +477,20 @@ def costruisci() -> Notebook:
         | Passo | Comando | Che cosa succede |
         |---|---|---|
         | 8 | `uv add --dev ruff` | Ruff entra nel gruppo `dev` del progetto |
-        | 9 | **Shift+Alt+F** su `calcoli.py` e su `main.py` | spazi e righe vuote al posto giusto; la riga lunga va tra parentesi ma resta lunga |
-        | 10 | pannello **Problems** | le quattro segnalazioni della sezione 7, due delle quali Ruff sa correggere |
+        | 9 | **Format Document** su `calcoli.py` e su `main.py` | il formatter: spazi e righe vuote al posto giusto; la riga lunga va tra parentesi ma resta lunga |
+        | 10 | **View → Problems** | il linter: le quattro segnalazioni della sezione 7, due delle quali Ruff sa correggere |
     """)
     nb.md("""
-        Le segnalazioni si correggono prima con Ruff e poi a mano, e alla fine si controlla che non ne resti
-        nessuna. Dal terminale gli stessi passi sono `uv run ruff format`, `uv run ruff check` e
+        Le segnalazioni si correggono prima con Ruff e poi a mano, e alla fine si rimette in forma un'ultima volta.
+        **Format Document** e **Source Action...** sono nel menu del tasto destro dentro il file. Dal terminale gli stessi passi sono `uv run ruff format`, `uv run ruff check` e
         `uv run ruff check --fix`, e l'ultimo `uv run ruff check` risponde `All checks passed!`.
     """)
     nb.md("""
         | Passo | Comando | Che cosa succede |
         |---|---|---|
-        | 11 | **Ruff: Fix all auto-fixable problems**, su ciascun file | spariscono `F401` e `I001`: l'import di `math` è tolto e gli import sono in ordine |
+        | 11 | **Source Action...** → **Ruff: Fix all auto-fixable problems**, su ciascun file | spariscono `F401` e `I001`: l'import di `math` è tolto e gli import sono in ordine |
         | 12 | a mano | si cancella `numero = len(prezzi)` e si divide in due la f-string lunga |
-        | 13 | **Shift+Alt+F** su `calcoli.py` | tolta la riga vuota rimasta, il pannello Problems non ha più segnalazioni di Ruff |
+        | 13 | **Format Document** su `calcoli.py` | tolta la riga vuota rimasta, il pannello Problems non ha più segnalazioni di Ruff |
         | 14 | `uv run main.py` | le stesse tre righe di prima, con il codice in ordine |
     """)
     nb.box("nota", titolo="Dove si lanciano uv init e uv add", testo="""
@@ -527,9 +526,9 @@ def costruisci() -> Notebook:
     nb.md("""
         | Ruff in VS Code | Dal terminale | Che cosa fa |
         |---|---|---|
-        | **Shift+Alt+F** (Format Document) | `uv run ruff format` | rimette in forma il codice |
-        | pannello **Problems** (**Ctrl+Shift+M**) | `uv run ruff check` | mostra le segnalazioni, con file, riga e codice |
-        | **Ruff: Fix all auto-fixable problems** | `uv run ruff check --fix` | applica le correzioni sicure |
-        | **Ctrl+.** su una riga sottolineata | | propone la correzione di quella riga |
+        | tasto destro → **Format Document** (Shift+Alt+F) | `uv run ruff format` | rimette in forma il codice |
+        | **View → Problems** (Ctrl+Shift+M) | `uv run ruff check` | mostra le segnalazioni, con file, riga e codice |
+        | tasto destro → **Source Action...** → **Ruff: Fix all auto-fixable problems** | `uv run ruff check --fix` | applica le correzioni sicure |
+        | **Quick Fix...** sulla riga sottolineata (Ctrl+.) | | propone la correzione di quella riga |
     """)
     return nb
