@@ -68,6 +68,10 @@ assert {"sigla", "price"} <= set(prezzi_stati.columns), "❌ Servono le colonne 
 prezzo_tx = prezzi_stati.loc[prezzi_stati["sigla"] == "TX", "price"].iloc[0]
 assert round(prezzo_tx, 2) == 8.86, "❌ Filtra su all sectors prima della media"
 '''),
+    '7.3': ('Esercizio 7.3', r'''
+assert 0 < len(milano) < len(certificati), "❌ milano deve avere solo le righe della provincia di Milano"
+assert len(co2_per_classe) > 1 and co2_per_classe.index.is_unique, "❌ co2_per_classe: una riga per classe energetica, con la media"
+'''),
     '8.1': ('Esercizio 8.1', r'''
 assert len(giornaliero) == 366, "❌ giornaliero: un valore per ogni giorno del 2024, con resample('D')"
 assert round(giornaliero.max()) == 26869, "❌ giornaliero: la media dei quarti d'ora di ogni giorno, con mean()"

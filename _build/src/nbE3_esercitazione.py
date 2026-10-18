@@ -277,7 +277,9 @@ def costruisci() -> Notebook:
             richiesta="""
                 1. Raggruppa le righe per `Artist`, somma `Plays` e ordina i totali in modo decrescente, come nella
                    classifica, salvando il risultato in `ascolti_per_artista`.
-                2. Salva in `artista_top` il nome dell'artista con il totale più alto, quello da mettere in apertura.
+                2. Salva in `artista_top` il nome dell'artista con il totale più alto, quello da mettere in apertura,
+                   con il metodo `idxmax()`, che non abbiamo ancora usato: restituisce l'etichetta del valore più
+                   alto, cioè il nome dell'artista e non il numero dei suoi ascolti.
             """,
             suggerimenti=[
                 """
@@ -308,7 +310,8 @@ def costruisci() -> Notebook:
         avanzata=dict(
             richiesta="""
                 1. Calcola in `ascolti_per_artista` i totali per artista in ordine decrescente e salva in
-                   `artista_top` il nome del primo.
+                   `artista_top` il nome del primo, con `idxmax()`, il metodo che restituisce l'etichetta del
+                   valore più alto.
                 2. Sotto la classifica la newsletter riporta tutte le righe di `ascolti`, raggruppate per artista in
                    ordine alfabetico e, per lo stesso artista, dall'ascolto più numeroso al meno numeroso: salvale in
                    `elenco` con un solo `sort_values` su due colonne.
@@ -609,15 +612,18 @@ def costruisci() -> Notebook:
                 2. Calcola in `media_oraria` e in `somma_oraria` la media e la somma di `power_kw` per ogni ora.
                 3. Le misure quartorarie oscillano per il rumore, e una media mobile su due ore le rende più
                    regolari senza cambiarne la frequenza: salva in `media_mobile` la media di `power_kw` su una
-                   finestra di 8 quarti d'ora, con `rolling`.
+                   finestra di 8 quarti d'ora, con il metodo `rolling`. È un metodo che non abbiamo ancora
+                   visto: `rolling(8)` raccoglie ogni valore insieme ai sette che lo precedono, in una finestra
+                   che scorre lungo la serie, e il `mean()` che segue ne calcola la media; lo riprendiamo negli
+                   Approfondimenti 2, con `shift`.
 
                 Le prime sette righe di `media_mobile` sono `NaN`, perché non hanno otto valori precedenti, e
                 l'ottava vale circa 237.9.
             """,
             suggerimenti=[
                 """
-                    `df_15min.index.dayofweek >= 5` riconosce il weekend; `rolling(8)` raccoglie ogni valore con i
-                    sette precedenti, e il `mean()` che segue ne calcola la media, come nel notebook 09.
+                    `df_15min.index.dayofweek >= 5` riconosce il weekend, e la media mobile si scrive come il
+                    resampling, con il metodo di aggregazione in coda: `df_15min["power_kw"].rolling(8).mean()`.
                 """,
             ],
             starter=unisci(PREPARA_SERIE, """

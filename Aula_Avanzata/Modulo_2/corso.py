@@ -85,10 +85,6 @@ assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio 
 assert leggi_tabella("pod").shape == (8, 3), "❌ leggi_tabella: deve restituire tutta la tabella, 8 righe e 3 colonne"
 assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, quella dell'Officina Meccanica Fumagalli"
 '''),
-    '6.3': ('Esercizio 6.3', r'''
-assert 0 < len(milano) < len(certificati), "❌ milano deve avere solo le righe della provincia di Milano"
-assert len(co2_per_classe) > 1 and co2_per_classe.index.is_unique, "❌ co2_per_classe: una riga per classe energetica, con la media"
-'''),
     'A1.1': ('Esercizio A1.1', r'''
 assert da_comprare == {"pane", "latte", "mele", "caffè", "pasta", "olio"}, "❌ da_comprare: unisci i due set"
 assert in_comune == {"latte", "mele"}, "❌ in_comune: usa intersection()"

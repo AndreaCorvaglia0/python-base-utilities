@@ -150,7 +150,9 @@ def costruisci() -> Notebook:
         PEP 8 è la guida di stile ufficiale di Python e stabilisce, tra le altre cose, come usare gli
         spazi, come chiamare le variabili e dove andare a capo. Seguirla rende il codice uniforme, e
         quindi più facile da leggere per chiunque conosca Python. Partiamo da una cella che funziona
-        correttamente ma ignora queste regole.
+        correttamente ma ignora queste regole. Usa anche alcune funzioni che non abbiamo ancora visto,
+        `sum`, `min` e `max`, che restituiscono la somma, il minimo e il massimo di una lista, e il formato
+        `{x:.1f}`, che mostra un numero con un solo decimale; qui ci interessa soltanto come è scritta.
     """)
     nb.code("""
         Voti=[7,8 ,6,9,5]

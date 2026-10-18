@@ -67,8 +67,9 @@ def costruisci() -> Notebook:
         print(citta.index("Milano"))   # Output: 1
     """)
     nb.md("""
-        Anche un DataFrame di pandas è un oggetto come gli altri, con molti più dati e metodi. Per
-        vederlo costruiamo un piccolo DataFrame con tre persone, ciascuna con nome, età e città, e
+        Anche un DataFrame di pandas è un oggetto come gli altri, con molti più dati e metodi. pandas
+        e i DataFrame sono l'argomento del notebook 06, e qui ci servono soltanto come esempio di
+        oggetto: costruiamo un piccolo DataFrame con tre persone, ciascuna con nome, età e città, e
         chiediamo a `type` di che oggetto si tratta.
     """)
     nb.code("""

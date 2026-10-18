@@ -58,9 +58,11 @@ def soluzione(codice: str) -> None:
 
 VERIFICHE = {
 
+    '0.1': ('Esercizio 0.1', r'''
+assert messaggio == "Primo comando Python del corso!", "❌ messaggio: copia il testo esatto, tra virgolette"
+'''),
     '0.2': ('Esercizio 0.2', r'''
-assert isinstance(citta, str) and citta.strip(), "❌ citta deve essere un testo tra virgolette"
-assert isinstance(temperatura, (int, float)), "❌ temperatura deve essere un numero, senza virgolette"
+assert citta_domani == "Torino" and gradi_domani == 21, "❌ citta_domani vale \"Torino\", tra virgolette, e gradi_domani vale 21, senza virgolette"
 '''),
     '1.1': ('Esercizio 1.1', r'''
 assert ore == 2, "❌ ore: quante volte 60 sta in 137"

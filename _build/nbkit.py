@@ -293,12 +293,19 @@ class Notebook:
         """Domanda di riepilogo con la risposta nascosta, che si apre con un clic."""
         self.celle.append(Cella("domanda", _d(testo), aula=self._aula(aula), extra={"risposta": _d(risposta)}))
 
-    def hands_on(self, richiesta: str, starter: str, soluzione: str, verifica: str | None = None,
-                 aula: str | None = None, rete: bool = False, prova_anche: str | None = None) -> None:
+    def hands_on(self, richiesta: str, starter: str | None = None, soluzione: str | None = None,
+                 verifica: str | None = None, aula: str | None = None, rete: bool = False,
+                 prova_anche: str | None = None) -> None:
         """Hands-on inline da uno a tre minuti, subito dopo l'esempio che riprende: box verde, cella da completare,
-        verifica. `prova_anche` è una riga facoltativa, sempre banale, per chi vuole esplorare un altro caso."""
+        verifica. `prova_anche` è una riga facoltativa, sempre banale, per chi vuole esplorare un altro caso.
+
+        Senza `starter` e `soluzione` il Hands-on è soltanto un gesto da fare nell'editor (creare una cella,
+        premere Restart, aprire la vista delle variabili): resta il riquadro con le istruzioni, senza celle.
+        """
         a = self._aula(aula)
         self.celle.append(Cella("prova", _d(richiesta), aula=a, extra={"prova_anche": _d(prova_anche) if prova_anche else None}))
+        if starter is None and soluzione is None:
+            return
         self.celle.append(Cella("code", _d(starter), aula=a, solo_studente=True, rete=rete, ruolo="starter"))
         self.celle.append(Cella("code", _d(soluzione), aula=a, solo_soluzioni=True, rete=rete, ruolo="soluzione"))
         if verifica:

@@ -417,7 +417,8 @@ def costruisci() -> Notebook:
             e `temperature_2m`. Se la rete non risponde, il blocco `try/except` legge al suo posto il file
             `../Dati/fallback/meteo_milano_2024_2025.json`, che contiene temperature di esempio e non misurate.
             In quel caso la funzione stampa un messaggio, e nelle frasi finali va indicato che la temperatura
-            viene dai dati di esempio.
+            viene dai dati di esempio. Non serve saper scrivere questa funzione: `requests` e `try/except` non
+            fanno parte del percorso, e basta leggere che cosa fa e usarne il risultato.
         """)
         nb.code("""
             import json

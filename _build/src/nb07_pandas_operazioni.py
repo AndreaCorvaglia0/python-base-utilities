@@ -660,4 +660,65 @@ def costruisci() -> Notebook:
         """,
     )
 
+    with nb.solo("avanzata"):
+        nb.esercizio(
+            titolo="La certificazione energetica degli edifici in Lombardia",
+            scenario="""
+                Regione Lombardia pubblica sul portale di open data i certificati energetici degli edifici, con
+                la classe energetica e le emissioni di CO2 di ciascuno. Vogliamo sapere quanta CO2 emette in
+                media un edificio di ogni classe in provincia di Milano: con `requests`, come nel notebook 06,
+                prendiamo i dati direttamente dal portale, e con il `groupby` di questo notebook calcoliamo la
+                media per classe. Il risultato è una Series con una
+                riga per ciascuna classe presente nei dati, dalle più efficienti, come A+, fino alla G. Per
+                questo esercizio serve la rete, perché non c'è un file di riserva.
+            """,
+            richiesta="""
+                1. Recupera i dati dall'endpoint `https://www.dati.lombardia.it/resource/rsg3-xhvk.json` e
+                   salvali nel DataFrame `certificati`.
+                2. Tieni solo gli edifici della provincia di Milano nel DataFrame `milano`.
+                3. Calcola le emissioni medie di CO2 per ciascuna classe energetica e salvale in
+                   `co2_per_classe`.
+            """,
+            suggerimento="""
+                conviene guardare prima `certificati.columns` e i valori di una colonna con `unique()`. I numeri
+                arrivano come testo e vanno convertiti con `pd.to_numeric`, come le misure dei sensori del
+                notebook 06, mentre la media per gruppo si scrive `df.groupby("colonna")["altra"].mean()`.
+            """,
+            starter="""
+                import requests
+
+                url = "https://www.dati.lombardia.it/resource/rsg3-xhvk.json"
+                response = ...
+                certificati = ...
+
+                milano = ...
+                co2_per_classe = ...
+                co2_per_classe
+            """,
+            soluzione="""
+                import requests
+
+                url = "https://www.dati.lombardia.it/resource/rsg3-xhvk.json"
+                response = requests.get(url, params={"$limit": 50000}, timeout=30)
+                response.raise_for_status()
+                certificati = pd.DataFrame(response.json())
+
+                milano = certificati[certificati["provincia"] == "MI"].copy()
+                milano["emissioni_di_co2"] = pd.to_numeric(milano["emissioni_di_co2"], errors="coerce")
+                co2_per_classe = milano.groupby("classe_energetica")["emissioni_di_co2"].mean()
+                co2_per_classe
+            """,
+            perche="""
+                Prima di scrivere il filtro conviene controllare i nomi delle colonne con `certificati.columns`
+                e i valori della provincia con `unique()`, perché il portale indica la provincia con la sigla,
+                `MI`, mentre il comune è scritto per esteso e in maiuscolo. Se il portale cambiasse questi
+                nomi, basterebbe adattare la maschera e il `groupby`.
+            """,
+            verifica="""
+                assert 0 < len(milano) < len(certificati), "❌ milano deve avere solo le righe della provincia di Milano"
+                assert len(co2_per_classe) > 1 and co2_per_classe.index.is_unique, "❌ co2_per_classe: una riga per classe energetica, con la media"
+            """,
+            rete=True,
+            facoltativo=True,
+        )
     return nb

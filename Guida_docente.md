@@ -23,7 +23,8 @@ controlli degli esercizi, richiamati nei notebook con `verifica("7.1")`, sono ra
 ogni cartella, che il build genera dagli assert scritti nei sorgenti; il corsista vede soltanto la chiamata e una riga
 con ✅ oppure ❌. Prima della prima giornata conviene aprire un'esercitazione in VS Code su un PC dell'aula e controllare
 che i blocchi "Passo per passo" e "Suggerimento" si aprano con un clic e che la cella `soluzione(...)` mostri il codice
-colorato.
+colorato. Nella stessa occasione conviene controllare come si chiamano, nella versione di VS Code installata, il
+pulsante **Variables** e la scheda **JUPYTER** in cui compaiono le variabili, perché il notebook 00 li nomina così.
 
 ## La struttura di un modulo
 
@@ -43,12 +44,12 @@ Modulo 1 · martedì 20 ottobre · Setup, Python e sintassi di base
 | | Base | Avanzata |
 |---|---|---|
 | Demo VS Code (`Extra/VS_Code_e_notebook.ipynb`) | 15 | 15 |
-| 00 Jupyter e i notebook | 20 | 20 |
+| 00 Jupyter e i notebook | 25 | 20 |
 | 01 Introduzione a Python e sintassi base | 40 | 30 |
 | 02 Tipi di dato e manipolazione | 40 | 35 |
 | 03 Codice leggibile | 20 | 20 |
 | Ambiente, script e Ruff (solo Avanzata) | — | 30 |
-| **Lezione** | **135** | **150** |
+| **Lezione** | **140** | **150** |
 | Esercitazione 1 | 60 | 60 |
 
 Modulo 2 · mercoledì 21 ottobre · Controllo del flusso, funzioni e primi dati in pandas

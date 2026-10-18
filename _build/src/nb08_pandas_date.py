@@ -30,6 +30,12 @@ def costruisci() -> Notebook:
         Togliamo poi qualche riga scelta a caso per simulare le acquisizioni mancanti, che ritroveremo più avanti
         come buchi nella serie.
     """)
+    nb.md("""
+        Le due celle che seguono sono celle di servizio: generano i dati con alcune funzioni di NumPy e di pandas
+        che nel corso non useremo, come `np.random` per il rumore e `pd.date_range` per la sequenza degli istanti.
+        Basta eseguirle, senza leggerle riga per riga; dal risultato in poi il notebook usa soltanto strumenti che
+        spieghiamo.
+    """)
     nb.code("""
         import numpy as np
         np.random.seed(42)
@@ -295,21 +301,26 @@ def costruisci() -> Notebook:
         l'ultimo valore valido nei buchi successivi e si usa per grandezze che restano stabili per un certo tempo,
         come lo stato di un dispositivo, mentre `df.bfill()` copia all'indietro il primo valore valido che segue.
     """)
+    nb.md("""
+        Per confrontare i quattro metodi guardiamo una finestra di tre quarti d'ora prima e dopo il primo buco.
+        `pd.Timedelta(minutes=45)` rappresenta una durata, e sommata o sottratta a un istante dà un altro istante;
+        le durate le riprendiamo negli Approfondimenti 2. Con i due estremi `inizio` e `fine`, `loc[inizio:fine]`
+        seleziona il periodo come nella sezione sul tempo come indice.
+    """)
     nb.code("""
-        # lavoriamo SOLO su power_kw
-        s = df_15min["power_kw"]
-
+        s = df_15min["power_kw"]  # lavoriamo solo su power_kw
         t0 = timestamp_mancanti[0]
-        # finestra: da t0-45min a t0+45min
-        idx = slice(t0 - pd.Timedelta(minutes=45), t0 + pd.Timedelta(minutes=45))
+        # finestra: da 45 minuti prima a 45 minuti dopo il primo buco
+        inizio = t0 - pd.Timedelta(minutes=45)
+        fine = t0 + pd.Timedelta(minutes=45)
 
         # imputazioni (una colonna ciascuna)
         confronto = pd.DataFrame({
-            "original": s.loc[idx],
-            "time": s.interpolate(method="time").loc[idx],
-            "linear": s.interpolate(method="linear").loc[idx],
-            "ffill": s.ffill().loc[idx],
-            "bfill": s.bfill().loc[idx],
+            "original": s.loc[inizio:fine],
+            "time": s.interpolate(method="time").loc[inizio:fine],
+            "linear": s.interpolate(method="linear").loc[inizio:fine],
+            "ffill": s.ffill().loc[inizio:fine],
+            "bfill": s.bfill().loc[inizio:fine],
         })
 
         confronto
@@ -319,18 +330,12 @@ def costruisci() -> Notebook:
         stimano il valore mancante interpolando tra i due punti vicini. Il metodo `time` tiene conto della distanza
         effettiva tra i timestamp, mentre `linear` tratta le righe come equidistanti. Dopo `asfreq` le righe sono
         tutte a distanza costante, quindi i due metodi danno lo stesso risultato, in questo caso 271.25.
-        Il grafico qui sotto mette a confronto le quattro imputazioni.
+        Il grafico qui sotto mette a confronto le quattro imputazioni: passando a `px.line` l'intera tabella, Plotly
+        disegna una linea per ogni colonna, e `markers=True` segna i singoli punti.
     """)
     nb.code("""
-        # visualizzazione con Plotly delle imputazioni
-        import plotly.graph_objects as go
-
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=confronto.index, y=confronto["time"], mode="markers+lines", name="interpolate time"))
-        fig.add_trace(go.Scatter(x=confronto.index, y=confronto["linear"], mode="markers+lines", name="interpolate linear"))
-        fig.add_trace(go.Scatter(x=confronto.index, y=confronto["ffill"], mode="markers+lines", name="ffill"))
-        fig.add_trace(go.Scatter(x=confronto.index, y=confronto["bfill"], mode="markers+lines", name="bfill"))
-        fig.update_layout(title="Imputazioni per missing value", height=400, width=700)
+        # una linea per ogni metodo di imputazione
+        fig = px.line(confronto[["time", "linear", "ffill", "bfill"]], markers=True, title="Imputazioni per missing value")
         fig.show()
     """)
 
