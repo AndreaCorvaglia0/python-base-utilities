@@ -56,6 +56,9 @@ fuori posto: se la risposta è sì, va riscritta.
   domande retoriche, esclamazioni. Il testo non cerca l'attenzione: la informa.
 - **Nessuna cella etichetta.** "Unione:", "Esempio:", "Intersezione:" diventano frasi: "L'unione di due set, che si
   ottiene con `union()`, contiene tutti gli elementi presenti in almeno uno dei due."
+- **Il testo non parla di sé.** Niente frasi che spiegano com'è costruito il notebook, che cosa contengono i suoi
+  riquadri o perché è organizzato così: il corsista vede il contenuto, non le intenzioni di chi l'ha scritto. Le
+  scelte di forma si vedono dalla forma stessa e, se vanno spiegate, si spiegano nella Guida o in questi documenti.
 - **I due punti** si usano per introdurre un elenco o un esempio di codice, non per saldare due mezze frasi.
 - **Niente "Qui/Ora/Poi" come apertura** ripetuta. Niente sequenze di imperativi secchi: le istruzioni operative si
   scrivono come frasi ("Per vederlo, premiamo Restart e poi eseguiamo la cella qui sotto").

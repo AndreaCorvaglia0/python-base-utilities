@@ -33,11 +33,6 @@ def costruisci() -> Notebook:
         indice=False,    # proiettato mentre si parla: si scorre per titoli, l'indice sarebbe lungo quanto una pagina
     )
 
-    nb.md("""
-        Ogni titolo di questo notebook corrisponde a un concetto, e sotto ciascuno ci sono poche frasi e, quando
-        serve, una tabella che riassume. I riquadri grigi intitolati **Approfondimento** aggiungono dettagli che
-        non servono per la dimostrazione e per l'esercitazione, e si possono saltare.
-    """)
 
     # ------------------------------------------------------------------ 1
     nb.sezione("uv e l'ambiente virtuale")
@@ -499,8 +494,8 @@ def costruisci() -> Notebook:
 
     # ------------------------------------------------------------------ 10
     nb.sezione("I comandi in breve", intro="""
-        Le due tabelle raccolgono i comandi del notebook, da scrivere nel terminale aperto sulla cartella del
-        progetto su cui si vuole lavorare.
+        I comandi di uv e di Ruff si scrivono nel terminale aperto sulla cartella del progetto su cui si vuole
+        lavorare, per noi `demo/` o `esercizio/`.
     """)
     nb.md("""
         | Comando | Che cosa fa |
