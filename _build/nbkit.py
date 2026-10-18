@@ -254,6 +254,7 @@ class Notebook:
     extra: bool = False                      # notebook della cartella Extra: versione unica, senza aula
     riserva: bool = False                    # materiale di riserva: Riserva/<Aula>/, fuori dalle cartelle dei corsisti
     fuori_programma: bool = False   # Approfondimenti: fuori dalla catena precedente/prossimo, per le classi che vanno avanti
+    indice: bool = True             # False: niente indice anche se il notebook è lungo
     soluzioni_a_richiesta: bool = False   # esercitazioni: sotto ogni esercizio una cella soluzione("E1.3") che mostra solo quella
     celle: list[Cella] = field(default_factory=list)
     _aula_corrente: str | None = None
@@ -556,7 +557,7 @@ class Notebook:
         self.soluzioni = soluzioni_reg
         self.prefisso_verifiche = f"{prefisso}." if self.etichetta_esercizio == "Esercizio" else f"{self.etichetta_esercizio} "
         cells = [new_markdown_cell(self.banner(aula, soluzioni), metadata={"tags": ["banner"]})]
-        if indice and len(out) >= INDICE_DA:
+        if self.indice and indice and len(out) >= INDICE_DA:
             cells.append(new_markdown_cell('<a id="indice"></a>\n**Indice**\n\n' + "\n".join(indice), metadata={"tags": ["indice"]}))
         for tipo, src, meta in out:
             if tipo == "md":

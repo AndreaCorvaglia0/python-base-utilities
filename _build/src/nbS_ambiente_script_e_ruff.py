@@ -30,13 +30,13 @@ def costruisci() -> Notebook:
         ],
         tempo=30,
         dati=[],
+        indice=False,    # proiettato mentre si parla: si scorre per titoli, l'indice sarebbe lungo quanto una pagina
     )
 
     nb.md("""
         Ogni titolo di questo notebook corrisponde a un concetto, e sotto ciascuno ci sono poche frasi e, quando
         serve, una tabella che riassume. I riquadri grigi intitolati **Approfondimento** aggiungono dettagli che
-        non servono per la dimostrazione e per l'esercitazione, e si possono saltare. L'indice qui sopra porta
-        direttamente a ogni parte.
+        non servono per la dimostrazione e per l'esercitazione, e si possono saltare.
     """)
 
     # ------------------------------------------------------------------ 1
