@@ -70,6 +70,10 @@ variabili di una riga data. Extra: i due esercizi attuali (rinominare e document
 seguendo PEP 8), già brevi.
 
 ### S · Ambiente, script e Ruff (solo Avanzata)
+Il notebook si proietta mentre il docente parla, quindi è scritto come una presentazione: un titolo numerato per
+ogni concetto, che compare anche nell'indice, sotto ciascuno due o tre frasi e una tabella che si legge a colpo
+d'occhio, i dettagli in riquadri Approfondimento che si possono saltare, e la dimostrazione in due tabelle con passo,
+comando e risultato. Le frasi restano complete, come nel resto del corso.
 Il notebook di spiegazione del modulo 1 dell'Avanzata, in `Modulo_1/Script_uv_Ruff/`, non ha Hands-on né sezione
 Extra, per scelta. I gesti che insegna (`uv run`, `uv add`, `uv sync`, `ruff format`, `ruff check --fix`) si fanno nel
 terminale, dentro un progetto con il suo ambiente, e non in una cella: il kernel del notebook usa l'ambiente del
