@@ -159,7 +159,7 @@ def costruisci() -> Notebook:
         Un comando di uv lavora sul progetto della **cartella in cui si trova il terminale**: cerca un
         `pyproject.toml` in quella cartella e, se non lo trova, risale una cartella alla volta. Nella cartella del
         corso, o in `Modulo_1`, i comandi agiscono quindi sul progetto del corso. La cartella `demo/` contiene
-        soltanto due script, e diventa un progetto a sé quando `uv init` vi crea un `pyproject.toml`: da quel
+        soltanto due script, e diventa un progetto a sé quando `uv init --bare` vi crea un `pyproject.toml`: da quel
         momento un terminale aperto lì lavora su quel progetto, con un ambiente separato.
     """)
     nb.box("approfondimento", titolo="Perché non pip install", testo="""
@@ -379,7 +379,7 @@ def costruisci() -> Notebook:
     """)
     nb.sottosezione("La configurazione", intro="""
         Ruff si configura nella sezione `[tool.ruff]` di `pyproject.toml`, che la cella seguente legge dal
-        dizionario `progetto`. Il `pyproject.toml` creato da `uv init` in `demo/` non ha questa sezione, quindi
+        dizionario `progetto`. Il `pyproject.toml` creato da `uv init --bare` in `demo/` non ha questa sezione, quindi
         Ruff, risalendo le cartelle come uv, usa quella del corso, e il terminale e l'estensione di VS Code danno
         le stesse segnalazioni.
     """)
@@ -428,7 +428,9 @@ def costruisci() -> Notebook:
         Nella dimostrazione mettiamo insieme quello che abbiamo visto: trasformiamo i due file di `demo/` in un
         progetto, gli costruiamo un ambiente apposito, **una libreria alla volta** man mano che ci accorgiamo che
         manca, sistemiamo il codice con Ruff e lo lanciamo. Chi vuole può ripetere i comandi sul proprio PC mentre
-        li eseguiamo. All'inizio la cartella contiene soltanto i due script, come mostra la cella seguente.
+        li eseguiamo. All'inizio la cartella contiene soltanto i due script, come mostra la cella seguente, e l'opzione
+        `--bare` di `uv init` aggiunge soltanto `pyproject.toml`, senza il `README.md` e il repository git che il
+        comando normale prepara per un progetto da pubblicare.
     """)
     nb.code("""
         sorted(os.listdir("demo"))
@@ -441,14 +443,14 @@ def costruisci() -> Notebook:
     """)
     nb.sottosezione("Prima parte: l'ambiente, una libreria alla volta", intro="""
         Prima di creare il progetto lanciamo lo script una volta, per vedere quale ambiente usa uv quando la
-        cartella non ha un progetto suo. Dopo `uv init` lo rilanciamo, e sono gli errori a dirci che cosa
+        cartella non ha un progetto suo. Dopo `uv init --bare` lo rilanciamo, e sono gli errori a dirci che cosa
         aggiungere.
     """)
     nb.md("""
         | Passo | Comando | Che cosa succede |
         |---|---|---|
         | 1 | `uv run main.py` | funziona: senza un progetto suo, uv risale fino al progetto del corso e usa il suo ambiente, dove pandas c'è |
-        | 2 | `uv init` | uv avvisa che la cartella è esclusa dal progetto del corso, ed è quello che vogliamo; nasce il progetto `demo`, con il nome della cartella: `pyproject.toml` con `dependencies = []`, `README.md` e `.gitignore` |
+        | 2 | `uv init --bare` | uv avvisa che la cartella è esclusa dal progetto del corso, ed è quello che vogliamo; nasce il progetto `demo`, con il nome della cartella e un solo file, `pyproject.toml` con `dependencies = []` |
         | 3 | `uv run main.py` | uv crea `.venv` e `uv.lock` del progetto, poi lo script si ferma con `No module named 'pandas'` |
     """)
     nb.md("""
@@ -519,7 +521,7 @@ def costruisci() -> Notebook:
         | `uv add --dev ruff` | aggiunge uno strumento di sviluppo, nel gruppo `dev` |
         | `uv remove pandas` | toglie una libreria dal progetto e dall'ambiente |
         | `uv run main.py` | allinea `.venv` ai file del progetto ed esegue lo script con il suo Python |
-        | `uv init` | crea un progetto nella cartella del terminale, con il nome della cartella |
+        | `uv init --bare` | crea nella cartella del terminale un progetto con il solo `pyproject.toml` |
     """)
     nb.md("""
         | Comando | Che cosa fa |

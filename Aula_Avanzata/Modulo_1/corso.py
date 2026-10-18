@@ -97,9 +97,9 @@ import tomllib
 from pathlib import Path
 
 pyproject = Path("Script_uv_Ruff/esercizio/pyproject.toml")
-assert pyproject.exists(), "❌ nella cartella esercizio non c'è ancora pyproject.toml: lancia uv init nel terminale aperto in quella cartella"
+assert pyproject.exists(), "❌ nella cartella esercizio non c'è ancora pyproject.toml: lancia uv init --bare nel terminale aperto in quella cartella"
 assert nome_progetto.strip() == tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["name"] == "esercizio", "❌ nome_progetto: la voce name di esercizio/pyproject.toml"
-assert Path("Script_uv_Ruff/esercizio/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: dopo uv init lancia di nuovo uv run main.py"
+assert Path("Script_uv_Ruff/esercizio/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: dopo uv init --bare lancia di nuovo uv run main.py"
 assert cartella_creata.strip().rstrip("/") == ".venv", "❌ cartella_creata: il nome nella riga Creating virtual environment at"
 assert libreria_mancante.strip() == "pandas", "❌ libreria_mancante: il nome tra apici nell'ultima riga dell'errore"
 '''),
@@ -191,7 +191,7 @@ assert paesi[0] == 'Canada' and paesi[-1] == 'Stati Uniti', "❌ paesi: sorted(g
 
 # Le soluzioni degli esercizi che le mostrano a richiesta, codificate perché non si leggano per caso.
 SOLUZIONI = {
-    'E1.1': ('Esercizio E1.1', 'IyBuZWwgdGVybWluYWxlLCBuZWxsYSBjYXJ0ZWxsYSBlc2VyY2l6aW8KIyAgIHV2IHJ1biBtYWluLnB5ICAgICAgICBmdW56aW9uYSwgY29uIGwnYW1iaWVudGUgZGVsIGNvcnNvCiMgICB1diBpbml0ICAgICAgICAgICAgICAgSW5pdGlhbGl6ZWQgcHJvamVjdCBgZXNlcmNpemlvYAojICAgdXYgcnVuIG1haW4ucHkKIyBDcmVhdGluZyB2aXJ0dWFsIGVudmlyb25tZW50IGF0OiAudmVudgojIC4uLgojIE1vZHVsZU5vdEZvdW5kRXJyb3I6IE5vIG1vZHVsZSBuYW1lZCAncGFuZGFzJwpub21lX3Byb2dldHRvID0gImVzZXJjaXppbyIKY2FydGVsbGFfY3JlYXRhID0gIi52ZW52IgpsaWJyZXJpYV9tYW5jYW50ZSA9ICJwYW5kYXMi'),
+    'E1.1': ('Esercizio E1.1', 'IyBuZWwgdGVybWluYWxlLCBuZWxsYSBjYXJ0ZWxsYSBlc2VyY2l6aW8KIyAgIHV2IHJ1biBtYWluLnB5ICAgICAgICBmdW56aW9uYSwgY29uIGwnYW1iaWVudGUgZGVsIGNvcnNvCiMgICB1diBpbml0IC0tYmFyZSAgICAgICAgSW5pdGlhbGl6ZWQgcHJvamVjdCBgZXNlcmNpemlvYAojICAgdXYgcnVuIG1haW4ucHkKIyBDcmVhdGluZyB2aXJ0dWFsIGVudmlyb25tZW50IGF0OiAudmVudgojIC4uLgojIE1vZHVsZU5vdEZvdW5kRXJyb3I6IE5vIG1vZHVsZSBuYW1lZCAncGFuZGFzJwpub21lX3Byb2dldHRvID0gImVzZXJjaXppbyIKY2FydGVsbGFfY3JlYXRhID0gIi52ZW52IgpsaWJyZXJpYV9tYW5jYW50ZSA9ICJwYW5kYXMi'),
     'E1.2': ('Esercizio E1.2', 'IyBuZWwgdGVybWluYWxlLCBuZWxsYSBjYXJ0ZWxsYSBlc2VyY2l6aW8KIyAgIHV2IGFkZCBwYW5kYXMgICAgICAgIGluc3RhbGxhIHBhbmRhcyBlIGxlIGxpYnJlcmllIGRhIGN1aSBkaXBlbmRlCiMgICB1diBydW4gbWFpbi5weQojIFRlbXBlcmF0dXJhIG1hc3NpbWEgZGVsbGEgc2V0dGltYW5hOiAxNi4wIGdyYWRpCiMgVGVtcGVyYXR1cmEgbWVkaWEgZGVsbGEgc2V0dGltYW5hOiAxNS4wIGdyYWRpLCBjYWxjb2xhdGEgc3UgNSBnaW9ybmkKIyAuLi4KIyBNb2R1bGVOb3RGb3VuZEVycm9yOiBObyBtb2R1bGUgbmFtZWQgJ29wZW5weXhsJwpzZWNvbmRhX2xpYnJlcmlhID0gIm9wZW5weXhsIg=='),
     'E1.3': ('Esercizio E1.3', 'IyBuZWwgdGVybWluYWxlLCBuZWxsYSBjYXJ0ZWxsYSBlc2VyY2l6aW8KIyAgIHV2IGFkZCBvcGVucHl4bAojICAgdXYgcnVuIG1haW4ucHkKIyBUZW1wZXJhdHVyYSBtYXNzaW1hIGRlbGxhIHNldHRpbWFuYTogMTYuMCBncmFkaQojIFRlbXBlcmF0dXJhIG1lZGlhIGRlbGxhIHNldHRpbWFuYTogMTUuMCBncmFkaSwgY2FsY29sYXRhIHN1IDUgZ2lvcm5pCiMgTGEgdGFiZWxsYSBkZWxsZSB0ZW1wZXJhdHVyZSDDqCBuZWwgZmlsZSBtZXRlby54bHN4CnJpZ2FfbWVkaWEgPSAiVGVtcGVyYXR1cmEgbWVkaWEgZGVsbGEgc2V0dGltYW5hOiAxNS4wIGdyYWRpLCBjYWxjb2xhdGEgc3UgNSBnaW9ybmki'),
     'E1.4': ('Esercizio E1.4', 'IyBuZWwgdGVybWluYWxlLCBuZWxsYSBjYXJ0ZWxsYSBlc2VyY2l6aW8KIyAgIHV2IGFkZCAtLWRldiBydWZmCiMgICB1diBydW4gcnVmZiBmb3JtYXQgICAgICAgMiBmaWxlcyByZWZvcm1hdHRlZAojICAgdXYgcnVuIHJ1ZmYgY2hlY2sKIyBJMDAxIFsqXSBJbXBvcnQgYmxvY2sgaXMgdW4tc29ydGVkIG9yIHVuLWZvcm1hdHRlZCAgICAgICAgIC0tPiBtYWluLnB5CiMgRTUwMSBMaW5lIHRvbyBsb25nICgxMDIgPiAxMDApICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLT4gbWFpbi5weQojIEY0MDEgWypdIGBtYXRoYCBpbXBvcnRlZCBidXQgdW51c2VkICAgICAgICAgICAgICAgICAgICAgICAgLS0+IG1ldGVvLnB5CiMgRjg0MSBMb2NhbCB2YXJpYWJsZSBgZ2lvcm5pYCBpcyBhc3NpZ25lZCB0byBidXQgbmV2ZXIgdXNlZCAtLT4gbWV0ZW8ucHkKYXZ2aXNpID0gWyJJMDAxIiwgIkU1MDEiLCAiRjQwMSIsICJGODQxIl0='),

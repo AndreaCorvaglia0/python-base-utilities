@@ -334,7 +334,7 @@ altrimenti il passo 9 non trova più nulla da formattare.
 La dimostrazione si fa nella cartella `Modulo_1/Script_uv_Ruff/demo/` di una copia dell'aula estratta dallo zip, la
 stessa che hanno i corsisti, che possono ripetere i comandi sul proprio PC. Prima di cominciare conviene ingrandire il
 carattere del terminale e tenere aperto `calcoli.py`, per vederlo cambiare, e far notare che la cartella contiene
-soltanto i due script: il progetto nasce in aula con `uv init`. I numeri di versione stampati da uv possono essere più alti di
+soltanto i due script: il progetto nasce in aula con `uv init --bare`. I numeri di versione stampati da uv possono essere più alti di
 quelli riportati qui. L'ordine dei comandi Ruff, con `format` prima di `check`, serve a mostrare separatamente il lavoro
 del formatter e quello del linter, ed è lo stesso che il notebook descrive nella sezione 8. Con le regole scelte il
 linter trova le stesse quattro segnalazioni prima e dopo la formattazione, con numeri di riga diversi, quindi anche
@@ -350,10 +350,10 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
    ambiente, dove pandas e openpyxl ci sono già. È il momento per mostrare che un comando di uv lavora sul progetto
    che trova a partire dalla cartella del terminale.
 
-3. Si lancia `uv init`, che stampa prima ``Project `demo` is excluded by workspace ...``, cioè che la cartella resta
-   fuori dal progetto del corso, poi `Initialized project` con il nome `demo`, e crea `pyproject.toml`, con il nome della cartella
-   e `dependencies = []`, il file `README.md` vuoto e, se la cartella non sta già in un repository git, anche
-   `.gitignore` e la cartella nascosta `.git`. Il nuovo progetto non entra in quello del corso, perché il
+3. Si lancia `uv init --bare`, che stampa prima ``Project `demo` is excluded by workspace ...``, cioè che la cartella
+   resta fuori dal progetto del corso, poi `Initialized project` con il nome `demo`, e crea soltanto `pyproject.toml`,
+   con il nome della cartella e `dependencies = []`. Senza `--bare`, `uv init` preparerebbe anche un `README.md` vuoto
+   e, fuori da un repository git, `.gitignore` e la cartella nascosta `.git`, che qui non servono. Il nuovo progetto non entra in quello del corso, perché il
    `pyproject.toml` del corso esclude le cartelle di `Modulo_1/Script_uv_Ruff/` nella sezione `[tool.uv.workspace]`;
    in qualunque altra cartella del corso `uv init` lo aggiungerebbe invece come parte del progetto del corso. Il file
    `spesa.xlsx` scritto al passo precedente si può cancellare.
@@ -533,7 +533,7 @@ fatto il loro lavoro, e la cella `soluzione` mostra i comandi e i valori attesi.
 
 | Passo | Il corsista scrive | La verifica controlla |
 |---|---|---|
-| E1.1 | `nome_progetto`, `cartella_creata`, `libreria_mancante` | `pyproject.toml` creato da `uv init` con il nome `esercizio`, `uv.lock` nella cartella, `.venv` e `pandas` |
+| E1.1 | `nome_progetto`, `cartella_creata`, `libreria_mancante` | `pyproject.toml` creato da `uv init --bare` con il nome `esercizio`, `uv.lock` nella cartella, `.venv` e `pandas` |
 | E1.2 | `seconda_libreria` | pandas tra le `dependencies` di `esercizio/pyproject.toml`, e `openpyxl` |
 | E1.3 | `riga_media` | openpyxl tra le `dependencies`, e la riga `Temperatura media della settimana: 15.0 gradi, calcolata su 5 giorni` |
 | E1.4 | `avvisi` | Ruff nel gruppo `dev`, `meteo.py` già formattato, e i codici `E501`, `F401`, `F841`, `I001` |

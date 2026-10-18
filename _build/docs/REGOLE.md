@@ -202,7 +202,7 @@ Dentro `Aula_*/` non si modifica nulla a mano: i notebook e i `corso.py` sono ge
 - Le cartelle della dimostrazione e dell'esercizio su uv e Ruff, in `_build/src/script_uv_ruff/`: `demo/` ed
   `esercizio/` diventano lo stato di partenza in `Aula_Avanzata/Modulo_1/Script_uv_Ruff/`, mentre `soluzioni/demo/` e
   `soluzioni/esercizio/` diventano lo stato finale in `Aula_Avanzata/Soluzioni/Script_uv_Ruff/`. Lo stato di partenza
-  contiene soltanto i due script: il progetto nasce in aula con `uv init`, che crea un progetto a sé perché il
+  contiene soltanto i due script: il progetto nasce in aula con `uv init --bare`, che crea un progetto a sé perché il
   `pyproject.toml` dei corsisti esclude `Modulo_1/Script_uv_Ruff/*` nella sezione `[tool.uv.workspace]`. Il nuovo
   `pyproject.toml` non ha una sezione `[tool.ruff]`, quindi Ruff usa quella del corso, la cui voce `src` gli fa
   riconoscere `calcoli.py` e `meteo.py` come file del progetto. `controlla.py` verifica che lo stato di partenza non

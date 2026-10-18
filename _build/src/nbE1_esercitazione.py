@@ -146,16 +146,16 @@ def parte_script(nb: Notebook) -> None:
     nb.esercizio(
         titolo="Il progetto e il primo lancio",
         scenario="""
-            Come nella dimostrazione, i due script diventano un progetto con `uv init`, che crea nella cartella il
-            file `pyproject.toml` con il nome della cartella e la lista delle librerie vuota. Prima di crearlo
+            Come nella dimostrazione, i due script diventano un progetto con `uv init --bare`, che crea nella
+            cartella soltanto il file `pyproject.toml` con il nome della cartella e la lista delle librerie vuota. Prima di crearlo
             lanciamo lo script una volta, per vedere che senza un progetto suo uv usa l'ambiente del corso, dove
-            pandas c'è già. Dopo `uv init` lo stesso comando crea l'ambiente del progetto e il file `uv.lock`, e lo
+            pandas c'è già. Dopo `uv init --bare` lo stesso comando crea l'ambiente del progetto e il file `uv.lock`, e lo
             script si ferma subito con un `ModuleNotFoundError`, il cui messaggio nomina la libreria mancante.
         """,
         richiesta="""
             1. Nel terminale aperto nella cartella `esercizio` lancia `uv run main.py`: lo script arriva in fondo,
                perché uv, non trovando un progetto nella cartella, risale fino a quello del corso.
-            2. Lancia `uv init`. La prima riga, `Project ... is excluded by workspace`, dice che la cartella resta
+            2. Lancia `uv init --bare`. La prima riga, `Project ... is excluded by workspace`, dice che la cartella resta
                fuori dal progetto del corso, ed è quello che vogliamo. Apri il `pyproject.toml` appena creato e
                leggi il nome del progetto e la voce `dependencies`, che è una lista vuota.
             3. Lancia di nuovo `uv run main.py`, poi guarda nel pannello Explorer la cartella `.venv` e il file
@@ -180,7 +180,7 @@ def parte_script(nb: Notebook) -> None:
         soluzione="""
             # nel terminale, nella cartella esercizio
             #   uv run main.py        funziona, con l'ambiente del corso
-            #   uv init               Initialized project `esercizio`
+            #   uv init --bare        Initialized project `esercizio`
             #   uv run main.py
             # Creating virtual environment at: .venv
             # ...
@@ -194,9 +194,9 @@ def parte_script(nb: Notebook) -> None:
             from pathlib import Path
 
             pyproject = Path("{ESERCIZIO}/pyproject.toml")
-            assert pyproject.exists(), "❌ nella cartella esercizio non c'è ancora pyproject.toml: lancia uv init nel terminale aperto in quella cartella"
+            assert pyproject.exists(), "❌ nella cartella esercizio non c'è ancora pyproject.toml: lancia uv init --bare nel terminale aperto in quella cartella"
             assert nome_progetto.strip() == tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["name"] == "esercizio", "❌ nome_progetto: la voce name di esercizio/pyproject.toml"
-            assert Path("{ESERCIZIO}/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: dopo uv init lancia di nuovo uv run main.py"
+            assert Path("{ESERCIZIO}/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: dopo uv init --bare lancia di nuovo uv run main.py"
             assert cartella_creata.strip().rstrip("/") == ".venv", "❌ cartella_creata: il nome nella riga Creating virtual environment at"
             assert libreria_mancante.strip() == "pandas", "❌ libreria_mancante: il nome tra apici nell'ultima riga dell'errore"
         """,

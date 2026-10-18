@@ -189,9 +189,9 @@ import tomllib
 from pathlib import Path
 
 pyproject = Path("Script_uv_Ruff/esercizio/pyproject.toml")
-assert pyproject.exists(), "❌ nella cartella esercizio non c'è ancora pyproject.toml: lancia uv init nel terminale aperto in quella cartella"
+assert pyproject.exists(), "❌ nella cartella esercizio non c'è ancora pyproject.toml: lancia uv init --bare nel terminale aperto in quella cartella"
 assert nome_progetto.strip() == tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["name"] == "esercizio", "❌ nome_progetto: la voce name di esercizio/pyproject.toml"
-assert Path("Script_uv_Ruff/esercizio/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: dopo uv init lancia di nuovo uv run main.py"
+assert Path("Script_uv_Ruff/esercizio/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: dopo uv init --bare lancia di nuovo uv run main.py"
 assert cartella_creata.strip().rstrip("/") == ".venv", "❌ cartella_creata: il nome nella riga Creating virtual environment at"
 assert libreria_mancante.strip() == "pandas", "❌ libreria_mancante: il nome tra apici nell'ultima riga dell'errore"
 '''),
