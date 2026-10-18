@@ -11,7 +11,9 @@ una cosa nel codice appena visto: un altro indice, un'altra chiave, un altro par
 tre minuti, ha una cella da completare con `...`, una `verifica=` con uno o due `assert`, e può chiudersi con una riga
 `prova_anche=` sempre banale ("prova con passo 3", "prova con `ascending=False`"). Non introduce niente di nuovo, non
 è un compito, non ha scenario: due frasi che dicono che cosa fare e che cosa deve uscire. Nel sorgente è
-`nb.hands_on(richiesta, starter, soluzione, verifica, prova_anche)`.
+`nb.hands_on(richiesta, starter, soluzione, verifica, prova_anche)`. Quando il gesto si fa nell'editor e non nel codice,
+come creare una cella o premere Restart, il Hands-on ha soltanto il riquadro con le istruzioni, senza `starter` né
+`verifica`; succede quasi solo nel notebook 00.
 
 La sezione Extra chiude il notebook, si chiama "Extra", in aula si salta e chi vuole la fa a casa. Contiene due o tre
 esercizi brevi (`nb.esercizio`, con il formato "prima il risultato, poi i passi"), che ripassano i punti principali
@@ -27,10 +29,15 @@ e sono sostituiti da Hands-on nuovi.
 ## Notebook per notebook
 
 ### 00 · Jupyter e i notebook
-Concetti che restano: eseguire una cella e leggere l'output, lo stato del kernel (una variabile definita in una cella
-vale nelle successive, Restart la cancella), celle Markdown. Hands-on, due: dopo "Le celle di codice" cambiare il testo
-stampato da un `print` e rieseguire; dopo "Il kernel" definire una variabile in una cella e usarla nella successiva
-(verifica sul valore). Extra: i due esercizi attuali (cella Markdown più cella di codice; il meteo di oggi), accorciati.
+Il notebook insegna lo strumento, non il Python: i corsisti non sanno ancora nulla del linguaggio, quindi il codice si
+limita a variabili e `print`. Concetti che restano: celle di codice e celle Markdown; eseguire, creare ed eliminare
+celle con tre scorciatoie (Shift + Invio; Esc e poi B, o A; Esc e poi M); il kernel che tiene le variabili, la vista
+Variables di VS Code; l'ordine di esecuzione e il numero tra parentesi; Restart che cancella le variabili e Run All
+che le ricostruisce. Hands-on, cinque, subito dopo la spiegazione di ciascun gesto: eseguire una cella con il proprio
+nome; creare una cella di codice e una Markdown con le scorciatoie ed eliminarne una; trovare le variabili nella vista
+e crearne una nuova; rieseguire fuori ordine una cella e guardare il risultato cambiare; Restart, `NameError` e Run
+All. Tre di questi sono soltanto gesti nell'editor e non hanno codice né verifica. Extra: una cella Markdown e una di
+codice con istruzioni esatte; il giro completo di variabili, Restart e Run All.
 
 ### 01 · Introduzione a Python e sintassi base
 Concetti che restano: assegnazione e nomi, operatori (`/`, `//`, `%`, `**`), `import` di un modulo e `modulo.nome`,

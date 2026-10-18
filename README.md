@@ -42,7 +42,7 @@ sezioni Extra in fondo ai notebook non sono comprese nei tempi.
 
 | Modulo | Notebook | Aula Base | Aula Avanzata |
 |---|---|---|---|
-| 1 | `00_Notebook` · Jupyter e i notebook | 20 min | 20 min |
+| 1 | `00_Notebook` · celle, esecuzione, variabili, Restart e Run All in VS Code | 25 min | 20 min |
 | 1 | `01_Python_e_sintassi_base` · variabili, numeri, stringhe, import | 40 min | 30 min |
 | 1 | `02_Tipi_di_dato` · liste, tuple, dizionari, set | 40 min | 35 min |
 | 1 | `03_Codice_leggibile` · commenti, Markdown, docstring, PEP 8 | 20 min | 20 min |

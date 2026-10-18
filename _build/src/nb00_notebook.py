@@ -1,4 +1,4 @@
-"""00 · Jupyter e i notebook."""
+"""00 · Jupyter e i notebook: usare un notebook in VS Code, prima di sapere il Python."""
 
 from nbkit import Notebook
 
@@ -11,15 +11,15 @@ def costruisci() -> Notebook:
         blocco=1,
         giornata=1,
         intento=(
-            "In questo notebook vediamo come è fatto un notebook Jupyter e come si usa, perché è lo "
-            "strumento in cui scriviamo ed eseguiamo il codice del corso."
+            "In questo notebook impariamo a usare un notebook Jupyter in VS Code, lo strumento in cui scriviamo "
+            "ed eseguiamo il codice del corso: celle, esecuzione, variabili in memoria e riavvio del kernel."
         ),
         obiettivi=[
-            "spiegare cos'è un notebook e come lavorano celle e kernel",
-            "eseguire una cella di codice e scrivere una cella Markdown",
-            "usare le scorciatoie da tastiera principali",
+            "riconoscere, creare, eseguire ed eliminare celle di codice e celle Markdown, con tre scorciatoie",
+            "seguire le variabili in memoria nella vista Variables di VS Code",
+            "capire perché conta l'ordine in cui si eseguono le celle e che cosa fanno Restart e Run All",
         ],
-        tempo=20,
+        tempo={"base": 25, "avanzata": 20},
         dati=[],
     )
 
@@ -29,111 +29,143 @@ def costruisci() -> Notebook:
         VS Code. Anche in quel caso il codice va letto e controllato da chi lo usa, e per riuscirci
         bisogna conoscere il linguaggio in cui è scritto. Per questo nella prima parte del corso
         scriviamo il codice a mano, un'istruzione alla volta, e lo affidiamo a un agente solo
-        nell'ultimo blocco.
+        nell'ultimo modulo.
     """)
 
     # ------------------------------------------------------------------ 2
     nb.sezione("Cos'è Jupyter Notebook", intro="""
-        *Jupyter Notebook* è un ambiente di sviluppo interattivo che permette di creare e condividere
-        documenti in cui il codice eseguibile convive con il testo formattato, le immagini e i grafici.
-        È molto usato nell'analisi dei dati, nel *machine learning* e nella ricerca scientifica, perché
-        tiene insieme in un unico file il codice, i risultati e la loro spiegazione. Il nome **Jupyter**
-        richiama tre dei principali linguaggi supportati, **Julia**, **Python** e **R**. Nel corso i
-        notebook si aprono e si eseguono in VS Code.
+        *Jupyter Notebook* è un ambiente di lavoro interattivo in cui il codice eseguibile convive con il
+        testo formattato e con i risultati, come tabelle e grafici. È molto usato nell'analisi dei dati,
+        perché tiene insieme in un unico file il codice, quello che produce e la sua spiegazione. Nel corso
+        i notebook si aprono e si eseguono in VS Code, e questo notebook serve proprio a prendere confidenza
+        con lo strumento: il Python vero e proprio comincia dal notebook 01, e qui ci bastano qualche
+        variabile e qualche `print`.
 
         [Documentazione ufficiale di Jupyter Notebook](https://jupyter-notebook.readthedocs.io/en/latest/notebook.html)
     """)
 
     # ------------------------------------------------------------------ 3
-    nb.sezione("Le celle di codice", intro="""
-        Un notebook è composto da una serie di **celle**, che possono contenere codice oppure testo
-        formattato. Per eseguire una cella di codice si clicca sulla cella e si preme **Shift + Invio**,
-        oppure il triangolo che compare alla sua sinistra, e il risultato appare subito sotto la cella.
-        Delle tre celle qui sotto, la prima stampa un testo con `print`, la seconda mostra che anche
-        senza `print` il notebook visualizza il valore dell'ultima riga, e la terza calcola la somma di
-        due numeri.
+    nb.sezione("Celle di codice e celle Markdown", intro="""
+        Un notebook è una sequenza di **celle**, di due tipi. Le celle di codice contengono istruzioni
+        Python: in VS Code stanno in un riquadro, con un triangolo a sinistra per eseguirle e l'indicazione
+        `Python` in basso a destra. Le celle **Markdown** contengono testo formattato, come questa che stai
+        leggendo, e quando le apri con un doppio clic riportano `Markdown` in basso a destra. Per eseguire
+        una cella di codice si clicca il triangolo, oppure si preme **Shift + Invio**, e il risultato
+        compare subito sotto la cella.
     """)
     nb.code("""
-        # esegui questa cella con Shift + Invio
+        # una cella di codice: eseguila con il triangolo a sinistra oppure con Shift + Invio
         print("Ciao dal notebook")
     """)
-    nb.code("""
-        # senza print il notebook mostra il valore dell'ultima riga
-        1 + 1
-    """)
-    nb.code("""
-        # esempio di codice Python che calcola la somma di due numeri
-        a = 10
-        b = 20
-        c = a + b
-        print(c)  # Output: 30
+    nb.md("""
+        L'istruzione `print` stampa sotto la cella quello che le passiamo tra parentesi; il testo va
+        scritto tra virgolette. Nella cella successiva c'è un'altra istruzione, `nome = ...`, che crea una
+        **variabile**, cioè un nome a cui associamo un valore: da quel momento possiamo usare `nome` al
+        posto del valore. Variabili e `print` sono tutto il Python che serve in questo notebook.
     """)
     nb.hands_on(
         richiesta="""
-            Completa la cella qui sotto in modo che stampi un saluto con il tuo nome, per esempio
-            `Ciao, sono Anna`, e poi la somma di 15 e 27, calcolata in `c` come nell'esempio sopra. Eseguita
-            con Shift + Invio, la cella stampa il saluto e, sulla riga successiva, il numero 42.
+            Nella cella qui sotto sostituisci i puntini con il tuo nome, scritto tra virgolette, per esempio
+            `"Anna"`, ed esegui la cella con il triangolo a sinistra. Sotto la cella compare `Ciao, Anna`.
         """,
         starter="""
-            print("...")
-
-            a = ...
-            b = ...
-            c = a + b
-            print(c)
+            nome = ...
+            print("Ciao,", nome)
         """,
         soluzione="""
-            print("Ciao, sono Anna")
-
-            a = 15
-            b = 27
-            c = a + b
-            print(c)  # Output: 42
+            nome = "Anna"
+            print("Ciao,", nome)  # Output: Ciao, Anna
         """,
         verifica="""
-            assert c == 42, "❌ c deve valere 15 + 27, cioè 42"
+            assert isinstance(nome, str) and nome.strip(), "❌ nome deve essere un testo tra virgolette, per esempio \\"Anna\\""
         """,
-        prova_anche="togli il `print` dall'ultima riga e lascia soltanto `c`, che il notebook mostra lo stesso perché è l'ultima riga della cella.",
     )
+    nb.md("""
+        La cella che segue è una cella Markdown. In questo momento ne vedi la versione formattata, con un
+        titolo, una parola in grassetto e un elenco; facendo doppio clic sulla cella compare invece il testo
+        di partenza, in cui il titolo comincia con `#` e il grassetto è racchiuso tra due asterischi. Dopo
+        aver cambiato una parola si torna alla vista formattata con **Shift + Invio**, come per eseguire una
+        cella di codice.
+    """)
+    nb.md("""
+        ## Un titolo Markdown
+
+        Un testo con una parola in **grassetto**.
+
+        - primo elemento di un elenco
+        - secondo elemento
+    """)
 
     # ------------------------------------------------------------------ 4
-    nb.sezione("Il kernel", intro="""
-        Il **kernel** è il processo che esegue il codice Python del notebook e che tiene in memoria le
-        variabili create durante il lavoro. Ogni kernel è legato a un interprete Python preciso, e nel
-        corso usiamo quello dell'ambiente virtuale del progetto. Il percorso stampato dalla cella qui
-        sotto, che indica quale interprete sta usando il kernel, deve quindi contenere `.venv`; se non
-        lo contiene, si cambia kernel con **Select Kernel**, in alto a destra.
+    nb.sezione("Creare ed eliminare celle", intro="""
+        Le celle si creano con i pulsanti **+ Code** e **+ Markdown**, che compaiono passando con il mouse
+        tra una cella e l'altra, e si eliminano con l'icona del cestino nella piccola barra in alto a destra
+        della cella selezionata. Con la tastiera si lavora più in fretta, e bastano tre scorciatoie.
+        **Shift + Invio** esegue la cella e passa alla successiva. **Esc** e poi **B** creano una cella di
+        codice nuova sotto quella selezionata, e **A** al posto di **B** la crea sopra. **Esc** e poi **M**
+        trasformano la cella selezionata in una cella Markdown. Il tasto **Esc** serve a uscire dalla scrittura dentro la cella, in modo che il
+        tasto successivo agisca sulla cella intera.
+    """)
+    nb.code("""
+        # punto di partenza per il Hands-on: clicca su questa cella
+        print("Sotto questa cella creiamo le nostre")
+    """)
+    nb.code("""
+        # questa cella va eliminata con l'icona del cestino
+    """)
+    nb.hands_on(
+        richiesta="""
+            1. Clicca sulla cella `punto di partenza` qui sopra, premi **Esc** e poi **B**: sotto compare una
+               cella di codice nuova.
+            2. Scrivi nella cella nuova `print("La mia prima cella")` ed eseguila con **Shift + Invio**.
+            3. Premi **Esc**, poi **B** per un'altra cella nuova e **M** per trasformarla in Markdown; scrivi
+               `## Le mie prove` e premi **Shift + Invio**: compare un titolo.
+            4. Elimina la cella `questa cella va eliminata` con l'icona del cestino.
+        """,
+        prova_anche="se elimini per errore una cella, **Ctrl + Z** (su Mac **Cmd + Z**) la fa ricomparire, purché tu sia fuori dalla cella, dopo **Esc**.",
+    )
+
+    # ------------------------------------------------------------------ 5
+    nb.sezione("Il kernel e le variabili", intro="""
+        Il codice delle celle non viene eseguito da VS Code, ma da un programma separato, il **kernel**, che
+        tiene in memoria le variabili create durante il lavoro. Per questo una variabile creata in una cella
+        resta disponibile in tutte le altre: vive nella memoria del kernel e non nella cella che l'ha
+        definita. Il kernel del corso deve essere quello dell'ambiente del progetto, e la cella qui sotto lo
+        controlla: il percorso stampato deve contenere `.venv`, altrimenti si cambia kernel con il pulsante
+        **Select Kernel**, in alto a destra. Le istruzioni della cella le capiremo più avanti, e per ora
+        basta guardare il risultato.
     """)
     nb.code("""
         # il Python usato dal kernel: il percorso deve contenere .venv
-        # (se non c'è, cambia kernel con Select Kernel, in alto a destra)
         import sys
 
         sys.executable
     """)
     nb.md("""
-        Le variabili create in una cella restano disponibili per tutte le altre, perché vivono nella
-        memoria del kernel e non nella cella che le ha definite. Le tre celle seguenti assegnano un
-        valore a `x`, lo leggono in una cella separata e poi lo incrementano. Se eseguiamo più volte
-        l'ultima, `x` cresce di uno a ogni esecuzione, e cresce anche il numero a sinistra della cella,
-        che conta le esecuzioni fatte dal kernel.
+        Le due celle che seguono creano due variabili, `citta` e `temperatura`, e la terza le usa. La terza
+        cella funziona anche se le variabili sono state create altrove, perché il kernel le ricorda.
     """)
     nb.code("""
-        x = 5
+        citta = "Milano"
     """)
     nb.code("""
-        x
+        temperatura = 18
     """)
     nb.code("""
-        # esegui questa cella più volte: x cresce, e cresce il numero a sinistra della cella
-        x = x + 1
-        x
+        print("Oggi a", citta, "ci sono", temperatura, "gradi")  # Output: Oggi a Milano ci sono 18 gradi
+    """)
+    nb.md("""
+        VS Code mostra in ogni momento le variabili che il kernel ha in memoria. Il pulsante **Variables**,
+        nella barra in cima al notebook, apre in basso la scheda **JUPYTER** con una riga per variabile: il
+        nome, il tipo e il valore. Se il pulsante non si vede, si trova nel menu `...` della stessa barra, e
+        in alternativa si apre la palette dei comandi con **Ctrl + Shift + P** (su Mac **Cmd + Shift + P**) e
+        si cerca *variables*.
     """)
     nb.hands_on(
         richiesta="""
-            Nella cella qui sotto assegna alla variabile `giorni` il numero dei giorni di una settimana ed
-            eseguila. La verifica che segue è una cella diversa, e trova `giorni` perché il kernel lo tiene
-            in memoria.
+            Apri la vista delle variabili e trova `nome`, `citta` e `temperatura`. Poi nella cella qui sotto
+            scrivi `giorni = 7` ed eseguila: nella vista compare una riga nuova, con il nome `giorni`, il tipo
+            `int` e il valore `7`.
         """,
         starter="""
             giorni = ...
@@ -142,136 +174,132 @@ def costruisci() -> Notebook:
             giorni = 7
         """,
         verifica="""
-            assert giorni == 7, "❌ giorni deve valere 7, il numero dei giorni di una settimana"
+            assert giorni == 7, "❌ giorni deve valere 7"
         """,
-        prova_anche="scrivi `giorni * 4` in una cella nuova ed eseguila, e Python usa il valore di `giorni` che il kernel ha conservato.",
+        prova_anche="cambia `giorni = 7` in `giorni = 30`, riesegui la cella e guarda il valore cambiare nella vista.",
     )
-    nb.md("""
-        Il pulsante **Restart**, in cima al notebook, riavvia il kernel. Il codice scritto nelle celle
-        rimane dov'è, ma le variabili create fino a quel momento vengono perse, perché esistevano solo
-        nella memoria del processo appena chiuso. Per vederlo, premiamo Restart e poi eseguiamo la cella
-        qui sotto, che chiede il valore di `x`: Python risponde con un `NameError`, perché quel nome non
-        esiste più. Il pulsante **Run All** esegue di nuovo tutte le celle dall'alto in basso e
-        ricostruisce lo stato del notebook.
-    """)
-    nb.code("""
-        x
-    """)
-
-    # ------------------------------------------------------------------ 5
-    nb.sezione("Le celle Markdown", intro="""
-        Il testo di un notebook si scrive nelle celle *Markdown*, un linguaggio di formattazione molto
-        semplice in cui, per esempio, un `#` all'inizio della riga produce un titolo e due asterischi
-        intorno a una parola la rendono in grassetto. La cella qui sotto raccoglie gli elementi più
-        comuni: titoli, grassetto e corsivo, elenchi e un link. Facendo doppio clic sulla cella se ne
-        vede il sorgente, e dopo aver cambiato una parola si torna alla vista formattata con
-        **Shift + Invio**.
-    """)
-    nb.md("""
-        # Titolo di primo livello
-        ## Titolo di secondo livello
-
-        Un testo in **grassetto** e uno in *corsivo*.
-
-        - Elemento 1
-        - Elemento 2
-
-        1. Primo elemento
-        2. Secondo elemento
-
-        [Guida al Markdown](https://www.markdownguide.org/basic-syntax/)
-    """)
 
     # ------------------------------------------------------------------ 6
-    nb.sezione("Le scorciatoie da tastiera", intro="""
-        Le scorciatoie da tastiera rendono più rapido il lavoro con le celle. Quasi tutte si usano in
-        modalità comando, che si attiva con `Esc` e in cui i tasti agiscono sulla cella selezionata
-        invece di scrivere al suo interno. Le più utili sono queste:
-
-        - `Shift + Invio` esegue la cella e passa alla successiva;
-        - `Esc` e poi `A` o `B` inseriscono una nuova cella sopra o sotto quella selezionata;
-        - `Esc` e poi `M` o `Y` trasformano la cella in una cella Markdown o di codice;
-        - `Esc` e poi `D` due volte eliminano la cella;
-        - `Ctrl + S` (su Mac `Cmd + S`) salva il notebook.
-
-        Le due celle che seguono servono per provarle, seguendo le istruzioni scritte nei commenti.
+    nb.sezione("L'ordine di esecuzione", intro="""
+        Il kernel esegue le celle nell'ordine in cui le lanciamo, non in quello in cui compaiono sullo
+        schermo, e tiene sempre l'ultimo valore assegnato a ogni variabile. Il numero tra parentesi quadre a
+        sinistra di ogni cella, come `[5]`, dice in che momento è stata eseguita, e lo stesso numero cresce a
+        ogni esecuzione. Di solito si eseguono le celle dall'alto in basso e il problema non si pone, ma
+        rieseguire una cella più in alto dopo averne eseguite altre può dare un risultato diverso da quello
+        che ci si aspetta leggendo il notebook. Le tre celle che seguono servono a vederlo.
     """)
     nb.code("""
-        # esegui, poi premi Esc e B: sotto compare una cella nuova; scrivici prezzo * 2 ed eseguila
-        prezzo = 4.5
+        prezzo = 10
     """)
     nb.code("""
-        # Premi Esc, poi M e Shift + Invio: questa riga diventa un titolo
+        print(prezzo * 2)
     """)
+    nb.code("""
+        prezzo = 15
+    """)
+    nb.hands_on(
+        richiesta="""
+            1. Esegui le tre celle qui sopra nell'ordine: la seconda stampa `20`.
+            2. Torna alla seconda cella e rieseguila: ora stampa `30`, perché il kernel ha in memoria
+               l'ultimo valore assegnato a `prezzo`, quello della terza cella, anche se sullo schermo la
+               terza cella viene dopo.
+            3. Guarda il numero tra parentesi a sinistra delle tre celle: la seconda ha adesso il numero più
+               alto, perché è l'ultima eseguita.
+        """,
+    )
+
+    # ------------------------------------------------------------------ 7
+    nb.sezione("Restart e Run All", intro="""
+        Il pulsante **Restart**, nella barra in cima al notebook, riavvia il kernel. Il codice scritto nelle
+        celle rimane dov'è, ma le variabili create fino a quel momento vengono perse, perché esistevano solo
+        nella memoria del kernel appena chiuso. Il pulsante **Run All** esegue invece tutte le celle
+        dall'alto in basso, nell'ordine in cui compaiono, e ricostruisce le variabili. Restart seguito da
+        Run All è quindi il modo più sicuro per controllare che il notebook funzioni da capo a fondo, senza
+        dipendere da celle eseguite fuori ordine. Se una cella dà errore, Run All si ferma lì.
+    """)
+    nb.code("""
+        print(citta)
+    """)
+    nb.hands_on(
+        richiesta="""
+            1. Premi **Restart** in cima al notebook: la vista delle variabili si svuota.
+            2. Esegui la cella `print(citta)` qui sopra: compare un errore, e l'ultima riga dice
+               `NameError: name 'citta' is not defined`, cioè che il nome `citta` non esiste più.
+            3. Premi **Run All**: le celle vengono eseguite dall'alto, la cella stampa di nuovo `Milano` e
+               nella vista ricompaiono le variabili.
+        """,
+    )
 
     # ------------------------------------------------------------------ Extra
     nb.sezione("Extra", """
-        Questa sezione raccoglie due esercizi brevi sui punti principali del notebook, pensati per il
-        ripasso a casa, e durante la lezione la saltiamo. Sotto l'esercizio che ha un risultato da
-        controllare c'è una cella con `verifica(...)`, che stampa ✅ se il risultato è corretto e
-        altrimenti dice che cosa non torna.
+        Questa sezione raccoglie due esercizi brevi per rifare a casa, da soli, i gesti di questo notebook;
+        durante la lezione la saltiamo. Ogni esercizio dice esattamente che cosa scrivere, e sotto la cella da
+        completare c'è la verifica, che stampa ✅ se il risultato è corretto e altrimenti dice che cosa non
+        torna.
     """)
     nb.esercizio(
         titolo="Una cella Markdown e una cella di codice",
         scenario="""
-            Un notebook alterna celle di testo e celle di codice, e il testo dice a chi legge che cosa fa il
-            codice che segue. Costruiamo una coppia di questo tipo: una cella Markdown con un titolo e una
-            frase e, sotto, una cella di codice che stampa `Primo comando Python del corso!`.
+            Costruiamo una coppia di celle, una Markdown con un titolo e una frase e, sotto, una di codice che
+            stampa una riga, come quelle che si incontrano in ogni notebook del corso. Alla fine il titolo
+            compare formattato e sotto la cella di codice si legge `Primo comando Python del corso!`.
         """,
         richiesta="""
-            1. Sopra la cella di codice qui sotto aggiungi una **cella Markdown** con il titolo "Soluzione" e
-               la frase "Questa è la soluzione del primo esercizio."
-            2. Nella cella di codice scrivi `print("Primo comando Python del corso!")`.
-            3. Esegui le due celle con `Shift + Invio`, prima quella Markdown e poi quella di codice.
+            1. Clicca sulla cella di codice qui sotto, premi **Esc** e poi **A**: sopra compare una cella nuova.
+               Trasformala in Markdown con **M**.
+            2. Scrivi nella cella Markdown `# Il mio primo notebook` e, su una riga nuova, `Questa cella spiega
+               quella sotto.`, poi premi **Shift + Invio**.
+            3. Nella cella di codice sostituisci i puntini con `"Primo comando Python del corso!"`, tra
+               virgolette, ed eseguila con **Shift + Invio**.
         """,
         starter="""
-            # scrivi qui il comando print
-            ...
+            messaggio = ...
+            print(messaggio)
         """,
         soluzione="""
-            print("Primo comando Python del corso!")
+            messaggio = "Primo comando Python del corso!"
+            print(messaggio)  # Output: Primo comando Python del corso!
+        """,
+        verifica="""
+            assert messaggio == "Primo comando Python del corso!", "❌ messaggio: copia il testo esatto, tra virgolette"
         """,
         perche="""
-            Il sorgente della cella Markdown, cioè quello che si vede facendo doppio clic, è il seguente:
+            Il testo della cella Markdown, cioè quello che si vede con un doppio clic, è il seguente:
 
             ```markdown
-            # Soluzione
+            # Il mio primo notebook
 
-            Questa è la soluzione del primo esercizio.
+            Questa cella spiega quella sotto.
             ```
         """,
     )
     nb.esercizio(
-        titolo="Il meteo di oggi",
+        titolo="Variabili, Restart e Run All",
         scenario="""
-            Vogliamo stampare una riga come `Oggi a Milano ci sono 18 gradi` a partire da due variabili, una
-            con il nome della città e una con la temperatura. Con i valori nelle variabili, per rifare la
-            stampa per un'altra città basta cambiare le due assegnazioni.
+            Rifacciamo da capo il giro delle variabili: le creiamo, le guardiamo nella vista **Variables**, le
+            perdiamo con **Restart** e le ritroviamo con **Run All**. Alla fine la cella stampa
+            `Domani a Torino ci saranno 21 gradi` e la vista mostra `citta_domani` e `gradi_domani`.
         """,
         richiesta="""
-            1. Crea la variabile `citta` con il nome della tua città e la variabile `temperatura` con la
-               temperatura di oggi, scritta come numero.
-            2. Stampa la riga con un solo `print`, che unisce i pezzi di testo e i valori delle due variabili.
+            1. Nella cella qui sotto scrivi `citta_domani = "Torino"` e `gradi_domani = 21` al posto dei
+               puntini, ed eseguila.
+            2. Apri la vista delle variabili e trova le due righe nuove.
+            3. Premi **Restart** e controlla che la vista si svuoti.
+            4. Premi **Run All** e controlla che la cella stampi di nuovo la riga e che le due variabili
+               ricompaiano nella vista.
         """,
-        suggerimento=(
-            "`print` accetta più valori separati da virgola e li stampa uno dopo l'altro, separati da uno "
-            "spazio. I testi vanno scritti tra virgolette, mentre i nomi delle variabili si scrivono senza."
-        ),
         starter="""
-            citta = ...
-            temperatura = ...
-
-            print(...)
+            citta_domani = ...
+            gradi_domani = ...
+            print("Domani a", citta_domani, "ci saranno", gradi_domani, "gradi")
         """,
         soluzione="""
-            citta = "Milano"
-            temperatura = 18
-
-            print("Oggi a", citta, "ci sono", temperatura, "gradi")
+            citta_domani = "Torino"
+            gradi_domani = 21
+            print("Domani a", citta_domani, "ci saranno", gradi_domani, "gradi")  # Output: Domani a Torino ci saranno 21 gradi
         """,
         verifica="""
-            assert isinstance(citta, str) and citta.strip(), "❌ citta deve essere un testo tra virgolette"
-            assert isinstance(temperatura, (int, float)), "❌ temperatura deve essere un numero, senza virgolette"
+            assert citta_domani == "Torino" and gradi_domani == 21, "❌ citta_domani vale \\"Torino\\", tra virgolette, e gradi_domani vale 21, senza virgolette"
         """,
     )
     return nb

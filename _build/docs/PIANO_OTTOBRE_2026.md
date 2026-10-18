@@ -141,7 +141,7 @@ notebook sono nei banner e nella `Guida_docente.md`; le sezioni Extra non sono c
 
 | Modulo | Lezione Base | Lezione Avanzata | Nota |
 |---|---|---|---|
-| 1 | 135 | 150 | l'Avanzata aggiunge il notebook su uv, script e Ruff (30) |
+| 1 | 140 | 150 | l'Avanzata aggiunge il notebook su uv, script e Ruff (30) e fa il 00 in 20 minuti |
 | 2 | 140 | 150 | l'Avanzata ha la sezione sulle API nel 06 |
 | 3 | 130 | 135 | compresa la demo di Data Wrangler (15) |
 | 4 | 210 | 210 | 09 (25), 10 (35), capstone (150, di cui 40 per lo step 7 di richieste libere a Copilot); nessuna esercitazione |

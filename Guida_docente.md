@@ -43,12 +43,12 @@ Modulo 1 · martedì 20 ottobre · Setup, Python e sintassi di base
 | | Base | Avanzata |
 |---|---|---|
 | Demo VS Code (`Extra/VS_Code_e_notebook.ipynb`) | 15 | 15 |
-| 00 Jupyter e i notebook | 20 | 20 |
+| 00 Jupyter e i notebook | 25 | 20 |
 | 01 Introduzione a Python e sintassi base | 40 | 30 |
 | 02 Tipi di dato e manipolazione | 40 | 35 |
 | 03 Codice leggibile | 20 | 20 |
 | Ambiente, script e Ruff (solo Avanzata) | — | 30 |
-| **Lezione** | **135** | **150** |
+| **Lezione** | **140** | **150** |
 | Esercitazione 1 | 60 | 60 |
 
 Modulo 2 · mercoledì 21 ottobre · Controllo del flusso, funzioni e primi dati in pandas
