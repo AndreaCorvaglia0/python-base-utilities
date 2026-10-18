@@ -19,7 +19,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -97,10 +96,9 @@ def controlla_cartelle() -> int:
         if p.returncode != 0:
             dettaglio = (p.stderr.strip().splitlines() or [""])[-1]
             problemi.append(f"{cartella.relative_to(ROOT)}/uv.lock non è aggiornato: lancia `uv lock` lì ({dettaglio})")
-    for d in ("demo", "esercizio"):     # il punto di partenza: nessuna libreria, nessun lock
-        progetto = tomllib.loads((SCRIPT_UV_SRC / d / "pyproject.toml").read_text(encoding="utf-8"))
-        if progetto["project"].get("dependencies") or "dependency-groups" in progetto or (SCRIPT_UV_SRC / d / "uv.lock").exists():
-            problemi.append(f"_build/src/script_uv_ruff/{d}: il punto di partenza ha già librerie o un uv.lock")
+    for d in ("demo", "esercizio"):     # il punto di partenza: soltanto gli script, il progetto nasce in aula con uv init
+        if any((SCRIPT_UV_SRC / d / f).exists() for f in ("pyproject.toml", "uv.lock", ".python-version")):
+            problemi.append(f"_build/src/script_uv_ruff/{d}: il punto di partenza contiene già i file di un progetto uv")
     avanzata = CARTELLE_AULA["avanzata"]
     for dst, src in SCRIPT_UV.items():
         cartella = avanzata / dst
@@ -113,7 +111,9 @@ def controlla_cartelle() -> int:
         else:
             # i notebook S ed E1 fanno lanciare `ruff format` prima di `ruff check`: anche dopo, gli avvisi sono quelli
             with tempfile.TemporaryDirectory() as tmp:
-                copia = Path(tmp) / Path(dst).name
+                # stessa posizione rispetto al pyproject.toml dell'aula, da cui Ruff prende la configurazione
+                shutil.copy2(avanzata / "pyproject.toml", Path(tmp) / "pyproject.toml")
+                copia = Path(tmp) / dst
                 shutil.copytree(cartella, copia, ignore=shutil.ignore_patterns(".venv", "__pycache__", ".ruff_cache"))
                 subprocess.run(PY + ["-m", "ruff", "format", "--no-cache", "."], cwd=copia, capture_output=True)
                 problemi += _avvisi_ruff(copia, f"{dst} dopo ruff format", attesi)

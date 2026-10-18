@@ -33,6 +33,10 @@ Aula_*/*.py
 # quello che una prova della demo o dell'esercizio su uv e Ruff lascia nelle loro cartelle
 Aula_*/*/Script_uv_Ruff/*/*.xlsx
 Aula_*/Modulo_*/Script_uv_Ruff/*/uv.lock
+Aula_*/Modulo_*/Script_uv_Ruff/*/pyproject.toml
+Aula_*/Modulo_*/Script_uv_Ruff/*/README.md
+Aula_*/Modulo_*/Script_uv_Ruff/*/.python-version
+Aula_*/Modulo_*/Script_uv_Ruff/*/.gitignore
 
 # gli zip per i corsisti, prodotti da _build/esporta.py
 dist/

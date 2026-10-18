@@ -213,8 +213,8 @@ cartella `esercizio/`.
 | 0-6 | uv, l'ambiente virtuale, i file del progetto, aggiungere e togliere librerie | sezioni 1-3 |
 | 6-11 | notebook e script, l'import di una funzione da un altro file | sezioni 4-5 |
 | 11-15 | formatter, linter e Ruff | sezioni 6-8 |
-| 15-22 | dimostrazione, prima parte: l'ambiente costruito una libreria alla volta | sezione 9, passi 1-5 |
-| 22-30 | dimostrazione, seconda parte: il codice sistemato con Ruff | sezione 9, passi 6-12 |
+| 15-22 | dimostrazione, prima parte: l'ambiente costruito una libreria alla volta | sezione 9, passi 1-7 |
+| 22-30 | dimostrazione, seconda parte: il codice sistemato con Ruff | sezione 9, passi 8-14 |
 | pausa | | |
 | 0-45 | Esercitazione 1: i corsisti rifanno la dimostrazione in `esercizio/` | `Modulo_1/Esercitazione_1.ipynb` |
 | 45-60 | correzione | |
@@ -327,14 +327,14 @@ chi la vuole la accende con **Format On Save** nelle impostazioni. Le impostazio
 aggiungere a VS Code l'a capo dopo l'ultima riga a ogni salvataggio (`files.insertFinalNewline`), perché in un file
 scritto a mano la sua mancanza è una segnalazione di Ruff, `W292`, che negli esercizi di riserva confonderebbe il
 risultato. **Shift+Alt+F** si mostra alla fine della dimostrazione, e non su `calcoli.py` prima di cominciare,
-altrimenti il passo 7 non trova più nulla da formattare.
+altrimenti il passo 9 non trova più nulla da formattare.
 
 ### La dimostrazione dal vivo
 
 La dimostrazione si fa nella cartella `Modulo_1/Script_uv_Ruff/demo/` di una copia dell'aula estratta dallo zip, la
 stessa che hanno i corsisti, che possono ripetere i comandi sul proprio PC. Prima di cominciare conviene ingrandire il
-carattere del terminale, tenere aperti `pyproject.toml` e `calcoli.py` della dimostrazione, per vederli cambiare, e far
-notare che la voce `dependencies` è una lista vuota. I numeri di versione stampati da uv possono essere più alti di
+carattere del terminale e tenere aperto `calcoli.py`, per vederlo cambiare, e far notare che la cartella contiene
+soltanto i due script: il progetto nasce in aula con `uv init`. I numeri di versione stampati da uv possono essere più alti di
 quelli riportati qui. L'ordine dei comandi Ruff, con `format` prima di `check`, serve a mostrare separatamente il lavoro
 del formatter e quello del linter, ed è lo stesso che il notebook descrive nella sezione 8. Con le regole scelte il
 linter trova le stesse quattro segnalazioni prima e dopo la formattazione, con numeri di riga diversi, quindi anche
@@ -345,7 +345,21 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
    percorso all'inizio della riga di comando deve finire con `Script_uv_Ruff\demo`, ed è la prima cosa da far
    controllare ai corsisti.
 
-2. Si lancia `uv run main.py`. uv crea l'ambiente del progetto e lo script si ferma sull'import di pandas:
+2. Si lancia `uv run main.py` prima di creare il progetto. Lo script arriva in fondo e stampa le tre righe, perché la
+   cartella `demo/` non ha un `pyproject.toml` e uv, risalendo le cartelle, trova quello del corso e usa il suo
+   ambiente, dove pandas e openpyxl ci sono già. È il momento per mostrare che un comando di uv lavora sul progetto
+   che trova a partire dalla cartella del terminale.
+
+3. Si lancia `uv init`, che stampa prima ``Project `demo` is excluded by workspace ...``, cioè che la cartella resta
+   fuori dal progetto del corso, poi `Initialized project` con il nome `demo`, e crea `pyproject.toml`, con il nome della cartella
+   e `dependencies = []`, il file `README.md` vuoto e, se la cartella non sta già in un repository git, anche
+   `.gitignore` e la cartella nascosta `.git`. Il nuovo progetto non entra in quello del corso, perché il
+   `pyproject.toml` del corso esclude le cartelle di `Modulo_1/Script_uv_Ruff/` nella sezione `[tool.uv.workspace]`;
+   in qualunque altra cartella del corso `uv init` lo aggiungerebbe invece come parte del progetto del corso. Il file
+   `spesa.xlsx` scritto al passo precedente si può cancellare.
+
+4. Si rilancia `uv run main.py`, che questa volta lavora sul progetto `demo`: uv crea l'ambiente del progetto e lo
+   script si ferma sull'import di pandas:
 
    ```text
    Using CPython 3.13.x interpreter at: ...
@@ -364,7 +378,7 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
    lo stesso motivo che gli script di questa parte non si lanciano con **Run Python File**. Se VS Code chiede se usare
    il nuovo ambiente per la cartella, si risponde di no, perché per i notebook resta l'ambiente del corso.
 
-3. Si lancia `uv add pandas`, che installa pandas insieme alle librerie da cui dipende:
+5. Si lancia `uv add pandas`, che installa pandas insieme alle librerie da cui dipende:
 
    ```text
    Resolved 6 packages in ...
@@ -382,7 +396,7 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
    elenca anche pandas e le librerie da cui dipende. Il punto da sottolineare è che abbiamo chiesto una libreria e ne
    sono arrivate altre, quelle da cui pandas dipende, tutte registrate in `uv.lock`.
 
-4. Si rilancia `uv run main.py`. Lo script stampa le prime due righe e si ferma al salvataggio in Excel:
+6. Si rilancia `uv run main.py`. Lo script stampa le prime due righe e si ferma al salvataggio in Excel:
 
    ```text
    Totale della spesa: 13.10 euro
@@ -405,7 +419,7 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
    ImportError: `Import openpyxl` failed.  Use pip or conda to install the openpyxl package.
    ```
 
-5. Si lancia `uv add openpyxl`, che installa `et-xmlfile` e `openpyxl`, e poi di nuovo `uv run main.py`:
+7. Si lancia `uv add openpyxl`, che installa `et-xmlfile` e `openpyxl`, e poi di nuovo `uv run main.py`:
 
    ```text
    Totale della spesa: 13.10 euro
@@ -416,16 +430,16 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
    Il file `spesa.xlsx` compare nella cartella `demo/`, che è quella del terminale, e `pyproject.toml` elenca ora
    `openpyxl` e `pandas`.
 
-6. Si lancia `uv add --dev ruff`, che installa Ruff e aggiunge a `pyproject.toml` la sezione `[dependency-groups]`
+8. Si lancia `uv add --dev ruff`, che installa Ruff e aggiunge a `pyproject.toml` la sezione `[dependency-groups]`
    con `dev = ["ruff>=0.17.1"]`, lo stesso gruppo che il progetto del corso usa per Ruff.
 
-7. Si lancia `uv run ruff format`, che risponde `2 files reformatted`. In `calcoli.py` compaiono gli spazi attorno a
+9. Si lancia `uv run ruff format`, che risponde `2 files reformatted`. In `calcoli.py` compaiono gli spazi attorno a
    `=` e a `/`, `sum( prezzi )` diventa `sum(prezzi)`, le due funzioni sono separate da due righe vuote e c'è una riga
    vuota dopo la docstring. In `main.py` compare la riga vuota dopo la docstring, e il `print` lungo viene diviso su
    tre righe, con la stringa da sola in quella centrale, ma resta oltre i 100 caratteri. L'import di `math` e la
    variabile `numero` sono ancora lì.
 
-8. Si lancia `uv run ruff check`, che trova quattro problemi. Sotto la prima riga di ogni segnalazione Ruff mostra
+10. Si lancia `uv run ruff check`, che trova quattro problemi. Sotto la prima riga di ogni segnalazione Ruff mostra
    le righe di codice coinvolte e, alla voce `help`, la correzione che propone, che qui sono sostituite da `...`:
 
    ```text
@@ -449,7 +463,7 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
    104 caratteri perché il formatter ha messo la stringa su una riga sua, rientrata di quattro spazi; prima della
    formattazione la riga del `print` ne aveva 107.
 
-9. Si lancia `uv run ruff check --fix`, che ristampa le due segnalazioni rimaste, `F841` ed `E501`, e chiude con
+11. Si lancia `uv run ruff check --fix`, che ristampa le due segnalazioni rimaste, `F841` ed `E501`, e chiude con
    queste righe:
 
    ```text
@@ -462,7 +476,7 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
    ordine alfabetico. In `calcoli.py` l'import di `math` non c'è più, e al suo posto restano righe vuote di troppo
    dopo la docstring.
 
-10. Si correggono a mano le due segnalazioni rimaste. In `calcoli.py` si cancella la riga `numero = len(prezzi)`, e in
+12. Si correggono a mano le due segnalazioni rimaste. In `calcoli.py` si cancella la riga `numero = len(prezzi)`, e in
     `main.py` si divide la f-string in due pezzi:
 
     ```python
@@ -475,13 +489,13 @@ partendo da `check --fix` il risultato finale sarebbe lo stesso.
     Python unisce due stringhe scritte una dopo l'altra in una stringa sola, quindi il testo stampato non cambia.
     Ciascun pezzo ha la sua `f` perché contiene delle graffe, e lo spazio resta alla fine del primo pezzo.
 
-11. Si lancia di nuovo `uv run ruff format`, che risponde `1 file reformatted, 1 file left unchanged` perché toglie le
+13. Si lancia di nuovo `uv run ruff format`, che risponde `1 file reformatted, 1 file left unchanged` perché toglie le
     righe vuote in più di `calcoli.py`, e poi `uv run ruff check`, che risponde `All checks passed!`. Se qualcuno
     lancia `check` prima del secondo `format`, ottiene già `All checks passed!`, perché con le regole scelte nel
     progetto il linter non segnala le righe vuote in più, che sistema soltanto il formatter: per questo il lavoro si
     chiude sempre con un `format` e un `check`.
 
-12. Si lancia un'ultima volta `uv run main.py`, che stampa le stesse tre righe di prima. Per chiudere si mostra il
+14. Si lancia un'ultima volta `uv run main.py`, che stampa le stesse tre righe di prima. Per chiudere si mostra il
     `pyproject.toml` finale, con `openpyxl` e `pandas` tra le dipendenze e Ruff nel gruppo `dev`, e lo si confronta
     con quello di `Soluzioni/Script_uv_Ruff/demo/`.
 
@@ -519,7 +533,7 @@ fatto il loro lavoro, e la cella `soluzione` mostra i comandi e i valori attesi.
 
 | Passo | Il corsista scrive | La verifica controlla |
 |---|---|---|
-| E1.1 | `cartella_creata`, `libreria_mancante` | `uv.lock` nella cartella `esercizio/`, `.venv` e `pandas` |
+| E1.1 | `nome_progetto`, `cartella_creata`, `libreria_mancante` | `pyproject.toml` creato da `uv init` con il nome `esercizio`, `uv.lock` nella cartella, `.venv` e `pandas` |
 | E1.2 | `seconda_libreria` | pandas tra le `dependencies` di `esercizio/pyproject.toml`, e `openpyxl` |
 | E1.3 | `riga_media` | openpyxl tra le `dependencies`, e la riga `Temperatura media della settimana: 15.0 gradi, calcolata su 5 giorni` |
 | E1.4 | `avvisi` | Ruff nel gruppo `dev`, `meteo.py` già formattato, e i codici `E501`, `F401`, `F841`, `I001` |
@@ -567,15 +581,15 @@ correggono in aula. La Base fa invece l'Esercitazione 1 sugli stessi esercizi, n
 
 ### Problemi frequenti e come rimediare
 
-Il comando `uv init` non va lanciato dentro la cartella dell'aula, né in una sua sottocartella. uv vede che la
-cartella sta dentro un altro progetto e registra quello nuovo come membro del progetto del corso: nel `pyproject.toml`
-dell'aula compare una sezione `[tool.uv.workspace]` con `members = [...]`, e il progetto nuovo usa la `.venv` e il
-`uv.lock` del corso, dove le librerie ci sono già, quindi non si vede mai che cosa manca. Per rimediare si cancella la
-sezione `[tool.uv.workspace]` dal `pyproject.toml` dell'aula, si sposta fuori dall'aula o si cancella la cartella nuova
+Il comando `uv init` crea un progetto a sé soltanto nelle cartelle di `Modulo_1/Script_uv_Ruff/`, che il
+`pyproject.toml` dell'aula esclude nella sezione `[tool.uv.workspace]`. In qualunque altra cartella dell'aula uv vede che
+la cartella sta dentro un altro progetto e registra quello nuovo come membro del progetto del corso: nella sezione
+`[tool.uv.workspace]` dell'aula compare una sezione `[tool.uv.workspace]` con `members = [...]`, e il progetto nuovo usa la `.venv` e il
+`uv.lock` del corso, dove le librerie ci sono già, quindi non si vede mai che cosa manca. Per rimediare si toglie la
+voce aggiunta a `members`, che deve tornare `members = []`, si sposta fuori dall'aula o si cancella la cartella nuova
 e si lancia `uv sync` nella cartella dell'aula, che riporta anche `uv.lock` allo stato di partenza; in alternativa si
-ricopiano `pyproject.toml` e `uv.lock` dallo zip e si lancia `uv sync`. Un progetto nuovo si crea fuori dall'aula, per
-esempio con `uv init prova` lanciato in `C:\Corso`, mentre nelle cartelle `demo/` ed `esercizio/` `uv init` non serve,
-perché il `pyproject.toml` c'è già.
+ricopiano `pyproject.toml` e `uv.lock` dallo zip e si lancia `uv sync`. Un progetto proprio, che non sia la dimostrazione o
+l'esercizio, si crea fuori dall'aula, per esempio con `uv init prova` lanciato in `C:\Corso`.
 
 Un `uv add` lanciato dalla cartella dell'aula o da `Modulo_1`, invece che da `demo/` o da `esercizio/`, lavora sul
 progetto del corso. Con pandas, openpyxl e Ruff non cambia nulla, perché il corso li ha già: uv risponde con due righe

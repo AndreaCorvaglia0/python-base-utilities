@@ -185,9 +185,13 @@ assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'o
 assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
 '''),
     'E1.1': ('Esercizio E1.1', r'''
+import tomllib
 from pathlib import Path
 
-assert Path("Script_uv_Ruff/esercizio/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: lancia uv run main.py nel terminale aperto in quella cartella"
+pyproject = Path("Script_uv_Ruff/esercizio/pyproject.toml")
+assert pyproject.exists(), "❌ nella cartella esercizio non c'è ancora pyproject.toml: lancia uv init nel terminale aperto in quella cartella"
+assert nome_progetto.strip() == tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["name"] == "esercizio", "❌ nome_progetto: la voce name di esercizio/pyproject.toml"
+assert Path("Script_uv_Ruff/esercizio/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: dopo uv init lancia di nuovo uv run main.py"
 assert cartella_creata.strip().rstrip("/") == ".venv", "❌ cartella_creata: il nome nella riga Creating virtual environment at"
 assert libreria_mancante.strip() == "pandas", "❌ libreria_mancante: il nome tra apici nell'ultima riga dell'errore"
 '''),

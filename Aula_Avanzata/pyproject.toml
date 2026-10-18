@@ -24,6 +24,14 @@ line-length = 100
 target-version = "py312"
 # i notebook e corso.py restano fuori: nel corso Ruff si usa soltanto sugli script
 extend-exclude = ["corso.py", "*.ipynb"]
+# le cartelle degli script hanno il loro progetto: Ruff vi riconosce calcoli.py e meteo.py come file del progetto
+src = [".", "Modulo_1/Script_uv_Ruff/*", "Soluzioni/Script_uv_Ruff/*"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
+
+# le cartelle demo/ ed esercizio/ della sezione su uv e Ruff diventano progetti a sé con `uv init`: senza questa
+# esclusione uv le aggiungerebbe al progetto del corso, con lo stesso .venv, e nessuna libreria risulterebbe mancante
+[tool.uv.workspace]
+members = []
+exclude = ["Modulo_1/Script_uv_Ruff/*"]

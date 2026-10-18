@@ -201,7 +201,12 @@ Dentro `Aula_*/` non si modifica nulla a mano: i notebook e i `corso.py` sono ge
   distinto da quello della radice del repository, che serve a costruire e validare il materiale.
 - Le cartelle della dimostrazione e dell'esercizio su uv e Ruff, in `_build/src/script_uv_ruff/`: `demo/` ed
   `esercizio/` diventano lo stato di partenza in `Aula_Avanzata/Modulo_1/Script_uv_Ruff/`, mentre `soluzioni/demo/` e
-  `soluzioni/esercizio/` diventano lo stato finale in `Aula_Avanzata/Soluzioni/Script_uv_Ruff/`.
+  `soluzioni/esercizio/` diventano lo stato finale in `Aula_Avanzata/Soluzioni/Script_uv_Ruff/`. Lo stato di partenza
+  contiene soltanto i due script: il progetto nasce in aula con `uv init`, che crea un progetto a sé perché il
+  `pyproject.toml` dei corsisti esclude `Modulo_1/Script_uv_Ruff/*` nella sezione `[tool.uv.workspace]`. Il nuovo
+  `pyproject.toml` non ha una sezione `[tool.ruff]`, quindi Ruff usa quella del corso, la cui voce `src` gli fa
+  riconoscere `calcoli.py` e `meteo.py` come file del progetto. `controlla.py` verifica che lo stato di partenza non
+  contenga file di un progetto uv.
 
 `controlla.py`, a ogni giro e qualunque notebook si indichi, controlla anche le cartelle delle aule: che le copie di
 dati e file del progetto coincidano con gli originali, che `_build/aula/uv.lock` sia aggiornato (`uv lock --check`) e

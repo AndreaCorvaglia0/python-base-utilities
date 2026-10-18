@@ -79,8 +79,9 @@ come sono.
 
 ## Le cartelle demo ed esercizio
 
-Le cartelle `demo/` ed `esercizio/`, in `Modulo_1/Script_uv_Ruff/`, sono progetti separati da quello del corso,
-ciascuno con il suo `pyproject.toml` e, dopo il primo `uv run`, con il suo ambiente `.venv` e il suo `uv.lock`. Gli
+Le cartelle `demo/` ed `esercizio/`, in `Modulo_1/Script_uv_Ruff/`, all'inizio contengono soltanto due script. Con
+`uv init`, lanciato in un terminale aperto nella cartella, ciascuna diventa un progetto separato da quello del corso,
+con il suo `pyproject.toml` e, dopo il primo `uv run`, con il suo ambiente `.venv` e il suo `uv.lock`. Gli
 script che contengono si lanciano sempre con `uv run main.py` in un terminale aperto in quella cartella, che si ottiene
 con il tasto destro sulla cartella nel pannello Explorer e la voce **Open in Integrated Terminal**. Anche Ruff si
 lancia soltanto da quel terminale, perché dalla cartella del corso metterebbe in ordine anche i file di partenza delle

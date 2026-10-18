@@ -111,10 +111,10 @@ def parte_script(nb: Notebook) -> None:
 
     # ------------------------------------------------------------------ 2. I passi dello script
     nb.sezione("Lo script delle temperature", intro="""
-        La cartella `esercizio` ha la stessa struttura della cartella `demo`: un `pyproject.toml` con la lista
-        delle librerie ancora vuota, il file `.python-version` con la versione di Python, il file `meteo.py` con
-        tre funzioni sulle temperature e lo script `main.py`, che le importa, stampa la temperatura massima e
-        quella media della settimana e salva una tabella in Excel. I cinque esercizi seguono l'ordine della
+        La cartella `esercizio` è fatta come la cartella `demo` all'inizio della dimostrazione: contiene soltanto
+        due script, il file `meteo.py` con tre funzioni sulle temperature e lo script `main.py`, che le importa,
+        stampa la temperatura massima e quella media della settimana e salva una tabella in Excel. Il progetto,
+        con il suo `pyproject.toml` e il suo ambiente, lo creiamo noi. I cinque esercizi seguono l'ordine della
         dimostrazione e vanno fatti in sequenza, perché ognuno parte dalla cartella come l'ha lasciata il
         precedente.
     """)
@@ -129,8 +129,8 @@ def parte_script(nb: Notebook) -> None:
     nb.md("""
         Prima di ogni comando conviene controllare che il terminale sia nella cartella `esercizio`, il cui
         percorso compare all'inizio della riga di comando. Lanciato dalla cartella del corso, `uv add` lavorerebbe
-        sul progetto del corso, che ha già pandas e openpyxl, quindi non installerebbe nulla e
-        `esercizio/pyproject.toml` resterebbe con la lista vuota. Anche Ruff, lanciato da lì, metterebbe in ordine
+        sul progetto del corso, che ha già pandas e openpyxl, quindi non installerebbe nulla e il progetto
+        `esercizio` resterebbe senza librerie. Anche Ruff, lanciato da lì, metterebbe in ordine
         i file di `esercizio` prima del tempo, e gli esercizi su Ruff non troverebbero più i quattro problemi da
         cui partono.
     """)
@@ -144,45 +144,59 @@ def parte_script(nb: Notebook) -> None:
 
     # E1.1 ---------------------------------------------------------------
     nb.esercizio(
-        titolo="Il primo lancio dello script",
+        titolo="Il progetto e il primo lancio",
         scenario="""
-            Come nella dimostrazione, partiamo da un progetto che non dichiara nessuna libreria e lanciamo lo script
-            per farci dire da Python che cosa manca, in modo che l'ambiente contenga soltanto le librerie che
-            servono. Al primo `uv run main.py` uv crea l'ambiente del progetto in una cartella nuova e scrive il
-            file `uv.lock`, che per ora contiene soltanto il progetto. Lo script si ferma subito con un
-            `ModuleNotFoundError`, il cui messaggio nomina la libreria mancante.
+            Come nella dimostrazione, i due script diventano un progetto con `uv init`, che crea nella cartella il
+            file `pyproject.toml` con il nome della cartella e la lista delle librerie vuota. Prima di crearlo
+            lanciamo lo script una volta, per vedere che senza un progetto suo uv usa l'ambiente del corso, dove
+            pandas c'è già. Dopo `uv init` lo stesso comando crea l'ambiente del progetto e il file `uv.lock`, e lo
+            script si ferma subito con un `ModuleNotFoundError`, il cui messaggio nomina la libreria mancante.
         """,
         richiesta="""
-            1. Apri `esercizio/pyproject.toml` in VS Code e controlla che la voce `dependencies` sia una lista vuota.
-            2. Nel terminale aperto nella cartella `esercizio` lancia `uv run main.py`, poi guarda nel pannello
-               Explorer la cartella `.venv` e il file `uv.lock`, comparsi accanto agli script.
-            3. Scrivi in `cartella_creata` il nome della cartella che uv dice di aver creato e in
-               `libreria_mancante` il nome della libreria che compare nell'ultima riga dell'errore.
+            1. Nel terminale aperto nella cartella `esercizio` lancia `uv run main.py`: lo script arriva in fondo,
+               perché uv, non trovando un progetto nella cartella, risale fino a quello del corso.
+            2. Lancia `uv init`. La prima riga, `Project ... is excluded by workspace`, dice che la cartella resta
+               fuori dal progetto del corso, ed è quello che vogliamo. Apri il `pyproject.toml` appena creato e
+               leggi il nome del progetto e la voce `dependencies`, che è una lista vuota.
+            3. Lancia di nuovo `uv run main.py`, poi guarda nel pannello Explorer la cartella `.venv` e il file
+               `uv.lock`, comparsi accanto agli script.
+            4. Scrivi in `nome_progetto` il nome del progetto, in `cartella_creata` il nome della cartella che uv
+               dice di aver creato e in `libreria_mancante` il nome della libreria che compare nell'ultima riga
+               dell'errore.
         """,
         suggerimenti=[
             """
-                Tra le prime righe stampate da uv c'è `Creating virtual environment at: ...`, e l'ultima riga
-                dell'errore ha la forma `No module named '...'`: i due nomi da copiare stanno al posto dei puntini.
+                Il nome del progetto è alla voce `name` di `pyproject.toml`. Tra le prime righe stampate dal secondo
+                `uv run` c'è `Creating virtual environment at: ...`, e l'ultima riga dell'errore ha la forma
+                `No module named '...'`.
             """,
         ],
         starter="""
             # i comandi si lanciano nel terminale, nella cartella Script_uv_Ruff/esercizio
+            nome_progetto = "..."
             cartella_creata = "..."
             libreria_mancante = "..."
         """,
         soluzione="""
             # nel terminale, nella cartella esercizio
+            #   uv run main.py        funziona, con l'ambiente del corso
+            #   uv init               Initialized project `esercizio`
             #   uv run main.py
             # Creating virtual environment at: .venv
             # ...
             # ModuleNotFoundError: No module named 'pandas'
+            nome_progetto = "esercizio"
             cartella_creata = ".venv"
             libreria_mancante = "pandas"
         """,
         verifica=f"""
+            import tomllib
             from pathlib import Path
 
-            assert Path("{ESERCIZIO}/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: lancia uv run main.py nel terminale aperto in quella cartella"
+            pyproject = Path("{ESERCIZIO}/pyproject.toml")
+            assert pyproject.exists(), "❌ nella cartella esercizio non c'è ancora pyproject.toml: lancia uv init nel terminale aperto in quella cartella"
+            assert nome_progetto.strip() == tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["name"] == "esercizio", "❌ nome_progetto: la voce name di esercizio/pyproject.toml"
+            assert Path("{ESERCIZIO}/uv.lock").exists(), "❌ nella cartella esercizio non c'è ancora uv.lock: dopo uv init lancia di nuovo uv run main.py"
             assert cartella_creata.strip().rstrip("/") == ".venv", "❌ cartella_creata: il nome nella riga Creating virtual environment at"
             assert libreria_mancante.strip() == "pandas", "❌ libreria_mancante: il nome tra apici nell'ultima riga dell'errore"
         """,

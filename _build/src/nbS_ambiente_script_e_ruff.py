@@ -158,8 +158,9 @@ def costruisci() -> Notebook:
     nb.sottosezione("Su quale progetto lavora un comando", intro="""
         Un comando di uv lavora sul progetto della **cartella in cui si trova il terminale**: cerca un
         `pyproject.toml` in quella cartella e, se non lo trova, risale una cartella alla volta. Nella cartella del
-        corso, o in `Modulo_1`, i comandi agiscono quindi sul progetto del corso, mentre la cartella `demo/` ha un
-        `pyproject.toml` suo, e un terminale aperto lì lavora su quel progetto, con un ambiente separato.
+        corso, o in `Modulo_1`, i comandi agiscono quindi sul progetto del corso. La cartella `demo/` contiene
+        soltanto due script, e diventa un progetto a sé quando `uv init` vi crea un `pyproject.toml`: da quel
+        momento un terminale aperto lì lavora su quel progetto, con un ambiente separato.
     """)
     nb.box("approfondimento", titolo="Perché non pip install", testo="""
         Negli esempi in rete compare spesso `pip install`, anche in una cella come `!pip install`. Il programma
@@ -378,8 +379,9 @@ def costruisci() -> Notebook:
     """)
     nb.sottosezione("La configurazione", intro="""
         Ruff si configura nella sezione `[tool.ruff]` di `pyproject.toml`, che la cella seguente legge dal
-        dizionario `progetto`. Il terminale e l'estensione di VS Code leggono la stessa configurazione, quindi
-        danno le stesse segnalazioni.
+        dizionario `progetto`. Il `pyproject.toml` creato da `uv init` in `demo/` non ha questa sezione, quindi
+        Ruff, risalendo le cartelle come uv, usa quella del corso, e il terminale e l'estensione di VS Code danno
+        le stesse segnalazioni.
     """)
     nb.code("""
         progetto["tool"]["ruff"]
@@ -390,6 +392,7 @@ def costruisci() -> Notebook:
         | `line-length` | il limite delle righe, 100 caratteri |
         | `target-version` | la versione di Python per cui scriviamo |
         | `extend-exclude` | i file che Ruff lascia stare: `corso.py` e i notebook del corso |
+        | `src` | le cartelle in cui Ruff cerca i file dei progetti, per riconoscere `calcoli` e `meteo` |
         | `lint` → `select` | le famiglie di regole attive, `E`, `F`, `W` e `I` |
     """)
     nb.sottosezione("Ruff in VS Code", intro="""
@@ -422,14 +425,13 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 9
     nb.sezione("La dimostrazione")
     nb.sottosezione("Il punto di partenza", intro="""
-        Nella dimostrazione mettiamo insieme quello che abbiamo visto: costruiamo per i due file di `demo/` un
-        ambiente apposito, **una libreria alla volta** man mano che ci accorgiamo che manca, sistemiamo il codice
-        con Ruff e lo lanciamo. Chi vuole può ripetere i comandi sul proprio PC mentre li eseguiamo. Il progetto
-        parte senza librerie, come mostra la cella seguente.
+        Nella dimostrazione mettiamo insieme quello che abbiamo visto: trasformiamo i due file di `demo/` in un
+        progetto, gli costruiamo un ambiente apposito, **una libreria alla volta** man mano che ci accorgiamo che
+        manca, sistemiamo il codice con Ruff e lo lanciamo. Chi vuole può ripetere i comandi sul proprio PC mentre
+        li eseguiamo. All'inizio la cartella contiene soltanto i due script, come mostra la cella seguente.
     """)
     nb.code("""
-        demo = tomllib.loads(Path("demo/pyproject.toml").read_text(encoding="utf-8"))
-        demo["project"]
+        sorted(os.listdir("demo"))
     """)
     nb.md("""
         Il terminale si apre nella cartella `demo/` con il tasto destro sulla cartella, nel pannello **Explorer**,
@@ -438,19 +440,30 @@ def costruisci() -> Notebook:
         Python del corso, dove pandas c'è già, e non farebbe comparire gli errori della dimostrazione.
     """)
     nb.sottosezione("Prima parte: l'ambiente, una libreria alla volta", intro="""
-        Lo script si lancia subito, senza librerie, e sono gli errori a dirci che cosa aggiungere.
+        Prima di creare il progetto lanciamo lo script una volta, per vedere quale ambiente usa uv quando la
+        cartella non ha un progetto suo. Dopo `uv init` lo rilanciamo, e sono gli errori a dirci che cosa
+        aggiungere.
     """)
     nb.md("""
         | Passo | Comando | Che cosa succede |
         |---|---|---|
-        | 1 | `uv run main.py` | uv crea `.venv` e `uv.lock`, poi lo script si ferma con `No module named 'pandas'` |
-        | 2 | `uv add pandas` | pandas entra in `pyproject.toml` e `uv.lock` e si installa, insieme a numpy |
-        | 3 | `uv run main.py` | compaiono il totale e il prezzo medio, poi il salvataggio si ferma con `No module named 'openpyxl'` |
-        | 4 | `uv add openpyxl` | openpyxl entra nel progetto |
-        | 5 | `uv run main.py` | lo script arriva in fondo e crea `spesa.xlsx` nella cartella `demo/` |
+        | 1 | `uv run main.py` | funziona: senza un progetto suo, uv risale fino al progetto del corso e usa il suo ambiente, dove pandas c'è |
+        | 2 | `uv init` | uv avvisa che la cartella è esclusa dal progetto del corso, ed è quello che vogliamo; nasce il progetto `demo`, con il nome della cartella: `pyproject.toml` con `dependencies = []`, `README.md` e `.gitignore` |
+        | 3 | `uv run main.py` | uv crea `.venv` e `uv.lock` del progetto, poi lo script si ferma con `No module named 'pandas'` |
     """)
     nb.md("""
-        Al passo 3 l'errore nasce dentro pandas: il traceback, cioè l'elenco delle righe attraversate che Python
+        Da qui in avanti ogni errore nomina la libreria che manca, e la aggiungiamo al progetto.
+    """)
+    nb.md("""
+        | Passo | Comando | Che cosa succede |
+        |---|---|---|
+        | 4 | `uv add pandas` | pandas entra in `pyproject.toml` e `uv.lock` e si installa, insieme a numpy |
+        | 5 | `uv run main.py` | compaiono il totale e il prezzo medio, poi il salvataggio si ferma con `No module named 'openpyxl'` |
+        | 6 | `uv add openpyxl` | openpyxl entra nel progetto |
+        | 7 | `uv run main.py` | lo script arriva in fondo e crea `spesa.xlsx` nella cartella `demo/` |
+    """)
+    nb.md("""
+        Al passo 5 l'errore nasce dentro pandas: il traceback, cioè l'elenco delle righe attraversate che Python
         stampa sopra il messaggio, finisce in `pandas/io/excel/_openpyxl.py`, perché pandas usa openpyxl per
         scrivere i file Excel ma non lo installa da sé. Se VS Code propone di usare il nuovo ambiente della
         cartella, si risponde di no, perché i notebook restano sull'ambiente del corso.
@@ -462,9 +475,9 @@ def costruisci() -> Notebook:
     nb.md("""
         | Passo | Comando | Che cosa succede |
         |---|---|---|
-        | 6 | `uv add --dev ruff` | Ruff entra nel gruppo `dev` del progetto |
-        | 7 | `uv run ruff format` | `2 files reformatted`: spazi e righe vuote al posto giusto |
-        | 8 | `uv run ruff check` | le quattro segnalazioni della sezione 7, due correggibili con `--fix` |
+        | 8 | `uv add --dev ruff` | Ruff entra nel gruppo `dev` del progetto |
+        | 9 | `uv run ruff format` | `2 files reformatted`: spazi e righe vuote al posto giusto |
+        | 10 | `uv run ruff check` | le quattro segnalazioni della sezione 7, due correggibili con `--fix` |
     """)
     nb.md("""
         Le segnalazioni si correggono prima con Ruff e poi a mano, e alla fine si controlla che non ne resti
@@ -473,17 +486,18 @@ def costruisci() -> Notebook:
     nb.md("""
         | Passo | Comando | Che cosa succede |
         |---|---|---|
-        | 9 |`uv run ruff check --fix` | spariscono `F401` e `I001`: l'import di `math` è tolto e gli import sono in ordine |
-        | 10 | a mano | si cancella `numero = len(prezzi)` e si divide in due la f-string lunga |
-        | 11 | `uv run ruff format` e `uv run ruff check` | tolta la riga vuota rimasta, `All checks passed!` |
-        | 12 | `uv run main.py` | le stesse tre righe di prima, con il codice in ordine |
+        | 11 | `uv run ruff check --fix` | spariscono `F401` e `I001`: l'import di `math` è tolto e gli import sono in ordine |
+        | 12 | a mano | si cancella `numero = len(prezzi)` e si divide in due la f-string lunga |
+        | 13 | `uv run ruff format` e `uv run ruff check` | tolta la riga vuota rimasta, `All checks passed!` |
+        | 14 | `uv run main.py` | le stesse tre righe di prima, con il codice in ordine |
     """)
     nb.box("nota", titolo="Dove si lanciano uv init e uv add", testo="""
-        Un progetto nuovo si crea con `uv init nome`, che prepara la cartella `nome` con `pyproject.toml`,
-        `.python-version` e un primo `main.py`. Il comando va lanciato fuori dalla cartella del corso, per esempio
-        in `C:\\Corso`, perché dentro quella cartella uv registra il nuovo progetto come parte di quello del corso
-        e gli fa usare lo stesso `.venv`, dove le librerie ci sono già tutte. Allo stesso modo `uv add`, lanciato
-        in una cartella senza un suo `pyproject.toml`, lavora sul progetto del corso.
+        Dentro la cartella del corso `uv init` crea un progetto a sé soltanto in `demo/` ed `esercizio/`, che il
+        progetto del corso esclude nella sezione `[tool.uv.workspace]` del suo `pyproject.toml`. In un'altra
+        cartella del corso uv registrerebbe il nuovo progetto come parte di quello del corso, con lo stesso
+        `.venv`, dove le librerie ci sono già tutte: un progetto proprio si crea quindi fuori, per esempio con
+        `uv init prova` in `C:\\Corso`. Allo stesso modo `uv add`, lanciato prima di `uv init`, lavora sul
+        progetto del corso.
     """)
     nb.sottosezione("Dopo la dimostrazione", intro="""
         Nell'[Esercitazione 1](../Esercitazione_1.ipynb) rifai gli stessi passi nella cartella `esercizio/`, che
@@ -505,7 +519,7 @@ def costruisci() -> Notebook:
         | `uv add --dev ruff` | aggiunge uno strumento di sviluppo, nel gruppo `dev` |
         | `uv remove pandas` | toglie una libreria dal progetto e dall'ambiente |
         | `uv run main.py` | allinea `.venv` ai file del progetto ed esegue lo script con il suo Python |
-        | `uv init nome` | crea il progetto nuovo `nome`; si lancia fuori dalla cartella del corso |
+        | `uv init` | crea un progetto nella cartella del terminale, con il nome della cartella |
     """)
     nb.md("""
         | Comando | Che cosa fa |
