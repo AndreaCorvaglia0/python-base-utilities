@@ -135,9 +135,18 @@ def box_html(tipo: str, corpo: str, titolo: str | None = None) -> str:
     return _div(sfondo, bordo, f"{testa}\n\n{corpo}")
 
 
+# Spazio attorno a ogni blocco che si apre con un clic: senza margine due blocchi consecutivi (Passo per passo,
+# Suggerimento 1, Suggerimento 2) stanno attaccati e si rischia di aprire quello sbagliato.
+STILE_DETTAGLI = "margin: 14px 0;"
+STILE_SOMMARIO = "cursor: pointer; padding: 4px 0;"
+
+
 def _dettagli(titolo: str, corpo: str) -> str:
     """Blocco che si apre con un clic: il titolo resta visibile, il contenuto no."""
-    return f"<details>\n<summary>{titolo}</summary>\n\n{textwrap.dedent(corpo).strip()}\n\n</details>"
+    return (
+        f'<details style="{STILE_DETTAGLI}">\n<summary style="{STILE_SOMMARIO}">{titolo}</summary>\n\n'
+        f"{textwrap.dedent(corpo).strip()}\n\n</details>"
+    )
 
 
 def citazione(tipo: str, corpo: str, titolo: str | None = None) -> str:
