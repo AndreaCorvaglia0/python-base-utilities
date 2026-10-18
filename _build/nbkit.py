@@ -2,10 +2,17 @@
 nbkit: il generatore dei notebook del corso.
 
 Ogni notebook è descritto da uno script in `_build/src/` che espone una funzione `costruisci()`
-e restituisce un `Notebook`. Dallo stesso sorgente si ottengono quattro file:
+e restituisce un `Notebook`. Dallo stesso sorgente si ottengono quattro file, dentro le due cartelle che i
+corsisti ricevono:
 
-    Aula_Base/NN_Titolo.ipynb          Aula_Avanzata/NN_Titolo.ipynb
-    Soluzioni_Base/NN_Titolo.ipynb     Soluzioni_Avanzata/NN_Titolo.ipynb
+    Aula_Base/Modulo_N/NN_Titolo.ipynb        Aula_Avanzata/Modulo_N/NN_Titolo.ipynb
+    Aula_Base/Soluzioni/NN_Titolo.ipynb       Aula_Avanzata/Soluzioni/NN_Titolo.ipynb
+
+Il modulo è `blocco` (un intero, o un dizionario per aula). Per i notebook del percorso la voce di `PROGRAMMA`
+dice anche la sottocartella dentro il modulo, se c'è (per esempio `Modulo_1/Script_uv_Ruff/`), e se esiste una copia
+con le soluzioni. I percorsi verso `Dati/` e `Schede/` partono dalla radice dell'aula: da `Modulo_N/` e da
+`Soluzioni/` si scrive `../Dati/`, da una sottocartella del modulo `../../Dati/`. Il materiale di riserva
+(`riserva=True`) va in `Riserva/<Aula>/`, fuori dalle cartelle dei corsisti.
 
 Uso tipico:
 
@@ -58,28 +65,61 @@ AULE = ("base", "avanzata")
 NOMI_AULA = {"base": "Aula Base", "avanzata": "Aula Avanzata"}
 
 # ---------------------------------------------------------------------------
-# Programma: numero -> (file, titolo[, aule]). Serve per i link "prossimo notebook"; il quarto elemento, se c'è,
-# dice a quali aule il notebook appartiene (gli altri valgono per entrambe).
+# Programma: la sequenza dei notebook, per i link "precedente" e "prossimo". Ogni voce dice in quale modulo sta il
+# notebook, in quale sottocartella del modulo (se c'è), per quali aule vale e se ha una versione con le soluzioni.
 # ---------------------------------------------------------------------------
+@dataclass(frozen=True)
+class Voce:
+    num: str
+    file: str
+    titolo: str
+    modulo: int
+    aule: tuple[str, ...] = AULE
+    cartella: str = ""          # sottocartella dentro Modulo_N, se il notebook non sta direttamente nel modulo
+    soluzioni: bool = True      # False: il notebook non ha esercizi e non ha una copia in Soluzioni/
+
+
 PROGRAMMA = [
-    ("00", "00_Notebook", "Jupyter e i notebook"),
-    ("01", "01_Python_e_sintassi_base", "Introduzione a Python e sintassi base"),
-    ("02", "02_Tipi_di_dato", "Tipi di dato e manipolazione"),
-    ("03", "03_Codice_leggibile", "Codice leggibile"),
-    ("S", "Ambiente_script_e_Ruff", "Ambiente, script e Ruff", ("avanzata",)),
-    ("E1", "Esercitazione_1", "Esercitazione 1"),
-    ("04", "04_Funzioni_e_controllo", "Funzioni e controllo del flusso"),
-    ("05", "05_Oggetti_ed_errori", "Oggetti ed errori"),
-    ("06", "06_Pandas_e_import_dati", "Pandas: Series, DataFrame e import dei dati"),
-    ("E2", "Esercitazione_2", "Esercitazione 2"),
-    ("07", "07_Pandas_operazioni", "Pandas: operazioni sui DataFrame"),
-    ("08", "08_Pandas_date", "Pandas: le date"),
-    ("E3", "Esercitazione_3", "Esercitazione 3"),
-    ("09", "09_Plotly", "Plotly per serie storiche"),
-    ("10", "10_Agenti_per_il_coding", "Agenti per il coding"),
-    ("11", "11_Capstone", "Capstone: il carico del Nord e la temperatura"),
+    Voce("00", "00_Notebook", "Jupyter e i notebook", 1),
+    Voce("01", "01_Python_e_sintassi_base", "Introduzione a Python e sintassi base", 1),
+    Voce("02", "02_Tipi_di_dato", "Tipi di dato e manipolazione", 1),
+    Voce("03", "03_Codice_leggibile", "Codice leggibile", 1),
+    Voce("S", "Ambiente_script_e_Ruff", "Ambiente, script e Ruff", 1, ("avanzata",), "Script_uv_Ruff", False),
+    Voce("E1", "Esercitazione_1", "Esercitazione 1", 1),
+    Voce("04", "04_Funzioni_e_controllo", "Funzioni e controllo del flusso", 2),
+    Voce("05", "05_Oggetti_ed_errori", "Oggetti ed errori", 2),
+    Voce("06", "06_Pandas_e_import_dati", "Pandas: Series, DataFrame e import dei dati", 2),
+    Voce("E2", "Esercitazione_2", "Esercitazione 2", 2),
+    Voce("07", "07_Pandas_operazioni", "Pandas: operazioni sui DataFrame", 3),
+    Voce("08", "08_Pandas_date", "Pandas: le date", 3),
+    Voce("E3", "Esercitazione_3", "Esercitazione 3", 3),
+    Voce("09", "09_Plotly", "Plotly per serie storiche", 4),
+    Voce("10", "10_Agenti_per_il_coding", "Agenti per il coding", 4),
+    Voce("11", "11_Capstone", "Capstone: il carico del Nord e la temperatura", 4),
 ]
 COMPITO = ("C", "Homework", "Homework")
+CARTELLA_SOLUZIONI = "Soluzioni"     # dentro la cartella dell'aula, accanto ai moduli
+
+
+def cartella_modulo(modulo: int, cartella: str = "") -> str:
+    """Il percorso, relativo alla radice dell'aula, della cartella di un notebook del percorso."""
+    return f"Modulo_{modulo}" + (f"/{cartella}" if cartella else "")
+
+
+def posizione(voce: Voce, soluzioni: bool) -> str:
+    """Dove sta il file di `voce`, relativo alla radice dell'aula. Un notebook senza esercizi non ha copia in
+    Soluzioni/, quindi chi lo cita da lì punta alla versione nel modulo."""
+    if soluzioni and voce.soluzioni:
+        return f"{CARTELLA_SOLUZIONI}/{voce.file}.ipynb"
+    return f"{cartella_modulo(voce.modulo, voce.cartella)}/{voce.file}.ipynb"
+
+
+def relativo(da_cartella: str, a_file: str) -> str:
+    """Percorso relativo (con le barre in avanti) da una cartella a un file, entrambi relativi alla radice."""
+    import posixpath
+
+    return posixpath.relpath(a_file, da_cartella or ".")
+
 
 NOMI_BLOCCO = {
     1: "Modulo 1 · Setup, Python e sintassi di base",
@@ -90,9 +130,9 @@ NOMI_BLOCCO = {
 }
 
 
-def programma(aula: str) -> list[tuple[str, str, str]]:
-    """Le voci del programma che valgono per `aula`, come (numero, file, titolo)."""
-    return [(p[0], p[1], p[2]) for p in PROGRAMMA if len(p) < 4 or aula in p[3]]
+def programma(aula: str) -> list[Voce]:
+    """Le voci del programma che valgono per `aula`, nell'ordine in cui si affrontano."""
+    return [v for v in PROGRAMMA if aula in v.aule]
 
 
 def _nome_link(n: str, t: str) -> str:
@@ -196,7 +236,7 @@ class Notebook:
     num: str
     file: str
     titolo: str
-    blocco: int
+    blocco: int | dict[str, int]    # il modulo (1-4; 0 = riserva), anche diverso per aula
     giornata: int
     intento: str
     obiettivi: list[str] | dict[str, list[str]]
@@ -207,6 +247,7 @@ class Notebook:
     prefisso_esercizi: str | None = None     # default: num
     prossimo: str | None = None              # testo markdown della chiusura, se diverso dal programma
     extra: bool = False                      # notebook della cartella Extra: versione unica, senza aula
+    riserva: bool = False                    # materiale di riserva: Riserva/<Aula>/, fuori dalle cartelle dei corsisti
     fuori_programma: bool = False   # Approfondimenti: fuori dalla catena precedente/prossimo, per le classi che vanno avanti
     soluzioni_a_richiesta: bool = False   # esercitazioni: sotto ogni esercizio una cella soluzione("E1.3") che mostra solo quella
     celle: list[Cella] = field(default_factory=list)
@@ -301,22 +342,56 @@ class Notebook:
             if passo_in_piu.get("verifica"):
                 self.celle.append(Cella("code", _d(passo_in_piu["verifica"]), aula=a, rete=rete, ruolo="verifica", extra={"passo": True}))
 
-    # ------------------------------------------------------------------ build
+    # ------------------------------------------------------------------ posizione
     def _per_aula(self, valore, aula: str):
         return valore[aula] if isinstance(valore, dict) else valore
 
-    def _link_prossimo(self, aula: str) -> str | None:
+    @property
+    def voce(self) -> Voce | None:
+        """La voce del programma di questo notebook (None per Approfondimenti, Homework, Extra e riserva)."""
+        return next((v for v in PROGRAMMA if v.num == self.num), None)
+
+    def ha_soluzioni(self) -> bool:
+        """Se il notebook ha una copia con le soluzioni (i notebook senza esercizi non ce l'hanno)."""
+        return self.voce.soluzioni if self.voce else True
+
+    def cartella_rel(self, aula: str, soluzioni: bool) -> str:
+        """La cartella del notebook, relativa alla radice in cui viene scritto (vuota per Extra e riserva)."""
+        if self.extra or self.riserva:
+            return ""
+        if soluzioni:
+            return CARTELLA_SOLUZIONI
+        modulo = self._per_aula(self.blocco, aula)
+        if self.voce and self.voce.modulo != modulo:
+            raise ValueError(f"{self.file}: blocco={modulo} ma il programma lo mette nel modulo {self.voce.modulo}")
+        return cartella_modulo(modulo, self.voce.cartella if self.voce else "")
+
+    def radice(self, aula: str, soluzioni: bool) -> str:
+        """Il prefisso che dalla cartella del notebook porta alla cartella che contiene Dati/ e Schede/."""
+        if self.extra:
+            return "../"
+        if self.riserva:
+            return "../../"
+        return "../" * len(self.cartella_rel(aula, soluzioni).split("/"))
+
+    def _link(self, aula: str, soluzioni: bool, passo: int) -> str | None:
+        voci = programma(aula)
+        nums = [v.num for v in voci]
+        if self.extra or self.num not in nums:
+            return None
+        i = nums.index(self.num) + passo
+        if not 0 <= i < len(voci):
+            return None
+        v = voci[i]
+        destinazione = relativo(self.cartella_rel(aula, soluzioni), posizione(v, soluzioni))
+        etichetta = "Prossimo" if passo > 0 else "Precedente"
+        return f"{etichetta}: [{_nome_link(v.num, v.titolo)}]({destinazione})"
+
+    # ------------------------------------------------------------------ build
+    def _link_prossimo(self, aula: str, soluzioni: bool = False) -> str | None:
         if self.prossimo is not None:
             return self.prossimo
-        voci = programma(aula)
-        nums = [p[0] for p in voci]
-        if self.num not in nums:
-            return None
-        i = nums.index(self.num)
-        if i + 1 >= len(voci):
-            return None
-        n, f, t = voci[i + 1]
-        return f"Prossimo: [{_nome_link(n, t)}]({f}.ipynb)"
+        return self._link(aula, soluzioni, +1)
 
     def banner(self, aula: str, soluzioni: bool) -> str:
         """Testata piana: titolo, tempo e dati su una riga, i tre obiettivi. Modulo e aula stanno in chiusura."""
@@ -328,21 +403,18 @@ class Notebook:
             titolo += " · Soluzioni"
         testa = ["Extra · materiale per il docente"] if self.extra else []
         testa.append(f"⏱ ~{tempo} min")
-        radice = "../../Dati/" if self.num == COMPITO[0] else "../Dati/"
+        radice = self.radice(aula, soluzioni) + "Dati/"
         testa.append("Dati: " + (", ".join(f"`{radice}{d}`" for d in dati) if dati else "nessuno"))
         righe = [" &nbsp;·&nbsp; ".join(testa), "", "**In questo notebook impariamo a**", ""]
         righe += [f"- {o}" for o in obiettivi]
         return f'<a id="inizio"></a>\n# {titolo}\n\n' + "\n".join(righe)
 
-    def _link_precedente(self, aula: str) -> str | None:
-        voci = programma(aula)
-        nums = [p[0] for p in voci]
-        if self.extra or self.num not in nums or nums.index(self.num) == 0:
-            return None
-        n, f, t = voci[nums.index(self.num) - 1]
-        return f"Precedente: [{_nome_link(n, t)}]({f}.ipynb)"
+    def _link_precedente(self, aula: str, soluzioni: bool = False) -> str | None:
+        return self._link(aula, soluzioni, -1)
 
     def build(self, root: Path | str, aula: str, soluzioni: bool = False, lint: bool = True) -> Path:
+        """Scrive il notebook. `root` è la radice dell'aula (Aula_Base, Aula_Avanzata), oppure la cartella stessa
+        per Extra e riserva; la sottocartella la decide `cartella_rel`."""
         assert aula in AULE
         root = Path(root)
         prefisso = (self.num.lstrip("0") or "0") if self.prefisso_esercizi is None else self.prefisso_esercizi
@@ -487,11 +559,11 @@ class Notebook:
         else:
             numero = f" {self.num}" if self.num[0].isdigit() else ""   # "S" e simili: notebook senza numero
             chiusura = f"---\n\n**Fine del notebook{numero}.**"
-        link = [l for l in (self._link_precedente(aula), None if self.extra else self._link_prossimo(aula)) if l]
+        link = [l for l in (self._link_precedente(aula, soluzioni), None if self.extra else self._link_prossimo(aula, soluzioni)) if l]
         if link:
             chiusura += " " + " &nbsp;·&nbsp; ".join(link)
         if not self.extra:
-            meta = ["Approfondimenti: se la classe è avanti" if self.fuori_programma else NOMI_BLOCCO[self.blocco]]
+            meta = ["Approfondimenti: se la classe è avanti" if self.fuori_programma else NOMI_BLOCCO[self._per_aula(self.blocco, aula)]]
             meta.append(NOMI_AULA[aula])
             chiusura += "\n\n<sub>" + " · ".join(meta) + "</sub>"
         cells.append(new_markdown_cell(chiusura, metadata={"tags": ["chiusura"]}))
@@ -516,7 +588,7 @@ class Notebook:
             if errori:
                 raise ValueError(f"{self.file} ({aula}):\n  - " + "\n  - ".join(errori))
 
-        out_path = root / f"{self.file}.ipynb"
+        out_path = root / self.cartella_rel(aula, soluzioni) / f"{self.file}.ipynb"
         out_path.parent.mkdir(parents=True, exist_ok=True)
         nbformat.validate(nb)
         nbformat.write(nb, out_path)
@@ -664,7 +736,7 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
             avvisi.append(f"parola da controllare {p.strip()!r} ({n})")
     tutto = testo + "\n" + "\n".join(c["source"] for c in code)
     for m in re.finditer(r"""["'(]\s*(?:\./)?Dati/""", tutto):
-        errori.append(f"percorso dati non relativo alla cartella del notebook: usa '../Dati/' ({m.group(0)!r})")
+        errori.append(f"percorso dati non relativo alla cartella del notebook: usa {nb.radice(aula, False) + 'Dati/'!r} ({m.group(0)!r})")
     # celle di spiegazione troppo lunghe (escluse le celle con box, esercizi, banner, indice)
     for c in md:
         tags = c.get("metadata", {}).get("tags", [])
@@ -725,6 +797,7 @@ def lint_notebook(nb: Notebook, aula: str, cells: list) -> tuple[list[str], list
         if len(frasi) >= 3 and len(parole) / len(frasi) < 8:
             avvisi.append(f"frasi telegrafiche ({len(frasi)} frasi, {len(parole) // len(frasi)} parole in media): {corpo[:60]!r}")
     # il capstone ha gli Step dentro ogni sezione, per scelta didattica
-    if sezioni and not sezioni[-1].endswith(("Esercizi", "Extra")) and nb.num != COMPITO[0] and not nb.num.startswith("E") and not nb.extra and nb.etichetta_esercizio == "Esercizio":
+    if sezioni and not sezioni[-1].endswith(("Esercizi", "Extra")) and nb.num != COMPITO[0] and not nb.num.startswith("E") \
+            and not nb.extra and nb.ha_soluzioni() and nb.etichetta_esercizio == "Esercizio":
         avvisi.append(f"l'ultima sezione non è 'Esercizi' ma {sezioni[-1]!r}")
     return errori, avvisi

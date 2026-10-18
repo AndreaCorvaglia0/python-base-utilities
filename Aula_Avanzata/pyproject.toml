@@ -1,0 +1,28 @@
+[project]
+name = "corso-python"
+version = "2026.1"
+description = "Corso di Python per chi lavora con i dati nelle utility: i notebook, i dati e le librerie del corso."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas>=3.0",
+    "numpy>=2.0",
+    "plotly>=6.0",
+    "openpyxl>=3.1",
+    "requests>=2.32",
+    "ipykernel>=6.29",
+    "nbformat>=5.10",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.8",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["corso.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]

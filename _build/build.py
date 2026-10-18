@@ -4,8 +4,12 @@ Costruisce i notebook del corso a partire dagli script in `_build/src/`.
     uv run python _build/build.py            # tutti
     uv run python _build/build.py 05 07      # solo quei numeri (C = homework, E1..E3 = esercitazioni, EXTRA = cartella Extra)
 
-Output: Aula_Base/, Aula_Avanzata/ (versione studente) e Soluzioni_Base/, Soluzioni_Avanzata/, più Extra/ e Riserva/ (Homework).
-In ogni cartella scrive anche `corso.py`, il modulo con i controlli degli esercizi (`verifica("7.1")`).
+Output: le due cartelle che i corsisti ricevono, Aula_Base/ e Aula_Avanzata/, ciascuna con Modulo_1 … Modulo_4
+(versione studente) e Soluzioni/ (versione con le soluzioni), più Extra/ e Riserva/ per il docente.
+In ogni cartella di notebook scrive anche `corso.py`, il modulo con i controlli degli esercizi (`verifica("7.1")`).
+Alla fine copia nelle cartelle delle aule i file che le rendono autosufficienti (dati, schede, progetto uv,
+README, impostazioni di VS Code, cartelle della demo e dell'esercizio su uv e Ruff): vedi `statici.py`.
+Un build completo toglie dalle cartelle delle aule i notebook e i `corso.py` che nessun sorgente produce più.
 """
 
 from __future__ import annotations
@@ -21,13 +25,7 @@ SRC = HERE / "src"
 sys.path.insert(0, str(HERE))
 
 from nbkit import leggi_modulo_corso, scrivi_modulo_corso  # noqa: E402
-
-CARTELLE = {
-    ("base", False): ROOT / "Aula_Base",
-    ("avanzata", False): ROOT / "Aula_Avanzata",
-    ("base", True): ROOT / "Soluzioni_Base",
-    ("avanzata", True): ROOT / "Soluzioni_Avanzata",
-}
+from statici import CARTELLE_AULA, copia_statici, togli_orfani  # noqa: E402
 
 
 def carica(filtro: list[str]):
@@ -82,25 +80,40 @@ def main(argv: list[str]) -> int:
         except ValueError as e:
             print(f"[ERRORE] {e}")
             rc = 1
+    scritti: set[Path] = set()
     for stem, nb in carica(filtro):
+        nome = nb.file
         for aula in nb.aule:
             for soluzioni in (False, True):
+                if soluzioni and not nb.ha_soluzioni():
+                    continue
                 try:
-                    if nb.num == "C":      # l'Homework è materiale di riserva: fuori dalle cartelle dei corsisti
-                        cartella = ROOT / "Riserva" / aula.capitalize()
-                        nb.file = "Homework_Soluzioni" if soluzioni else "Homework"
+                    if nb.riserva:      # materiale di riserva: fuori dalle cartelle dei corsisti
+                        radice = ROOT / "Riserva" / aula.capitalize()
+                        nb.file = nome + "_Soluzioni" if soluzioni else nome
                     else:
-                        cartella = CARTELLE[(aula, soluzioni)]
-                    out = nb.build(cartella, aula=aula, soluzioni=soluzioni)
-                    raccogli(cartella, nb)
+                        radice = CARTELLE_AULA[aula]
+                    out = nb.build(radice, aula=aula, soluzioni=soluzioni)
+                    raccogli(out.parent, nb)
+                    scritti.add(out)
                     print(f"{stem:32s} -> {out.relative_to(ROOT)}")
                 except ValueError as e:
                     print(f"[ERRORE] {e}")
                     rc = 1
+        nb.file = nome
     for cartella, d in verifiche.items():
         sd = soluzioni_reg.get(cartella, {})
+        if not d and not sd:        # notebook senza esercizi: nessun corso.py accanto
+            (cartella / "corso.py").unlink(missing_ok=True)
+            continue
         out = scrivi_modulo_corso(cartella, dict(sorted(d.items(), key=_ordine)), dict(sorted(sd.items(), key=_ordine)))
+        scritti.add(out)
         print(f"{'corso.py':32s} -> {out.relative_to(ROOT)}  ({len(d)} controlli, {len(sd)} soluzioni a richiesta)")
+    for riga in copia_statici():
+        print(riga)
+    if not filtro and rc == 0:
+        for tolto in togli_orfani(scritti):
+            print(f"{'rimosso (orfano)':32s} -> {tolto.relative_to(ROOT)}")
     return rc
 
 

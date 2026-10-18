@@ -9,6 +9,7 @@ DB = "../../Dati/homework/anagrafica.db"
 def costruisci() -> Notebook:
     nb = Notebook(
         num="C",
+        riserva=True,
         file="Homework",
         titolo="Homework: una settimana nell'ufficio Analisi Consumi",
         blocco=0,

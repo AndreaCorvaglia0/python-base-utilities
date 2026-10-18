@@ -1,8 +1,8 @@
 """
 Stampa un notebook generato cella per cella, come lo vede un corsista: il testo per intero, del codice la prima riga.
 
-    uv run python _build/leggi.py Aula_Base/07_Pandas_operazioni.ipynb
-    uv run python _build/leggi.py Aula_Base/07_Pandas_operazioni.ipynb --codice   # anche il codice per intero
+    uv run python _build/leggi.py Aula_Base/Modulo_3/07_Pandas_operazioni.ipynb
+    uv run python _build/leggi.py Aula_Base/Modulo_3/07_Pandas_operazioni.ipynb --codice   # anche il codice per intero
 
 Serve per la rilettura dopo una modifica: si legge l'output dall'inizio alla fine e si segnano le celle che non reggono.
 """

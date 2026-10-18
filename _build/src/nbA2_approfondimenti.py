@@ -10,7 +10,7 @@ def costruisci() -> Notebook:
         num="A2",
         file="Approfondimenti_2",
         titolo="Approfondimenti 2",
-        blocco=4,
+        blocco={"base": 3, "avanzata": 4},     # Base: solo le date (modulo 3); Avanzata: anche il codice degli agenti (modulo 4)
         giornata=4,
         fuori_programma=True,
         intento="Raccoglie gli argomenti sulle date che restano fuori dal notebook 08 e, nella versione Avanzata, `shift`, `rolling` e i costrutti che si incontrano nel codice scritto da un agente; si affronta in classe se si è in anticipo sul programma, oppure a casa.",

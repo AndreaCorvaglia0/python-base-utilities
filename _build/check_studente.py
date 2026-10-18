@@ -1,7 +1,7 @@
 """
 Esegue i notebook della versione studente e segnala le celle di teoria che falliscono.
 
-    uv run python _build/check_studente.py Aula_Base/*.ipynb
+    uv run python _build/check_studente.py Aula_Base/Modulo_1/*.ipynb
 
 Nella versione studente gli esercizi hanno `...` al posto del codice, quindi le celle `starter`
 e `verifica` possono fallire: è previsto. Non deve fallire nessun'altra cella: se succede, una

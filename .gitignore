@@ -12,17 +12,24 @@ __pycache__/
 *.html
 Output/
 
-# file prodotti dagli esercizi nelle cartelle dei notebook (i dati veri stanno in Dati/)
-Aula_*/*.csv
-Aula_*/*.xlsx
-Soluzioni_*/*.csv
-Soluzioni_*/*.xlsx
+# file prodotti dagli esercizi nelle cartelle dei notebook (i dati veri stanno in Dati/ e nelle sue copie Aula_*/Dati/)
+Aula_*/Modulo_*/*.csv
+Aula_*/Modulo_*/*.xlsx
+Aula_*/Modulo_*/*.py
+!Aula_*/Modulo_*/corso.py
+Aula_*/Soluzioni/*.csv
+Aula_*/Soluzioni/*.xlsx
+Aula_*/Soluzioni/*.py
+!Aula_*/Soluzioni/corso.py
 Riserva/*/*.csv
 Riserva/*/*.xlsx
-Aula_*/*.py
-Soluzioni_*/*.py
-!Aula_*/corso.py
-!Soluzioni_*/corso.py
+
+# quello che una prova della demo o dell'esercizio su uv e Ruff lascia nelle loro cartelle
+Aula_*/*/Script_uv_Ruff/*/*.xlsx
+Aula_*/Modulo_*/Script_uv_Ruff/*/uv.lock
+
+# gli zip per i corsisti, prodotti da _build/esporta.py
+dist/
 
 # worktree temporanei degli agenti
 .claude/worktrees/
