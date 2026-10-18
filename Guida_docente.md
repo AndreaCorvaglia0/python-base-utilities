@@ -632,11 +632,12 @@ esercizi che stavano nel notebook `Ambiente_script_e_Ruff` come Hands-on ed Extr
 `if __name__ == "__main__":`, passare da un notebook a uno script, correggere a mano una riga troppo lunga e ripulire
 un file con Ruff. Serve a un'aula Avanzata che finisce l'esercitazione in anticipo, o a chi vuole fare pratica a casa.
 
-Per consegnare un notebook di riserva si manda la sua cartella, `Riserva/Base/` o `Riserva/Avanzata/`, con i notebook
-e il `corso.py` che contiene le verifiche, senza i file `.csv` che l'Homework scrive quando lo si esegue. I corsisti
-la mettono dentro la cartella dell'aula come sottocartella, per esempio `Aula_Avanzata/Riserva/`, allo stesso livello
-dei moduli: in questo modo i percorsi `../Dati/` dell'Homework funzionano e `from corso import verifica` trova il
-`corso.py` giusto. La cartella non va copiata nelle `Aula_*` del repository, perché un build completo toglie da lì i
+Per consegnare il materiale di riserva si lancia `uv run python _build/esporta.py avanzata --riserva` (oppure `base`),
+che prepara `dist/Riserva_Avanzata.zip` con la cartella `Riserva/Avanzata/`, i notebook e il `corso.py` che contiene le
+verifiche, senza i file `.csv` che l'Homework scrive quando lo si esegue. I corsisti estraggono lo zip dentro la
+cartella dell'aula, dove compare `Riserva/Avanzata/` allo stesso livello dei moduli: da lì i percorsi `../../Dati/`
+dell'Homework arrivano ai dati del corso, come nel repository, e `from corso import verifica` trova il `corso.py`
+giusto. La cartella non va copiata nelle `Aula_*` del repository, perché un build completo toglie da lì i
 notebook che nessun sorgente produce. Per l'aula Avanzata è previsto anche un breve notebook facoltativo su Prophet
 nel modulo 4, da preparare dopo aver verificato che `uv add prophet` funzioni sui PC dell'aula.
 

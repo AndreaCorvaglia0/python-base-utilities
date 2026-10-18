@@ -31,8 +31,8 @@ def costruisci() -> Notebook:
     # ------------------------------------------------------------------ 1
     nb.sezione("Prima di cominciare", intro="""
         I file dell'homework si trovano nella cartella `../../Dati/homework/`, e la cella qui sotto ne mostra l'elenco.
-        Se la lista risulta vuota, il percorso relativo non porta alla cartella giusta, di solito perché il notebook
-        è stato spostato fuori da Aula_Base o Aula_Avanzata.
+        Se la lista risulta vuota, il percorso relativo non porta alla cartella giusta, di solito perché la cartella
+        `Riserva` non è stata estratta dentro la cartella del corso, accanto a `Dati` e ai moduli.
     """)
     nb.code("""
         from pathlib import Path
@@ -49,9 +49,9 @@ def costruisci() -> Notebook:
     """)
     nb.md("""
         I passi sono indipendenti, quindi chi si blocca su uno può passare al successivo, e i due segnati come
-        facoltativi si fanno se resta tempo. Per ripassare si possono riaprire il notebook
-        [02](02_Tipi_di_dato.ipynb) per liste e dizionari, il [04](04_Funzioni_e_controllo.ipynb) per cicli e
-        funzioni e il [06](06_Pandas_e_import_dati.ipynb) per CSV, Excel e SQL.
+        facoltativi si fanno se resta tempo. Per ripassare si possono riaprire il notebook 02, nella cartella
+        `Modulo_1`, per liste e dizionari, e i notebook 04 e 06, nella cartella `Modulo_2`, per cicli e funzioni e
+        per CSV, Excel e SQL.
     """)
 
     # ------------------------------------------------------------------ 2

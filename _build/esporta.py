@@ -4,6 +4,7 @@ Prepara gli zip da consegnare ai corsisti: uno per aula, con dentro la sola cart
     uv run python _build/esporta.py                      # build completo, poi dist/Aula_Base.zip e dist/Aula_Avanzata.zip
     uv run python _build/esporta.py avanzata             # solo un'aula
     uv run python _build/esporta.py --moduli 3 4         # aggiornamento: solo Modulo_3 e Modulo_4, per entrambe le aule
+    uv run python _build/esporta.py avanzata --riserva   # il materiale di riserva di un'aula, da estrarre nella sua cartella
 
 Prima ricostruisce tutto il corso, così le copie di dati, schede e cartelle della demo tornano identiche agli
 originali anche dopo una prova in aula. Nello zip entrano soltanto i file che git conosce o che non ignora: restano
@@ -12,6 +13,10 @@ fuori l'ambiente `.venv`, le cache e i file che i notebook e gli script producon
 Con `--moduli` lo zip (dist/Aula_X_moduli_3_4.zip) contiene soltanto le cartelle di quei moduli, le loro soluzioni,
 `Soluzioni/corso.py`, `Dati/` e `Schede/`: estratto sopra la cartella che il corsista ha già, aggiorna quei moduli e
 non tocca i notebook dei moduli precedenti, in cui il corsista ha scritto le sue risposte.
+
+Con `--riserva` lo zip (dist/Riserva_Avanzata.zip) contiene `Riserva/<Aula>/`, con i notebook di riserva e il loro
+`corso.py`: il corsista lo estrae dentro la cartella dell'aula, e i percorsi `../../Dati/` dei notebook di riserva
+arrivano allora ai dati del corso come nel repository.
 """
 
 from __future__ import annotations
@@ -30,7 +35,8 @@ from statici import CARTELLE_AULA  # noqa: E402
 
 def file_da_esportare(cartella: Path) -> list[Path]:
     """I file della cartella che git traccia o che non ignora, in ordine."""
-    p = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", cartella.name],
+    p = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--",
+                        cartella.relative_to(ROOT).as_posix()],
                        cwd=ROOT, capture_output=True, text=True, check=True)
     return sorted(ROOT / f for f in p.stdout.split("\0") if f and (ROOT / f).is_file())
 
@@ -51,6 +57,8 @@ def solo_moduli(cartella: Path, files: list[Path], moduli: list[int]) -> list[Pa
 
 
 def main(argv: list[str]) -> int:
+    riserva = "--riserva" in argv
+    argv = [a for a in argv if a != "--riserva"]
     moduli = [int(a) for a in argv[argv.index("--moduli") + 1:]] if "--moduli" in argv else []
     nomi_aule = argv[:argv.index("--moduli")] if "--moduli" in argv else argv
     aule = [a.lower() for a in nomi_aule] or list(CARTELLE_AULA)
@@ -61,9 +69,11 @@ def main(argv: list[str]) -> int:
     dist = ROOT / "dist"
     dist.mkdir(exist_ok=True)
     for aula in aule:
-        cartella = CARTELLE_AULA[aula]
+        cartella = ROOT / "Riserva" / aula.capitalize() if riserva else CARTELLE_AULA[aula]
         files = file_da_esportare(cartella)
-        if moduli:
+        if riserva:
+            uscita = dist / f"Riserva_{aula.capitalize()}.zip"
+        elif moduli:
             files = solo_moduli(cartella, files, moduli)
             uscita = dist / f"{cartella.name}_moduli_{'_'.join(map(str, moduli))}.zip"
         else:

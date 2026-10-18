@@ -51,6 +51,11 @@ def parte_script(nb: Notebook) -> None:
         facoltativa, da fare a casa.
     """)
     nb.md("""
+        Questa è la copia con le soluzioni: la cartella `Script_uv_Ruff/esercizio` che le sta accanto contiene già
+        il progetto finito, con le librerie aggiunte e il codice in ordine, e le celle dei passi riportano i valori
+        che il terminale stampa. Per rifare l'esercizio da capo si lavora nella cartella `esercizio` del modulo 1.
+    """, solo_soluzioni=True)
+    nb.md("""
         Tutti i comandi si scrivono nel terminale di VS Code, aperto nella cartella `esercizio`. Il modo più
         semplice per aprirlo è un clic con il tasto destro sulla cartella, nel pannello Explorer, e poi la voce
         **Open in Integrated Terminal**; in alternativa, da un terminale aperto nella cartella principale
@@ -115,7 +120,7 @@ def parte_script(nb: Notebook) -> None:
         stampato. La verifica controlla quei valori e legge i file del progetto, per confermare che i comandi
         hanno fatto il loro lavoro, e la cella `soluzione` mostra i comandi e i valori attesi di quel passo.
     """)
-    nb.box("attenzione", """
+    nb.md("""
         Prima di ogni `uv add` conviene controllare che il terminale sia nella cartella `esercizio`, il cui
         percorso compare all'inizio della riga di comando. Lanciato dalla cartella principale dell'aula, il
         comando modificherebbe il `pyproject.toml` del corso invece di quello dell'esercizio. Un avviso che nomina

@@ -344,24 +344,27 @@ def costruisci() -> Notebook:
     nb.md("""
         La voce `line-length` fissa a 100 caratteri il limite delle righe, `target-version` indica la
         versione di Python per cui scriviamo ed `extend-exclude` toglie dal controllo il file `corso.py`,
-        che contiene le verifiche degli esercizi. La sottosezione `lint`, alla voce `select`, sceglie le
+        che contiene le verifiche degli esercizi, e i notebook del corso, perché qui Ruff serve per gli
+        script. La sottosezione `lint`, alla voce `select`, sceglie le
         famiglie di regole `E`, `F`, `W` e `I` viste sopra. Il terminale e l'estensione di VS Code leggono
         la stessa configurazione, e quindi danno le stesse segnalazioni.
     """)
     nb.md("""
         Dal terminale Ruff si lancia con `uv run`, che usa la versione installata nel progetto. Senza il
-        nome di un file, i comandi lavorano su tutti i file Python, notebook compresi, della cartella del
-        terminale e delle sue sottocartelle:
+        nome di un file, i comandi lavorano su tutti i file Python della cartella del terminale e delle sue
+        sottocartelle, tranne quelli esclusi nella configurazione:
 
         ```bash
         uv run ruff format          # rimette in forma i file
         uv run ruff check           # elenca le segnalazioni
         uv run ruff check --fix     # applica le correzioni sicure
         ```
-
-        Conviene seguire un ordine preciso: prima `check --fix`, poi le correzioni a mano di quello che
-        resta, poi `format` e alla fine un ultimo `check`, che risponde `All checks passed!` quando non
-        c'è più nulla da segnalare.
+    """)
+    nb.md("""
+        Nella dimostrazione seguiamo un ordine preciso. Prima `format` sistema la forma, così al linter
+        restano soltanto i problemi veri; poi `check` li elenca, `check --fix` applica le correzioni
+        sicure e il resto si corregge a mano; alla fine un altro `format` e un ultimo `check`, che risponde
+        `All checks passed!` quando non c'è più nulla da segnalare.
     """)
     nb.md("""
         In VS Code Ruff funziona attraverso l'estensione **Ruff**, pubblicata da Astral, che la cartella
@@ -438,16 +441,17 @@ def costruisci() -> Notebook:
         12. Lanciamo un'ultima volta `uv run main.py`, che stampa le stesse tre righe di prima con il
             codice ormai in ordine.
     """)
-    nb.box("attenzione", """
-        Alcuni errori sono frequenti la prima volta. Il comando `uv init` non va lanciato dentro la
-        cartella del corso, perché uv registra il nuovo progetto come parte di quello del corso e gli fa
-        usare lo stesso `.venv`, dove le librerie ci sono già tutte e non si vede mai che cosa manca. Per
-        lo stesso motivo `uv add`, in una cartella senza `pyproject.toml`, modifica il progetto del corso.
-        Il pulsante **Run Python File** di VS Code usa l'interprete selezionato nell'editor, cioè il
-        Python del corso, che ha già pandas, quindi in questa parte gli script si lanciano sempre con
-        `uv run` nel terminale. Se uv stampa l'avviso
-        `VIRTUAL_ENV=... does not match the project environment path`, l'avviso è innocuo: uv usa
-        comunque l'ambiente della cartella.
+    nb.box("nota", titolo="Gli errori più frequenti", testo="""
+        Il comando `uv init` non va lanciato dentro la cartella del corso, perché uv registra il nuovo
+        progetto come parte di quello del corso e gli fa usare lo stesso `.venv`, dove le librerie ci sono
+        già tutte e non si vede mai che cosa manca. Per lo stesso motivo `uv add`, lanciato in una cartella
+        senza un suo `pyproject.toml`, modifica il progetto del corso.
+    """)
+    nb.md("""
+        Il pulsante **Run Python File** di VS Code usa l'interprete selezionato nell'editor, cioè il Python
+        del corso, che ha già pandas, quindi in questa parte gli script si lanciano sempre con `uv run` nel
+        terminale. Se uv stampa l'avviso `VIRTUAL_ENV=... does not match the project environment path`,
+        l'avviso è innocuo, perché uv usa comunque l'ambiente della cartella in cui viene lanciato.
     """)
     nb.md("""
         Nell'[Esercitazione 1](../Esercitazione_1.ipynb) rifai gli stessi passi nella cartella
