@@ -108,7 +108,8 @@ def costruisci() -> Notebook:
         """,
         base=dict(
             richiesta="""
-                1. Salva in `valore_massimo` il più grande dei tre numeri e in `valore_minimo` il più piccolo.
+                1. Salva in `valore_massimo` il più grande dei tre numeri e in `valore_minimo` il più piccolo,
+                   con le funzioni `max()` e `min()`, che abbiamo incontrato nella cella su PEP 8 del notebook 03.
                 2. Salva in `differenza` la differenza tra massimo e minimo.
                 3. Completa i tre `print`, in modo che stampino le righe indicate nei commenti.
             """,
@@ -161,7 +162,8 @@ def costruisci() -> Notebook:
         ),
         avanzata=dict(
             richiesta="""
-                1. Salva in `valore_massimo` e `valore_minimo` il più grande e il più piccolo dei tre numeri, e in
+                1. Salva in `valore_massimo` e `valore_minimo` il più grande e il più piccolo dei tre numeri, con
+                   `max()` e `min()`, e in
                    `differenza` la loro differenza.
                 2. Salva in `media` la media dei tre numeri, arrotondata a un decimale con `round()`.
                 3. Stampa i quattro risultati, uno per riga, con le f-string.

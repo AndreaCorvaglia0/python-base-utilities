@@ -412,7 +412,9 @@ def costruisci() -> Notebook:
                    italiano.
                 2. Controlla con `info()` che la colonna `kwh` sia di tipo `float64`, perché soltanto una colonna
                    numerica si può sommare.
-                3. Salva in `righe` il numero di righe del DataFrame e in `totale_kwh` la somma della colonna `kwh`.
+                3. Salva in `righe` il numero di righe del DataFrame e in `totale_kwh` la somma della colonna `kwh`,
+                   con il metodo `sum()` delle colonne, nuovo ma simile alla funzione `sum()` delle liste; i
+                   calcoli sulle colonne li vediamo per esteso nel notebook 07.
             """,
             suggerimenti=[
                 """
@@ -460,7 +462,8 @@ def costruisci() -> Notebook:
                    italiano, e tieni soltanto le colonne `pod`, `fascia` e `kwh`, perché il nome del cliente e la
                    data non servono a questo controllo e senza di loro `info()` mostra solo quello che interessa.
                 2. Controlla con `info()` che la colonna `kwh` sia di tipo `float64`.
-                3. Salva in `righe` il numero di righe del DataFrame e in `totale_kwh` la somma della colonna `kwh`.
+                3. Salva in `righe` il numero di righe del DataFrame e in `totale_kwh` la somma della colonna `kwh`,
+                   con il metodo `sum()` delle colonne, che vediamo per esteso nel notebook 07.
 
                 Il DataFrame ha 216 righe e 3 colonne.
             """,

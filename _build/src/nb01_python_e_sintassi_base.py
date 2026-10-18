@@ -55,6 +55,8 @@ def costruisci() -> Notebook:
         quindi le istruzioni che appartengono allo stesso blocco si scrivono tutte rientrate dello
         stesso numero di spazi, di solito quattro. Nell'esempio qui sotto la riga con `print` è
         rientrata perché fa parte del blocco dell'`if`, e viene eseguita solo se la condizione è vera.
+        L'istruzione `if` la vediamo per esteso nel notebook 04, e qui serve soltanto a mostrare un blocco
+        rientrato.
     """)
     nb.code("""
         if 3 == 3:

@@ -117,10 +117,6 @@ assert set(listino["fascia"]) == {"F1", "F2", "F3"}, "❌ listino: è il foglio 
 assert leggi_tabella("pod").shape == (8, 3), "❌ leggi_tabella: deve restituire tutta la tabella, 8 righe e 3 colonne"
 assert list(officina["potenza_kw"]) == [30.0], "❌ officina: una riga sola, quella dell'Officina Meccanica Fumagalli"
 '''),
-    '6.3': ('Esercizio 6.3', r'''
-assert 0 < len(milano) < len(certificati), "❌ milano deve avere solo le righe della provincia di Milano"
-assert len(co2_per_classe) > 1 and co2_per_classe.index.is_unique, "❌ co2_per_classe: una riga per classe energetica, con la media"
-'''),
     '7.1': ('Esercizio 7.1', r'''
 assert prime_tre["kwh"].tolist() == [5785.2, 1434.9, 1396.3], "❌ prime_tre: ordina per kwh con ascending=False e tieni le prime tre righe"
 assert prime_tre.iloc[0]["cliente"] == "Panificio Rè", "❌ prime_tre: la prima riga è la lettura di luglio del Panificio Rè"
@@ -130,6 +126,10 @@ assert len(prezzi_stati) == 4, "❌ Con l'inner join restano le quattro righe di
 assert {"sigla", "price"} <= set(prezzi_stati.columns), "❌ Servono le colonne sigla e price"
 prezzo_tx = prezzi_stati.loc[prezzi_stati["sigla"] == "TX", "price"].iloc[0]
 assert round(prezzo_tx, 2) == 8.86, "❌ Filtra su all sectors prima della media"
+'''),
+    '7.3': ('Esercizio 7.3', r'''
+assert 0 < len(milano) < len(certificati), "❌ milano deve avere solo le righe della provincia di Milano"
+assert len(co2_per_classe) > 1 and co2_per_classe.index.is_unique, "❌ co2_per_classe: una riga per classe energetica, con la media"
 '''),
     '8.1': ('Esercizio 8.1', r'''
 assert len(giornaliero) == 366, "❌ giornaliero: un valore per ogni giorno del 2024, con resample('D')"
