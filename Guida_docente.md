@@ -23,7 +23,8 @@ controlli degli esercizi, richiamati nei notebook con `verifica("7.1")`, sono ra
 ogni cartella, che il build genera dagli assert scritti nei sorgenti; il corsista vede soltanto la chiamata e una riga
 con ✅ oppure ❌. Prima della prima giornata conviene aprire un'esercitazione in VS Code su un PC dell'aula e controllare
 che i blocchi "Passo per passo" e "Suggerimento" si aprano con un clic e che la cella `soluzione(...)` mostri il codice
-colorato.
+colorato. Nella stessa occasione conviene controllare come si chiamano, nella versione di VS Code installata, il
+pulsante **Variables** e la scheda **JUPYTER** in cui compaiono le variabili, perché il notebook 00 li nomina così.
 
 ## La struttura di un modulo
 
