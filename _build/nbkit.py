@@ -78,6 +78,11 @@ class Voce:
     cartella: str = ""          # sottocartella dentro Modulo_N, se il notebook non sta direttamente nel modulo
     soluzioni: bool = True      # False: il notebook non ha esercizi e non ha una copia in Soluzioni/
 
+    def __post_init__(self):
+        # la copia in Soluzioni/ sta un livello più su: i percorsi ../../Dati/ della sottocartella non varrebbero
+        if self.cartella and self.soluzioni:
+            raise ValueError(f"{self.file}: un notebook in una sottocartella del modulo non può avere la copia in Soluzioni/")
+
 
 PROGRAMMA = [
     Voce("00", "00_Notebook", "Jupyter e i notebook", 1),
@@ -124,7 +129,7 @@ def relativo(da_cartella: str, a_file: str) -> str:
 NOMI_BLOCCO = {
     1: "Modulo 1 · Setup, Python e sintassi di base",
     2: "Modulo 2 · Controllo del flusso, funzioni e primi dati in pandas",
-    3: "Modulo 3 · Analisi dei dati con pandas e visualizzazione",
+    3: "Modulo 3 · Analisi dei dati con pandas",
     4: "Modulo 4 · Agenti per il coding e capstone",
     0: "Materiale di riserva",
 }
@@ -606,7 +611,7 @@ class Notebook:
 # ---------------------------------------------------------------------------
 # corso.py: il modulo con i controlli degli esercizi, uno per cartella di notebook
 # ---------------------------------------------------------------------------
-MODULO_CORSO = '''"""Controllo degli esercizi del corso. Generato da _build/build.py: non modificare a mano.
+MODULO_CORSO = '''"""Controllo degli esercizi del corso. Il file è generato insieme ai notebook: non va modificato a mano.
 
 In ogni notebook, sotto un esercizio:
 

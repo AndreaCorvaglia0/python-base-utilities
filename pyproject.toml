@@ -25,8 +25,9 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-# gli script della demo su uv e Ruff partono apposta con gli avvisi, e corso.py è generato
-extend-exclude = ["_build/src/script_uv_ruff", "Aula_*", "corso.py"]
+# gli script della demo su uv e Ruff partono apposta con gli avvisi; notebook e corso.py delle aule e della
+# riserva sono generati
+extend-exclude = ["_build/src/script_uv_ruff", "Aula_*", "Riserva", "corso.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]

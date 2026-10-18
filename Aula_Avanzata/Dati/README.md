@@ -9,9 +9,9 @@
 | `impianti_fv.csv` | Anagrafica di 40 impianti fotovoltaici in Lombardia | dati di esempio, inventati |
 | `bolletta_esempio.xlsx` | Tre fogli: `Consumi`, `Listino`, `Anagrafica` | dati di esempio, inventati |
 | `utility.db` | Database SQLite con le tabelle `clienti`, `pod`, `letture` | dati di esempio, inventati |
-| `homework/letture_marzo.csv` | Letture giornaliere di marzo 2025 di otto POD, formato "italiano" (`;` e virgola decimale), con una lettura ×10 il 12 marzo per il POD IT001E31047092 | dati di esempio, inventati (homework) |
-| `homework/clienti.xlsx` | Due fogli: `Anagrafica` (pod, cliente, comune) e `Listino` (fascia, eur_kwh) | dati di esempio, inventati (homework) |
-| `homework/anagrafica.db` | Database SQLite con la tabella `pod` (pod, cliente, potenza_kw) | dati di esempio, inventati (homework) |
-| `fallback/meteo_milano_2024_2025.json` | Risposta di Open-Meteo (archivio): temperatura oraria a Milano, 2024-2025, 17544 ore | copia della risposta dell'API, usata quando la rete non è disponibile |
-| `fallback/lombardia_sensori.json` | Anagrafica dei sensori meteo di Regione Lombardia (dataset `nf78-nj6b`), 30 sensori, tutti i campi come testo | copia della risposta dell'API, usata quando la rete non è disponibile |
-| `fallback/lombardia_misure_2001.json` | Misure del sensore di temperatura 2001 (dataset `647i-nhxk`), giugno 2025 ogni 10 minuti, con qualche `-9999` | copia della risposta dell'API, usata quando la rete non è disponibile |
+| `homework/letture_marzo.csv` | Letture giornaliere di marzo 2025 di otto POD, formato "italiano" (`;` e virgola decimale), con una lettura ×10 il 12 marzo per il POD IT001E31047092 | dati di esempio, inventati (esercizi Extra del notebook 06) |
+| `homework/clienti.xlsx` | Due fogli: `Anagrafica` (pod, cliente, comune) e `Listino` (fascia, eur_kwh) | dati di esempio, inventati (esercizi Extra del notebook 06) |
+| `homework/anagrafica.db` | Database SQLite con la tabella `pod` (pod, cliente, potenza_kw) | dati di esempio, inventati (esercizi Extra del notebook 06) |
+| `fallback/meteo_milano_2024_2025.json` | Risposta di Open-Meteo (archivio): temperatura oraria a Milano, 2024-2025, 17544 ore | dati di esempio, non misurati, con lo stesso schema della risposta dell'API, usati quando la rete non risponde |
+| `fallback/lombardia_sensori.json` | Anagrafica dei sensori meteo di Regione Lombardia (dataset `nf78-nj6b`), 30 sensori, tutti i campi come testo | dati di esempio, non misurati, con lo stesso schema della risposta dell'API, usati quando la rete non risponde |
+| `fallback/lombardia_misure_2001.json` | Misure del sensore di temperatura 2001 (dataset `647i-nhxk`), giugno 2025 ogni 10 minuti, con qualche `-9999` | dati di esempio, non misurati, con lo stesso schema della risposta dell'API, usati quando la rete non risponde |

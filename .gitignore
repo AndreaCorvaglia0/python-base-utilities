@@ -24,6 +24,12 @@ Aula_*/Soluzioni/*.py
 Riserva/*/*.csv
 Riserva/*/*.xlsx
 
+# quello che Run Python File o un esercizio di riserva lasciano nella radice di un'aula, e i file di blocco di Excel
+Aula_*/*.csv
+Aula_*/*.xlsx
+Aula_*/*.py
+~$*
+
 # quello che una prova della demo o dell'esercizio su uv e Ruff lascia nelle loro cartelle
 Aula_*/*/Script_uv_Ruff/*/*.xlsx
 Aula_*/Modulo_*/Script_uv_Ruff/*/uv.lock

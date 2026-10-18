@@ -64,7 +64,10 @@ def _readme_dati(aula: str) -> str:
             continue
         riga = re.sub(r"dati di esempio, generati da `_build/genera_dati.py` con lo stesso schema dell'API; "
                       r"`uv run python _build/scarica_fallback.py` li sostituisce con i dati veri",
-                      "copia della risposta dell'API, usata quando la rete non è disponibile", riga)
+                      "dati di esempio, non misurati, con lo stesso schema della risposta dell'API, usati quando la "
+                      "rete non risponde", riga)
+        riga = riga.replace("dati di esempio, inventati (homework)",
+                            "dati di esempio, inventati (esercizi Extra del notebook 06)")
         righe.append(riga)
     return "\n".join(righe).rstrip() + "\n"
 
@@ -110,7 +113,10 @@ def copia_statici() -> list[str]:
 
         dati = cartella / "Dati"
         _sincronizza({dati / f: ROOT / "Dati" / f for f in _dati_per(aula)}, dati, tieni=lambda f: f == dati / "README.md")
-        (dati / "README.md").write_text(_readme_dati(aula), encoding="utf-8")
+        readme = _readme_dati(aula)
+        if "_build" in readme:      # il testo di Dati/README.md è cambiato e la sostituzione non ha più effetto
+            resoconto.append(f"  [avviso] {cartella.name}/Dati/README.md cita ancora _build/: aggiorna _readme_dati")
+        (dati / "README.md").write_text(readme, encoding="utf-8")
         _rispecchia(ROOT / "Schede", cartella / "Schede")
 
         n_script = 0

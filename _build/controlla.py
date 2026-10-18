@@ -15,15 +15,18 @@ Esce con codice 1 se il build dà errori o avvisi, o se una validazione fallisce
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
+import tempfile
+import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PY = [sys.executable]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from statici import AULA_SRC, CARTELLE_AULA, SCRIPT_UV, differenze  # noqa: E402
+from statici import AULA_SRC, CARTELLE_AULA, SCRIPT_UV, SCRIPT_UV_SRC, differenze  # noqa: E402
 
 # gli avvisi di Ruff che gli script della demo e dell'esercizio devono dare prima della pulizia (Guida, notebook S
 # ed Esercitazione 1 Avanzata li citano): codice -> file
@@ -51,12 +54,12 @@ def main(argv: list[str]) -> int:
     def seleziona(cartella: str) -> list[str]:
         files = sorted(f for f in (ROOT / cartella).rglob("*.ipynb") if ".venv" not in f.parts and ".ipynb_checkpoints" not in f.parts)
         if not filtro:
-            return [str(f.relative_to(ROOT)) for f in files]
+            return [f.relative_to(ROOT).as_posix() for f in files]
         scelti = []
         for f in files:
             numero = json.loads(f.read_text(encoding="utf-8"))["metadata"].get("corso", {}).get("numero", "")
             if any(n == numero.upper() or (n == "EXTRA" and cartella == "Extra") for n in filtro):
-                scelti.append(str(f.relative_to(ROOT)))
+                scelti.append(f.relative_to(ROOT).as_posix())
         return scelti
 
     aule = [c.name for c in CARTELLE_AULA.values()]
@@ -87,28 +90,46 @@ def main(argv: list[str]) -> int:
 
 
 def controlla_cartelle() -> int:
-    """Copie identiche agli originali, lock dei corsisti aggiornato, avvisi di Ruff previsti negli script."""
+    """Copie identiche agli originali, lock aggiornati, punto di partenza della demo intatto, avvisi di Ruff previsti."""
     problemi = differenze()
-    p = subprocess.run(["uv", "lock", "--check", "--offline"], cwd=AULA_SRC, capture_output=True, text=True)
-    if p.returncode != 0:
-        problemi.append("_build/aula/uv.lock non è aggiornato: lancia `uv lock` in _build/aula")
+    for cartella in [AULA_SRC] + [SCRIPT_UV_SRC / "soluzioni" / d for d in ("demo", "esercizio")]:
+        p = subprocess.run(["uv", "lock", "--check", "--offline"], cwd=cartella, capture_output=True, text=True)
+        if p.returncode != 0:
+            dettaglio = (p.stderr.strip().splitlines() or [""])[-1]
+            problemi.append(f"{cartella.relative_to(ROOT)}/uv.lock non è aggiornato: lancia `uv lock` lì ({dettaglio})")
+    for d in ("demo", "esercizio"):     # il punto di partenza: nessuna libreria, nessun lock
+        progetto = tomllib.loads((SCRIPT_UV_SRC / d / "pyproject.toml").read_text(encoding="utf-8"))
+        if progetto["project"].get("dependencies") or "dependency-groups" in progetto or (SCRIPT_UV_SRC / d / "uv.lock").exists():
+            problemi.append(f"_build/src/script_uv_ruff/{d}: il punto di partenza ha già librerie o un uv.lock")
     avanzata = CARTELLE_AULA["avanzata"]
     for dst, src in SCRIPT_UV.items():
         cartella = avanzata / dst
-        p = subprocess.run(PY + ["-m", "ruff", "check", "--no-cache", "--output-format", "json", "."],
-                           cwd=cartella, capture_output=True, text=True)
-        trovati = {(a["code"], Path(a["filename"]).name) for a in json.loads(p.stdout or "[]")}
         attesi = set() if src.startswith("soluzioni/") else AVVISI_INIZIALI[src]
-        if trovati != attesi:
-            problemi.append(f"{dst}: Ruff dà {sorted(trovati)}, attesi {sorted(attesi)}")
+        problemi += _avvisi_ruff(cartella, dst, attesi)
         if src.startswith("soluzioni/"):
             p = subprocess.run(PY + ["-m", "ruff", "format", "--check", "--no-cache", "."], cwd=cartella, capture_output=True, text=True)
             if p.returncode != 0:
                 problemi.append(f"{dst}: ruff format cambierebbe qualcosa")
+        else:
+            # i notebook S ed E1 fanno lanciare `ruff format` prima di `ruff check`: anche dopo, gli avvisi sono quelli
+            with tempfile.TemporaryDirectory() as tmp:
+                copia = Path(tmp) / Path(dst).name
+                shutil.copytree(cartella, copia, ignore=shutil.ignore_patterns(".venv", "__pycache__", ".ruff_cache"))
+                subprocess.run(PY + ["-m", "ruff", "format", "--no-cache", "."], cwd=copia, capture_output=True)
+                problemi += _avvisi_ruff(copia, f"{dst} dopo ruff format", attesi)
     print(f"cartelle delle aule: {'OK' if not problemi else 'PROBLEMI'}")
     for r in problemi:
         print("  " + r)
     return 1 if problemi else 0
+
+
+def _avvisi_ruff(cartella: Path, nome: str, attesi: set) -> list[str]:
+    p = subprocess.run(PY + ["-m", "ruff", "check", "--no-cache", "--output-format", "json", "."],
+                       cwd=cartella, capture_output=True, text=True)
+    if p.returncode not in (0, 1):
+        return [f"{nome}: Ruff non è partito ({p.stderr.strip()[:200]})"]
+    trovati = {(a["code"], Path(a["filename"]).name) for a in json.loads(p.stdout)}
+    return [] if trovati == attesi else [f"{nome}: Ruff dà {sorted(trovati)}, attesi {sorted(attesi)}"]
 
 
 if __name__ == "__main__":

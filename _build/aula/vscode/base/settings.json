@@ -2,7 +2,7 @@
     "jupyter.notebookFileRoot": "${fileDirname}",
     "python.terminal.activateEnvironment": false,
     "files.exclude": {
-        "**/__pycache__": true,
-        "**/.ruff_cache": true
-    }
+        "**/__pycache__": true
+    },
+    "files.insertFinalNewline": true
 }

@@ -124,11 +124,11 @@ def costruisci() -> Notebook:
     nb.hands_on(
         richiesta="""
             Il biglietto del museo è ridotto per chi ha meno di 26 anni oppure almeno 65: completa la condizione
-            con `or` e il ramo `else`, che assegna `"intero"`. Con `eta = 70` la variabile `biglietto` deve valere
-            `"ridotto"`.
+            con `or` e il ramo `else`, che assegna `"intero"`. Con `eta = 40` la variabile `biglietto` deve valere
+            `"intero"`.
         """,
         starter="""
-            eta = 70
+            eta = 40
             if eta < 26 or ...:
                 biglietto = "ridotto"
             else:
@@ -136,7 +136,7 @@ def costruisci() -> Notebook:
             print(biglietto)
         """,
         soluzione="""
-            eta = 70
+            eta = 40
             if eta < 26 or eta >= 65:
                 biglietto = "ridotto"
             else:
@@ -144,9 +144,9 @@ def costruisci() -> Notebook:
             print(biglietto)
         """,
         verifica="""
-            assert biglietto == "ridotto", "❌ con 70 anni il biglietto è ridotto: la seconda condizione è eta >= 65"
+            assert biglietto == "intero", "❌ con 40 anni il biglietto è intero: la seconda condizione è eta >= 65 e il ramo else assegna \"intero\""
         """,
-        prova_anche='con `eta = 40`, che deve dare `"intero"`.',
+        prova_anche='con `eta = 70`, che deve dare `"ridotto"`.',
     )
 
     # ------------------------------------------------------------------ 2

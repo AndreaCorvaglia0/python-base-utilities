@@ -109,8 +109,12 @@ def main(argv: list[str]) -> int:
         out = scrivi_modulo_corso(cartella, dict(sorted(d.items(), key=_ordine)), dict(sorted(sd.items(), key=_ordine)))
         scritti.add(out)
         print(f"{'corso.py':32s} -> {out.relative_to(ROOT)}  ({len(d)} controlli, {len(sd)} soluzioni a richiesta)")
-    for riga in copia_statici():
-        print(riga)
+    try:
+        for riga in copia_statici():
+            print(riga)
+    except OSError as e:    # su Windows un file aperto (Excel, un programma lanciato da un .venv) non si toglie
+        print(f"[ERRORE] copia dei file statici: {e}. Chiudi il programma che usa {e.filename} e rilancia il build.")
+        rc = 1
     if not filtro and rc == 0:
         for tolto in togli_orfani(scritti):
             print(f"{'rimosso (orfano)':32s} -> {tolto.relative_to(ROOT)}")

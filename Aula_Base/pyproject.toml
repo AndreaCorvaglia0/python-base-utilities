@@ -22,7 +22,7 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-# i notebook del corso e corso.py restano fuori: Ruff si usa sugli script, a partire da Modulo_1/Script_uv_Ruff
+# i notebook e corso.py restano fuori: nel corso Ruff si usa soltanto sugli script
 extend-exclude = ["corso.py", "*.ipynb"]
 
 [tool.ruff.lint]

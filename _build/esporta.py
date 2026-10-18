@@ -30,15 +30,21 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
-from statici import CARTELLE_AULA  # noqa: E402
+from statici import CARTELLE_AULA, SCRIPT_UV  # noqa: E402
 
 
 def file_da_esportare(cartella: Path) -> list[Path]:
-    """I file della cartella che git traccia o che non ignora, in ordine."""
-    p = subprocess.run(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--",
-                        cartella.relative_to(ROOT).as_posix()],
-                       cwd=ROOT, capture_output=True, text=True, check=True)
-    return sorted(ROOT / f for f in p.stdout.split("\0") if f and (ROOT / f).is_file())
+    """I file della cartella che git traccia o che non ignora, in ordine. Quelli non ancora tracciati si elencano,
+    perché un file lasciato da una prova finirebbe nello zip senza che nessuno se ne accorga."""
+    def ls(*opzioni: str) -> list[str]:
+        p = subprocess.run(["git", "ls-files", *opzioni, "-z", "--", cartella.relative_to(ROOT).as_posix()],
+                           cwd=ROOT, capture_output=True, encoding="utf-8", check=True)
+        return [f for f in p.stdout.split("\0") if f]
+
+    nuovi = ls("--others", "--exclude-standard")
+    if nuovi:
+        print(f"[avviso] {len(nuovi)} file non tracciati da git finiscono nello zip:", *nuovi, sep="\n  ")
+    return sorted(ROOT / f for f in ls("--cached") + nuovi if (ROOT / f).is_file())
 
 
 def solo_moduli(cartella: Path, files: list[Path], moduli: list[int]) -> list[Path]:
@@ -46,11 +52,14 @@ def solo_moduli(cartella: Path, files: list[Path], moduli: list[int]) -> list[Pa
     cartelle = [cartella / f"Modulo_{m}" for m in moduli]
     nomi = {f.name for f in files if any(c in f.parents for c in cartelle) and f.suffix == ".ipynb"}
     soluzioni = cartella / "Soluzioni"
+    # le cartelle finite della demo e dell'esercizio vanno con il modulo che contiene il loro punto di partenza
+    soluzioni_script = [dst for dst in SCRIPT_UV if dst.startswith("Soluzioni/")
+                        and any(d.startswith(f"Modulo_{m}/") and d.endswith(dst.split("/", 1)[1]) for d in SCRIPT_UV for m in moduli)]
     tenuti = []
     for f in files:
         dentro = any(c in f.parents for c in cartelle) or any(f.is_relative_to(cartella / d) for d in ("Dati", "Schede"))
         sol = f.parent == soluzioni and (f.name in nomi or f.name == "corso.py")
-        script = 1 in moduli and f.is_relative_to(soluzioni / "Script_uv_Ruff")
+        script = any(f.is_relative_to(cartella / dst) for dst in soluzioni_script)
         if dentro or sol or script:
             tenuti.append(f)
     return tenuti
@@ -59,9 +68,14 @@ def solo_moduli(cartella: Path, files: list[Path], moduli: list[int]) -> list[Pa
 def main(argv: list[str]) -> int:
     riserva = "--riserva" in argv
     argv = [a for a in argv if a != "--riserva"]
-    moduli = [int(a) for a in argv[argv.index("--moduli") + 1:]] if "--moduli" in argv else []
+    moduli = [int(a) for a in argv[argv.index("--moduli") + 1:] if a.isdigit()] if "--moduli" in argv else []
     nomi_aule = argv[:argv.index("--moduli")] if "--moduli" in argv else argv
     aule = [a.lower() for a in nomi_aule] or list(CARTELLE_AULA)
+    sbagliate = [a for a in aule if a not in CARTELLE_AULA]
+    if sbagliate or ("--moduli" in argv and not moduli) or any(m not in (1, 2, 3, 4) for m in moduli) or (riserva and moduli):
+        print("[ERRORE] uso: esporta.py [base|avanzata ...] [--moduli N ...] [--riserva]  (moduli da 1 a 4, "
+              "--riserva senza --moduli)")
+        return 2
     rc = subprocess.run([sys.executable, str(HERE / "build.py")], cwd=ROOT).returncode
     if rc != 0:
         print("[ERRORE] il build non è andato a buon fine: niente zip")

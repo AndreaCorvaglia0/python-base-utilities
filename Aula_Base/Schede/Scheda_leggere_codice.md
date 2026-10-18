@@ -47,7 +47,7 @@ letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", enco
 | `[p / 4 for p in potenze]` | comprehension | un ciclo che costruisce una lista in una riga | `{k: v for k, v in ...}` |
 | `*args`, `**kwargs` | argomenti raccolti | raccolgono tutti gli argomenti per posizione e tutti quelli per nome, di solito per passarli a un'altra funzione | `pd.read_csv(path, **opzioni)` |
 | `logger.info("...")` | log | come un `print`, ma con il livello davanti (`INFO:__main__:...`); il messaggio va nel terminale e si attiva con `logging.basicConfig` | |
-| `if __name__ == "__main__":` | blocco main (guardia dello script) | il blocco viene eseguito quando il file è il programma lanciato, con `uv run` o incollato in una cella, ma non quando viene importato | |
+| `if __name__ == "__main__":` | blocco main (guardia dello script) | il blocco viene eseguito quando il file viene lanciato come programma, oppure quando il codice è incollato in una cella, ma non quando il file viene importato | |
 | `yield` | generatore | una funzione che restituisce un elemento alla volta invece di una lista intera | |
 | `async def` / `await` | codice asincrono | si legge come una funzione normale con una parola in più; nell'analisi dei dati si incontra di rado | |
 | `None` | il valore "niente" | è il default dei parametri facoltativi e ciò che restituisce una funzione senza `return` | `if fasce is not None:` |
@@ -57,7 +57,7 @@ letture = pd.read_csv("../Dati/letture_pod_2025.csv", sep=";", decimal=",", enco
 
 ## Leggere uno script
 
-1. Gli `import` in testa al file dicono quali librerie servono, e conviene distinguere quelle della libreria standard, che arrivano con Python, da quelle installate, che hanno richiesto un `uv add`.
+1. Gli `import` in testa al file dicono quali librerie servono, e conviene distinguere quelle della libreria standard, che arrivano con Python, da quelle installate a parte, che nel progetto del corso sono elencate tra le dipendenze di `pyproject.toml`.
 2. Le costanti scritte in MAIUSCOLO raccolgono i numeri, i percorsi e le soglie che vengono dall'esterno.
 3. Le `def` sono gli strumenti dello script. Il nome, i parametri e la docstring bastano per capire che cosa fanno, e il corpo si può leggere in un secondo momento.
 4. In fondo al file si trova il codice che usa queste funzioni, dentro `main()` oppure in righe libere, ed è da lì che parte l'esecuzione.

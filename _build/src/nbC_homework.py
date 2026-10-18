@@ -25,7 +25,7 @@ def costruisci() -> Notebook:
         dati=["homework/letture_marzo.csv", "homework/clienti.xlsx", "homework/anagrafica.db"],
         etichetta_esercizio="Passo",
         prefisso_esercizi="",
-        prossimo="Le soluzioni le guardiamo insieme all'inizio del modulo 3.",
+        prossimo="La versione risolta è nel notebook `Homework_Soluzioni`, nella stessa cartella.",
     )
 
     # ------------------------------------------------------------------ 1
@@ -40,7 +40,7 @@ def costruisci() -> Notebook:
         list(Path("../../Dati/homework").glob("*"))
     """)
     nb.md("""
-        L'homework richiede circa mezz'ora e lo riprendiamo insieme all'inizio del modulo 3. Ogni passo comincia
+        L'homework richiede circa mezz'ora. Ogni passo comincia
         dicendo che cosa vogliamo ottenere e perché, e da lì si può arrivare al risultato da soli; chi preferisce
         procedere per gradi apre con un clic il blocco Passo per passo, e sotto i suggerimenti, anche loro nascosti,
         da leggere solo dopo aver provato. Nella cella da completare i `...` prendono il posto del codice da
@@ -376,8 +376,8 @@ def costruisci() -> Notebook:
         scenario="""
             Venerdì il distributore manda il CSV con le letture giornaliere di marzo degli otto POD, scritto
             all'italiana con il punto e virgola tra le colonne e la virgola nei decimali, e l'officina di Lecco
-            segnala una bolletta di marzo tripla del solito. Una giornata normale resta sotto i 250 kWh, quindi con
-            pandas cerchiamo tra le 248 righe quelle sopra i 500 e le salviamo in un CSV da girare al distributore per
+            segnala una bolletta di marzo più alta di circa un terzo rispetto al solito. Una giornata normale resta
+            sotto i 250 kWh, quindi con pandas cerchiamo tra le 248 righe quelle sopra i 500 e le salviamo in un CSV da girare al distributore per
             un controllo. L'unica riga anomala è dell'officina, POD `IT001E31047092`, con 1530.3 kWh il 12 marzo.
         """,
         richiesta="""

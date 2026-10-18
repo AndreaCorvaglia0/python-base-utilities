@@ -1,4 +1,4 @@
-"""Controllo degli esercizi del corso. Generato da _build/build.py: non modificare a mano.
+"""Controllo degli esercizi del corso. Il file è generato insieme ai notebook: non va modificato a mano.
 
 In ogni notebook, sotto un esercizio:
 
