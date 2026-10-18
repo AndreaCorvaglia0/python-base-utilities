@@ -1,4 +1,4 @@
-# REQUISITI CONSOLIDATI (edizione Sorgenia 2026) — vincolanti, prevalgono sul CHARTER dove diverso
+# REQUISITI CONSOLIDATI (edizione Sorgenia 2026): vincolanti, prevalgono sul CHARTER dove diverso
 
 Raccolti dalle richieste del docente, nell'ordine: brief iniziale, chiarimento sull'obiettivo (agenti), decisioni
 (fallback, resample, script, Ruff), e la revisione del 6 ottobre ("semplifica").
@@ -19,18 +19,21 @@ Raccolti dalle richieste del docente, nell'ordine: brief iniziale, chiarimento s
 - Niente pagine di spiegazione: il docente parla in aula. Scritto ci va quello che serve a seguire e a rileggere dopo.
 - Assert e celle di verifica: utili ma non ovunque. Regola: i "Prova tu" dentro al notebook NON hanno celle di
   verifica (si dice il risultato atteso in una riga); gli esercizi di fine notebook hanno al massimo UNA cella di
-  verifica, corta (1-3 assert), solo quando il risultato è un numero o una tabella controllabile.
+  verifica, corta (1-3 assert), solo quando il risultato è un numero o una tabella controllabile. La prima parte è
+  superata: da ottobre i "Prova tu" si chiamano Hands-on e hanno una `verifica=` breve (REGOLE.md, HANDS_ON.md).
 - Un esercizio per concetto, non tre: le f-string hanno UN esercizio in tutto il corso; non ripetere lo stesso
   esercizio con numeri diversi in notebook diversi.
 - Meno riquadri, meno "passo in più", meno "bis": il bis solo dove al docente serve davvero una scelta.
 - Esercitazione organizzata: momenti di esercitazione con domande ed esercizi, strutturati, non esercizi sparsi.
 
 ## 3. Cosa NON va nei notebook (lo mostra il docente dal vivo)
-VS Code, estensioni, scelta del kernel, ambiente virtuale e uv, script vs notebook e terminale, Ruff, Data Wrangler,
-il wrapper dell'API. Vanno in una **Guida per il docente** che dice quando farli, cosa mostrare e quanto tempo
-prendono; il tempo si conta nel totale della giornata. Nel notebook resta al massimo una riga che segna il punto
-("Qui il docente mostra ...").
-Il setup per i corsisti resta nel README (uv sync, kernel), non nei notebook.
+VS Code, estensioni, scelta del kernel, Data Wrangler e il wrapper dell'API. Vanno in una **Guida per il docente**
+che dice quando farli, cosa mostrare e quanto tempo prendono; il tempo si conta nel totale della giornata. Il
+materiale già scritto sta in `Extra/`, e i notebook del percorso non parlano del docente.
+Ambiente virtuale e uv, script e notebook, terminale e Ruff erano nello stesso elenco. Dal 18 ottobre 2026, per l'aula
+Avanzata, sono il notebook di spiegazione `Ambiente_script_e_Ruff` del modulo 1, con la demo dal vivo e
+l'Esercitazione 1 che la fa rifare (PIANO_OTTOBRE_2026.md, "Script, uv e Ruff nell'aula Avanzata").
+Il setup per i corsisti resta nel README dell'aula (uv sync, kernel), non nei notebook.
 
 ## 4. Dominio degli esempi e degli esercizi
 - Esempi e esercizi semplici NON nel dominio utility/energia: scenari che tutti riconoscono (spesa, viaggi, voti,
@@ -51,14 +54,16 @@ Il setup per i corsisti resta nel README (uv sync, kernel), non nei notebook.
 - Non "voi"; "noi" operativo e "tu" quando si affida un compito.
 
 ## 6. Cosa resta dell'impianto attuale
-- Due aule (Base, Avanzata) dallo stesso sorgente; Homework tra le due giornate; capstone a fine corso (Terna +
-  Open-Meteo, senza forecast); uv per il setup (README); le schede di una pagina; il generatore `_build/`.
+- Due aule (Base, Avanzata) dallo stesso sorgente; Homework tra le due giornate (da ottobre è materiale di riserva,
+  in `Riserva/`); capstone a fine corso (Terna + Open-Meteo, senza forecast); uv per il setup (README); le schede di
+  una pagina; il generatore `_build/`.
 - Il sistema visivo (banner, indice, riquadri) resta ma più sobrio: meno riquadri per notebook.
 - L'obiettivo del corso resta: utenti consapevoli degli agenti per il coding, che sanno leggere il codice. Si dichiara
   una volta (00 e README), senza slogan.
 
 ## 7. Processo
-- Fable dirige, organizza e controlla; Opus, Sonnet e Haiku per i task in base al peso (è un lavoro di taglio: costa meno).
+- Il lavoro si divide in compiti separati, ciascuno controllato con il build e riletto prima di chiuderlo; è
+  soprattutto un lavoro di taglio.
 - Le decisioni grosse si chiedono al docente prima di farle.
 
 ## 8. Decisioni del docente (6 ottobre, seconda tornata)
@@ -74,9 +79,13 @@ Il setup per i corsisti resta nel README (uv sync, kernel), non nei notebook.
 4. **Dimostrazioni del docente** (VS Code, kernel, ambiente e uv, script, Ruff, Data Wrangler, wrapper API): niente nel
    notebook. Il materiale già scritto si sposta in una cartella separata `Extra/` (notebook a sé, con la teoria), così il
    docente vede come sarebbe stato svolto. Una `Guida_docente.md` dice quando farle e quanto durano; il tempo entra nel totale.
+   Il 18 ottobre ambiente e uv, script e Ruff sono usciti da questo elenco e sono diventati, per l'Avanzata, il notebook
+   `Ambiente_script_e_Ruff` del modulo 1 con la sua demo; in `Extra/` restano VS Code e i notebook, Data Wrangler e il
+   wrapper delle API.
 
 ## Edizione di ottobre 2026
 
 Le decisioni per le quattro giornate del 20-21 e 27-28 ottobre 2026 (moduli, esercitazioni da un'ora, allineamento
-tra Base e Avanzata, giornata finale sul capstone con Copilot) sono in `PIANO_OTTOBRE_2026.md`, che prevale su questo
-file dove i due si contraddicono.
+tra Base e Avanzata, giornata finale sul capstone con Copilot, cartelle dei corsisti) sono in `PIANO_OTTOBRE_2026.md`,
+che prevale su questo file dove i due si contraddicono. Come sono fatte e come si mantengono le cartelle delle aule è
+scritto in `REGOLE.md`, sezione "La cartella dell'aula".

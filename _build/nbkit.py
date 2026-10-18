@@ -274,8 +274,9 @@ class Notebook:
     def sottosezione(self, titolo: str, intro: str | None = None, aula: str | None = None) -> None:
         self.celle.append(Cella("sottosezione", _d(intro) if intro else "", aula=self._aula(aula), extra={"titolo": titolo}))
 
-    def md(self, testo: str, aula: str | None = None) -> None:
-        self.celle.append(Cella("md", _d(testo), aula=self._aula(aula)))
+    def md(self, testo: str, aula: str | None = None, solo_soluzioni: bool = False, solo_studente: bool = False) -> None:
+        """Cella di testo; `solo_soluzioni` o `solo_studente` la mettono in una sola delle due versioni."""
+        self.celle.append(Cella("md", _d(testo), aula=self._aula(aula), solo_soluzioni=solo_soluzioni, solo_studente=solo_studente))
 
     def code(self, src: str, aula: str | None = None, rete: bool = False, errore: bool = False) -> None:
         """Cella di codice. rete=True se chiama un'API; errore=True se deve dare errore apposta."""

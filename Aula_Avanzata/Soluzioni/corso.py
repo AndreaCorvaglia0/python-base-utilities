@@ -185,22 +185,81 @@ assert round(media_24h.max()) == 27189, "❌ media_24h: rolling su 96 quarti d'o
 assert picco_24h == pd.Timestamp("2024-07-19 15:30"), "❌ picco_24h: usa media_24h.idxmax()"
 '''),
     'E1.1': ('Esercizio E1.1', r'''
+assert cartella_creata.strip().rstrip("/") == ".venv", "❌ cartella_creata: il nome nella riga Creating virtual environment at"
+assert libreria_mancante.strip() == "pandas", "❌ libreria_mancante: il nome tra apici nell'ultima riga dell'errore"
+'''),
+    'E1.2': ('Esercizio E1.2', r'''
+import tomllib
+from pathlib import Path
+
+progetto = tomllib.loads(Path("Script_uv_Ruff/esercizio/pyproject.toml").read_text(encoding="utf-8"))
+
+librerie = progetto["project"]["dependencies"]
+assert any(voce.startswith("pandas") for voce in librerie), "❌ pandas non è tra le dependencies di esercizio/pyproject.toml: lancia uv add pandas nella cartella esercizio"
+assert seconda_libreria.strip() == "openpyxl", "❌ seconda_libreria: il nome tra apici nell'ultima riga del nuovo errore"
+'''),
+    'E1.3': ('Esercizio E1.3', r'''
+import tomllib
+from pathlib import Path
+
+progetto = tomllib.loads(Path("Script_uv_Ruff/esercizio/pyproject.toml").read_text(encoding="utf-8"))
+
+librerie = progetto["project"]["dependencies"]
+assert any(voce.startswith("openpyxl") for voce in librerie), "❌ openpyxl non è tra le dependencies di esercizio/pyproject.toml: lancia uv add openpyxl"
+assert riga_media.strip() == "Temperatura media della settimana: 15.0 gradi, calcolata su 5 giorni", "❌ riga_media: la riga copiata dal terminale, tale e quale"
+'''),
+    'E1.4': ('Esercizio E1.4', r'''
+import tomllib
+from pathlib import Path
+
+progetto = tomllib.loads(Path("Script_uv_Ruff/esercizio/pyproject.toml").read_text(encoding="utf-8"))
+
+sviluppo = progetto.get("dependency-groups", {}).get("dev", [])
+assert any(voce.startswith("ruff") for voce in sviluppo), "❌ ruff non è nel gruppo dev di esercizio/pyproject.toml: lancia uv add --dev ruff"
+assert sorted(avvisi) == ["E501", "F401", "F841", "I001"], "❌ avvisi: i quattro codici stampati da uv run ruff check, come stringhe"
+'''),
+    'E1.5': ('Esercizio E1.5', r'''
+from pathlib import Path
+
+cartella = Path("Script_uv_Ruff/esercizio")
+meteo = (cartella / "meteo.py").read_text(encoding="utf-8")
+righe_lunghe = [r for r in (cartella / "main.py").read_text(encoding="utf-8").splitlines() if len(r) > 100]
+assert esito_finale.strip() == "All checks passed!", "❌ esito_finale: la riga stampata da uv run ruff check quando non trova problemi"
+assert "import math" not in meteo and "giorni =" not in meteo and "giorni=" not in meteo, "❌ meteo.py contiene ancora import math o la variabile giorni"
+assert not righe_lunghe, "❌ main.py ha ancora una riga di più di 100 caratteri"
+'''),
+    'E1.6': ('Esercizio E1.6', r'''
+from pathlib import Path
+
+righe = Path("Script_uv_Ruff/esercizio/main.py").read_text(encoding="utf-8").splitlines()
+riga_import = next((r for r in righe if r.startswith("from meteo import")), "")
+assert "minima" in riga_import, "❌ main.py: aggiungi minima alla riga from meteo import"
+assert riga_minima.strip() == "Temperatura minima della settimana: 13.8 gradi", "❌ riga_minima: la riga stampata dal terminale, tale e quale"
+'''),
+    'E1.7': ('Esercizio E1.7', r'''
+assert nome_importato.strip() == "meteo", "❌ nome_importato: il nome stampato con uv run main.py"
+assert nome_lanciato.strip() == "__main__", "❌ nome_lanciato: il nome stampato con uv run meteo.py"
+'''),
+    'E1.8': ('Esercizio E1.8', r'''
+assert file_versioni.strip() == "uv.lock", "❌ file_versioni: il file in cui uv registra le versioni esatte di ogni libreria"
+'''),
+    'E1.9': ('Esercizio E1.9', r'''
 assert valore_massimo == 25 and valore_minimo == 7 and differenza == 18, "❌ Controlla max(), min() e la differenza"
 assert media == 14.0, "❌ media: (a + b + c) / 3, arrotondata con round(..., 1)"
 '''),
-    'E1.2': ('Esercizio E1.2', r'''
+    'E1.10': ('Esercizio E1.10', r'''
 assert round(area, 6) == 78.539816, "❌ area: math.pi moltiplicato per raggio ** 2"
 assert round(circonferenza, 6) == 31.415927, "❌ circonferenza: 2 * math.pi * raggio"
 '''),
-    'E1.3': ('Esercizio E1.3', r'''
+    'E1.11': ('Esercizio E1.11', r'''
 assert lista_invertita == [5, 4, 3, 2, 1], "❌ lista_invertita: slicing con passo -1"
 assert ultimi_due == [4, 5] and ogni_due == [1, 3, 5], "❌ ultimi_due è lista[-2:] e ogni_due è lista[::2]"
 '''),
-    'E1.4': ('Esercizio E1.4', r'''
+    'E1.12': ('Esercizio E1.12', r'''
 assert elementi_pari == ["Martina", "Giulia", "Francesca", "Sara"], "❌ elementi_pari: lista[2::2]"
 assert uomini == ["Luigi", "Marco", "Simone", "Alessandro", "Lorenzo"] and quanti_uomini == 5, "❌ uomini è lista[1::2] e quanti_uomini è len(uomini)"
 '''),
-    'E1.5': ('Esercizio E1.5', r'''
+    'E1.13': ('Esercizio E1.13', r'''
 assert g8.get('Regno Unito') == 'Londra' and g8.get('Stati Uniti') == 'Washington, D.C.', "❌ Aggiungi le due coppie con g8[chiave] = valore"
 assert quanti == 8 and capitale_italia == 'Roma', "❌ quanti è len(g8) e capitale_italia è g8['Italia']"
 assert paesi[0] == 'Canada' and paesi[-1] == 'Stati Uniti', "❌ paesi: sorted(g8.keys())"

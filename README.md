@@ -1,36 +1,54 @@
 # Python base per le utility
 
-Questo repository contiene il materiale di un corso su Python in quattro moduli di quattro ore, per chi lavora con
-i dati in una società del settore energetico. Il corso parte dalle basi del linguaggio e arriva all'analisi di dati tabellari con
-pandas, alla gestione delle date, ai grafici interattivi con Plotly e a un caso completo costruito sui dati di carico
-elettrico pubblicati da Terna. Una parte del percorso è dedicata agli agenti per il coding, come Copilot in VS Code:
-oggi molto codice viene scritto da strumenti di questo tipo, e per chiedere loro la cosa giusta e controllare quello
-che restituiscono è necessario saper leggere il codice.
+Questo repository contiene il materiale di un corso su Python in quattro moduli di quattro ore, per chi lavora con i
+dati in una società del settore energetico. Il corso parte dalle basi del linguaggio e arriva all'analisi di dati
+tabellari con pandas, alla gestione delle date, ai grafici interattivi con Plotly e a un caso completo costruito sui
+dati di carico elettrico pubblicati da Terna. Una parte del percorso è dedicata agli agenti per il coding, come Copilot
+in VS Code: oggi molto codice viene scritto da strumenti di questo tipo, e per chiedere loro la cosa giusta e
+controllare quello che restituiscono è necessario saper leggere il codice.
 
 Il materiale esiste in due versioni con lo stesso programma. La versione **Base** è pensata per chi non ha mai
-programmato, mentre la versione **Avanzata** si rivolge a chi ha già visto un po' di Python e aggiunge alcune sezioni
-in più, come le list comprehension, la lettura di dati da API e le medie mobili.
+programmato, mentre la versione **Avanzata** si rivolge a chi ha già visto un po' di Python e aggiunge alcune parti in
+più, come l'ambiente del progetto, gli script e Ruff nel modulo 1, le list comprehension, la lettura di dati da API e
+le medie mobili. Il README è scritto per chi tiene e mantiene il corso; i corsisti non ricevono il repository, ma solo
+la cartella della loro aula.
 
-## Installazione
+## Le cartelle dei corsisti
 
-Per seguire il corso servono VS Code, il gestore di ambienti uv e una copia di questa cartella. L'installazione
-richiede pochi minuti.
+Ogni corsista riceve la cartella della sua aula, `Aula_Base/` o `Aula_Avanzata/`, come file zip. La cartella funziona
+da sola: contiene i notebook dei quattro moduli, le soluzioni, i dati, le schede, il progetto uv `corso-python`, uguale
+per le due aule, e le impostazioni di VS Code. Il suo `README.md`, generato da `_build/aula/README_base.md` e
+`_build/aula/README_avanzata.md`, spiega al corsista come installare VS Code e uv, dove estrarre lo zip, come lanciare
+`uv sync` e scegliere il kernel, e come risolvere i problemi più comuni. Le due cartelle sono generate dal build e non
+si modificano a mano; gli zip si preparano con un comando che ricostruisce prima tutto il corso:
 
-1. Installare [uv](https://docs.astral.sh/uv/). Su Windows il comando è `winget install --id=astral-sh.uv -e`, su
-   Mac `brew install uv`.
-2. Scaricare il repository, con il pulsante **Code → Download ZIP** oppure con `git clone`, e aprire la cartella in
-   VS Code.
-3. Eseguire `uv sync` nel terminale di VS Code. Il comando crea la cartella `.venv` con l'interprete Python e tutte le
-   librerie usate nel corso, nelle versioni indicate dal progetto.
-4. Aprire un notebook e scegliere il kernel con il pulsante **Select Kernel**, in alto a destra. Se nell'elenco compare
-   già una voce con `.venv` nel nome è quella giusta; altrimenti si passa da **Select Another Kernel... → Python
-   Environments...** e si sceglie la `.venv` appena creata.
-5. Eseguire la prima cella di codice del notebook `00_Notebook`. Se stampa un percorso che contiene `.venv`,
-   l'ambiente è configurato correttamente.
+    uv run python _build/esporta.py              # dist/Aula_Base.zip e dist/Aula_Avanzata.zip
+    uv run python _build/esporta.py base         # una sola aula
 
-Se durante il corso serve una libreria che non è nel progetto, si aggiunge con `uv add nome` dal terminale e poi si
-riavvia il kernel con **Restart**. Le estensioni di VS Code necessarie sono **Python** e **Jupyter**; in aula si usano
-anche **Data Wrangler** e **GitHub Copilot**, e nella versione Avanzata **Ruff**.
+Nello zip entrano soltanto i file che Git conosce o non ignora, quindi restano fuori `.venv`, le cache e i file
+prodotti eseguendo notebook e script. La cartella dell'Avanzata, che è la più completa, è fatta così:
+
+```
+Aula_Avanzata/
+    README.md                                  le istruzioni per il corsista
+    pyproject.toml  uv.lock  .python-version   il progetto uv "corso-python"
+    .vscode/                                   impostazioni ed estensioni consigliate
+    Dati/  Schede/                             i dati usati dai notebook e le tre schede
+    Modulo_1/ … Modulo_4/                      i notebook del percorso, con il loro corso.py
+        Modulo_1/Script_uv_Ruff/               Ambiente_script_e_Ruff, demo/ ed esercizio/
+    Soluzioni/                                 la versione risolta di ogni notebook, con il suo corso.py
+        Soluzioni/Script_uv_Ruff/              demo/ ed esercizio/ come sono alla fine
+```
+
+I notebook sono distribuiti nei moduli come nella tabella seguente, con una numerazione da 00 a 11 unica per tutto il
+corso.
+
+| Cartella | Aula Base | Aula Avanzata |
+|---|---|---|
+| `Modulo_1` | 00, 01, 02, 03, Esercitazione_1 | gli stessi, più `Script_uv_Ruff/` |
+| `Modulo_2` | 04, 05, 06, Esercitazione_2, Approfondimenti_1 | gli stessi |
+| `Modulo_3` | 07, 08, Esercitazione_3, Approfondimenti_2 | 07, 08, Esercitazione_3 |
+| `Modulo_4` | 09, 10, 11 | 09, 10, 11, Approfondimenti_2 |
 
 ## Il programma
 
@@ -38,7 +56,8 @@ Il corso si svolge in quattro moduli di quattro ore, il 20 e 21 ottobre e il 27 
 l'aula Base fa il modulo nelle prime quattro ore e l'aula Avanzata lo stesso modulo nelle quattro successive. I primi
 tre moduli si chiudono con un'ora di esercitazione, il quarto è dedicato agli agenti per il coding e al progetto
 finale. La tabella elenca i notebook nell'ordine in cui si svolgono, con il tempo previsto per ciascuna versione; le
-sezioni Extra in fondo ai notebook non sono comprese nei tempi.
+sezioni Extra in fondo ai notebook non sono comprese nei tempi, e le dimostrazioni dal vivo, che non sono notebook dei
+corsisti, sono nelle tabelle della `Guida_docente.md`.
 
 | Modulo | Notebook | Aula Base | Aula Avanzata |
 |---|---|---|---|
@@ -46,8 +65,8 @@ sezioni Extra in fondo ai notebook non sono comprese nei tempi.
 | 1 | `01_Python_e_sintassi_base` · variabili, numeri, stringhe, import | 40 min | 30 min |
 | 1 | `02_Tipi_di_dato` · liste, tuple, dizionari, set | 40 min | 35 min |
 | 1 | `03_Codice_leggibile` · commenti, Markdown, docstring, PEP 8 | 20 min | 20 min |
-| 1 | `Ambiente_script_e_Ruff` · uv e `.venv`, script `.py`, Ruff | — | 30 min |
-| 1 | `Esercitazione_1` | 60 min | 60 min |
+| 1 | `Ambiente_script_e_Ruff` · uv e `.venv`, i file del progetto, notebook e script, import da un file, Ruff, con la demo dal vivo | no | 30 min |
+| 1 | `Esercitazione_1` · Base: esercizi sui notebook 00-03; Avanzata: la demo ripetuta nella cartella `esercizio/`, con gli esercizi sui notebook 00-03 facoltativi, a casa | 60 min | 60 min |
 | 2 | `04_Funzioni_e_controllo` · if, for, funzioni (Avanzata: lambda, list comprehension) | 50 min | 50 min |
 | 2 | `05_Oggetti_ed_errori` · oggetti, metodi, documentazione, traceback | 35 min | 30 min |
 | 2 | `06_Pandas_e_import_dati` · Series, DataFrame, CSV, Excel, SQL (Avanzata: API) | 55 min | 70 min |
@@ -68,23 +87,42 @@ strutturato, con domande di riepilogo, cinque esercizi con suggerimenti nascosti
 richiesta, mentre i due Approfondimenti raccolgono il materiale che resta fuori dal percorso principale e si aprono
 solo quando la classe è in anticipo. Sotto ogni esercizio si trova una cella con la chiamata `verifica("7.1")`, che
 controlla il risultato e stampa ✅ se è corretto, oppure una riga che indica che cosa non torna. Le soluzioni di tutti
-gli esercizi sono nelle cartelle `Soluzioni_Base/` e `Soluzioni_Avanzata/`.
+gli esercizi sono nella cartella `Soluzioni/` di ogni aula, a disposizione dei corsisti fin dal primo giorno.
 
-## Il contenuto delle cartelle
+## Il materiale del docente
+
+Quello che serve soltanto al docente resta nel repository e non va ai corsisti. La `Guida_docente.md` riporta i tempi
+dei quattro moduli, indica quando svolgere le dimostrazioni dal vivo, descrive come distribuire gli zip e gli
+aggiornamenti e che cosa raccontare nella parte su uv, script e Ruff dell'Avanzata, con la demo passo per passo e
+l'ora di esercitazione, e suggerisce dove tagliare se si è in ritardo.
 
 | Cartella | Contenuto |
 |---|---|
-| `Aula_Base/`, `Aula_Avanzata/` | i notebook del corso, le tre Esercitazioni e i due Approfondimenti; `corso.py` è il modulo con i controlli degli esercizi |
-| `Soluzioni_Base/`, `Soluzioni_Avanzata/` | gli stessi notebook con gli esercizi risolti |
-| `Extra/` | le parti che il docente mostra dal vivo: VS Code, Data Wrangler, wrapper delle API |
-| `Riserva/` | l'Homework, un notebook di mezz'ora per le due aule, tenuto come riserva per una classe molto veloce |
-| `Dati/` | i dati usati nel corso: carico Terna, turbina eolica, prezzi, più i file di esempio (vedi `Dati/README.md`) |
-| `Schede/` | quattro schede di una pagina: leggere il codice, Excel → pandas, uv e script, gli errori più comuni; i notebook 01, 05, 06 e 07 rimandano alla loro |
+| `Aula_Base/`, `Aula_Avanzata/` | le cartelle dei corsisti, generate dal build |
+| `Extra/` | i notebook delle dimostrazioni dal vivo: VS Code e notebook, Data Wrangler, wrapper delle API |
+| `Riserva/` | l'Homework per le due aule e, per l'Avanzata, gli esercizi su uv, script e Ruff, per una classe molto veloce |
+| `Dati/` | gli originali dei dati del corso (vedi `Dati/README.md`), copiati nelle aule a ogni build |
+| `Schede/` | gli originali delle tre schede: leggere il codice, gli errori più comuni, da Excel a pandas |
 | `Slides/` | la presentazione del corso |
-| `_build/` | gli script che generano i notebook e i dati di esempio, e in `_build/docs/` le regole di scrittura del materiale (non servono per seguire il corso) |
+| `_build/` | gli script che generano il materiale: in `src/` i sorgenti dei notebook e le cartelle della demo su uv e Ruff, in `aula/` il progetto uv e i README dei corsisti, in `docs/` le regole di scrittura |
+| `dist/` | gli zip per i corsisti, prodotti da `_build/esporta.py` e non versionati |
 
-Il file `Guida_docente.md` indica quando svolgere le dimostrazioni dal vivo, riporta i tempi dei quattro moduli e
-suggerisce dove tagliare se si è in ritardo.
+## Ricostruire e controllare il materiale
+
+Per lavorare sul repository serve uv. Il comando `uv sync` nella radice crea l'ambiente del repository, che oltre alle
+librerie del corso contiene gli strumenti per eseguire e validare i notebook ed è distinto dal progetto dei corsisti
+in `_build/aula/`. I notebook di `Extra/` e di `Riserva/` si aprono con questo ambiente. I comandi principali sono
+questi:
+
+    uv run python _build/controlla.py 07 E2      # build, soluzioni eseguite e Run All studente dei notebook indicati
+    uv run python _build/controlla.py            # tutto il corso
+    uv run python _build/leggi.py Aula_Base/Modulo_3/07_Pandas_operazioni.ipynb   # rilettura cella per cella
+    uv run python _build/esporta.py              # gli zip per i corsisti
+
+`controlla.py` deve chiudersi con zero errori e zero avvisi. A ogni giro controlla anche che le copie nelle aule
+coincidano con gli originali, che il `uv.lock` dei corsisti sia aggiornato e che Ruff dia sugli script della demo e
+dell'esercizio esattamente le segnalazioni previste. Le regole di scrittura del materiale stanno in `_build/docs/`, e
+`CLAUDE.md` riassume il ciclo di lavoro.
 
 ## Come sono fatti i notebook
 
@@ -92,5 +130,5 @@ Ogni notebook si apre con il tempo previsto, i dati che utilizza e tre obiettivi
 collegamenti al notebook precedente e al successivo. Nel testo, le note e gli approfondimenti compaiono come
 citazioni rientrate, e gli approfondimenti si possono saltare senza perdere il filo. I riquadri colorati sono tre: il
 riquadro verde segnala un **Esercizio** o un **Hands-on**, cioè un momento in cui si scrive codice; il riquadro
-azzurro contiene la **Soluzione** e compare solo nelle cartelle delle soluzioni; il riquadro rosso, **Attenzione**,
+azzurro contiene la **Soluzione** e compare solo nella cartella `Soluzioni/`; il riquadro rosso, **Attenzione**,
 segnala un errore che capita spesso.

@@ -1,4 +1,9 @@
-"""S · Ambiente, script e Ruff (solo aula Avanzata, modulo 1, dopo il notebook 03)."""
+"""S · Ambiente, script e Ruff (solo aula Avanzata, modulo 1, dopo il notebook 03).
+
+Notebook di spiegazione, senza esercizi: prepara la dimostrazione nella cartella `demo/` e l'Esercitazione 1
+dell'Avanzata, che la fa rifare nella cartella `esercizio/`. Sta in `Aula_Avanzata/Modulo_1/Script_uv_Ruff/`, quindi
+la radice dell'aula è `../../` e la demo è in `demo/`.
+"""
 
 from nbkit import Notebook
 
@@ -12,113 +17,43 @@ def costruisci() -> Notebook:
         giornata=1,
         aule=("avanzata",),
         intento=(
-            "Il notebook mostra come è fatto l'ambiente del progetto e come lo gestisce uv, quando conviene "
-            "uno script al posto di un notebook e come Ruff controlla e rimette in forma il codice."
+            "Il notebook spiega che cosa fa uv e che cos'è un ambiente virtuale, quali file descrivono un "
+            "progetto, quando conviene uno script al posto di un notebook e come si importa una funzione da un "
+            "altro file; presenta poi Ruff come formatter e come linter e raccoglie i passi della dimostrazione "
+            "che l'Esercitazione 1 fa rifare."
         ),
         obiettivi=[
-            "riconoscere i file che descrivono il progetto e gestire le librerie con `uv add` e `uv sync`",
-            "trasformare il codice di un notebook in uno script `.py` e lanciarlo con `uv run`",
-            "usare Ruff in VS Code per rimettere in forma il codice e leggere i suoi avvisi",
+            "spiegare che cosa fa uv, a che cosa serve un ambiente virtuale e quali file descrivono un progetto",
+            "scrivere uno script che importa una funzione da un altro file e lanciarlo con `uv run`",
+            "usare Ruff come formatter e come linter, dal terminale e in VS Code",
         ],
         tempo=30,
         dati=[],
     )
 
     # ------------------------------------------------------------------ 1
-    nb.sezione("Il progetto del corso", intro="""
-        Il progetto del corso è stato preparato con il comando `uv sync`, lanciato nella cartella
-        principale. Il comando ha letto i file che descrivono il progetto, ha scaricato la versione di
-        Python richiesta, se sul PC mancava, e ha creato la cartella `.venv` con quel Python e tutte le
-        librerie del corso. In questa sezione vediamo che cosa contengono quei file, che sono gli stessi
-        in qualunque progetto Python gestito con uv.
+    nb.sezione("uv e l'ambiente virtuale", intro="""
+        uv è il programma con cui gestiamo i progetti Python del corso. Sa installare la versione di
+        Python richiesta da un progetto, creare l'ambiente virtuale del progetto, installare al suo interno
+        le librerie e lanciare i programmi con il Python giusto. Lo abbiamo già usato all'inizio del corso, quando il
+        comando `uv sync`, lanciato nella cartella del corso, ha preparato tutto quello che serve ai
+        notebook. In questo notebook vediamo che cosa ha fatto quel comando e come si usa uv per un
+        progetto nuovo.
     """)
     nb.md("""
-        Accanto alle cartelle dei notebook e dei dati, la cartella principale contiene tre elementi che
-        riguardano l'ambiente, cioè gli ultimi tre dello schema seguente:
-
-        ```
-        python-base-utilities/
-            Aula_.../           i notebook del corso
-            Dati/               i file che leggeremo: CSV, Excel, un database SQLite
-            Schede/             una pagina di riepilogo per argomento
-            pyproject.toml      la descrizione del progetto e l'elenco delle librerie
-            uv.lock             le versioni esatte di ogni libreria installata
-            .venv/              l'ambiente virtuale: Python e le librerie del progetto
-        ```
+        Un ambiente virtuale è una cartella, che nei progetti gestiti con uv si chiama `.venv`, con un
+        interprete Python e le librerie di un solo progetto. Avere un ambiente per progetto porta alcuni
+        vantaggi concreti. Due progetti possono usare versioni diverse della stessa libreria senza
+        disturbarsi, e aggiornare una libreria in uno non cambia nulla negli altri. L'ambiente sta nella
+        cartella del progetto, quindi si crea senza diritti di amministratore, e si può cancellare e
+        ricostruire in ogni momento, perché quello che serve a ricrearlo è scritto nei file del progetto.
     """)
     nb.md("""
-        Il file `pyproject.toml` è un file di testo nel formato TOML, che si può aprire in VS Code e
-        leggere liberamente. La sezione `[project]` contiene il nome del progetto, la versione minima di
-        Python e, sotto la voce `dependencies`, le librerie di cui il progetto ha bisogno. Lo stesso
-        contenuto si legge anche da Python: `Path` del modulo `pathlib` legge il file come testo, e la
-        funzione `tomllib.loads` lo trasforma in un dizionario in cui ogni sezione del file è una chiave.
-    """)
-    nb.code("""
-        import tomllib
-        from pathlib import Path
-
-        testo = Path("../pyproject.toml").read_text(encoding="utf-8")
-        progetto = tomllib.loads(testo)
-        progetto["project"]["dependencies"]
-    """)
-    nb.md("""
-        Il risultato è la lista delle librerie, ciascuna con un vincolo di versione largo: `pandas>=3.0`,
-        per esempio, indica pandas dalla versione 3.0 in su. Il file si legge per capire di che cosa ha
-        bisogno il progetto, ma non serve modificarlo a mano, perché lo aggiorna uv quando aggiungiamo o
-        togliamo una libreria.
-    """)
-    nb.hands_on(
-        richiesta="""
-            La sezione `[dependency-groups]` del file elenca, sotto la voce `dev`, gli strumenti che servono
-            a chi scrive il codice ma non al programma. Metti in `strumenti` quella lista, leggendola da
-            `progetto` con due chiavi come nell'esempio: tra gli strumenti compare anche Ruff, che useremo
-            alla fine del notebook.
-        """,
-        starter="""
-            strumenti = ...
-            strumenti
-        """,
-        soluzione="""
-            strumenti = progetto["dependency-groups"]["dev"]
-            strumenti
-        """,
-        verifica="""
-            assert strumenti == progetto["dependency-groups"]["dev"], "❌ strumenti: prima la chiave \\"dependency-groups\\", poi \\"dev\\""
-            assert any(voce.startswith("ruff") for voce in strumenti), "❌ tra gli strumenti di sviluppo dovrebbe esserci ruff"
-        """,
-        prova_anche='`progetto["project"]["requires-python"]`, che dice quale versione di Python serve al progetto.',
-    )
-    nb.md("""
-        Il file `uv.lock` completa `pyproject.toml` con l'elenco esatto di quello che è stato installato,
-        versione per versione, comprese le librerie da cui dipendono quelle elencate. Lo scrive uv e non si
-        modifica a mano. Si condivide insieme a `pyproject.toml`, in modo che chi riceve il progetto e
-        lancia `uv sync` ottenga esattamente lo stesso ambiente. La cartella `.venv`, invece, non si
-        condivide, perché pesa centinaia di megabyte e si ricrea a partire da `uv.lock` in circa un minuto.
-    """)
-    nb.md("""
-        Negli esempi che si trovano in rete compare spesso il comando `!pip install nome`, scritto dentro
-        una cella di un notebook. Nel progetto non lo usiamo, perché installa la libreria nell'ambiente
-        senza registrarla nei file del progetto. Di conseguenza `pyproject.toml` e `uv.lock` restano come
-        prima, il collega che lancia `uv sync` non riceve la libreria, e al successivo `uv sync` la
-        libreria sparisce anche dal nostro ambiente, che il comando rimette esattamente come lo descrive
-        `uv.lock`. Le librerie si aggiungono invece con `uv add`, che vediamo nella prossima sezione.
-    """)
-
-    # ------------------------------------------------------------------ 2
-    nb.sezione("Un ambiente per progetto", intro="""
-        Un notebook può funzionare sul nostro PC e non partire su quello di un collega, perché lui ha
-        installato tempo fa, per un altro progetto, una versione di pandas con cui il nostro codice dà
-        errore. Il problema nasce dal fatto che un solo Python condiviso tra più progetti ha una sola
-        versione di ogni libreria, che può andare bene per un progetto e non per un altro. Per questo ogni
-        progetto ha il suo ambiente virtuale, cioè una cartella con un Python e le versioni delle librerie
-        che servono a quel progetto.
-    """)
-    nb.md("""
-        Nel nostro progetto l'ambiente è la cartella `.venv`, e il kernel del notebook usa il Python che
-        sta lì dentro. Lo abbiamo controllato nel primo notebook con `sys.executable`, e la cella seguente
-        lo ripete chiedendo anche a pandas dove si trova il suo file principale, che si legge
-        nell'attributo `__file__` del modulo. Entrambi i percorsi passano per `.venv`, perché anche le
-        librerie sono installate dentro l'ambiente.
+        Il kernel di questo notebook usa il Python dell'ambiente del corso, come abbiamo controllato nel
+        primo notebook con `sys.executable`. La cella seguente lo ripete e chiede anche a pandas dove si
+        trova il suo file principale, che si legge nell'attributo `__file__` del modulo. Entrambi i
+        percorsi passano per `.venv`, perché anche le librerie sono installate dentro l'ambiente, nella
+        sottocartella `site-packages`.
     """)
     nb.code("""
         import sys
@@ -129,452 +64,421 @@ def costruisci() -> Notebook:
         print(pd.__file__)
     """)
     nb.md("""
-        Le librerie dell'ambiente si gestiscono con uv dal terminale di VS Code, che si apre con
-        **Terminal → New Terminal** e parte già nella cartella del progetto. I comandi che servono nella
-        pratica sono quattro, e si scrivono nel terminale, non in una cella del notebook:
+        Una libreria installata, quindi, è una cartella di file, in gran parte file `.py` scritti in
+        Python come i nostri. La cella seguente elenca i file della sottocartella `io/excel` di pandas, che
+        contiene il codice per leggere e scrivere i file Excel. Tra questi c'è `_openpyxl.py`, che
+        ritroveremo nella dimostrazione, quando un messaggio di errore indicherà proprio quel file.
+    """)
+    nb.code("""
+        from pathlib import Path
 
-        ```bash
-        uv add matplotlib       # aggiunge la libreria a pyproject.toml, aggiorna uv.lock e la installa
-        uv remove matplotlib    # toglie la libreria dal progetto
-        uv sync                 # rimette .venv esattamente come la descrive uv.lock
-        uv run spesa.py         # esegue un file Python con il Python di .venv
+        cartella_pandas = Path(pd.__file__).parent
+        sorted(f.name for f in (cartella_pandas / "io" / "excel").glob("*.py"))
+    """)
+
+    # ------------------------------------------------------------------ 2
+    nb.sezione("I file del progetto", intro="""
+        Un progetto gestito con uv è descritto da pochi file di testo, che stanno nella cartella
+        principale accanto al codice. Nella cartella del corso, due livelli sopra questo notebook, sono
+        gli ultimi quattro elementi dello schema seguente.
+    """)
+    nb.md("""
+        ```
+        Aula_Avanzata/
+            Modulo_1/ ... Modulo_4/   i notebook, un modulo per cartella
+            Soluzioni/                le soluzioni degli esercizi
+            Dati/   Schede/           i dati del corso e le schede di riepilogo
+            pyproject.toml            la descrizione del progetto e l'elenco delle librerie
+            uv.lock                   le versioni esatte di tutto quello che è installato
+            .python-version           la versione di Python del progetto
+            .venv/                    l'ambiente virtuale, creato da uv sync
         ```
     """)
     nb.md("""
-        Il comando `uv add` è quello che usa chi aggiunge una libreria al progetto, mentre `uv sync` è
-        quello che usa chi riceve il progetto aggiornato o vuole ricreare un ambiente che non funziona più.
-        Dopo un `uv add` il kernel già in esecuzione non vede la nuova libreria, quindi prima di scrivere
-        l'`import` lo si riavvia con **Restart**. Il comando `uv run`, infine, esegue un programma dentro
-        l'ambiente senza bisogno di attivarlo prima, e nella prossima sezione lo usiamo per gli script.
+        Il file `pyproject.toml` è scritto nel formato TOML, fatto di sezioni tra parentesi quadre e di
+        righe `chiave = valore`, e si apre in VS Code come qualunque file di testo. La sezione `[project]`
+        contiene il nome del progetto, la versione minima di Python e, alla voce `dependencies`, le
+        librerie di cui il programma ha bisogno. Lo stesso contenuto si legge anche da Python con il modulo
+        `tomllib` della libreria standard, che trasforma il testo in un dizionario con una chiave per
+        sezione.
+    """)
+    nb.code("""
+        import tomllib
+
+        testo = Path("../../pyproject.toml").read_text(encoding="utf-8")
+        progetto = tomllib.loads(testo)
+        print(progetto["project"]["dependencies"])
+        print(progetto["dependency-groups"]["dev"])
     """)
     nb.md("""
-        Quando un `import` fallisce con un `ModuleNotFoundError`, conviene controllare due cose
-        nell'ordine. Se la libreria non compare in `pyproject.toml`, manca dal progetto e si aggiunge con
-        `uv add`. Se invece compare e `uv sync` risponde che è tutto a posto, la libreria è installata, ma
-        il notebook la cerca in un altro Python, perché il kernel scelto non è quello di `.venv`. In questo
-        caso si cambia kernel con **Select Kernel**, senza installare nulla una seconda volta.
+        Ogni libreria compare con un vincolo di versione largo, come `pandas>=3.0`, che accetta pandas
+        dalla versione 3.0 in su. La seconda riga viene dalla sezione `[dependency-groups]`, che alla voce
+        `dev` raccoglie gli strumenti di sviluppo, cioè quelli che servono a chi scrive il codice ma non al
+        programma per funzionare: nel nostro caso Ruff, che vediamo più avanti. Le due liste non si
+        modificano a mano, perché le aggiorna uv ogni volta che aggiungiamo o togliamo una libreria.
     """)
-    nb.box("nota", """
-        uv non è l'unico strumento per gestire gli ambienti. La coppia `venv` e `pip`, inclusa in Python,
-        segue la stessa idea ma richiede più passaggi a mano e non produce un file come `uv.lock`; conda è
-        diffuso in ambito scientifico, e Poetry svolge un lavoro simile a quello di uv. Chi eredita un
-        progetto usa lo strumento che vi trova, riconoscibile da file come `environment.yml` per conda o
-        `poetry.lock` per Poetry.
+    nb.md("""
+        Gli altri file completano la descrizione. Il file `uv.lock` elenca la versione esatta di ogni
+        libreria installata, comprese quelle da cui dipendono le librerie di `pyproject.toml`, e permette a
+        chi riceve il progetto di ricostruire lo stesso identico ambiente su un altro PC. Il file
+        `.python-version` indica la versione di Python che uv usa per creare l'ambiente, mentre `.venv` è
+        l'ambiente stesso, che uv crea e aggiorna a partire dagli altri file. La tabella seguente dice chi
+        scrive ciascun file e se si condivide con i colleghi insieme al codice.
+    """)
+    nb.md("""
+        | File | Chi lo scrive | Si condivide |
+        |---|---|---|
+        | `pyproject.toml` | uv, per le librerie; a mano, per la configurazione degli strumenti | sì |
+        | `uv.lock` | soltanto uv | sì |
+        | `.python-version` | chi crea il progetto, oppure `uv init` | sì |
+        | `.venv/` | uv, con `uv sync` e `uv run` | no, perché pesa centinaia di megabyte e si ricrea con `uv sync` |
     """)
 
     # ------------------------------------------------------------------ 3
-    nb.sezione("Script e notebook", intro="""
-        Il notebook è lo strumento adatto all'esplorazione, perché permette di provare una cella, guardare
-        il risultato e cambiare strada. Uno script è invece un file `.py` che esegue sempre le stesse
-        istruzioni dall'inizio alla fine, senza che nessuno debba intervenire, ed è la forma giusta per
-        un'operazione da ripetere, come un report che parte ogni mattina o un controllo da lanciare ogni
-        lunedì. Quando il codice di un notebook è diventato stabile, conviene quindi trasformarlo in uno
-        script.
+    nb.sezione("Aggiungere e togliere librerie", intro="""
+        Le librerie di un progetto si gestiscono con pochi comandi di uv, che si scrivono nel terminale e
+        non in una cella del notebook. In VS Code il terminale si apre con **Terminal → New Terminal** e
+        parte dalla cartella aperta nell'editor, che per noi è la cartella del corso. Le librerie
+        arrivano da PyPI, il catalogo pubblico dei pacchetti Python, quindi i comandi che le installano
+        hanno bisogno della connessione a internet. Quelli che si usano di più sono quattro.
     """)
-    nb.md('''
-        Per creare uno script usiamo **File → New File** in VS Code e salviamo il file con il nome
-        `spesa.py` nella cartella principale del progetto, accanto a `pyproject.toml`. Il file contiene
-        una docstring che dice a che cosa serve, una funzione e le righe che la usano:
-
-        ```python
-        """Totale della spesa della settimana."""
-
-
-        def totale(prezzi):
-            """Somma dei prezzi di una lista di prodotti."""
-            return sum(prezzi)
-
-
-        scontrino = [3.5, 2.2, 4.8, 1.9, 14.9]
-        print(f"Totale della spesa: {totale(scontrino):.2f} euro")
-        ```
-    ''')
     nb.md("""
-        Lo script si lancia dal terminale, nella cartella del progetto, con `uv run`, che avvia il Python
-        di `.venv` sul file, esegue il codice e termina:
-
         ```bash
-        uv run spesa.py
+        uv add matplotlib       # aggiunge la libreria a pyproject.toml e uv.lock e la installa
+        uv add --dev ruff       # aggiunge uno strumento di sviluppo, nel gruppo dev
+        uv remove matplotlib    # toglie la libreria dai file del progetto e da .venv
+        uv sync                 # rimette .venv esattamente come lo descrive uv.lock
         ```
 
-        Il terminale stampa la riga `Totale della spesa: 27.30 euro`. Non servono celle né un kernel, e per
-        questo lo stesso comando si può affidare a un'attività pianificata, che lo lancia a un'ora
-        stabilita anche quando nessuno è davanti al PC.
+        Il comando `uv add` è quello di chi aggiunge una libreria, mentre `uv sync` è quello di chi riceve
+        il progetto aggiornato da un collega o vuole ricostruire un ambiente che non funziona più.
     """)
     nb.md("""
-        Lo stesso codice, incollato in una cella, stampa la stessa riga, perché una cella e uno script
-        eseguono le istruzioni Python nello stesso modo. Le differenze stanno nel contorno. In uno script
-        l'ultima espressione non viene mostrata, quindi un nome lasciato da solo sull'ultima riga non
-        stampa nulla e va messo dentro un `print`. I percorsi relativi, inoltre, partono dalla cartella da
-        cui si lancia lo script e non da quella del notebook: dalla cartella principale del progetto i dati
-        si trovano in `Dati/`, senza il `../` che usiamo nei notebook.
+        Dopo un `uv add` nell'ambiente del corso il kernel già avviato non vede la nuova libreria, quindi
+        prima di scrivere l'`import` lo si riavvia con **Restart**. Negli esempi in rete compare spesso
+        `pip install`, anche dentro una cella come `!pip install`, ma nei progetti gestiti con uv non si
+        usa. Un ambiente creato da uv non contiene pip, quindi il comando, se trova un pip sul PC, usa
+        quello di un altro Python e installa la libreria lì invece che in `.venv`. Anche quando funziona,
+        la libreria non entra in `pyproject.toml` e `uv.lock`, quindi il collega non la riceve e il
+        successivo `uv sync` la toglie.
     """)
-    nb.code('''
-        def totale(prezzi):
-            """Somma dei prezzi di una lista di prodotti."""
-            return sum(prezzi)
-
-
-        scontrino = [3.5, 2.2, 4.8, 1.9, 14.9]
-        print(f"Totale della spesa: {totale(scontrino):.2f} euro")
-    ''')
     nb.md("""
-        Quando lanciamo `uv run spesa.py`, Python assegna al file il nome speciale `__main__`, che si legge
-        nella variabile `__name__`; se invece un altro file importa il nostro con `import spesa`, il nome è
-        `spesa`. Per questo negli script si trova spesso il controllo `if __name__ == "__main__":`, che
-        esegue il blocco sottostante solo quando il file è il programma lanciato. Lì si mettono le righe
-        che fanno il lavoro, mentre le funzioni definite sopra restano utilizzabili da altri file con un
-        `import`. Anche il notebook, per Python, è il programma principale, e infatti nella cella seguente
-        `__name__` vale `'__main__'`.
+        Tutti i comandi di uv lavorano sul progetto della cartella in cui si trova il terminale. uv cerca
+        un file `pyproject.toml` in quella cartella e, se non lo trova, risale una cartella alla volta fino
+        a trovarne uno. In un terminale aperto sulla cartella del corso, o su una sua sottocartella senza
+        `pyproject.toml` come `Modulo_1`, i comandi agiscono quindi sul progetto del corso e sul suo
+        `.venv`. La cartella `demo/` della dimostrazione ha invece un `pyproject.toml` suo, e un terminale
+        aperto lì lavora su quel progetto, con un ambiente separato.
     """)
-    nb.code("__name__")
-    nb.hands_on(
-        richiesta="""
-            Nella cella le righe che fanno il lavoro stanno dentro il blocco `if`, ma la condizione è
-            incompleta. Al posto dei `...` scrivi il nome che Python dà al programma lanciato, in modo che
-            il blocco venga eseguito e la cella stampi `Totale della spesa: 27.30 euro`.
-        """,
-        starter='''
-            def totale(prezzi):
-                """Somma dei prezzi di una lista di prodotti."""
-                return sum(prezzi)
-
-
-            if __name__ == "...":
-                scontrino = [3.5, 2.2, 4.8, 1.9, 14.9]
-                riga = f"Totale della spesa: {totale(scontrino):.2f} euro"
-                print(riga)
-        ''',
-        soluzione='''
-            def totale(prezzi):
-                """Somma dei prezzi di una lista di prodotti."""
-                return sum(prezzi)
-
-
-            if __name__ == "__main__":
-                scontrino = [3.5, 2.2, 4.8, 1.9, 14.9]
-                riga = f"Totale della spesa: {totale(scontrino):.2f} euro"
-                print(riga)  # Output: Totale della spesa: 27.30 euro
-        ''',
-        verifica="""
-            assert riga == "Totale della spesa: 27.30 euro", "❌ il blocco if non è stato eseguito: la condizione confronta __name__ con \\"__main__\\""
-        """,
-        prova_anche='scrivi `"spesa"` al posto di `"__main__"` ed esegui di nuovo: la cella non stampa nulla, perché nel notebook il nome è `__main__`.',
-    )
 
     # ------------------------------------------------------------------ 4
-    nb.sezione("Ruff", intro="""
-        Ruff è uno strumento che svolge due compiti. Come formatter, con il comando `ruff format`, rimette
-        in forma il codice secondo le regole di PEP 8 viste nel notebook sul codice leggibile, sistemando
-        spazi, indentazione e righe vuote senza cambiare il comportamento del programma. Come linter, con
-        il comando `ruff check`, segnala i problemi che non riguardano la forma, per esempio un import che
-        non serve o una variabile calcolata e mai usata. Nel progetto Ruff è già installato, tra gli
-        strumenti di sviluppo che abbiamo letto in `pyproject.toml`.
+    nb.sezione("Notebook e script", intro="""
+        Un notebook è lo strumento adatto all'esplorazione, perché permette di eseguire una cella alla
+        volta, guardare il risultato e cambiare strada. Uno script è invece un file di testo con
+        estensione `.py`, che Python esegue dall'inizio alla fine con un solo comando, sempre nello stesso
+        ordine e senza che nessuno debba intervenire. Quando un'analisi è diventata stabile e va ripetuta,
+        per esempio ogni mattina o a ogni nuovo file di dati, conviene trasformarla in uno script.
     """)
     nb.md("""
-        In VS Code si installa l'estensione **Ruff**, pubblicata da Astral, dal pannello delle estensioni.
-        Da quel momento gli avvisi del linter compaiono nell'editor come sottolineature, con il codice e il
-        messaggio che si leggono passando sopra con il mouse. Per rimettere in forma il file a ogni
-        **Ctrl+S** si aggiungono le righe seguenti al file `settings.json`, che si apre dalla palette dei
-        comandi (**Ctrl+Shift+P**) con **Preferences: Open User Settings (JSON)**:
+        Lo script ha alcuni vantaggi pratici. Si lancia dal terminale con `uv run nome.py`, quindi si può
+        affidare a un'attività pianificata che lo esegue a un'ora stabilita, anche quando nessuno è
+        davanti al PC. Ogni esecuzione riparte da zero, quindi il risultato non dipende da quello che è
+        stato eseguito prima, mentre in un notebook può dipendere dall'ordine in cui abbiamo eseguito le
+        celle. Le funzioni definite in uno script, infine, si riusano da altri file con un `import`, come
+        vediamo nella prossima sezione.
+    """)
+    nb.md("""
+        Uno script è anche più semplice da leggere fuori da VS Code. Un notebook, infatti, è un file JSON
+        che contiene, oltre al codice, il testo delle celle Markdown, gli output e alcune informazioni per
+        Jupyter, e nel controllo di versione, come Git, una modifica di una riga si confonde tra tutto il
+        resto. La cella seguente stampa l'inizio del file di questo notebook, cioè quello che si vede
+        aprendolo con un editor di testo.
+    """)
+    nb.code("""
+        print(Path("Ambiente_script_e_Ruff.ipynb").read_text(encoding="utf-8")[:200])
+    """)
+    nb.md("""
+        Quando il codice passa da un notebook a uno script cambiano due dettagli. In uno script l'ultima
+        espressione non viene mostrata, quindi un nome lasciato da solo sull'ultima riga non stampa nulla,
+        e quello che vogliamo vedere va messo dentro un `print`. I percorsi relativi, inoltre, partono
+        dalla cartella in cui si trova il terminale e non da quella del file: lo script della
+        dimostrazione, lanciato dalla cartella `demo/`, scrive lì il suo file Excel.
+    """)
 
-        ```json
-        {
-            "[python]": {
-                "editor.defaultFormatter": "charliermarsh.ruff",
-                "editor.formatOnSave": true
-            }
-        }
-        ```
+    # ------------------------------------------------------------------ 5
+    nb.sezione("Importare una funzione da un altro file", intro="""
+        Il programma della dimostrazione è diviso in due file, che stanno nella cartella `demo/` accanto a
+        questo notebook. Il file `calcoli.py` definisce le funzioni che fanno i conti, mentre `main.py` è lo
+        script che si lancia e che le usa. La cella seguente stampa `calcoli.py`, scritto apposta in
+        disordine, con spazi mancanti, un import che non serve e una variabile mai usata, perché nella
+        dimostrazione lo sistemiamo con Ruff.
+    """)
+    nb.code("""
+        print(Path("demo/calcoli.py").read_text(encoding="utf-8"))
     """)
     nb.md("""
-        Il formatter, applicato alla cella scritta senza regole del notebook sul codice leggibile, aggiunge
-        gli spazi attorno a `=` e agli operatori e dopo le virgole, porta l'indentazione a quattro spazi e
-        mette due righe vuote prima e dopo il `def`. I nomi `Voti`, `Calc` e `x` restano invece com'erano,
-        perché scegliere un nome che dica che cosa contiene la variabile è un lavoro che Ruff lascia a noi.
+        Il file `main.py` comincia con due `import` e poi usa le funzioni di `calcoli.py` per stampare il
+        totale e il prezzo medio della spesa della settimana. Le ultime righe costruiscono con pandas una
+        tabella con i prodotti e i prezzi e la salvano nel file Excel `spesa.xlsx`.
+    """)
+    nb.code("""
+        print(Path("demo/main.py").read_text(encoding="utf-8"))
+    """)
+    nb.md("""
+        La riga `from calcoli import totale, prezzo_medio` ha la stessa forma di `from math import sqrt`,
+        che abbiamo usato nel notebook 01, e `import pandas as pd` è l'import di sempre. Per Python,
+        infatti, `calcoli`, `math` e `pandas` sono tutti moduli, e cambia soltanto il posto in cui si
+        trovano. Python cerca un modulo in un elenco ordinato di cartelle, `sys.path`, e usa il primo che
+        trova. La cella seguente stampa il percorso del modulo `json` della libreria standard e poi
+        l'elenco delle cartelle.
+    """)
+    nb.code("""
+        import json
+
+        print(json.__file__)
+        for cartella in sys.path:
+            print(cartella)
+    """)
+    nb.md("""
+        L'elenco contiene le cartelle della libreria standard, che arriva con il Python installato da uv e
+        contiene `json`, e la cartella `site-packages` dentro `.venv`, dove uv installa pandas e le altre
+        librerie del progetto. Nel notebook compare anche la cartella corrente, cioè quella del notebook,
+        di solito scritta come una riga vuota. Quando lanciamo uno script, invece, Python mette in testa
+        all'elenco la cartella che contiene il file, ed è per questo che `main.py` trova `calcoli.py`, che
+        gli sta accanto.
+    """)
+    nb.md("""
+        Un `import` esegue il file importato dall'inizio alla fine, una volta sola, e poi rende disponibili
+        i nomi che ha definito. Per `calcoli.py` significa definire le due funzioni, ma un `print` scritto
+        fuori dalle funzioni comparirebbe nel terminale prima di tutto quello che stampa `main.py`. Per
+        distinguere i due casi Python dà a ogni file eseguito un nome, che si legge nella variabile `__name__`: vale
+        `"__main__"` nel file lanciato con `uv run` e il nome del modulo, qui `"calcoli"`, in un file
+        importato. Anche il notebook è il programma principale, come mostra la cella seguente.
+    """)
+    nb.code("__name__")
+    nb.md("""
+        Per questo negli script si trova spesso, in fondo al file, un blocco `if __name__ == "__main__":`
+        con le righe che fanno il lavoro, che vengono eseguite quando lanciamo il file ma non quando un
+        altro file lo importa per usarne le funzioni. Dopo il primo import, inoltre, accanto a
+        `calcoli.py` compare la cartella `__pycache__`, dove Python conserva una versione già tradotta del
+        file per partire più in fretta la volta successiva. Si può ignorare, e VS Code, nella cartella del
+        corso, non la mostra.
+    """)
+
+    # ------------------------------------------------------------------ 6
+    nb.sezione("Formattare il codice", intro="""
+        Nel notebook 03 abbiamo visto le regole di PEP 8 sulla forma del codice: l'indentazione di quattro
+        spazi, uno spazio attorno a `=` e agli operatori e dopo le virgole, due righe vuote prima e dopo
+        una funzione e righe non troppo lunghe. Formattare il codice significa sistemarne la forma secondo
+        queste regole senza cambiare quello che fa. Un formatter è il programma che lo fa al posto nostro,
+        riscrivendo il file con gli spazi, le righe vuote e gli a capo al posto giusto, nello stesso modo
+        in tutto il progetto.
+    """)
+    nb.md('''
+        Applicato a `calcoli.py`, il formatter aggiunge gli spazi attorno a `=` e a `/`, toglie quelli
+        dentro `sum( prezzi )`, separa le funzioni con due righe vuote e mette una riga vuota dopo la
+        docstring del modulo:
 
         ```python
-        # prima
-        Voti=[7,8 ,6,9,5]
-        def Calc(v):
-          m=sum(v)/len(v)
-          return m
+        """Le funzioni che servono per fare i conti della spesa."""
 
-        # dopo ruff format
-        Voti = [7, 8, 6, 9, 5]
+        import math
 
 
-        def Calc(v):
-            m = sum(v) / len(v)
-            return m
+        def totale(prezzi):
+            """La somma dei prezzi."""
+            numero = len(prezzi)
+            return sum(prezzi)
+
+
+        def prezzo_medio(prezzi):
+            """Il prezzo medio, cioè il totale diviso per il numero dei prodotti."""
+            return sum(prezzi) / len(prezzi)
         ```
-    """)
+    ''')
     nb.md("""
-        Gli avvisi del linter hanno un codice formato da una lettera, che indica la famiglia di regole, e
-        da un numero, che indica la regola. La tabella riporta i tre avvisi che si incontrano più spesso.
+        Il formatter cambia soltanto la forma. Non rinomina le variabili, perché scegliere un nome che dica
+        che cosa contiene resta un lavoro nostro, e non toglie l'import di `math` né la variabile `numero`,
+        anche se non servono a nulla. Non divide nemmeno una stringa troppo lunga: può spezzare
+        un'istruzione su più righe dentro le parentesi, ma il testo tra virgolette resta intero, e la riga
+        che lo contiene può restare oltre il limite.
+    """)
 
-        | Codice | Avviso | Che cosa vuol dire |
-        |---|---|---|
-        | `F401` | `` `math` imported but unused `` | una libreria importata e mai usata |
-        | `F841` | `` Local variable `totale` is assigned to but never used `` | una variabile calcolata e mai letta |
-        | `E501` | `Line too long (117 > 100)` | una riga oltre il limite fissato in `pyproject.toml` |
+    # ------------------------------------------------------------------ 7
+    nb.sezione("Il linter", intro="""
+        Un linter legge il codice senza eseguirlo e segnala gli errori probabili e le abitudini che
+        portano a errori, come un import che non serve, una variabile calcolata e mai usata o un nome mai
+        definito. Ogni segnalazione indica il file, la riga e un codice formato da una lettera, che indica
+        la famiglia di regole, e da un numero. Le famiglie che usiamo sono quattro: `E` e `W` per lo stile
+        di PEP 8, `F` per gli errori probabili e `I` per l'ordine degli import. Sui due file della
+        dimostrazione, dopo la formattazione, il linter dà le quattro segnalazioni della tabella seguente.
     """)
     nb.md("""
-        Il comportamento di Ruff si configura nella sezione `[tool.ruff]` di `pyproject.toml`, che la cella
-        seguente legge dal dizionario `progetto` costruito all'inizio del notebook. La voce `line-length`
-        fissa a 100 caratteri il limite delle righe, `target-version` indica la versione di Python per cui
-        scriviamo e `select` sceglie le famiglie di regole: `E` e `W` per lo stile di PEP 8, `F` per gli
-        import inutilizzati e i nomi non definiti, `I` per l'ordine degli import. L'estensione di VS Code e
-        il terminale leggono la stessa configurazione, quindi danno gli stessi avvisi.
+        | Codice | Messaggio | Che cosa vuol dire | Come si corregge |
+        |---|---|---|---|
+        | `F401` | `` `math` imported but unused `` | un modulo importato e mai usato | `--fix` toglie l'import |
+        | `F841` | `` Local variable `numero` is assigned to but never used `` | una variabile assegnata e mai letta | a mano |
+        | `I001` | `Import block is un-sorted or un-formatted` | gli import non sono in ordine | `--fix` li riordina |
+        | `E501` | `Line too long (104 > 100)` | una riga oltre i 100 caratteri | a mano |
+    """)
+    nb.md("""
+        L'opzione `--fix` applica soltanto le correzioni sicure, che Ruff segna con `[*]` nell'elenco e
+        che non cambiano il comportamento del programma. Per gli import la correzione è sicura: Ruff toglie
+        quelli inutilizzati e riordina gli altri in gruppi, prima la libreria standard, poi le librerie
+        installate e per ultimi i file del progetto. La riga di `F841` la lascia invece a noi, e conviene
+        guardarla con attenzione, perché una variabile calcolata e mai usata a volte è il segno di un
+        errore più sotto.
+        Per `E501` non c'è una correzione automatica, perché dividere un testo è una scelta di chi scrive.
+    """)
+
+    # ------------------------------------------------------------------ 8
+    nb.sezione("Ruff: formatter e linter insieme", intro="""
+        Ruff è un unico programma che fa da formatter e da linter, con due comandi distinti: `ruff format`
+        rimette in forma il codice e `ruff check` lo controlla. Nel progetto del corso è già installato,
+        nel gruppo `dev` che abbiamo letto in `pyproject.toml`, e si configura nella sezione `[tool.ruff]`
+        dello stesso file, che la cella seguente legge dal dizionario `progetto`.
     """)
     nb.code("""
         progetto["tool"]["ruff"]
     """)
     nb.md("""
-        Dal terminale, nella cartella del progetto, Ruff si lancia con `uv run`, che usa la versione
-        installata nel progetto. Il primo comando elenca gli avvisi, il secondo corregge quelli che sa
-        correggere e il terzo rimette in forma il file:
+        La voce `line-length` fissa a 100 caratteri il limite delle righe, `target-version` indica la
+        versione di Python per cui scriviamo ed `extend-exclude` toglie dal controllo il file `corso.py`,
+        che contiene le verifiche degli esercizi. La sottosezione `lint`, alla voce `select`, sceglie le
+        famiglie di regole `E`, `F`, `W` e `I` viste sopra. Il terminale e l'estensione di VS Code leggono
+        la stessa configurazione, e quindi danno le stesse segnalazioni.
+    """)
+    nb.md("""
+        Dal terminale Ruff si lancia con `uv run`, che usa la versione installata nel progetto. Senza il
+        nome di un file, i comandi lavorano su tutti i file Python, notebook compresi, della cartella del
+        terminale e delle sue sottocartelle:
 
         ```bash
-        uv run ruff check spesa.py
-        uv run ruff check --fix spesa.py
-        uv run ruff format spesa.py
+        uv run ruff format          # rimette in forma i file
+        uv run ruff check           # elenca le segnalazioni
+        uv run ruff check --fix     # applica le correzioni sicure
         ```
+
+        Conviene seguire un ordine preciso: prima `check --fix`, poi le correzioni a mano di quello che
+        resta, poi `format` e alla fine un ultimo `check`, che risponde `All checks passed!` quando non
+        c'è più nulla da segnalare.
     """)
     nb.md("""
-        Le correzioni automatiche hanno un limite preciso. Il comando `check --fix` toglie gli import
-        inutilizzati e riordina quelli rimasti, che sono modifiche sicure, ma non elimina una variabile mai
-        usata, perché quella riga potrebbe essere un errore da capire e non un avanzo da cancellare. Il
-        comando `format` spezza su più righe un'istruzione troppo lunga, ma non divide una stringa, e in
-        quel caso l'avviso `E501` resta finché non dividiamo la stringa noi, come nella cella seguente.
+        In VS Code Ruff funziona attraverso l'estensione **Ruff**, pubblicata da Astral, che la cartella
+        del corso propone tra le estensioni consigliate e imposta come formatter dei file Python. Il
+        comando **Format Document**, con la scorciatoia **Shift+Alt+F**, rimette in forma il file aperto.
+        Le segnalazioni del linter compaiono come sottolineature nel codice e nel pannello **Problems**, e
+        su una riga sottolineata la scorciatoia **Ctrl+.** apre il menu **Quick Fix** con le correzioni
+        disponibili. Chi vuole la formattazione a ogni salvataggio può attivare l'impostazione
+        **Format On Save**.
+    """)
+    nb.md("""
+        La riga troppo lunga di `main.py` si sistema a mano, dividendo la f-string in due pezzi scritti uno
+        dopo l'altro dentro le parentesi del `print`. Python unisce due stringhe adiacenti in una stringa
+        sola, quindi il testo stampato non cambia, e ciascun pezzo ha la sua `f` perché contiene delle
+        graffe da sostituire. La cella seguente mostra la riga corretta, con i prezzi della dimostrazione.
     """)
     nb.code("""
-        soglia = 30
+        prezzi = [2.40, 1.15, 3.20, 4.50, 1.85]
 
-        messaggio = (
-            f"Trovati 2 giorni sopra i {soglia} gradi nel file meteo_luglio.csv: "
-            "controllare il sensore sul balcone"
+        print(
+            f"Prezzo medio di un prodotto: {sum(prezzi) / len(prezzi):.2f} euro, "
+            f"calcolato su {len(prezzi)} prodotti"
         )
-        messaggio
+    """)
+
+    # ------------------------------------------------------------------ 9
+    nb.sezione("La dimostrazione", intro="""
+        Nella dimostrazione mettiamo insieme quello che abbiamo visto. Partiamo dai due file della cartella
+        `demo/`, costruiamo per loro un ambiente apposito, aggiungendo una libreria alla volta man mano che
+        ci accorgiamo che manca, sistemiamo il codice con Ruff e lo lanciamo. La cartella `demo/` contiene
+        il punto di partenza, quindi chi vuole può ripetere i comandi sul proprio PC mentre li eseguiamo
+        insieme. Il progetto della demo parte senza librerie, come mostra la cella seguente.
+    """)
+    nb.code("""
+        demo = tomllib.loads(Path("demo/pyproject.toml").read_text(encoding="utf-8"))
+        demo["project"]
     """)
     nb.md("""
-        Quando due stringhe scritte una dopo l'altra stanno dentro le stesse parentesi, Python le unisce in
-        una stringa sola, e in questo modo un testo lungo si distribuisce su più righe senza cambiare. Il
-        prefisso `f` serve soltanto sui pezzi che contengono delle graffe da sostituire.
+        La prima parte costruisce l'ambiente, con i passi seguenti.
+
+        1. Apriamo un terminale nella cartella `demo/`, con il tasto destro sulla cartella nel pannello
+           **Explorer** e la voce **Open in Integrated Terminal**, oppure con
+           `cd Modulo_1/Script_uv_Ruff/demo` dalla cartella del corso.
+        2. Lanciamo `uv run main.py`. uv crea `.venv` per il progetto della demo, e lo script si ferma
+           alla riga dell'import con `ModuleNotFoundError: No module named 'pandas'`.
+        3. Aggiungiamo la libreria con `uv add pandas`, che la scrive in `pyproject.toml`, aggiorna
+           `uv.lock` e la installa insieme a numpy e alle altre librerie da cui dipende.
     """)
-    nb.hands_on(
-        richiesta="""
-            La riga di `avviso` è lunga 122 caratteri e Ruff la segnalerebbe con `E501`. Scrivi in
-            `avviso_diviso` lo stesso testo diviso in due pezzi tra parentesi, come nell'esempio, con la
-            `f` solo sul pezzo che contiene `{citta}`. La cella stampa `True` quando i due testi coincidono.
-        """,
-        starter="""
-            citta = "Bologna"
-            avviso = f"Domani a {citta} è prevista pioggia dalle 14 alle 18: conviene rimandare la partita di calcetto a giovedì sera"
+    nb.md("""
+        4. Rilanciamo `uv run main.py`. Le due righe con il totale e il prezzo medio compaiono, ma il
+           salvataggio in Excel si ferma con `No module named 'openpyxl'`. Il traceback finisce dentro
+           `pandas/io/excel/_openpyxl.py`, il file che abbiamo visto nella prima sezione, perché pandas
+           usa openpyxl per scrivere i file Excel ma non lo installa da sé.
+        5. Aggiungiamo `uv add openpyxl` e rilanciamo lo script, che questa volta stampa anche
+           `La tabella della spesa è nel file spesa.xlsx`. Il file Excel compare nella cartella `demo/`.
+    """)
+    nb.md("""
+        La seconda parte sistema il codice con Ruff.
 
-            avviso_diviso = (
-                ...
-            )
-            print(avviso_diviso == avviso)
-        """,
-        soluzione="""
-            citta = "Bologna"
-            avviso = f"Domani a {citta} è prevista pioggia dalle 14 alle 18: conviene rimandare la partita di calcetto a giovedì sera"
-
-            avviso_diviso = (
-                f"Domani a {citta} è prevista pioggia dalle 14 alle 18: "
-                "conviene rimandare la partita di calcetto a giovedì sera"
-            )
-            print(avviso_diviso == avviso)  # Output: True
-        """,
-        verifica="""
-            assert isinstance(avviso_diviso, str), "❌ avviso_diviso: due stringhe tra parentesi, una dopo l'altra"
-            assert avviso_diviso == avviso, "❌ avviso_diviso: il testo deve essere identico a quello di avviso, spazi compresi"
-        """,
-    )
-    nb.box("nota", """
-        Ruff controlla anche i notebook. Il comando `uv run ruff check nome.ipynb` esamina le celle una per
-        una con la stessa configurazione dei file `.py`, e in VS Code l'estensione mostra gli avvisi
-        direttamente nelle celle.
+        6. Aggiungiamo Ruff come strumento di sviluppo con `uv add --dev ruff`.
+        7. Lanciamo `uv run ruff format`, che risponde `2 files reformatted`. La riga lunga di `main.py`
+           finisce tra parentesi, ma resta oltre i 100 caratteri.
+        8. Lanciamo `uv run ruff check`, che trova le quattro segnalazioni della tabella e indica che due
+           si correggono con `--fix`.
+        9. Lanciamo `uv run ruff check --fix`, che toglie l'import di `math` e riordina gli import di
+           `main.py`, con `import pandas as pd` prima e l'import da `calcoli` dopo, separati da una riga
+           vuota.
+    """)
+    nb.md("""
+        10. Correggiamo a mano le due segnalazioni rimaste: cancelliamo la riga `numero = len(prezzi)` e
+            dividiamo la f-string lunga in due pezzi, come nell'ultima cella della sezione 8.
+        11. Rilanciamo `uv run ruff format`, perché l'import tolto ha lasciato righe vuote di troppo in
+            `calcoli.py`, e poi `uv run ruff check`, che risponde `All checks passed!`.
+        12. Lanciamo un'ultima volta `uv run main.py`, che stampa le stesse tre righe di prima con il
+            codice ormai in ordine.
+    """)
+    nb.box("attenzione", """
+        Alcuni errori sono frequenti la prima volta. Il comando `uv init` non va lanciato dentro la
+        cartella del corso, perché uv registra il nuovo progetto come parte di quello del corso e gli fa
+        usare lo stesso `.venv`, dove le librerie ci sono già tutte e non si vede mai che cosa manca. Per
+        lo stesso motivo `uv add`, in una cartella senza `pyproject.toml`, modifica il progetto del corso.
+        Il pulsante **Run Python File** di VS Code usa l'interprete selezionato nell'editor, cioè il
+        Python del corso, che ha già pandas, quindi in questa parte gli script si lanciano sempre con
+        `uv run` nel terminale. Se uv stampa l'avviso
+        `VIRTUAL_ENV=... does not match the project environment path`, l'avviso è innocuo: uv usa
+        comunque l'ambiente della cartella.
+    """)
+    nb.md("""
+        Nell'[Esercitazione 1](../Esercitazione_1.ipynb) rifai gli stessi passi nella cartella
+        `esercizio/`, che contiene un programma equivalente sulle temperature della settimana, con le
+        funzioni in `meteo.py` e lo script in `main.py`. Il punto di arrivo della dimostrazione e
+        dell'esercizio, con i file sistemati e i `pyproject.toml` completi, si trova nella cartella
+        `Soluzioni/Script_uv_Ruff/` del corso.
     """)
 
-    nb.md("Riassunto in una pagina: [uv, il progetto e gli script](../Schede/Scheda_uv_e_script.md).")
-
-    # ------------------------------------------------------------------ Extra
-    nb.sezione("Extra", """
-        Questa sezione raccoglie tre esercizi brevi sui punti principali del notebook, pensati per il
-        ripasso a casa, e durante la lezione la saltiamo. Il secondo chiede di creare un file nella
-        cartella del progetto e di lanciarlo dal terminale di VS Code, e lo stesso vale, se vuoi
-        controllare la tua risposta, per il terzo.
+    # ------------------------------------------------------------------ 10
+    nb.sezione("I comandi in breve", intro="""
+        Le due tabelle seguenti raccolgono i comandi del notebook, da scrivere nel terminale aperto sulla
+        cartella del progetto su cui si vuole lavorare. La prima riguarda uv e l'ambiente, la seconda Ruff.
     """)
-    nb.esercizio(
-        titolo="La libreria che manca",
-        scenario="""
-            Un collega, prima di andare in ferie, ti ha lasciato un notebook che disegna alcuni grafici con
-            Plotly e altri con matplotlib, una libreria che nel progetto non c'è. Vogliamo controllare che
-            Plotly sia installato, sapere con quale comando si aggiunge matplotlib e lasciare scritto al
-            collega il comando con cui, al rientro, riceverà la libreria. Alla fine `versione_plotly`
-            contiene la versione installata di Plotly, una stringa di numeri separati da punti, e
-            `comando_aggiungi` e `comando_collega` contengono i due comandi di uv, scritti come nel
-            terminale.
-        """,
-        richiesta="""
-            1. Importa `plotly` e metti in `versione_plotly` il valore del suo attributo `__version__`.
-            2. Metti in `comando_aggiungi` il comando del terminale che aggiunge `matplotlib` al progetto.
-            3. Metti in `comando_collega` il comando che il collega lancia per ricevere la libreria aggiunta.
-        """,
-        suggerimento="i due comandi sono nella sezione sull'ambiente per progetto, e si scrivono tutti in minuscolo.",
-        starter="""
-            import ...
-
-            versione_plotly = ...
-            comando_aggiungi = "..."
-            comando_collega = "..."
-
-            print(versione_plotly, comando_aggiungi, comando_collega)
-        """,
-        soluzione="""
-            import plotly
-
-            versione_plotly = plotly.__version__
-            comando_aggiungi = "uv add matplotlib"
-            comando_collega = "uv sync"
-
-            print(versione_plotly, comando_aggiungi, comando_collega)
-        """,
-        verifica="""
-            import plotly
-
-            assert versione_plotly == plotly.__version__, "❌ versione_plotly: l'attributo __version__ della libreria plotly"
-            assert comando_aggiungi.strip() == "uv add matplotlib", "❌ comando_aggiungi: il comando uv che aggiunge una libreria, seguito dal nome"
-            assert comando_collega.strip() == "uv sync", "❌ comando_collega: il comando uv che ricrea l'ambiente dai file del progetto"
-        """,
-        perche=(
-            "Chi aggiunge una libreria usa `uv add`, che aggiorna `pyproject.toml` e `uv.lock`; chi riceve il "
-            "progetto aggiornato usa `uv sync`, che legge quei due file e installa quello che manca."
-        ),
-    )
-    nb.esercizio(
-        titolo="Da notebook a script",
-        scenario="""
-            Sul balcone hai una piccola stazione meteo, e ogni domenica vuoi conoscere la temperatura media
-            della settimana con un solo comando nel terminale, senza aprire un notebook. Le temperature di
-            questa settimana sono `14.5, 16.0, 15.2, 13.8, 15.5`, e lo script `media_temperature.py`,
-            lanciato con `uv run`, stampa la riga `Temperatura media: 15.0 gradi`. Per controllare che lo
-            script sia stato eseguito, copiamo nel notebook la riga che compare nel terminale.
-        """,
-        richiesta="""
-            1. Crea in VS Code il file `media_temperature.py` nella cartella principale del progetto,
-               accanto a `pyproject.toml`.
-            2. Scrivi nel file una funzione `media(valori)` che restituisce `sum(valori) / len(valori)`.
-            3. Sotto la funzione, dentro un blocco `if __name__ == "__main__":`, scrivi la lista
-               `temperature` e un `print` con una f-string che stampa la media con una cifra decimale.
-            4. Lancia lo script dal terminale con `uv run media_temperature.py`.
-            5. Copia la riga stampata dal terminale nella variabile `output_script` della cella qui sotto.
-        """,
-        suggerimento="parti dal file `spesa.py` della sezione sugli script e cambia nomi, calcolo e testo; il formato `:.1f` dentro le graffe dà una cifra decimale.",
-        starter="""
-            # il codice sta nel file media_temperature.py; qui solo la riga copiata dal terminale
-            output_script = "..."
-            output_script
-        """,
-        soluzione='''
-            # contenuto di media_temperature.py, nella cartella principale del progetto
-            def media(valori):
-                """Media aritmetica di una lista di numeri."""
-                return sum(valori) / len(valori)
-
-
-            if __name__ == "__main__":
-                temperature = [14.5, 16.0, 15.2, 13.8, 15.5]
-                print(f"Temperatura media: {media(temperature):.1f} gradi")
-
-            # la riga stampata dal terminale dopo uv run media_temperature.py
-            output_script = "Temperatura media: 15.0 gradi"
-        ''',
-        verifica="""
-            assert output_script.strip() == "Temperatura media: 15.0 gradi", "❌ output_script: la riga stampata dal terminale, tale e quale"
-        """,
-        perche=(
-            "Il file sta nella cartella principale, che è anche quella in cui si apre il terminale, quindi "
-            "`uv run media_temperature.py` funziona senza indicare percorsi. La riga va copiata dal terminale "
-            "e non ricalcolata nel notebook, perché è la prova che lo script è stato eseguito."
-        ),
-    )
-    nb.esercizio(
-        titolo="Pulizia con Ruff",
-        scenario="""
-            Un amico ha scritto lo script `meteo_report.py` qui sotto e vuole metterlo in un repository
-            condiviso, dove ogni file deve passare `uv run ruff check` senza avvisi. Prima di lanciare Ruff
-            proviamo a fare il suo lavoro, leggendo il file e scrivendo i codici degli avvisi che darebbe,
-            e poi riscriviamo il codice in modo che non ne dia nessuno e stampi lo stesso testo.
-
-            ```python
-            import math
-
-            soglia = 30
-            giorni_caldi = ["12 luglio", "13 luglio"]
-
-
-            def riepilogo(giorni_caldi, soglia):
-                n = len(giorni_caldi)
-                totale = 0
-                return f"Trovati {n} giorni sopra i {soglia} gradi nel file meteo_luglio.csv: controllare il sensore sul balcone"
-
-
-            print(riepilogo(giorni_caldi, soglia))
-            ```
-        """,
-        richiesta="""
-            1. Metti in `avvisi` la lista dei codici Ruff che il file farebbe scattare, come stringhe, uno per problema.
-            2. Riscrivi nella cella il codice corretto, con una docstring per `riepilogo`, in modo che non dia
-               avvisi e stampi lo stesso testo.
-            3. Se vuoi controllare la tua risposta, salva l'originale in `meteo_report.py` nella cartella
-               principale del progetto e lancia `uv run ruff check meteo_report.py`.
-        """,
-        suggerimento="i codici sono nella tabella della sezione su Ruff, e la stringa lunga si divide in due pezzi tra parentesi.",
-        starter="""
-            avvisi = [...]
-
-            # qui sotto il codice corretto
-            soglia = 30
-            giorni_caldi = ["12 luglio", "13 luglio"]
-
-
-            def riepilogo(giorni_caldi, soglia):
-                ...
-
-
-            print(riepilogo(giorni_caldi, soglia))
-        """,
-        soluzione='''
-            # un import mai usato, una variabile mai letta, una riga da 117 caratteri
-            avvisi = ["F401", "F841", "E501"]
-
-            soglia = 30
-            giorni_caldi = ["12 luglio", "13 luglio"]
-
-
-            def riepilogo(giorni_caldi, soglia):
-                """Una riga di testo con il numero di giorni sopra la soglia."""
-                n = len(giorni_caldi)
-                return (
-                    f"Trovati {n} giorni sopra i {soglia} gradi nel file meteo_luglio.csv: "
-                    "controllare il sensore sul balcone"
-                )
-
-
-            print(riepilogo(giorni_caldi, soglia))
-        ''',
-        verifica="""
-            assert sorted(avvisi) == ["E501", "F401", "F841"], "❌ avvisi: tre codici come stringhe, per l'import inutilizzato, la variabile mai letta e la riga troppo lunga"
-            assert riepilogo(["12 luglio", "13 luglio"], 30) == "Trovati 2 giorni sopra i 30 gradi nel file meteo_luglio.csv: controllare il sensore sul balcone", "❌ riepilogo: il testo in uscita deve restare identico"
-            assert riepilogo.__doc__, "❌ riepilogo: manca la docstring"
-        """,
-        perche=(
-            "L'import di `math` e la variabile `totale` non servono a nulla e si tolgono. La riga lunga si "
-            "divide in due pezzi tra parentesi, il testo in uscita resta identico e Ruff non segnala più "
-            "alcun avviso."
-        ),
-    )
+    nb.md("""
+        | Comando | Che cosa fa |
+        |---|---|
+        | `uv sync` | crea `.venv` o lo rimette esattamente come lo descrive `uv.lock`, gruppo `dev` compreso |
+        | `uv add pandas` | aggiunge una libreria a `pyproject.toml` e `uv.lock` e la installa |
+        | `uv add --dev ruff` | aggiunge uno strumento di sviluppo, nel gruppo `dev` |
+        | `uv remove pandas` | toglie una libreria dal progetto e dall'ambiente |
+        | `uv run main.py` | esegue uno script con il Python di `.venv`, dopo averlo allineato ai file del progetto |
+        | `uv init nome` | crea un progetto nuovo nella cartella `nome`, fuori dalla cartella del corso |
+    """)
+    nb.md("""
+        | Comando | Che cosa fa |
+        |---|---|
+        | `uv run ruff format` | rimette in forma i file della cartella e delle sottocartelle |
+        | `uv run ruff check` | elenca le segnalazioni, con file, riga e codice |
+        | `uv run ruff check --fix` | applica le correzioni sicure, come togliere e riordinare gli import |
+        | **Shift+Alt+F** in VS Code | rimette in forma il file aperto |
+        | **Ctrl+.** su una riga sottolineata | apre le correzioni proposte da Ruff |
+    """)
     return nb

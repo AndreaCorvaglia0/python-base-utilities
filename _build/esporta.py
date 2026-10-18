@@ -1,12 +1,17 @@
 """
 Prepara gli zip da consegnare ai corsisti: uno per aula, con dentro la sola cartella dell'aula.
 
-    uv run python _build/esporta.py              # build completo, poi dist/Aula_Base.zip e dist/Aula_Avanzata.zip
-    uv run python _build/esporta.py avanzata     # solo un'aula
+    uv run python _build/esporta.py                      # build completo, poi dist/Aula_Base.zip e dist/Aula_Avanzata.zip
+    uv run python _build/esporta.py avanzata             # solo un'aula
+    uv run python _build/esporta.py --moduli 3 4         # aggiornamento: solo Modulo_3 e Modulo_4, per entrambe le aule
 
 Prima ricostruisce tutto il corso, così le copie di dati, schede e cartelle della demo tornano identiche agli
 originali anche dopo una prova in aula. Nello zip entrano soltanto i file che git conosce o che non ignora: restano
 fuori l'ambiente `.venv`, le cache e i file che i notebook e gli script producono quando si eseguono.
+
+Con `--moduli` lo zip (dist/Aula_X_moduli_3_4.zip) contiene soltanto le cartelle di quei moduli, le loro soluzioni,
+`Soluzioni/corso.py`, `Dati/` e `Schede/`: estratto sopra la cartella che il corsista ha già, aggiorna quei moduli e
+non tocca i notebook dei moduli precedenti, in cui il corsista ha scritto le sue risposte.
 """
 
 from __future__ import annotations
@@ -30,8 +35,25 @@ def file_da_esportare(cartella: Path) -> list[Path]:
     return sorted(ROOT / f for f in p.stdout.split("\0") if f and (ROOT / f).is_file())
 
 
+def solo_moduli(cartella: Path, files: list[Path], moduli: list[int]) -> list[Path]:
+    """I file di un aggiornamento: i moduli indicati, le loro soluzioni, dati e schede."""
+    cartelle = [cartella / f"Modulo_{m}" for m in moduli]
+    nomi = {f.name for f in files if any(c in f.parents for c in cartelle) and f.suffix == ".ipynb"}
+    soluzioni = cartella / "Soluzioni"
+    tenuti = []
+    for f in files:
+        dentro = any(c in f.parents for c in cartelle) or any(f.is_relative_to(cartella / d) for d in ("Dati", "Schede"))
+        sol = f.parent == soluzioni and (f.name in nomi or f.name == "corso.py")
+        script = 1 in moduli and f.is_relative_to(soluzioni / "Script_uv_Ruff")
+        if dentro or sol or script:
+            tenuti.append(f)
+    return tenuti
+
+
 def main(argv: list[str]) -> int:
-    aule = [a.lower() for a in argv] or list(CARTELLE_AULA)
+    moduli = [int(a) for a in argv[argv.index("--moduli") + 1:]] if "--moduli" in argv else []
+    nomi_aule = argv[:argv.index("--moduli")] if "--moduli" in argv else argv
+    aule = [a.lower() for a in nomi_aule] or list(CARTELLE_AULA)
     rc = subprocess.run([sys.executable, str(HERE / "build.py")], cwd=ROOT).returncode
     if rc != 0:
         print("[ERRORE] il build non è andato a buon fine: niente zip")
@@ -40,8 +62,12 @@ def main(argv: list[str]) -> int:
     dist.mkdir(exist_ok=True)
     for aula in aule:
         cartella = CARTELLE_AULA[aula]
-        uscita = dist / f"{cartella.name}.zip"
         files = file_da_esportare(cartella)
+        if moduli:
+            files = solo_moduli(cartella, files, moduli)
+            uscita = dist / f"{cartella.name}_moduli_{'_'.join(map(str, moduli))}.zip"
+        else:
+            uscita = dist / f"{cartella.name}.zip"
         with zipfile.ZipFile(uscita, "w", zipfile.ZIP_DEFLATED) as z:
             for f in files:
                 z.write(f, f.relative_to(ROOT).as_posix())

@@ -22,7 +22,8 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-extend-exclude = ["corso.py"]
+# i notebook del corso e corso.py restano fuori: Ruff si usa sugli script, a partire da Modulo_1/Script_uv_Ruff
+extend-exclude = ["corso.py", "*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]

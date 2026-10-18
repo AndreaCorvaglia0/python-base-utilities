@@ -43,7 +43,7 @@ SCRIPT_UV = {
     "Soluzioni/Script_uv_Ruff/demo": "soluzioni/demo",
     "Soluzioni/Script_uv_Ruff/esercizio": "soluzioni/esercizio",
 }
-# quello che una prova lascia nelle cartelle della demo e che non si copia
+# quello che una prova lascia nelle cartelle della demo: non si copia dalle sorgenti e si toglie dalle copie
 DA_NON_COPIARE = (".venv", "__pycache__", ".ruff_cache", "*.xlsx", "*.pyc")
 
 
@@ -85,12 +85,17 @@ def _sincronizza(coppie: dict[Path, Path], dst: Path, tieni=lambda f: False) -> 
 
 
 def _rispecchia(src: Path, dst: Path, ignora: tuple[str, ...] = ()) -> None:
-    """Rende `dst` una copia di `src`, tranne i file e le cartelle che corrispondono a `ignora`."""
+    """Rende `dst` una copia esatta di `src`, senza i file e le cartelle che corrispondono a `ignora`. Quello che una
+    prova ha lasciato in `dst` (`.venv`, `uv.lock`, i file Excel, le cache) si toglie: con un `.venv` rimasto da una
+    prova, nella demo le librerie risulterebbero già installate."""
     def ignorato(f: Path) -> bool:
         return any(part == pat or (pat.startswith("*") and part.endswith(pat[1:])) for part in f.parts for pat in ignora)
 
     coppie = {dst / f.relative_to(src): f for f in src.rglob("*") if f.is_file() and not ignorato(f.relative_to(src))}
-    _sincronizza(coppie, dst, tieni=lambda f: ignorato(f.relative_to(dst)))
+    if dst.exists():
+        for d in [d for d in dst.iterdir() if d.is_dir() and d.name in ignora]:
+            shutil.rmtree(d)        # .venv e cache: via in un colpo, senza scorrerne i file
+    _sincronizza(coppie, dst)
 
 
 def copia_statici() -> list[str]:

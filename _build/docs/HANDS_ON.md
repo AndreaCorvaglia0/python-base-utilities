@@ -15,6 +15,12 @@ tre minuti, ha una cella da completare con `...`, una `verifica=` con uno o due 
 come creare una cella o premere Restart, il Hands-on ha soltanto il riquadro con le istruzioni, senza `starter` né
 `verifica`; succede quasi solo nel notebook 00.
 
+Un notebook ha da due a tre Hands-on, messi soltanto dove il gesto è sensato e il concetto è rilevante per quello che
+segue; cinque è il massimo e non un obiettivo. I conteggi dei paragrafi seguenti descrivono i notebook come sono oggi:
+quelli che hanno quattro o cinque Hands-on non si riducono per questo, ma una revisione non ne aggiunge se il gesto
+non è nuovo e utile. Il notebook di spiegazione `Ambiente_script_e_Ruff` è l'unica eccezione verso il basso e non ne
+ha nessuno.
+
 La sezione Extra chiude il notebook, si chiama "Extra", in aula si salta e chi vuole la fa a casa. Contiene due o tre
 esercizi brevi (`nb.esercizio`, con il formato "prima il risultato, poi i passi"), che ripassano i punti principali
 del notebook. Dove il vecchio Homework o i vecchi esercizi di fine notebook sono fatti bene, si riusano qui. Nei
@@ -61,6 +67,38 @@ Concetti che restano: commenti che spiegano il perché, docstring letta con `hel
 dopo "Docstring" aggiungere una docstring a una funzione data e leggerla con `help()`; dopo "PEP 8" rinominare le
 variabili di una riga data. Extra: i due esercizi attuali (rinominare e documentare una funzione; riscrivere una cella
 seguendo PEP 8), già brevi.
+
+### S · Ambiente, script e Ruff (solo Avanzata)
+Il notebook di spiegazione del modulo 1 dell'Avanzata, in `Modulo_1/Script_uv_Ruff/`, non ha Hands-on né sezione
+Extra, per scelta. I gesti che insegna (`uv run`, `uv add`, `uv sync`, `ruff format`, `ruff check --fix`) si fanno nel
+terminale, dentro un progetto con il suo ambiente, e non in una cella: il kernel del notebook usa l'ambiente del
+corso, dove pandas, openpyxl e Ruff sono già installati, quindi un Hands-on nel notebook non farebbe mai comparire le
+librerie mancanti da cui parte la dimostrazione. La pratica è tutta nell'Esercitazione 1 dell'Avanzata, che segue la
+demo dal vivo e la fa rifare nella cartella `esercizio/`. Poiché non ha esercizi, la voce del notebook in
+`PROGRAMMA` ha `soluzioni=False`: non c'è una copia in `Soluzioni/` né un `corso.py` accanto al notebook. Dei suoi 30
+minuti circa metà va alla demo nella cartella `demo/`. Concetti che restano, e che l'esercitazione riprende uno a uno: che cosa fa
+uv e a che cosa serve un ambiente virtuale; i file del progetto (`pyproject.toml`, `uv.lock`, `.python-version`,
+`.venv`); `uv add`, `uv add --dev`, `uv run` e `uv sync`; la differenza tra notebook e script; `from modulo import
+funzione` per un file del progetto come per una libreria, con `sys.path` e `__name__`; che cosa fanno un formatter e un
+linter, e i comandi di Ruff. Esercizi in più su questi temi, per una classe che va avanti, stanno nel notebook di
+riserva in `Riserva/` (sorgente `nbR_*`), fuori dalle cartelle dei corsisti.
+
+### E1 · Esercitazione 1 nell'aula Avanzata
+Nell'Avanzata l'ora di esercitazione del modulo 1, 45 minuti di lavoro e 15 di correzione, è l'esercizio sullo
+script. Il corsista rifà la demo nella cartella `Modulo_1/Script_uv_Ruff/esercizio/`, che contiene un programma
+equivalente sulle temperature della settimana (`meteo.py` con le funzioni, `main.py` che le importa, stampa la massima
+e la media e salva `meteo.xlsx`) e dà gli stessi errori nello stesso ordine: prima manca pandas, poi openpyxl, e Ruff
+segnala `F401` e `F841` in `meteo.py`, `I001` ed `E501` in `main.py`. Il notebook apre con alcune domande sul notebook
+S e guida il lavoro con passi nel formato degli esercizi (obiettivo, Passo per passo, suggerimento, `soluzione` e
+una `verifica=` che controlla i valori copiati dal terminale e legge i file del progetto), ma i comandi si scrivono
+nel terminale. Qui, ed è la seconda eccezione, sono ammessi passi facoltativi in più, tutti elementari e nel
+perimetro del modulo 1: importare anche `minima` e
+stampare la minima con `:.1f`; un `print` al livello principale di `meteo.py`, che compare prima dell'output di
+`main.py` perché l'import esegue il file; `__name__` stampato da `meteo.py` lanciato con `uv run main.py` e con `uv
+run meteo.py`; cancellare `.venv` e ricostruirlo con `uv sync`. I cinque esercizi classici dell'Esercitazione 1, con
+le loro domande, restano in fondo allo stesso notebook, facoltativi, da fare a casa. Lo stato finale sta in
+`Soluzioni/Script_uv_Ruff/esercizio/`, che le soluzioni raggiungono con lo stesso percorso relativo
+`Script_uv_Ruff/esercizio/`. La Base fa l'Esercitazione 1 classica, invariata.
 
 ### 04 · Funzioni e controllo del flusso
 Concetti che restano: `if/elif/else` con una condizione, `for` su una lista con un accumulatore, `for` su `.items()`,
